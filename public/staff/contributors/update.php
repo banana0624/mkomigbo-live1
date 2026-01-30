@@ -6,13 +6,22 @@ declare(strict_types=1);
  * Staff: Update contributor (POST-only)
  *
  * Hardened:
- * - Recomputes slug safely (mk_slugify) and keeps it unique (mk_unique_contributor_slug), excluding current id
- * - Sanitizes bio_raw -> bio_html (mk_sanitize_bio_html preferred; else mk_sanitize_allowlist_html; else fail-safe)
  * - Schema-tolerant: updates only columns that exist
+ * - CSRF protected (csrf_token)
+ * - Slug safety:
+ *    - Keeps existing slug unless user explicitly provides a new slug
+ *    - If provided, slugify + unique (excluding current id)
+ * - Bio safety:
+ *    - Sanitizes bio_raw -> bio_html using mk_sanitize_bio_html / mk_sanitize_allowlist_html when available
+ *    - Else generates safe HTML (escaped + nl2br) so no XSS
+ * - Roles normalized to JSON array string
  * - No arrow functions
  */
 
 require_once __DIR__ . '/../_init.php';
+
+if (function_exists('require_staff_login')) { require_staff_login(); }
+if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
 
 /* ---------------------------------------------------------
    Basic helpers
@@ -87,7 +96,7 @@ if (!function_exists('pf__column_exists')) {
   }
 }
 
-/* Roles normalization */
+/* Roles normalization -> JSON string */
 if (!function_exists('pf__normalize_roles')) {
   function pf__normalize_roles(string $raw): array {
     $raw = trim($raw);
@@ -119,6 +128,48 @@ if (!function_exists('pf__normalize_roles')) {
     }
     $out = array_values(array_unique($out));
     return ['ok' => true, 'value' => json_encode($out, JSON_UNESCAPED_UNICODE)];
+  }
+}
+
+/* Failsafe bio HTML (always safe) */
+if (!function_exists('mk_failsafe_bio_html')) {
+  function mk_failsafe_bio_html(string $raw): string {
+    $raw = trim($raw);
+    if ($raw === '') return '';
+    $escaped = htmlspecialchars($raw, ENT_QUOTES, 'UTF-8');
+    return nl2br($escaped, false);
+  }
+}
+
+/* Slugify fallback */
+if (!function_exists('mk_slugify')) {
+  function mk_slugify(string $raw, string $fallback = 'contributor'): string {
+    $raw = trim($raw);
+    if ($raw === '') return $fallback;
+    $raw = strtolower($raw);
+    $raw = preg_replace('/[^\p{L}\p{N}]+/u', '-', $raw) ?? $raw;
+    $raw = trim($raw, '-');
+    return $raw !== '' ? $raw : $fallback;
+  }
+}
+
+/* Uniqueness fallback (excluding current id) */
+if (!function_exists('mk_unique_contributor_slug')) {
+  function mk_unique_contributor_slug(PDO $pdo, string $base, int $excludeId): string {
+    $base = trim($base);
+    if ($base === '') $base = 'contributor';
+
+    $slug = $base;
+    for ($i = 0; $i < 60; $i++) {
+      $st = $pdo->prepare("SELECT id FROM contributors WHERE slug = ? AND id <> ? LIMIT 1");
+      $st->execute([$slug, $excludeId]);
+      $found = $st->fetch(PDO::FETCH_ASSOC);
+
+      if (!$found) return $slug;
+
+      $slug = $base . '-' . ($i + 2);
+    }
+    return $base . '-' . time();
   }
 }
 
@@ -175,6 +226,34 @@ $cols = [
   'bio'          => pf__column_exists($pdo, $table, 'bio'),
 ];
 
+$pub_col = null;
+if (pf__column_exists($pdo, $table, 'is_public')) $pub_col = 'is_public';
+elseif (pf__column_exists($pdo, $table, 'visible')) $pub_col = 'visible';
+
+/* ---------------------------------------------------------
+   Load existing row (for keeping slug stable)
+--------------------------------------------------------- */
+$existing = null;
+try {
+  $select = ['id'];
+  $need = ['display_name','name','username','slug','bio_raw','bio','bio_html','status','email','roles','avatar_path'];
+  if ($pub_col) $need[] = $pub_col;
+  foreach ($need as $c) {
+    if ($c === 'id' || pf__column_exists($pdo, $table, $c)) $select[] = '`' . str_replace('`', '', $c) . '`';
+  }
+  $sql = "SELECT " . implode(', ', array_values(array_unique($select))) . " FROM contributors WHERE id = ? LIMIT 1";
+  $st = $pdo->prepare($sql);
+  $st->execute([$id]);
+  $existing = $st->fetch(PDO::FETCH_ASSOC) ?: null;
+} catch (Throwable $e) {
+  $existing = null;
+}
+
+if (!$existing) {
+  pf__flash_set('error', 'Contributor not found.');
+  redirect_to($return);
+}
+
 /* ---------------------------------------------------------
    Read inputs
 --------------------------------------------------------- */
@@ -188,7 +267,7 @@ $status_raw   = strtolower(trim((string)($_POST['status'] ?? '')));
 $avatar_path  = trim((string)($_POST['avatar_path'] ?? ''));
 $bio_raw_in   = (string)($_POST['bio_raw'] ?? '');
 
-/* Required display_name in your real schema */
+/* Required display_name (if your schema requires it) */
 if ($cols['display_name'] && $display_name === '') {
   pf__flash_set('error', 'Display name is required.');
   redirect_to('/staff/contributors/edit.php?id=' . rawurlencode((string)$id) . '&return=' . rawurlencode($return));
@@ -205,69 +284,65 @@ if ($cols['status']) {
   $status = $status_raw;
 }
 
+/* Public checkbox (if supported) */
+$pub_val = null;
+if ($pub_col) {
+  $pub_val = (isset($_POST[$pub_col]) && (string)$_POST[$pub_col] === '1') ? 1 : 0;
+}
+
+/* Roles */
+$roles_json = null;
+if ($cols['roles']) {
+  $roles_norm = pf__normalize_roles($roles_raw);
+  if (!$roles_norm['ok']) {
+    pf__flash_set('error', $roles_norm['error'] ?? 'Invalid roles value.');
+    redirect_to('/staff/contributors/edit.php?id=' . rawurlencode((string)$id) . '&return=' . rawurlencode($return));
+  }
+  $roles_json = $roles_norm['value'];
+}
+
 /* ---------------------------------------------------------
-   Slug recompute + uniqueness (only if slug column exists)
+   Slug logic (stable unless user provides a new one)
 --------------------------------------------------------- */
 $slug_final = null;
 if ($cols['slug']) {
-  // Base is explicit slug if provided, else display_name, else name/username as fallback.
-  $base_source = $slug_input;
-  if ($base_source === '') $base_source = $display_name;
-  if ($base_source === '') $base_source = $name;
-  if ($base_source === '') $base_source = $username;
-  if ($base_source === '') $base_source = 'contributor';
+  $current_slug = trim((string)($existing['slug'] ?? ''));
 
-  if (function_exists('mk_slugify')) {
-    $base = mk_slugify($base_source, 'contributor');
-  } else {
-    // Safe fallback slugify
-    $base = strtolower(trim($base_source));
-    $base = preg_replace('/[^\p{L}\p{N}]+/u', '-', $base) ?? $base;
-    $base = trim($base, '-');
-    if ($base === '') $base = 'contributor';
-  }
-
-  if (function_exists('mk_unique_contributor_slug')) {
+  if ($slug_input !== '') {
+    $base = mk_slugify($slug_input, 'contributor');
     $slug_final = mk_unique_contributor_slug($pdo, $base, $id);
   } else {
-    // Fallback: do not attempt uniqueness without helper; still set sanitized base
-    $slug_final = $base;
+    // Do not churn slug on unrelated edits: keep current
+    if ($current_slug !== '') {
+      $slug_final = $current_slug;
+    } else {
+      // If existing slug is empty, generate one from best available label
+      $base_source = $display_name !== '' ? $display_name : ($name !== '' ? $name : ($username !== '' ? $username : 'contributor'));
+      $base = mk_slugify($base_source, 'contributor');
+      $slug_final = mk_unique_contributor_slug($pdo, $base, $id);
+    }
   }
 }
 
 /* ---------------------------------------------------------
-   Bio sanitize (bio_raw -> bio_html) with fail-safe behavior
+   Bio sanitize (bio_raw -> bio_html) always safe
 --------------------------------------------------------- */
 $bio_raw_to_save  = $bio_raw_in;
-$bio_html_to_save = null; // only set if we are allowed to update it safely
+$bio_html_to_save = null;
 
 if ($cols['bio_raw'] || $cols['bio_html'] || $cols['bio']) {
-  // Save raw to bio_raw if supported, else legacy bio
-  // For bio_html: only overwrite if we have a sanitizer OR user is clearing bio.
-  $can_sanitize = false;
-
-  if (function_exists('mk_sanitize_bio_html')) {
-    $can_sanitize = true;
-    $bio_html_to_save = mk_sanitize_bio_html($bio_raw_to_save);
-  } else {
-    // Try your existing sanitizer file (if present)
-    if (!function_exists('mk_sanitize_allowlist_html')) {
-      $san = defined('APP_ROOT') ? (APP_ROOT . '/private/functions/sanitize.php') : null;
-      if ($san && is_file($san)) require_once $san;
-    }
-    if (function_exists('mk_sanitize_allowlist_html')) {
-      $can_sanitize = true;
-      $bio_html_to_save = mk_sanitize_allowlist_html($bio_raw_to_save);
-    }
+  // Load sanitize helper if your project has it
+  if (!function_exists('mk_sanitize_allowlist_html')) {
+    $san = defined('APP_ROOT') ? (APP_ROOT . '/private/functions/sanitize.php') : null;
+    if ($san && is_file($san)) require_once $san;
   }
 
-  if (!$can_sanitize) {
-    // Fail-safe: allow clearing bio_html, but do not overwrite with unsafe raw
-    if (trim($bio_raw_to_save) === '') {
-      $bio_html_to_save = '';
-    } else {
-      $bio_html_to_save = null; // leave existing bio_html untouched
-    }
+  if (function_exists('mk_sanitize_bio_html')) {
+    $bio_html_to_save = mk_sanitize_bio_html($bio_raw_to_save);
+  } elseif (function_exists('mk_sanitize_allowlist_html')) {
+    $bio_html_to_save = mk_sanitize_allowlist_html($bio_raw_to_save);
+  } else {
+    $bio_html_to_save = mk_failsafe_bio_html($bio_raw_to_save);
   }
 }
 
@@ -289,23 +364,19 @@ if ($cols['status']) {
   $params[':status'] = $status;
 }
 
-/* Slug */
 if ($cols['slug']) {
-  // Store NULL only if user intentionally clears AND you want that. Most sites want a slug always.
-  // Here we always store a computed slug_final (never null).
   $set[] = 'slug = :slug';
   $params[':slug'] = (string)$slug_final;
 }
 
-/* Roles */
-if ($cols['roles']) {
-  $roles_norm = pf__normalize_roles($roles_raw);
-  if (!$roles_norm['ok']) {
-    pf__flash_set('error', $roles_norm['error'] ?? 'Invalid roles value.');
-    redirect_to('/staff/contributors/edit.php?id=' . rawurlencode((string)$id) . '&return=' . rawurlencode($return));
-  }
+if ($cols['roles'] && $roles_json !== null) {
   $set[] = 'roles = :roles';
-  $params[':roles'] = $roles_norm['value'];
+  $params[':roles'] = $roles_json;
+}
+
+if ($pub_col) {
+  $set[] = $pub_col . ' = :pub';
+  $params[':pub'] = $pub_val;
 }
 
 /* Bio fields */
@@ -313,7 +384,6 @@ if ($cols['bio_raw']) {
   $set[] = 'bio_raw = :bio_raw';
   $params[':bio_raw'] = $bio_raw_to_save;
 } elseif ($cols['bio']) {
-  // legacy bio
   $set[] = 'bio = :bio';
   $params[':bio'] = $bio_raw_to_save;
 }
@@ -328,6 +398,9 @@ if (!$set) {
   redirect_to($return);
 }
 
+/* ---------------------------------------------------------
+   Execute
+--------------------------------------------------------- */
 try {
   $sql = "UPDATE contributors SET " . implode(', ', $set) . " WHERE id = :id LIMIT 1";
   $st = $pdo->prepare($sql);
@@ -339,7 +412,6 @@ try {
 } catch (Throwable $e) {
   $msg = $e->getMessage();
 
-  // Friendlier messages for common unique collisions
   if (stripos($msg, 'Duplicate') !== false) {
     if (stripos($msg, 'slug') !== false) {
       pf__flash_set('error', 'Update failed: slug already exists for another contributor.');

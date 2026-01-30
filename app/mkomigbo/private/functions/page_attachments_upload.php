@@ -2,300 +2,210 @@
 declare(strict_types=1);
 
 /**
- * /private/functions/page_attachments_upload.php
- * Staff upload pipeline:
- * 1) Receive upload -> quarantine/{staff_id}/
- * 2) Validate: size, mime sniff, extension policy
- * 3) Move -> /uploads/pages/{page_id}/
- * 4) Insert page_files row
- */
-
-if (!defined('PRIVATE_PATH')) {
-  throw new RuntimeException('PRIVATE_PATH not defined.');
-}
-
-/* ---------------------------
-   Policy
---------------------------- */
-
-function mk_upload_max_bytes(): int {
-  // 25MB default (tune as you like)
-  return 25 * 1024 * 1024;
-}
-
-function mk_upload_allowed_mimes(): array {
-  // Keep consistent with page_attachments.php allowlist
-  return [
-    'application/pdf',
-    'image/png',
-    'image/jpeg',
-    'image/webp',
-    'image/gif',
-    'text/plain',
-    'audio/mpeg',
-    'audio/mp3',
-    'audio/wav',
-    'audio/x-wav',
-    'audio/ogg',
-    'video/mp4',
-    'video/webm',
-    'application/zip',
-    'application/x-zip-compressed',
-    'application/msword',
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    'application/vnd.ms-excel',
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    'application/vnd.ms-powerpoint',
-    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-  ];
-}
-
-function mk_upload_allowed_exts(): array {
-  return [
-    'pdf','png','jpg','jpeg','webp','gif','txt',
-    'mp3','wav','ogg',
-    'mp4','webm',
-    'zip',
-    'doc','docx','xls','xlsx','ppt','pptx',
-  ];
-}
-
-/* ---------------------------
-   Helpers
---------------------------- */
-
-function mk_upload_fail(string $message): array {
-  return ['ok' => false, 'error' => $message];
-}
-
-function mk_upload_sniff_mime(string $path): string {
-  $mime = '';
-  if (function_exists('finfo_open')) {
-    $fi = finfo_open(FILEINFO_MIME_TYPE);
-    if ($fi) {
-      $m = finfo_file($fi, $path);
-      finfo_close($fi);
-      if (is_string($m)) $mime = trim($m);
-    }
-  }
-  return $mime !== '' ? $mime : 'application/octet-stream';
-}
-
-function mk_upload_safe_original_name(string $name): string {
-  $name = trim((string)$name);
-  $name = preg_replace('/[\x00-\x1F\x7F]+/u', '', $name) ?? $name;
-  $name = str_replace(['"', "'"], '', $name);
-  $name = trim($name);
-  if ($name === '') $name = 'upload';
-  return $name;
-}
-
-function mk_upload_ext(string $name): string {
-  $name = strtolower((string)$name);
-  $pos = strrpos($name, '.');
-  if ($pos === false) return '';
-  return trim(substr($name, $pos + 1));
-}
-
-function mk_upload_mkdir(string $path): bool {
-  if (is_dir($path)) return true;
-  return @mkdir($path, 0755, true);
-}
-
-function mk_upload_random_stored_name(string $ext): string {
-  $ext = strtolower(trim($ext));
-  $token = bin2hex(random_bytes(16)); // 32 chars
-  return $ext !== '' ? ($token . '.' . $ext) : $token;
-}
-
-function mk_upload_quarantine_dir(int $staffId): string {
-  return rtrim(PRIVATE_PATH, '/\\') . '/uploads/quarantine/pages/' . max(1, $staffId);
-}
-
-function mk_upload_final_dir(int $pageId): string {
-  return rtrim(PRIVATE_PATH, '/\\') . '/uploads/pages/' . max(1, $pageId);
-}
-
-/**
- * Insert into page_files safely. Skips optional columns if missing.
- */
-function mk_upload_insert_page_file(PDO $pdo, array $row): int {
-  // Detect columns once per request
-  static $cols = null;
-  if ($cols === null) {
-    $cols = [];
-    $st = $pdo->query("SHOW COLUMNS FROM page_files");
-    $r = $st ? ($st->fetchAll(PDO::FETCH_ASSOC) ?: []) : [];
-    foreach ($r as $c) {
-      $f = (string)($c['Field'] ?? '');
-      if ($f !== '') $cols[$f] = true;
-    }
-  }
-
-  $fields = [];
-  $params = [];
-
-  $map = [
-    'page_id'      => 'page_id',
-    'filename'     => 'filename',
-    'stored_name'  => 'stored_name',
-    'mime'         => 'mime',
-    'filesize'     => 'filesize',
-    'is_external'  => 'is_external',
-    'external_url' => 'external_url',
-    'created_by_staff_id' => 'created_by_staff_id',
-  ];
-
-  foreach ($map as $col => $key) {
-    if (!isset($cols[$col])) continue;
-    $fields[] = $col;
-    $params[":$col"] = $row[$key] ?? null;
-  }
-
-  // Hard requirements (must exist)
-  foreach (['page_id','filename','stored_name'] as $req) {
-    if (!in_array($req, $fields, true)) {
-      throw new RuntimeException("page_files missing required column: {$req}");
-    }
-  }
-
-  $sql = "INSERT INTO page_files (" . implode(', ', $fields) . ")
-          VALUES (" . implode(', ', array_map(fn($f) => ':' . $f, $fields)) . ")";
-  $st = $pdo->prepare($sql);
-  $st->execute($params);
-
-  return (int)$pdo->lastInsertId();
-}
-
-/* ---------------------------
-   Main entry point
---------------------------- */
-
-/**
- * Process upload(s) from an <input type="file" name="attachments[]" multiple>
+ * /app/mkomigbo/private/functions/page_attachments_upload.php
+ *
+ * Function: mk_staff_upload_page_attachments(PDO $pdo, int $pageId, int $staffId, array $files): array
+ *
+ * Storage:
+ * - Disk:   /public_html/lib/uploads/page_files/{page_id}/
+ * - DB:     page_files.file_path = /lib/uploads/page_files/{page_id}/{stored}
  *
  * Returns:
- * - ok true/false
- * - added: list of inserted ids + filenames
- * - errors: list of per-file errors
+ * - ['ok'=>bool, 'saved'=>int, 'errors'=>string[]]
  */
-function mk_staff_upload_page_attachments(PDO $pdo, int $pageId, int $staffId, array $files): array {
-  $pageId = max(1, (int)$pageId);
-  $staffId = max(1, (int)$staffId);
 
-  if ($pageId < 1) return mk_upload_fail('Invalid page id.');
-  if ($staffId < 1) return mk_upload_fail('Invalid staff id.');
+if (!function_exists('mk_staff_upload_page_attachments')) {
 
-  if (!isset($files['name'])) return mk_upload_fail('No files received.');
+  function mk_staff_upload_page_attachments(PDO $pdo, int $pageId, int $staffId, array $files): array {
+    $out = ['ok' => false, 'saved' => 0, 'errors' => []];
 
-  $max = mk_upload_max_bytes();
-  $allowMimes = mk_upload_allowed_mimes();
-  $allowExts  = mk_upload_allowed_exts();
-
-  $qdir = mk_upload_quarantine_dir($staffId);
-  $fdir = mk_upload_final_dir($pageId);
-
-  if (!mk_upload_mkdir($qdir)) return mk_upload_fail('Cannot create quarantine directory.');
-  if (!mk_upload_mkdir($fdir)) return mk_upload_fail('Cannot create final directory.');
-
-  $added = [];
-  $errors = [];
-
-  $names = (array)$files['name'];
-  $tmps  = (array)$files['tmp_name'];
-  $errs  = (array)$files['error'];
-  $sizes = (array)$files['size'];
-
-  $count = count($names);
-  for ($i = 0; $i < $count; $i++) {
-    $origName = mk_upload_safe_original_name((string)($names[$i] ?? ''));
-    $tmpPath  = (string)($tmps[$i] ?? '');
-    $errCode  = (int)($errs[$i] ?? UPLOAD_ERR_NO_FILE);
-    $size     = (int)($sizes[$i] ?? 0);
-
-    if ($errCode === UPLOAD_ERR_NO_FILE) continue;
-
-    if ($errCode !== UPLOAD_ERR_OK) {
-      $errors[] = "{$origName}: upload error ({$errCode})";
-      continue;
+    if ($pageId < 1) {
+      $out['errors'][] = 'Invalid page_id.';
+      return $out;
     }
 
-    if ($tmpPath === '' || !is_uploaded_file($tmpPath)) {
-      $errors[] = "{$origName}: invalid upload";
-      continue;
+    // Detect web root (/public_html) via PUBLIC_ROOT if available
+    $webRoot = null;
+    if (defined('PUBLIC_ROOT') && is_string(PUBLIC_ROOT) && PUBLIC_ROOT !== '') {
+      $webRoot = realpath(dirname(PUBLIC_ROOT));
+    }
+    if (!$webRoot) {
+      // Fallback: derive from APP_ROOT (/public_html/app/mkomigbo) -> /public_html/app -> /public_html
+      if (defined('APP_ROOT') && is_string(APP_ROOT) && APP_ROOT !== '') {
+        $webRoot = realpath(dirname(dirname(APP_ROOT)));
+      }
+    }
+    if (!$webRoot) {
+      $out['errors'][] = 'Could not resolve web root.';
+      return $out;
+    }
+    $webRoot = rtrim(str_replace('\\', '/', (string)$webRoot), '/');
+
+    $baseRel = '/lib/uploads/page_files/' . $pageId;
+    $baseDir = $webRoot . $baseRel;
+
+    if (!is_dir($baseDir)) {
+      if (!@mkdir($baseDir, 0755, true) && !is_dir($baseDir)) {
+        $out['errors'][] = 'Could not create upload directory.';
+        return $out;
+      }
     }
 
-    if ($size < 1 || $size > $max) {
-      $errors[] = "{$origName}: file too large (max " . number_format($max/1024/1024, 0) . "MB)";
-      continue;
+    // Normalize $_FILES structure
+    $names = $files['name'] ?? null;
+    $tmps  = $files['tmp_name'] ?? null;
+    $errs  = $files['error'] ?? null;
+    $sizes = $files['size'] ?? null;
+    $types = $files['type'] ?? null;
+
+    if (!is_array($names) || !is_array($tmps) || !is_array($errs)) {
+      $out['errors'][] = 'Invalid upload payload.';
+      return $out;
     }
 
-    $ext = mk_upload_ext($origName);
-    if ($ext === '' || !in_array($ext, $allowExts, true)) {
-      $errors[] = "{$origName}: extension not allowed";
-      continue;
+    // Introspect page_files columns (schema tolerant)
+    $have = [];
+    try {
+      $stc = $pdo->query("SHOW COLUMNS FROM page_files");
+      $cols = $stc ? ($stc->fetchAll(PDO::FETCH_ASSOC) ?: []) : [];
+      foreach ($cols as $r) {
+        $f = (string)($r['Field'] ?? '');
+        if ($f !== '') $have[$f] = true;
+      }
+    } catch (Throwable $e) {
+      $out['errors'][] = 'page_files table not accessible.';
+      return $out;
     }
 
-    $stored = mk_upload_random_stored_name($ext);
-    $qPath = rtrim($qdir, '/\\') . '/' . $stored;
-
-    // Step 1: move into quarantine
-    if (!@move_uploaded_file($tmpPath, $qPath)) {
-      $errors[] = "{$origName}: failed to move to quarantine";
-      continue;
+    if (!isset($have['page_id'])) {
+      $out['errors'][] = 'page_files.page_id missing.';
+      return $out;
     }
 
-    // Step 2: sniff MIME in quarantine
-    $mime = mk_upload_sniff_mime($qPath);
-    if (!in_array($mime, $allowMimes, true)) {
-      @unlink($qPath);
-      $errors[] = "{$origName}: file type not allowed ({$mime})";
-      continue;
-    }
+    // Policy
+    $maxBytes = 25 * 1024 * 1024; // 25MB (adjust later if you want)
+    $allowedPrefix = '/lib/uploads/page_files/';
 
-    // Step 3: move from quarantine to final
-    $finalPath = rtrim($fdir, '/\\') . '/' . $stored;
-    if (!@rename($qPath, $finalPath)) {
-      // fallback copy+unlink
-      if (!@copy($qPath, $finalPath)) {
-        @unlink($qPath);
-        $errors[] = "{$origName}: failed to move to final directory";
+    $saved = 0;
+
+    $count = count($names);
+    for ($i = 0; $i < $count; $i++) {
+      $orig = is_string($names[$i] ?? null) ? trim((string)$names[$i]) : '';
+      $tmp  = is_string($tmps[$i] ?? null) ? (string)$tmps[$i] : '';
+      $err  = (int)($errs[$i] ?? UPLOAD_ERR_NO_FILE);
+      $size = isset($sizes[$i]) ? (int)$sizes[$i] : 0;
+      $type = is_string($types[$i] ?? null) ? trim((string)$types[$i]) : '';
+
+      if ($err === UPLOAD_ERR_NO_FILE) continue;
+
+      if ($err !== UPLOAD_ERR_OK) {
+        $out['errors'][] = ($orig !== '' ? $orig . ': ' : '') . 'Upload error code ' . $err;
         continue;
       }
-      @unlink($qPath);
+
+      if ($tmp === '' || !is_uploaded_file($tmp)) {
+        $out['errors'][] = ($orig !== '' ? $orig . ': ' : '') . 'Temp upload missing.';
+        continue;
+      }
+
+      if ($size > $maxBytes) {
+        $out['errors'][] = ($orig !== '' ? $orig . ': ' : '') . 'File too large.';
+        continue;
+      }
+
+      // Generate stored name
+      $ext = '';
+      if ($orig !== '') {
+        $bn = basename($orig);
+        $pos = strrpos($bn, '.');
+        if ($pos !== false) {
+          $ext = strtolower(substr($bn, $pos + 1));
+          $ext = preg_replace('/[^a-z0-9]+/', '', $ext) ?? '';
+          if ($ext !== '') $ext = '.' . $ext;
+        }
+      }
+      $stored = bin2hex(random_bytes(16)) . $ext;
+
+      $dest = rtrim($baseDir, '/\\') . '/' . $stored;
+
+      if (!@move_uploaded_file($tmp, $dest)) {
+        $out['errors'][] = ($orig !== '' ? $orig . ': ' : '') . 'Could not move uploaded file.';
+        continue;
+      }
+      @chmod($dest, 0644);
+
+      $filePath = $baseRel . '/' . $stored; // begins with /lib/...
+      if (strpos($filePath, $allowedPrefix) !== 0) {
+        // should never happen, but keep safety
+        @unlink($dest);
+        $out['errors'][] = ($orig !== '' ? $orig . ': ' : '') . 'Blocked by path policy.';
+        continue;
+      }
+
+      // Detect MIME from file (prefer finfo)
+      $mime = $type;
+      if (function_exists('finfo_open')) {
+        try {
+          $fi = finfo_open(FILEINFO_MIME_TYPE);
+          if ($fi) {
+            $det = finfo_file($fi, $dest);
+            finfo_close($fi);
+            if (is_string($det) && $det !== '') $mime = $det;
+          }
+        } catch (Throwable $e) {}
+      }
+      if (!is_string($mime) || trim($mime) === '') $mime = 'application/octet-stream';
+
+      // Build INSERT dynamically based on existing columns
+      $cols = [];
+      $bind = [];
+
+      $cols[] = 'page_id';   $bind[':page_id'] = $pageId;
+
+      if (isset($have['original_name'])) { $cols[] = 'original_name'; $bind[':original_name'] = ($orig !== '' ? $orig : $stored); }
+      if (isset($have['stored_name']))   { $cols[] = 'stored_name';   $bind[':stored_name'] = $stored; }
+      if (isset($have['file_path']))     { $cols[] = 'file_path';     $bind[':file_path'] = $filePath; }
+      if (isset($have['mime_type']))     { $cols[] = 'mime_type';     $bind[':mime_type'] = $mime; }
+      if (isset($have['file_size']))     { $cols[] = 'file_size';     $bind[':file_size'] = (int)@filesize($dest); }
+
+      if (isset($have['is_external']))   { $cols[] = 'is_external';   $bind[':is_external'] = 0; }
+      if (isset($have['external_url']))  { $cols[] = 'external_url';  $bind[':external_url'] = null; }
+
+      // Optional audit fields (if your schema has them)
+      foreach (['uploaded_by','created_by','staff_id'] as $who) {
+        if (isset($have[$who])) { $cols[] = $who; $bind[':'.$who] = $staffId; break; }
+      }
+
+      // created_at if NOT auto-managed; only set if column exists AND likely not auto
+      if (isset($have['created_at'])) {
+        // harmless even if default exists; MySQL will accept explicit value
+        $cols[] = 'created_at';
+        $bind[':created_at'] = date('Y-m-d H:i:s');
+      }
+
+      $sql = "INSERT INTO page_files (" . implode(', ', $cols) . ") VALUES (" . implode(', ', array_map(fn($c) => ':' . $c, $cols)) . ")";
+      // But our bind keys already include :page_id etc; map accordingly:
+      $sql = "INSERT INTO page_files (" . implode(', ', $cols) . ") VALUES (" . implode(', ', array_keys($bind)) . ")";
+
+      try {
+        $ins = $pdo->prepare($sql);
+        foreach ($bind as $k => $v) {
+          if ($v === null) $ins->bindValue($k, null, PDO::PARAM_NULL);
+          elseif (is_int($v)) $ins->bindValue($k, $v, PDO::PARAM_INT);
+          else $ins->bindValue($k, (string)$v, PDO::PARAM_STR);
+        }
+        $ins->execute();
+        $saved++;
+      } catch (Throwable $e) {
+        // Roll back disk file if DB insert fails
+        @unlink($dest);
+        $out['errors'][] = ($orig !== '' ? $orig . ': ' : '') . 'DB insert failed: ' . $e->getMessage();
+        continue;
+      }
     }
 
-    @chmod($finalPath, 0644);
-
-    // Step 4: insert DB row
-    try {
-      $newId = mk_upload_insert_page_file($pdo, [
-        'page_id' => $pageId,
-        'filename' => $origName,
-        'stored_name' => $stored,
-        'mime' => $mime,
-        'filesize' => $size,
-        'is_external' => 0,
-        'external_url' => null,
-        'created_by_staff_id' => $staffId,
-      ]);
-
-      $added[] = ['id' => $newId, 'filename' => $origName];
-    } catch (Throwable $e) {
-      // Roll back file if DB insert fails
-      @unlink($finalPath);
-      $errors[] = "{$origName}: DB insert failed";
-      continue;
-    }
+    $out['saved'] = $saved;
+    $out['ok'] = ($saved > 0);
+    return $out;
   }
-
-  if (!$added && !$errors) {
-    return mk_upload_fail('No files selected.');
-  }
-
-  return [
-    'ok' => true,
-    'added' => $added,
-    'errors' => $errors,
-  ];
 }

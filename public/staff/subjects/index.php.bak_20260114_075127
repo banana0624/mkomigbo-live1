@@ -1,0 +1,244 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * /public/staff/subjects/index.php
+ * Staff: Subjects list (premium-safe, schema-tolerant).
+ *
+ * Guarantees:
+ * - Uses /public/staff/_init.php as the only bootstrap
+ * - No init scanning, no APP_ROOT definitions
+ * - View + Edit + Delete grouped together (Delete red)
+ * - Safe return= preserved to come back to this list
+ */
+
+@ini_set('display_errors', '0');
+@ini_set('display_startup_errors', '0');
+error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
+
+/* Authoritative staff bootstrap */
+require_once __DIR__ . '/../_init.php';
+
+$nav_active = 'subjects';
+$page_title = 'Subjects';
+
+/* ---------------------------------------------
+   Schema helpers (local + safe)
+--------------------------------------------- */
+if (!function_exists('mk_table_exists')) {
+  function mk_table_exists(PDO $pdo, string $table): bool {
+    try {
+      $st = $pdo->prepare("SELECT 1 FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=? LIMIT 1");
+      $st->execute([$table]);
+      return (bool)$st->fetchColumn();
+    } catch (Throwable $e) { return false; }
+  }
+}
+
+if (!function_exists('mk_column_exists')) {
+  function mk_column_exists(PDO $pdo, string $table, string $column): bool {
+    static $cache = [];
+    $key = strtolower($table . '.' . $column);
+    if (array_key_exists($key, $cache)) return (bool)$cache[$key];
+
+    try {
+      $st = $pdo->prepare("
+        SELECT 1 FROM information_schema.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME = ?
+          AND COLUMN_NAME = ?
+        LIMIT 1
+      ");
+      $st->execute([$table, $column]);
+      $cache[$key] = (bool)$st->fetchColumn();
+      return (bool)$cache[$key];
+    } catch (Throwable $e) {
+      $cache[$key] = false;
+      return false;
+    }
+  }
+}
+
+/* ---------------------------------------------
+   URLs + safe return
+--------------------------------------------- */
+$u = static function(string $path): string {
+  return function_exists('url_for') ? (string)url_for($path) : $path;
+};
+
+$current_uri  = (string)($_SERVER['REQUEST_URI'] ?? '/staff/subjects/');
+$current_path = parse_url($current_uri, PHP_URL_PATH);
+$current_path = is_string($current_path) ? $current_path : '/staff/subjects/';
+$current_qs   = parse_url($current_uri, PHP_URL_QUERY);
+$current_qs   = is_string($current_qs) && $current_qs !== '' ? ('?' . $current_qs) : '';
+$return_path  = $current_path . $current_qs;
+
+/* If pf__safe_return_url exists, normalize to staff-only */
+if (function_exists('pf__safe_return_url')) {
+  $return_path = pf__safe_return_url($return_path, '/staff/subjects/index.php');
+} else {
+  // minimal hardening: keep only staff paths
+  if ($return_path === '' || $return_path[0] !== '/' || strpos($return_path, '/staff/') !== 0) {
+    $return_path = '/staff/subjects/index.php';
+  }
+}
+
+$return_enc = rawurlencode($return_path);
+
+/* ---------------------------------------------
+   Fetch subjects
+--------------------------------------------- */
+$rows = [];
+$note = '';
+
+try {
+  $pdo = null;
+
+  if (function_exists('pdo')) {
+    $pdo = pdo();
+  }
+  if (!$pdo instanceof PDO && function_exists('staff_pdo')) {
+    $pdo = staff_pdo();
+  }
+  if (!$pdo instanceof PDO && function_exists('db')) {
+    $pdo = db();
+  }
+  if (!$pdo instanceof PDO) {
+    throw new RuntimeException('DB not available.');
+  }
+
+  if (!mk_table_exists($pdo, 'subjects')) {
+    $rows = [];
+  } else {
+    $has_slug        = mk_column_exists($pdo, 'subjects', 'slug');
+    $has_display     = mk_column_exists($pdo, 'subjects', 'display_name');
+    $has_menu_name   = mk_column_exists($pdo, 'subjects', 'menu_name');
+    $has_name        = mk_column_exists($pdo, 'subjects', 'name');
+    $has_title       = mk_column_exists($pdo, 'subjects', 'title');
+    $has_status      = mk_column_exists($pdo, 'subjects', 'status');
+    $has_is_active   = mk_column_exists($pdo, 'subjects', 'is_active');
+    $has_nav_order   = mk_column_exists($pdo, 'subjects', 'nav_order');
+    $has_position    = mk_column_exists($pdo, 'subjects', 'position');
+    $has_created_at  = mk_column_exists($pdo, 'subjects', 'created_at');
+
+    // Prefer: display_name > menu_name > name > title
+    $nameCol =
+      $has_display   ? 'display_name' :
+      ($has_menu_name ? 'menu_name' :
+      ($has_name      ? 'name' :
+      ($has_title     ? 'title' : null)));
+
+    $cols = [];
+    $cols[] = "id";
+    $cols[] = $has_slug ? "slug" : "NULL AS slug";
+    $cols[] = $nameCol ? ("`{$nameCol}` AS display_name") : "CAST(id AS CHAR) AS display_name";
+    if ($has_status)     $cols[] = "status";
+    if ($has_is_active)  $cols[] = "is_active";
+    if ($has_created_at) $cols[] = "created_at";
+
+    $sql = "SELECT " . implode(", ", $cols) . " FROM subjects";
+
+    $order = [];
+    if ($has_nav_order) $order[] = "nav_order ASC";
+    if ($has_position)  $order[] = "position ASC";
+    $order[] = "id DESC";
+    $sql .= " ORDER BY " . implode(", ", $order) . " LIMIT 500";
+
+    $rows = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC) ?: [];
+  }
+} catch (Throwable $e) {
+  $note = $e->getMessage();
+  $rows = [];
+}
+
+/* ---------------------------------------------
+   Header
+--------------------------------------------- */
+if (function_exists('mk_view_set')) {
+  mk_view_set(['page_title' => $page_title]);
+}
+
+if (function_exists('mk_require_shared')) {
+  mk_require_shared('staff_header.php');
+} else {
+  header('Content-Type: text/html; charset=UTF-8');
+  echo "<!doctype html><html><head><meta charset='utf-8'><title>" . (function_exists('h') ? h($page_title) : $page_title) . "</title></head><body><main>";
+}
+
+echo '<section class="hero">';
+echo '<h1 class="hero__title">Subjects</h1>';
+echo '<p class="hero__subtitle">Manage subjects in the public library.</p>';
+echo '</section>';
+
+if ($note !== '') {
+  echo '<section class="card"><div class="card__body">';
+  echo '<p class="warn" style="color:#b02a37;">' . h($note) . '</p>';
+  echo '</div></section>';
+}
+
+/* Actions */
+$u_new = $u('/staff/subjects/new.php?return=' . $return_enc);
+echo '<div style="margin:12px 0; display:flex; gap:10px; flex-wrap:wrap;">';
+echo '<a class="btn" href="' . h($u_new) . '">New Subject</a>';
+echo '</div>';
+
+/* List */
+if (!$rows) {
+  echo '<section class="card"><div class="card__body">';
+  echo '<p class="muted">No subjects found.</p>';
+  echo '</div></section>';
+} else {
+  echo '<section class="card"><div class="card__body" style="overflow:auto;">';
+  echo '<table class="table" style="width:100%; border-collapse:collapse;">';
+  echo '<thead><tr>';
+  echo '<th style="text-align:left; padding:10px; border-bottom:1px solid rgba(0,0,0,.10);">ID</th>';
+  echo '<th style="text-align:left; padding:10px; border-bottom:1px solid rgba(0,0,0,.10);">Name</th>';
+  echo '<th style="text-align:left; padding:10px; border-bottom:1px solid rgba(0,0,0,.10);">Slug</th>';
+  echo '<th style="text-align:left; padding:10px; border-bottom:1px solid rgba(0,0,0,.10);">Status</th>';
+  echo '<th style="text-align:left; padding:10px; border-bottom:1px solid rgba(0,0,0,.10);">Actions</th>';
+  echo '</tr></thead><tbody>';
+
+  foreach ($rows as $r) {
+    $id   = (int)($r['id'] ?? 0);
+    $name = (string)($r['display_name'] ?? 'Subject');
+    $slug = (string)($r['slug'] ?? '');
+
+    if ($name === '') $name = 'Subject';
+
+    if (array_key_exists('status', $r)) {
+      $status = (string)$r['status'];
+    } elseif (array_key_exists('is_active', $r)) {
+      $status = ((int)$r['is_active'] === 1) ? 'active' : 'inactive';
+    } else {
+      $status = '—';
+    }
+
+    $u_show = $u('/staff/subjects/show.php?id=' . $id . '&return=' . $return_enc);
+    $u_edit = $u('/staff/subjects/edit.php?id=' . $id . '&return=' . $return_enc);
+    $u_del  = $u('/staff/subjects/delete.php?id=' . $id . '&return=' . $return_enc);
+
+    echo '<tr>';
+    echo '<td style="padding:10px; border-bottom:1px solid rgba(0,0,0,.06);">' . h((string)$id) . '</td>';
+    echo '<td style="padding:10px; border-bottom:1px solid rgba(0,0,0,.06); font-weight:700;">' . h($name) . '</td>';
+    echo '<td style="padding:10px; border-bottom:1px solid rgba(0,0,0,.06);" class="muted">' . h($slug !== '' ? $slug : '—') . '</td>';
+    echo '<td style="padding:10px; border-bottom:1px solid rgba(0,0,0,.06);">' . h($status) . '</td>';
+
+    echo '<td style="padding:10px; border-bottom:1px solid rgba(0,0,0,.06); white-space:nowrap;">';
+    echo '<a class="btn btn--ghost" href="' . h($u_show) . '">View</a> ';
+    echo '<a class="btn" href="' . h($u_edit) . '">Edit</a> ';
+    echo '<a class="btn btn--danger" href="' . h($u_del) . '">Delete</a>';
+    echo '</td>';
+
+    echo '</tr>';
+  }
+
+  echo '</tbody></table>';
+  echo '</div></section>';
+}
+
+/* Footer */
+if (function_exists('mk_require_shared')) {
+  mk_require_shared('staff_footer.php');
+} else {
+  echo "</main></body></html>";
+}

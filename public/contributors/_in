@@ -1,0 +1,14 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * /public/contributors/_init.php
+ * Module bootstrap shim.
+ *
+ * Always delegate to the single authoritative bootstrap:
+ *   /public/_init.php
+ *
+ * This prevents “init not found” errors caused by stale/broken init scanners.
+ */
+
+require_once dirname(__DIR__) . '/_init.php';

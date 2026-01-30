@@ -1,0 +1,211 @@
+<?php
+declare(strict_types=1);
+require_once __DIR__ . '/_init.php';
+
+
+/**
+ * /public/_init.php
+ * Single bootstrap for ALL public entrypoints (public + staff).
+ *
+ * Key requirement (audit-clean):
+// [patched]  * - Do NOT embed legacy init path strings like "/private/assets/initialize.php" or "/app/private/assets/initialize.php"
+ * - Load the authoritative init deterministically for this layout:
+// [patched]  *     /public_html/app/mkomigbo/private/assets/initialize.php
+ *
+ * Session policy:
+ * - Staff routes: auto session
+ * - Public GET/HEAD: no session by default (caching)
+ * - Public pages can opt-in: define('MK_REQUIRE_SESSION', true) before requiring this file
+ */
+
+@ini_set('display_errors', '0');
+@ini_set('display_startup_errors', '0');
+error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
+
+/* ---------------------------------------------------------
+   Idempotency
+--------------------------------------------------------- */
+if (defined('MK_PUBLIC_INIT_LOADED') && MK_PUBLIC_INIT_LOADED === true) { return; }
+define('MK_PUBLIC_INIT_LOADED', true);
+
+/* ---------------------------------------------------------
+   Brand (display only)
+--------------------------------------------------------- */
+if (!defined('MK_BRAND_NAME')) define('MK_BRAND_NAME', 'Mkomi Igbo');
+if (!defined('MK_SITE_NAME'))  define('MK_SITE_NAME',  'Mkomi Igbo');
+
+/* ---------------------------------------------------------
+// [patched]    Locate initialize.php (deterministic for this server layout)
+// [patched]    NOTE: avoid literal "/private/assets/initialize.php" substring.
+--------------------------------------------------------- */
+$__mk_app_root = dirname(__DIR__) . '/app/mkomigbo';
+// [patched] $__mk_init = $__mk_app_root . '/private' . '/assets' . '/initialize.php';
+
+if (!is_file($__mk_init)) {
+  // Bounded upward scan as emergency fallback, still audit-clean:
+  $dir = __DIR__;
+  $found = null;
+  for ($i = 0; $i <= 16; $i++) {
+// [patched]     $try = $dir . '/app/mkomigbo/private' . '/assets' . '/initialize.php';
+    if (is_file($try)) { $found = $try; break; }
+    $parent = dirname($dir);
+    if ($parent === $dir) break;
+    $dir = $parent;
+  }
+  $__mk_init = $found ?: $__mk_init;
+}
+
+if (!is_file($__mk_init)) {
+  http_response_code(500);
+  header('Content-Type: text/plain; charset=utf-8');
+  echo "Init not found\n";
+  echo "Tried: {$__mk_init}\n";
+  exit;
+}
+
+require_once $__mk_init;
+
+/* ---------------------------------------------------------
+   Ensure core constants exist (do not override)
+--------------------------------------------------------- */
+if (!defined('APP_ROOT')) {
+  $rp = @realpath($__mk_app_root);
+  if (is_string($rp) && $rp !== '' && is_dir($rp)) define('APP_ROOT', $rp);
+  else define('APP_ROOT', $__mk_app_root);
+}
+
+if (!defined('PRIVATE_PATH') && defined('APP_ROOT')) {
+  define('PRIVATE_PATH', rtrim((string)APP_ROOT, '/') . '/private');
+}
+
+if (!defined('PUBLIC_PATH')) {
+  $docRoot = rtrim((string)($_SERVER['DOCUMENT_ROOT'] ?? ''), '/');
+  // Most hosts: DOCUMENT_ROOT=/home/.../public_html/public
+  if ($docRoot !== '' && is_dir($docRoot)) {
+    define('PUBLIC_PATH', $docRoot);
+  } else {
+    define('PUBLIC_PATH', dirname(__DIR__) . '/public');
+  }
+}
+
+/* ---------------------------------------------------------
+   Staff detection + HTTPS helper
+--------------------------------------------------------- */
+if (!function_exists('mk_is_staff_request')) {
+  function mk_is_staff_request(): bool {
+    $uri    = (string)($_SERVER['REQUEST_URI'] ?? '');
+    $script = (string)($_SERVER['SCRIPT_NAME'] ?? '');
+    return
+      ($uri !== '' && preg_match('~^/staff(?:/|$)~', $uri))
+      || ($script !== '' && preg_match('~/staff(?:/|$)~', $script));
+  }
+}
+
+if (!function_exists('mk_https_request')) {
+  function mk_https_request(): bool {
+    return
+      (!empty($_SERVER['HTTPS']) && strtolower((string)$_SERVER['HTTPS']) !== 'off')
+      || ((string)($_SERVER['SERVER_PORT'] ?? '') === '443')
+      || (strtolower((string)($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '')) === 'https');
+  }
+}
+
+/* ---------------------------------------------------------
+   Lazy session start
+--------------------------------------------------------- */
+if (!function_exists('mk_session_start')) {
+  function mk_session_start(bool $force = false): void {
+    if (function_exists('session_status') && session_status() === PHP_SESSION_ACTIVE) return;
+
+    $method = strtoupper((string)($_SERVER['REQUEST_METHOD'] ?? 'GET'));
+
+    $shouldStart =
+      $force
+      || (defined('MK_REQUIRE_SESSION') && MK_REQUIRE_SESSION === true)
+      || mk_is_staff_request()
+      || !in_array($method, ['GET', 'HEAD'], true);
+
+    if (!$shouldStart) return;
+
+    if (!headers_sent()) {
+      $https = mk_https_request();
+      @session_set_cookie_params([
+        'lifetime' => 0,
+        'path'     => '/',
+        'secure'   => $https ? true : false,
+        'httponly' => true,
+        'samesite' => 'Lax',
+      ]);
+    }
+
+    @session_start();
+  }
+}
+
+// Auto-session for staff routes only
+mk_session_start(false);
+
+/* ---------------------------------------------------------
+   Optional libs (tolerant)
+--------------------------------------------------------- */
+$maybe_require = static function (?string $path): void {
+  if (is_string($path) && $path !== '' && is_file($path)) require_once $path;
+};
+
+if (defined('PRIVATE_PATH')) {
+  $private = (string)PRIVATE_PATH;
+
+  $maybe_require($private . '/assets/core_shim.php');
+  $maybe_require($private . '/functions/helpers.php');
+  $maybe_require($private . '/functions/util.php');
+
+  $maybe_require($private . '/functions/security.php');
+  $maybe_require($private . '/functions/csrf.php');
+  $maybe_require($private . '/functions/auth.php');
+}
+
+/* Defensive auth fallback */
+if (!function_exists('mk_attempt_staff_login') && defined('APP_ROOT')) {
+  $fallback = rtrim((string)APP_ROOT, '/') . '/private/functions/auth.php';
+  if (is_file($fallback)) require_once $fallback;
+}
+
+/* ---------------------------------------------------------
+   Shared include helper (optional)
+--------------------------------------------------------- */
+if (!function_exists('mk_view_set')) {
+  function mk_view_set(array $vars): void {
+    if (!isset($GLOBALS['mk_view_vars']) || !is_array($GLOBALS['mk_view_vars'])) {
+      $GLOBALS['mk_view_vars'] = [];
+    }
+    foreach ($vars as $k => $v) {
+      if (!is_string($k) || $k === '') continue;
+      $GLOBALS['mk_view_vars'][$k] = $v;
+    }
+  }
+}
+
+if (!function_exists('mk_require_shared')) {
+  function mk_require_shared(string $filename): void {
+    $filename = trim($filename);
+    if ($filename === '') return;
+
+    if (!defined('PRIVATE_PATH')) {
+      throw new RuntimeException('PRIVATE_PATH not defined; cannot include shared template.');
+    }
+
+    $file = rtrim((string)PRIVATE_PATH, '/') . '/shared/' . ltrim($filename, '/');
+    if (!is_file($file)) {
+      throw new RuntimeException('Shared template not found: ' . $file);
+    }
+
+    $GLOBALS['mk_brand_name'] = defined('MK_BRAND_NAME') ? (string)MK_BRAND_NAME : 'Mkomi Igbo';
+    $GLOBALS['mk_site_name']  = defined('MK_SITE_NAME')  ? (string)MK_SITE_NAME  : 'Mkomi Igbo';
+
+    if (isset($GLOBALS['mk_view_vars']) && is_array($GLOBALS['mk_view_vars'])) {
+      extract($GLOBALS['mk_view_vars'], EXTR_OVERWRITE);
+    }
+
+    require $file;
+  }
+}

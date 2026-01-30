@@ -6,20 +6,20 @@ declare(strict_types=1);
  * Staff: Contributors list (premium) + bulk actions
  *
  * - schema-tolerant
- * - uses status column (active/draft) based on your real schema
- * - bulk actions: publish/unpublish/delete -> posts to /staff/contributors/bulk.php
- * - no arrow functions (compat)
+ * - uses status column (active/draft) when available
+ * - bulk actions post to /staff/contributors/bulk.php
+ * - no arrow functions
  */
 
 require_once __DIR__ . '/../_init.php';
 
+if (function_exists('require_staff_login')) { require_staff_login(); }
+
 /* ---------------------------------------------------------
-   Safety helpers (fallbacks)
+   Helpers (fallbacks)
 --------------------------------------------------------- */
 if (!function_exists('h')) {
-  function h(string $value): string {
-    return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
-  }
+  function h(string $value): string { return htmlspecialchars($value, ENT_QUOTES, 'UTF-8'); }
 }
 if (!function_exists('redirect_to')) {
   function redirect_to(string $location): void {
@@ -28,10 +28,13 @@ if (!function_exists('redirect_to')) {
     exit;
   }
 }
+if (!function_exists('pf__u')) {
+  function pf__u(string $path): string {
+    return function_exists('url_for') ? url_for($path) : $path;
+  }
+}
 
-/* ---------------------------------------------------------
-   CSRF field (fallback)
---------------------------------------------------------- */
+/* CSRF field (fallback) */
 if (!function_exists('csrf_token')) {
   function csrf_token(): string {
     if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
@@ -47,9 +50,7 @@ if (!function_exists('csrf_field')) {
   }
 }
 
-/* ---------------------------------------------------------
-   Flash messages (PRG)
---------------------------------------------------------- */
+/* Flash messages (PRG) */
 if (!function_exists('pf__flash_get')) {
   function pf__flash_get(string $key): string {
     if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
@@ -62,9 +63,7 @@ if (!function_exists('pf__flash_get')) {
   }
 }
 
-/* ---------------------------------------------------------
-   Safe return (staff-only)
---------------------------------------------------------- */
+/* Safe return (staff-only) */
 if (!function_exists('pf__safe_return_url')) {
   function pf__safe_return_url(string $raw, string $default): string {
     $raw = trim($raw);
@@ -78,9 +77,7 @@ if (!function_exists('pf__safe_return_url')) {
   }
 }
 
-/* ---------------------------------------------------------
-   Schema helpers
---------------------------------------------------------- */
+/* Schema helpers */
 if (!function_exists('pf__table_exists')) {
   function pf__table_exists(PDO $pdo, string $table): bool {
     try {
@@ -111,8 +108,29 @@ if (!function_exists('pf__column_exists')) {
   }
 }
 
+/* Roles display helper */
+if (!function_exists('pf__roles_display')) {
+  function pf__roles_display(string $raw): string {
+    $raw = trim($raw);
+    if ($raw === '') return '';
+    if (isset($raw[0]) && $raw[0] === '[') {
+      $decoded = json_decode($raw, true);
+      if (is_array($decoded)) {
+        $out = [];
+        foreach ($decoded as $v) {
+          $v = trim((string)$v);
+          if ($v !== '') $out[] = $v;
+        }
+        $out = array_values(array_unique($out));
+        return implode(', ', $out);
+      }
+    }
+    return $raw;
+  }
+}
+
 /* ---------------------------------------------------------
-   DB (PDO) — canonical staff accessor
+   DB (PDO)
 --------------------------------------------------------- */
 $pdo = function_exists('staff_pdo') ? staff_pdo() : (function_exists('db') ? db() : null);
 if (!$pdo instanceof PDO) {
@@ -122,9 +140,7 @@ if (!$pdo instanceof PDO) {
   exit;
 }
 
-/* ---------------------------------------------------------
-   Filters
---------------------------------------------------------- */
+/* Filters */
 $q = trim((string)($_GET['q'] ?? ''));
 
 /* Return path for PRG links */
@@ -133,39 +149,37 @@ if ($q !== '') { $return_params['q'] = $q; }
 $return_qs = $return_params ? ('?' . http_build_query($return_params, '', '&', PHP_QUERY_RFC3986)) : '';
 $return_path = '/staff/contributors/index.php' . $return_qs;
 
-/* ---------------------------------------------------------
-   Header (shared)
---------------------------------------------------------- */
+/* Header */
 $active_nav = 'contributors';
 $page_title = 'Manage Contributors • Staff';
 $page_desc  = 'Manage contributor profiles, roles, and linking.';
 
 $staff_subnav = [
-  ['label' => 'Dashboard',    'href' => url_for('/staff/'),              'active' => false],
-  ['label' => 'Contributors', 'href' => url_for('/staff/contributors/'), 'active' => true],
-  ['label' => 'Public',       'href' => url_for('/contributors/'),       'active' => false],
+  ['label' => 'Dashboard',    'href' => pf__u('/staff/'),              'active' => false],
+  ['label' => 'Contributors', 'href' => pf__u('/staff/contributors/'), 'active' => true],
+  ['label' => 'Public',       'href' => pf__u('/contributors/'),       'active' => false],
 ];
 
 require_once APP_ROOT . '/private/shared/staff_header.php';
 
 /* URLs */
-$u = static function(string $path): string {
-  return function_exists('url_for') ? url_for($path) : $path;
-};
-
-$new_url    = $u('/staff/contributors/new.php') . '?return=' . rawurlencode($return_path);
-$show_base  = $u('/staff/contributors/show.php');
-$edit_base  = $u('/staff/contributors/edit.php');
-$del_base   = $u('/staff/contributors/delete.php');
-$bulk_post  = $u('/staff/contributors/bulk.php');
-$self_url   = $u('/staff/contributors/index.php');
+$new_url   = pf__u('/staff/contributors/new.php') . '?return=' . rawurlencode($return_path);
+$show_base = pf__u('/staff/contributors/show.php');
+$edit_base = pf__u('/staff/contributors/edit.php');
+$del_base  = pf__u('/staff/contributors/delete.php');
+$bulk_post = pf__u('/staff/contributors/bulk.php');
+$self_url  = pf__u('/staff/contributors/index.php');
 
 /* Flash */
 $notice = pf__flash_get('notice');
 $error  = pf__flash_get('error');
 
+/* Optional msg= support */
+$msg = trim((string)($_GET['msg'] ?? ''));
+if ($msg !== '' && $notice === '' && $error === '') $notice = $msg;
+
 /* ---------------------------------------------------------
-   Fetch list (schema-tolerant, aligned to your real schema)
+   Fetch list (schema-tolerant)
 --------------------------------------------------------- */
 $rows = [];
 $warn = '';
@@ -235,16 +249,12 @@ if (!pf__table_exists($pdo, $table)) {
   }
 }
 
-/* ---------------------------------------------------------
-   View helpers
---------------------------------------------------------- */
+/* View helpers */
 function pf__status_pill(?string $status): array {
   $s = strtolower(trim((string)$status));
   if ($s === '') $s = 'active';
-
   if ($s === 'active') return ['text' => 'Active', 'class' => 'pill pill--success'];
   if ($s === 'draft')  return ['text' => 'Draft',  'class' => 'pill pill--muted'];
-
   return ['text' => strtoupper($s), 'class' => 'pill pill--muted'];
 }
 
@@ -296,7 +306,6 @@ function pf__status_pill(?string $status): array {
 
       <hr class="sep">
 
-      <!-- Bulk form wraps table -->
       <form method="post" action="<?php echo h($bulk_post); ?>" class="stack" onsubmit="return (function(){
         var sel = document.getElementById('bulk_action');
         if (!sel || !sel.value) { alert('Select a bulk action first.'); return false; }
@@ -310,8 +319,8 @@ function pf__status_pill(?string $status): array {
             <label class="label" for="bulk_action">Bulk action</label>
             <select class="input" id="bulk_action" name="action">
               <option value="">— Select —</option>
-              <option value="publish">Publish (set status = active)</option>
-              <option value="unpublish">Unpublish (set status = draft)</option>
+              <option value="set_active">Set Active (status = active)</option>
+              <option value="set_draft">Set Draft (status = draft)</option>
               <option value="delete">Delete</option>
             </select>
           </div>
@@ -321,7 +330,7 @@ function pf__status_pill(?string $status): array {
           </div>
 
           <div class="muted" style="margin-left:auto;">
-            Bulk publish/unpublish controls visibility via <code>status</code>.
+            Status controls visibility via <code>status</code>.
           </div>
         </div>
 
@@ -355,7 +364,8 @@ function pf__status_pill(?string $status): array {
                     if ($label === '') $label = 'Contributor #' . $id;
 
                     $slug  = trim((string)($r['slug'] ?? ''));
-                    $roles = trim((string)($r['roles'] ?? ''));
+                    $roles_raw = trim((string)($r['roles'] ?? ''));
+                    $roles = $roles_raw !== '' ? pf__roles_display($roles_raw) : '';
                     $status = array_key_exists('status', $r) ? (string)$r['status'] : 'active';
                     $pill = pf__status_pill($status);
 
@@ -381,7 +391,13 @@ function pf__status_pill(?string $status): array {
                         <div class="muted mono"><?php echo h($slug); ?></div>
                       <?php endif; ?>
                     </td>
-                    <td><?php echo ($roles !== '') ? h($roles) : '<span class="muted">—</span>'; ?></td>
+                    <td>
+                      <?php if ($roles !== ''): ?>
+                        <?php echo h($roles); ?>
+                      <?php else: ?>
+                        <span class="muted">—</span>
+                      <?php endif; ?>
+                    </td>
                     <td>
                       <span class="<?php echo h($pill['class']); ?>"><?php echo h($pill['text']); ?></span>
                     </td>

@@ -18,88 +18,86 @@ declare(strict_types=1);
  * - igbo_calendar_functions.php (market day + moon engine)
  */
 
-/**
- * Primary public API
- *
- * @return array{
- *   date_iso: string,
- *   market_day: string,
- *   market_index: int,
- *   element: string,
- *   element_symbol: string,
- *   moon_pct: int,
- *   moon_stage: string
- * }
- */
-function igbo_context_for_date(DateTimeImmutable $date): array
-{
-    static $tz = null;
-    if ($tz === null) {
-        $tz = new DateTimeZone('UTC');
-    }
+if (!function_exists('igbo_context_for_date')) {
 
-    // Normalize to UTC midnight (calendar-safe)
-    $d = $date->setTimezone($tz)->setTime(0, 0, 0);
-    $iso = $d->format('Y-m-d');
+  /**
+   * Primary public API
+   *
+   * @return array{
+   *   date_iso: string,
+   *   market_day: string,
+   *   market_index: int,
+   *   element: string,
+   *   element_symbol: string,
+   *   moon_pct: int,
+   *   moon_stage: string
+   * }
+   */
+  function igbo_context_for_date(DateTimeImmutable $date): array
+  {
+      static $tz = null;
+      if ($tz === null) {
+          $tz = new DateTimeZone('UTC');
+      }
 
-    /* -----------------------------------------
-       Market day (checkpoint-based)
-       ----------------------------------------- */
+      // Normalize to UTC midnight (calendar-safe)
+      $d = $date->setTimezone($tz)->setTime(0, 0, 0);
+      $iso = $d->format('Y-m-d');
 
-    // Hard anchor (single source of truth)
-    // 2026-01-07 = Nkwo
-    $anchorDate = new DateTimeImmutable('2026-01-07 00:00:00', $tz);
-    $anchorIdx  = 3; // Nkwo
+      /* -----------------------------------------
+         Market day (checkpoint-based)
+         ----------------------------------------- */
 
-    $epochAnchor = (int) floor($anchorDate->getTimestamp() / 86400);
-    $epochNow    = (int) floor($d->getTimestamp() / 86400);
+      // Hard anchor (single source of truth)
+      // 2026-01-07 = Nkwo
+      $anchorDate = new DateTimeImmutable('2026-01-07 00:00:00', $tz);
+      $anchorIdx  = 3; // Nkwo
 
-    $diffDays = $epochNow - $epochAnchor;
-    $marketIdx = ($anchorIdx + ($diffDays % 4)) % 4;
-    if ($marketIdx < 0) {
-        $marketIdx += 4;
-    }
+      $epochAnchor = (int) floor($anchorDate->getTimestamp() / 86400);
+      $epochNow    = (int) floor($d->getTimestamp() / 86400);
 
-    $marketNames = ['Eke', 'Orie', 'Afo', 'Nkwo'];
-    $marketDay   = $marketNames[$marketIdx];
+      $diffDays  = $epochNow - $epochAnchor;
+      $marketIdx = ($anchorIdx + ($diffDays % 4)) % 4;
+      if ($marketIdx < 0) {
+          $marketIdx += 4;
+      }
 
-    /* -----------------------------------------
-       Element mapping (Igbo cosmology)
-       ----------------------------------------- */
+      $marketNames = ['Eke', 'Orie', 'Afo', 'Nkwo'];
+      $marketDay   = $marketNames[$marketIdx] ?? 'Eke';
 
-    $elements = [
-        0 => ['Fire',  '🔥'],
-        1 => ['Water', '💧'],
-        2 => ['Earth', '🌍'],
-        3 => ['Air',   '🌬️'],
-    ];
+      /* -----------------------------------------
+         Element mapping (Igbo cosmology)
+         ----------------------------------------- */
+      $elements = [
+          0 => ['Fire',  '🔥'],
+          1 => ['Water', '💧'],
+          2 => ['Earth', '🌍'],
+          3 => ['Air',   '🌬️'],
+      ];
 
-    [$elementName, $elementSymbol] = $elements[$marketIdx];
+      [$elementName, $elementSymbol] = $elements[$marketIdx] ?? ['Fire','🔥'];
 
-    /* -----------------------------------------
-       Moon metrics (delegated to locked engine)
-       ----------------------------------------- */
+      /* -----------------------------------------
+         Moon metrics (delegated to locked engine)
+         ----------------------------------------- */
+      if (!function_exists('igbo_moon_metrics')) {
+          // Absolute safety fallback
+          $moonPct   = 0;
+          $moonStage = 'Unknown';
+      } else {
+          [, $moonPct, $moonStage] = igbo_moon_metrics($d);
+          $moonPct = max(0, min(100, (int)$moonPct));
+          $moonStage = is_string($moonStage) && $moonStage !== '' ? $moonStage : 'Unknown';
+      }
 
-    if (!function_exists('igbo_moon_metrics')) {
-        // Absolute safety fallback
-        $moonPct   = 0;
-        $moonStage = 'Unknown';
-    } else {
-        [, $moonPct, $moonStage] = igbo_moon_metrics($d);
-        $moonPct = max(0, min(100, (int)$moonPct));
-    }
-
-    /* -----------------------------------------
-       Final immutable context payload
-       ----------------------------------------- */
-
-    return [
-        'date_iso'       => $iso,
-        'market_day'     => $marketDay,
-        'market_index'   => $marketIdx,
-        'element'        => $elementName,
-        'element_symbol' => $elementSymbol,
-        'moon_pct'       => $moonPct,
-        'moon_stage'     => $moonStage,
-    ];
+      return [
+          'date_iso'       => $iso,
+          'market_day'     => $marketDay,
+          'market_index'   => $marketIdx,
+          'element'        => $elementName,
+          'element_symbol' => $elementSymbol,
+          'moon_pct'       => $moonPct,
+          'moon_stage'     => $moonStage,
+      ];
+  }
 }

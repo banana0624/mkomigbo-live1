@@ -1,9 +1,10 @@
-# /public/.htaccess (MINIMAL, NON-INTERFERING)
+# /home/mkomigbo/public_html/public/.htaccess
 Options -Indexes -MultiViews
 
 <IfModule mod_rewrite.c>
 RewriteEngine On
 
+# Let /public/lib/* pass through (assets live here)
 RewriteRule ^lib/ - [L]
 
 # Serve existing files/dirs

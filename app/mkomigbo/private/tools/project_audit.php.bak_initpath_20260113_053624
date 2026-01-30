@@ -1,0 +1,656 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * /private/tools/project_audit.php
+ * Mkomigbo Project Audit (CLI-first)
+ *
+ * What it does (Choice C):
+ * - Scans BOTH:
+ *   (1) APP_ROOT (app code):  /home/mkomigbo/public_html/app/mkomigbo
+ *   (2) PUBLIC_ROOT (web):    /home/mkomigbo/public_html/public
+ * - Detects common deployment / security footguns:
+ *   - wrong initialize.php path offenders
+ *   - private/tools code under /public/
+ *   - direct includes from /public/ to /private/ without staff guard patterns
+ *   - suspicious file names under public (tools, audit, diag)
+ * - Optional PHP syntax check if proc_open() is available
+ * - DB schema health checks if db() exists
+ * - Writes JSON report to APP_ROOT/logs/
+ *
+ * Run:
+ *   php /home/mkomigbo/public_html/app/mkomigbo/private/tools/project_audit.php
+ */
+
+@ini_set('display_errors', '0');
+@ini_set('display_startup_errors', '0');
+error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
+
+/* ---------------------------------------------------------
+   Small, safe helpers
+--------------------------------------------------------- */
+function mk_now_utc(): string {
+  return gmdate('Y-m-d\TH:i:s\Z');
+}
+
+function mk_out(string $s = ''): void {
+  echo $s . PHP_EOL;
+}
+
+function mk_hr(): void {
+  mk_out(str_repeat('-', 60));
+}
+
+function mk_is_cli(): bool {
+  return (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg');
+}
+
+function mk_norm_path(string $p): string {
+  $p = str_replace('\\', '/', $p);
+  $p = preg_replace('~/+~', '/', $p) ?? $p;
+  return rtrim($p, '/');
+}
+
+function mk_relpath(string $base, string $path): string {
+  $base = mk_norm_path($base);
+  $path = mk_norm_path($path);
+  if (strpos($path, $base) === 0) {
+    $r = substr($path, strlen($base));
+    if ($r === false) return $path;
+    $r = ltrim($r, '/');
+    return $r !== '' ? $r : '.';
+  }
+  return $path;
+}
+
+function mk_safe_json_write(string $file, string $json): bool {
+  $dir = dirname($file);
+  if (!is_dir($dir)) {
+    @mkdir($dir, 0750, true);
+  }
+  if (!is_dir($dir) || !is_writable($dir)) return false;
+
+  $tmp = $file . '.tmp.' . bin2hex(random_bytes(4));
+  $ok = @file_put_contents($tmp, $json, LOCK_EX);
+  if ($ok === false) return false;
+  @chmod($tmp, 0640);
+  return @rename($tmp, $file);
+}
+
+function mk_has_proc_open(): bool {
+  if (!function_exists('proc_open')) return false;
+  $disabled = (string)ini_get('disable_functions');
+  if ($disabled === '') return true;
+  $disabled = array_map('trim', explode(',', $disabled));
+  return !in_array('proc_open', $disabled, true);
+}
+
+function mk_php_lint(string $file): array {
+  // Returns: ['ok'=>bool,'output'=>string]
+  if (!mk_has_proc_open()) {
+    return ['ok' => true, 'output' => '(lint skipped: proc_open disabled)'];
+  }
+
+  $cmd = ['php', '-l', $file];
+  $descriptors = [
+    0 => ['pipe', 'r'],
+    1 => ['pipe', 'w'],
+    2 => ['pipe', 'w'],
+  ];
+  $proc = @proc_open($cmd, $descriptors, $pipes);
+  if (!is_resource($proc)) {
+    return ['ok' => true, 'output' => '(lint skipped: proc_open failed)'];
+  }
+
+  @fclose($pipes[0]);
+  $stdout = stream_get_contents($pipes[1]);
+  $stderr = stream_get_contents($pipes[2]);
+  @fclose($pipes[1]);
+  @fclose($pipes[2]);
+  $code = @proc_close($proc);
+
+  $out = trim((string)$stdout . "\n" . (string)$stderr);
+  $ok = ($code === 0);
+  return ['ok' => $ok, 'output' => $out !== '' ? $out : ($ok ? 'No syntax errors detected' : 'Syntax error')];
+}
+
+function mk_read_small(string $file, int $maxBytes = 262144): string {
+  // Read up to 256 KB for scanning patterns safely.
+  if (!is_file($file) || !is_readable($file)) return '';
+  $fh = @fopen($file, 'rb');
+  if (!$fh) return '';
+  $data = @fread($fh, $maxBytes);
+  @fclose($fh);
+  return is_string($data) ? $data : '';
+}
+
+function mk_perm_octal(string $file): string {
+  $p = @fileperms($file);
+  if ($p === false) return '';
+  return substr(sprintf('%o', $p), -4);
+}
+
+/* ---------------------------------------------------------
+   Resolve APP_ROOT + init (bounded scan)
+--------------------------------------------------------- */
+function mk_find_app_root(string $startDir, int $maxDepth = 8): ?string {
+  $dir = mk_norm_path($startDir);
+  for ($i = 0; $i <= $maxDepth; $i++) {
+    $cand = $dir . '/private/assets/initialize.php';
+    if (is_file($cand)) {
+      return $dir;
+    }
+    $parent = dirname($dir);
+    if ($parent === $dir || $parent === '' || $parent === '.') break;
+    $dir = mk_norm_path($parent);
+  }
+  return null;
+}
+
+$script_dir = mk_norm_path(__DIR__);
+/* __DIR__ = .../app/mkomigbo/private/tools */
+$app_root_guess = mk_find_app_root(dirname($script_dir, 2), 10); // start near .../app/mkomigbo/private
+if (!$app_root_guess) {
+  // final fallback: start at script dir
+  $app_root_guess = mk_find_app_root($script_dir, 14);
+}
+
+$report = [
+  'meta' => [
+    'tool' => 'project_audit',
+    'version' => '1.0.0',
+    'timestamp_utc' => mk_now_utc(),
+    'php_sapi' => PHP_SAPI,
+    'php_version' => PHP_VERSION,
+  ],
+  'paths' => [
+    'app_root' => null,
+    'private_path' => null,
+    'public_root' => null,
+    'init' => null,
+  ],
+  'checks' => [],
+  'findings' => [
+    'fail' => [],
+    'warn' => [],
+    'info' => [],
+  ],
+  'scan' => [
+    'app' => ['php_files' => 0, 'scanned' => 0, 'linted' => 0],
+    'public' => ['php_files' => 0, 'scanned' => 0, 'linted' => 0],
+    'excluded_dirs' => [],
+  ],
+  'db' => [
+    'ok' => false,
+    'database' => null,
+    'tables' => [],
+    'missing_tables' => [],
+    'missing_columns' => [],
+  ],
+  'output' => [
+    'json_report_path' => null,
+  ],
+];
+
+mk_out('Mkomigbo Project Audit');
+mk_hr();
+
+if (!$app_root_guess) {
+  $report['checks'][] = ['name' => 'Locate APP_ROOT', 'ok' => false, 'details' => 'Unable to locate private/assets/initialize.php by upward scan.'];
+  mk_out('[FAIL] Could not locate APP_ROOT (private/assets/initialize.php not found).');
+  exit(1);
+}
+
+$app_root = mk_norm_path($app_root_guess);
+$init = $app_root . '/private/assets/initialize.php';
+
+$report['paths']['app_root'] = $app_root;
+$report['paths']['init'] = $init;
+
+mk_out('APP_ROOT: ' . $app_root);
+mk_out('INIT:     ' . $init);
+
+if (!is_file($init)) {
+  $report['checks'][] = ['name' => 'initialize.php exists', 'ok' => false, 'details' => $init];
+  mk_out('');
+  mk_out('[FAIL] initialize.php missing — ' . $init);
+  exit(1);
+}
+
+$report['checks'][] = ['name' => 'initialize.php exists', 'ok' => true, 'details' => $init];
+mk_out('');
+mk_out('[ OK ] initialize.php found — ' . $init);
+
+/* Load init */
+try {
+  require_once $init;
+  $report['checks'][] = ['name' => 'initialize.php loaded', 'ok' => true, 'details' => 'Loaded successfully'];
+  mk_out('[ OK ] initialize.php loaded');
+} catch (Throwable $e) {
+  $report['checks'][] = ['name' => 'initialize.php loaded', 'ok' => false, 'details' => $e->getMessage()];
+  mk_out('[FAIL] initialize.php failed to load');
+  exit(1);
+}
+
+/* Constants */
+if (defined('APP_ROOT')) {
+  $report['checks'][] = ['name' => 'APP_ROOT constant', 'ok' => true, 'details' => (string)APP_ROOT];
+  mk_out('[ OK ] APP_ROOT constant — ' . (string)APP_ROOT);
+} else {
+  // We still proceed using $app_root discovered
+  $report['checks'][] = ['name' => 'APP_ROOT constant', 'ok' => false, 'details' => 'APP_ROOT not defined by init'];
+  $report['findings']['warn'][] = ['code' => 'APP_ROOT_UNDEFINED', 'message' => 'APP_ROOT constant not defined by initialize.php; audit will use discovered path.', 'path' => $app_root];
+  mk_out('[WARN] APP_ROOT constant not defined (using discovered APP_ROOT).');
+}
+
+if (defined('PRIVATE_PATH')) {
+  $report['paths']['private_path'] = (string)PRIVATE_PATH;
+  $report['checks'][] = ['name' => 'PRIVATE_PATH constant', 'ok' => true, 'details' => (string)PRIVATE_PATH];
+  mk_out('[ OK ] PRIVATE_PATH constant — ' . (string)PRIVATE_PATH);
+} else {
+  $report['checks'][] = ['name' => 'PRIVATE_PATH constant', 'ok' => false, 'details' => 'PRIVATE_PATH not defined by init'];
+  $report['findings']['warn'][] = ['code' => 'PRIVATE_PATH_UNDEFINED', 'message' => 'PRIVATE_PATH constant not defined by initialize.php.', 'path' => $app_root . '/private'];
+  mk_out('[WARN] PRIVATE_PATH constant not defined.');
+}
+
+/* Public root (Choice C) */
+$public_root = mk_norm_path(dirname($app_root, 2) . '/public'); // .../public_html/public
+if (!is_dir($public_root)) {
+  // fallback: if app root is not exactly .../app/mkomigbo
+  $public_root = mk_norm_path(dirname($app_root, 3) . '/public');
+}
+$report['paths']['public_root'] = $public_root;
+
+if (is_dir($public_root)) {
+  $report['checks'][] = ['name' => 'PUBLIC_ROOT exists', 'ok' => true, 'details' => $public_root];
+  mk_out('[ OK ] PUBLIC_ROOT — ' . $public_root);
+} else {
+  $report['checks'][] = ['name' => 'PUBLIC_ROOT exists', 'ok' => false, 'details' => $public_root];
+  $report['findings']['warn'][] = ['code' => 'PUBLIC_ROOT_MISSING', 'message' => 'Public root directory not found; public scan skipped.', 'path' => $public_root];
+  mk_out('[WARN] PUBLIC_ROOT missing — ' . $public_root . ' (public scan skipped)');
+}
+
+/* DB check */
+$pdo = null;
+try {
+  if (function_exists('db')) {
+    $pdo = db();
+  }
+} catch (Throwable $e) {
+  $pdo = null;
+}
+
+if ($pdo instanceof PDO) {
+  $report['checks'][] = ['name' => 'db() returns PDO', 'ok' => true, 'details' => 'PDO connected'];
+  mk_out('[ OK ] db() returns PDO');
+
+  try {
+    $dbName = (string)$pdo->query('SELECT DATABASE()')->fetchColumn();
+    $report['db']['ok'] = true;
+    $report['db']['database'] = $dbName;
+    $report['checks'][] = ['name' => 'DATABASE()', 'ok' => true, 'details' => $dbName];
+    mk_out('[ OK ] DATABASE() — ' . $dbName);
+  } catch (Throwable $e) {
+    $report['findings']['warn'][] = ['code' => 'DB_NAME_QUERY_FAIL', 'message' => 'Could not query DATABASE().', 'details' => $e->getMessage()];
+    mk_out('[WARN] Could not query DATABASE()');
+  }
+} else {
+  $report['checks'][] = ['name' => 'db() returns PDO', 'ok' => false, 'details' => 'db() not available or not a PDO'];
+  $report['findings']['warn'][] = ['code' => 'DB_UNAVAILABLE', 'message' => 'db() not available; DB checks skipped.', 'path' => 'initialize.php/db()'];
+  mk_out('[WARN] db() not available (DB checks skipped)');
+}
+
+mk_hr();
+
+/* ---------------------------------------------------------
+   Scan configuration
+--------------------------------------------------------- */
+$exclude_dirs = [
+  '/vendor',
+  '/logs',
+  '/private/cache',
+  '/cache',
+  '/tmp',
+  '/.git',
+  '/node_modules',
+  '/public/assets',        // usually big, not code
+  '/public/uploads',       // large
+];
+$report['scan']['excluded_dirs'] = $exclude_dirs;
+
+$danger_public_name_patterns = [
+  'project_audit.php',
+  'audit.php',
+  'diag.php',
+  'diagnostics.php',
+  '_diag.php',
+  'phpinfo.php',
+];
+
+$offender_strings = [
+  // common wrong path that caused earlier failures
+  '/app/private/assets/initialize.php',
+  '/private/assets/initialize.php', // when used as if at public_html root
+];
+
+/* ---------------------------------------------------------
+   Directory scanner
+--------------------------------------------------------- */
+function mk_should_exclude(string $base, string $path, array $exclude_dirs): bool {
+  $base = mk_norm_path($base);
+  $path = mk_norm_path($path);
+  $rel = '/' . ltrim(mk_relpath($base, $path), '/');
+
+  foreach ($exclude_dirs as $ex) {
+    $ex = mk_norm_path($ex);
+    if ($ex === '') continue;
+    if (strpos($rel, $ex) === 0) return true;
+  }
+  return false;
+}
+
+function mk_list_php_files(string $root, array $exclude_dirs): array {
+  $files = [];
+  if (!is_dir($root)) return $files;
+
+  $it = new RecursiveIteratorIterator(
+    new RecursiveDirectoryIterator($root, FilesystemIterator::SKIP_DOTS),
+    RecursiveIteratorIterator::SELF_FIRST
+  );
+
+  foreach ($it as $fi) {
+    /** @var SplFileInfo $fi */
+    $path = (string)$fi->getPathname();
+    if ($fi->isDir()) {
+      if (mk_should_exclude($root, $path, $exclude_dirs)) {
+        $it->next();
+      }
+      continue;
+    }
+    if (!$fi->isFile()) continue;
+    $lower = strtolower($path);
+    if (substr($lower, -4) !== '.php') continue;
+    if (mk_should_exclude($root, $path, $exclude_dirs)) continue;
+    $files[] = mk_norm_path($path);
+  }
+
+  sort($files);
+  return $files;
+}
+
+/* ---------------------------------------------------------
+   Finding helpers
+--------------------------------------------------------- */
+function mk_add_finding(array &$report, string $level, string $code, string $message, string $path = '', array $extra = []): void {
+  $row = array_merge([
+    'code' => $code,
+    'message' => $message,
+    'path' => $path,
+  ], $extra);
+  $report['findings'][$level][] = $row;
+}
+
+function mk_is_under(string $path, string $root): bool {
+  $path = mk_norm_path($path);
+  $root = mk_norm_path($root);
+  return (strpos($path, $root . '/') === 0) || ($path === $root);
+}
+
+/* ---------------------------------------------------------
+   Scan: APP code
+--------------------------------------------------------- */
+mk_out('Scan: APP');
+mk_hr();
+
+$app_files = mk_list_php_files($app_root, $exclude_dirs);
+$report['scan']['app']['php_files'] = count($app_files);
+mk_out('PHP files: ' . count($app_files));
+
+foreach ($app_files as $file) {
+  $report['scan']['app']['scanned']++;
+
+  $content = mk_read_small($file);
+  if ($content === '') continue;
+
+  // Detect known offenders
+  foreach ($offender_strings as $needle) {
+    if (strpos($content, $needle) !== false) {
+      mk_add_finding($report, 'warn', 'INIT_PATH_OFFENDER', 'File references a risky/incorrect initialize path: ' . $needle, $file);
+      break;
+    }
+  }
+
+  // Detect direct includes from app code to /public/ (usually okay, but can be suspicious)
+  if (strpos($content, '/public/') !== false && strpos($file, '/private/tools/') === false) {
+    // keep as info only
+    mk_add_finding($report, 'info', 'APP_REFERENCES_PUBLIC', 'File references /public/ (review if intentional).', $file);
+  }
+
+  // Optional lint (best effort)
+  $lint = mk_php_lint($file);
+  if ($lint['output'] !== '(lint skipped: proc_open disabled)' && $lint['output'] !== '(lint skipped: proc_open failed)') {
+    $report['scan']['app']['linted']++;
+    if (!$lint['ok']) {
+      mk_add_finding($report, 'fail', 'PHP_SYNTAX_ERROR', 'PHP syntax error detected.', $file, ['details' => $lint['output']]);
+    }
+  }
+}
+
+mk_out('[ OK ] APP scan complete');
+mk_hr();
+
+/* ---------------------------------------------------------
+   Scan: PUBLIC (web root)
+--------------------------------------------------------- */
+mk_out('Scan: PUBLIC');
+mk_hr();
+
+$public_files = [];
+if (is_dir($public_root)) {
+  $public_files = mk_list_php_files($public_root, $exclude_dirs);
+}
+$report['scan']['public']['php_files'] = count($public_files);
+mk_out('PHP files: ' . count($public_files));
+
+foreach ($public_files as $file) {
+  $report['scan']['public']['scanned']++;
+
+  $rel = mk_relpath($public_root, $file);
+  $content = mk_read_small($file);
+
+  // 1) Hard flag: tools/audit scripts under public
+  $lowerName = strtolower(basename($file));
+  foreach ($danger_public_name_patterns as $badName) {
+    if ($lowerName === strtolower($badName)) {
+      mk_add_finding($report, 'fail', 'UNSAFE_PUBLIC_TOOL', 'Sensitive tool script is under public web root. Move to /private/tools and expose via staff-only runner endpoint.', $file, ['rel' => $rel]);
+      break;
+    }
+  }
+
+  // 2) Sensitive directory names under public
+  $relLower = strtolower('/' . ltrim($rel, '/'));
+  if (strpos($relLower, '/staff/tools') === 0) {
+    mk_add_finding($report, 'warn', 'PUBLIC_STAFF_TOOLS', 'Staff tools directory exists under public. Prefer: /private/tools + staff-only runner.', $file, ['rel' => $rel]);
+  }
+
+  // 3) Wrong init path offenders in public endpoints
+  if ($content !== '') {
+    foreach ($offender_strings as $needle) {
+      if (strpos($content, $needle) !== false) {
+        mk_add_finding($report, 'fail', 'PUBLIC_INIT_PATH_OFFENDER', 'Public endpoint references incorrect initialize path: ' . $needle, $file, ['rel' => $rel]);
+        break;
+      }
+    }
+  }
+
+  // 4) Direct include of private assets from public endpoint without staff guard patterns (heuristic)
+  if ($content !== '' && (strpos($content, '/private/') !== false || strpos($content, 'PRIVATE_PATH') !== false)) {
+    $hasGuard = (strpos($content, 'require_staff_login') !== false)
+             || (strpos($content, 'require_staff') !== false)
+             || (strpos($content, 'mk_require_staff_login') !== false)
+             || (strpos($content, 'require_staff_role') !== false)
+             || (strpos($content, 'require_staff_admin') !== false);
+
+    if (!$hasGuard && strpos($relLower, '/staff/') === false) {
+      mk_add_finding($report, 'warn', 'PUBLIC_PRIVATE_INCLUDE_NO_GUARD', 'Public endpoint touches private code without an obvious staff/auth guard. Review.', $file, ['rel' => $rel]);
+    }
+  }
+
+  // Optional lint (best effort)
+  $lint = mk_php_lint($file);
+  if ($lint['output'] !== '(lint skipped: proc_open disabled)' && $lint['output'] !== '(lint skipped: proc_open failed)') {
+    $report['scan']['public']['linted']++;
+    if (!$lint['ok']) {
+      mk_add_finding($report, 'fail', 'PHP_SYNTAX_ERROR', 'PHP syntax error detected.', $file, ['rel' => $rel, 'details' => $lint['output']]);
+    }
+  }
+}
+
+mk_out('[ OK ] PUBLIC scan complete');
+mk_hr();
+
+/* ---------------------------------------------------------
+   DB schema checks (best effort)
+--------------------------------------------------------- */
+if ($pdo instanceof PDO) {
+  mk_out('DB schema checks');
+  mk_hr();
+
+  $must_tables = ['subjects', 'pages', 'contributors', 'page_files'];
+  $tables_ok = [];
+
+  foreach ($must_tables as $t) {
+    try {
+      $st = $pdo->prepare("SELECT 1 FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=? LIMIT 1");
+      $st->execute([$t]);
+      $ok = (bool)$st->fetchColumn();
+      $tables_ok[$t] = $ok;
+      if (!$ok) {
+        $report['db']['missing_tables'][] = $t;
+        mk_add_finding($report, 'warn', 'MISSING_TABLE', 'Expected table missing: ' . $t, 'db:' . $t);
+        mk_out('[WARN] Missing table: ' . $t);
+      } else {
+        $report['db']['tables'][] = $t;
+        mk_out('[ OK ] Table: ' . $t);
+      }
+    } catch (Throwable $e) {
+      mk_add_finding($report, 'warn', 'DB_SCHEMA_QUERY_FAIL', 'Schema query failed for table: ' . $t, 'db:' . $t, ['details' => $e->getMessage()]);
+      mk_out('[WARN] Could not verify table: ' . $t);
+    }
+  }
+
+  // Columns that your current UX relies on
+  $must_cols = [
+    'pages' => ['id', 'slug'],
+    'contributors' => ['id', 'status'],
+    'page_files' => ['id', 'page_id', 'stored_path'],
+  ];
+
+  foreach ($must_cols as $table => $cols) {
+    foreach ($cols as $col) {
+      try {
+        $st = $pdo->prepare("SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=? AND COLUMN_NAME=? LIMIT 1");
+        $st->execute([$table, $col]);
+        $ok = ((int)$st->fetchColumn() > 0);
+        if (!$ok) {
+          $report['db']['missing_columns'][] = ['table' => $table, 'column' => $col];
+          mk_add_finding($report, 'warn', 'MISSING_COLUMN', 'Expected column missing: ' . $table . '.' . $col, 'db:' . $table . '.' . $col);
+          mk_out('[WARN] Missing column: ' . $table . '.' . $col);
+        } else {
+          mk_out('[ OK ] Column: ' . $table . '.' . $col);
+        }
+      } catch (Throwable $e) {
+        mk_add_finding($report, 'warn', 'DB_SCHEMA_QUERY_FAIL', 'Schema query failed for column: ' . $table . '.' . $col, 'db:' . $table . '.' . $col, ['details' => $e->getMessage()]);
+        mk_out('[WARN] Could not verify column: ' . $table . '.' . $col);
+      }
+    }
+  }
+
+  mk_hr();
+}
+
+/* ---------------------------------------------------------
+   Permission sanity checks (informational)
+--------------------------------------------------------- */
+mk_out('Permissions (info)');
+mk_hr();
+
+$perm_init = mk_perm_octal($init);
+if ($perm_init !== '') {
+  mk_out('initialize.php perms: ' . $perm_init);
+  if ((int)$perm_init >= 0777) {
+    mk_add_finding($report, 'warn', 'PERMS_TOO_OPEN', 'initialize.php permissions are very open. Consider 0640/0644.', $init, ['perms' => $perm_init]);
+  }
+}
+
+$tool_file = __FILE__;
+$perm_tool = mk_perm_octal($tool_file);
+if ($perm_tool !== '') {
+  mk_out('project_audit.php perms: ' . $perm_tool);
+  if ((int)$perm_tool >= 0777) {
+    mk_add_finding($report, 'warn', 'PERMS_TOO_OPEN', 'project_audit.php permissions are very open. Consider 0640.', $tool_file, ['perms' => $perm_tool]);
+  }
+}
+
+mk_hr();
+
+/* ---------------------------------------------------------
+   Final summary + JSON report write
+--------------------------------------------------------- */
+$failCount = count($report['findings']['fail']);
+$warnCount = count($report['findings']['warn']);
+$infoCount = count($report['findings']['info']);
+
+mk_out('Summary');
+mk_hr();
+mk_out('FAIL: ' . $failCount);
+mk_out('WARN: ' . $warnCount);
+mk_out('INFO: ' . $infoCount);
+
+$exitCode = ($failCount > 0) ? 2 : 0;
+
+/* Write JSON report */
+$logs_dir = $app_root . '/logs';
+$ts = gmdate('Ymd_His');
+$report_path = $logs_dir . '/project_audit_' . $ts . '.json';
+$report['output']['json_report_path'] = $report_path;
+
+$json = json_encode($report, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+if (!is_string($json)) $json = '{"error":"json_encode failed"}';
+
+$wrote = mk_safe_json_write($report_path, $json);
+mk_out('');
+if ($wrote) {
+  mk_out('[ OK ] JSON report written: ' . $report_path);
+} else {
+  mk_out('[WARN] Could not write JSON report to: ' . $report_path);
+  mk_add_finding($report, 'warn', 'REPORT_WRITE_FAIL', 'Could not write JSON report. Check logs dir permissions.', $report_path);
+}
+
+mk_out('');
+mk_out('[ OK ] Audit completed');
+
+exit($exitCode);
+
+$max = 80; // show up to 80 lines
+$shown = 0;
+
+echo "------------------------------------------------------------\n";
+echo "Top issues (console)\n";
+echo "------------------------------------------------------------\n";
+
+foreach ($report['items'] as $it) {
+  if (!in_array($it['level'], ['FAIL','WARN'], true)) continue;
+
+  $code = $it['code'] ?? $it['level'];
+  $msg  = $it['message'] ?? '';
+  $file = $it['file'] ?? '';
+  $line = isset($it['line']) ? (int)$it['line'] : 0;
+
+  $loc = $file ? (" @ ".$file.($line ? (":".$line) : "")) : "";
+  echo "[".$it['level']."] ".$code." — ".$msg.$loc."\n";
+
+  $shown++;
+  if ($shown >= $max) break;
+}
+

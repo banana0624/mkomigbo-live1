@@ -18,9 +18,16 @@ if (!function_exists('h')) {
   function h(string $v): string { return htmlspecialchars($v, ENT_QUOTES, 'UTF-8'); }
 }
 
-if (!isset($nav_active) || !is_string($nav_active)) {
-  $nav_active = '';
+if (!function_exists('url_for')) {
+  function url_for(string $path): string {
+    $path = trim($path);
+    if ($path === '') return '/';
+    if ($path[0] !== '/') $path = '/' . $path;
+    return $path;
+  }
 }
+
+if (!isset($nav_active) || !is_string($nav_active)) $nav_active = '';
 $nav_active = trim($nav_active);
 
 /* Display brand (DO NOT use this for filesystem/paths) */
@@ -46,6 +53,8 @@ $staff_tools_url     = url_for('/staff/tools/');
 
 if (!function_exists('pf__nav_a')) {
   function pf__nav_a(string $key, string $href, string $label, string $active_key): string {
+    $href = trim($href);
+    if ($href === '') $href = '#'; // never emit href="#"
     $class = ($key === $active_key) ? 'active' : '';
     return '<a class="' . h($class) . '" href="' . h($href) . '">' . h($label) . '</a>';
   }
@@ -53,6 +62,8 @@ if (!function_exists('pf__nav_a')) {
 
 if (!function_exists('pf__subnav_a')) {
   function pf__subnav_a(string $href, string $label, bool $is_active = false): string {
+    $href = trim($href);
+    if ($href === '') $href = '#'; // never emit href="#"
     $class = $is_active ? 'active' : '';
     return '<a class="' . h($class) . '" href="' . h($href) . '">' . h($label) . '</a>';
   }
@@ -65,6 +76,7 @@ if (!$is_staff && isset($_SERVER['REQUEST_URI']) && is_string($_SERVER['REQUEST_
   if (strpos($uri, '/staff/') === 0) $is_staff = true;
 }
 
+/* Determine staff section for subnav highlighting */
 $uri  = isset($_SERVER['REQUEST_URI']) && is_string($_SERVER['REQUEST_URI']) ? (string)$_SERVER['REQUEST_URI'] : '';
 $path = $uri;
 if (($qpos = strpos($path, '?')) !== false) $path = substr($path, 0, $qpos);

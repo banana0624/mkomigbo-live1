@@ -3,13 +3,9 @@ declare(strict_types=1);
 
 /**
  * /public/staff/pages/attachments_delete.php
- * Staff: delete an attachment (DB + file) safely.
+ * Staff: delete an attachment safely (DB + disk).
  *
- * Unified on /public/staff/_init.php helpers:
- * - staff_csrf_verify()
- * - staff_safe_return_url()
- * - staff_redirect()
- * - staff_pdo()
+ * Redirect: attach=deleted|missing|denied|csrf|invalid|error
  */
 
 @ini_set('display_errors', '0');
@@ -17,6 +13,7 @@ declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
 
 require_once __DIR__ . '/../_init.php';
+if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
 
 $method = strtoupper((string)($_SERVER['REQUEST_METHOD'] ?? 'GET'));
 if ($method !== 'POST') {
@@ -25,126 +22,210 @@ if ($method !== 'POST') {
   exit;
 }
 
+/* ---------------------------------------------------------
+   Minimal fallbacks
+--------------------------------------------------------- */
+if (!function_exists('staff_safe_return_url')) {
+  function staff_safe_return_url(string $raw, string $default): string {
+    $raw = trim($raw);
+    if ($raw === '') return $default;
+    $raw = rawurldecode($raw);
+    if ($raw === '' || $raw[0] !== '/') return $default;
+    if (preg_match('~^//~', $raw)) return $default;
+    if (preg_match('~^[a-z]+:~i', $raw)) return $default;
+    if (strpos($raw, '/staff/') !== 0) return $default;
+    return $raw;
+  }
+}
+if (!function_exists('staff_redirect')) {
+  function staff_redirect(string $location, int $code = 302): void {
+    $location = str_replace(["\r","\n"], '', $location);
+    header('Location: ' . $location, true, $code);
+    exit;
+  }
+}
+if (!function_exists('staff_pdo')) {
+  function staff_pdo(): ?PDO {
+    return (function_exists('db') && db() instanceof PDO) ? db() : null;
+  }
+}
+if (!function_exists('staff_csrf_verify')) {
+  function staff_csrf_verify(string $token): bool {
+    if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
+    $sess = $_SESSION['csrf_token'] ?? '';
+    if (!is_string($sess) || $sess === '' || $token === '') return false;
+    return hash_equals($sess, $token);
+  }
+}
+if (!function_exists('pf__column_exists')) {
+  function pf__column_exists(PDO $pdo, string $table, string $column): bool {
+    static $cache = [];
+    $key = strtolower($table . '.' . $column);
+    if (array_key_exists($key, $cache)) return (bool)$cache[$key];
+    try {
+      $st = $pdo->prepare("
+        SELECT 1
+        FROM information_schema.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME = ?
+          AND COLUMN_NAME = ?
+        LIMIT 1
+      ");
+      $st->execute([$table, $column]);
+      $cache[$key] = (bool)$st->fetchColumn();
+      return (bool)$cache[$key];
+    } catch (Throwable $e) {
+      $cache[$key] = false;
+      return false;
+    }
+  }
+}
+
 $return = staff_safe_return_url((string)($_POST['return'] ?? ''), '/staff/subjects/pgs/index.php');
 
 $go = static function (string $return, string $code): never {
   $target = $return . (strpos($return, '?') === false ? '?' : '&') . 'attach=' . rawurlencode($code);
-  $target = str_replace(["\r", "\n"], '', $target);
-  staff_redirect(function_exists('url_for') ? (string)url_for($target) : $target, 302);
+  $target = str_replace(["\r","\n"], '', $target);
+  if (function_exists('url_for')) $target = (string)url_for($target);
+  staff_redirect($target, 303);
 };
 
-/* Staff guard fallback (in case require_staff() wasn’t executed upstream) */
-if (function_exists('staff_id') && staff_id() < 1) {
+/* Auth */
+$staffId = function_exists('staff_id') ? (int)staff_id() : 0;
+if ($staffId < 1) {
   $go($return, 'denied');
 }
 
-/* CSRF (accept csrf_token canonical + legacy csrf) */
+/* CSRF */
 $token = (string)($_POST['csrf_token'] ?? ($_POST['csrf'] ?? ''));
 if (!staff_csrf_verify($token)) {
   $go($return, 'csrf');
 }
 
-/* DB */
-$pdo = staff_pdo();
-if (!$pdo instanceof PDO) {
-  http_response_code(500);
-  exit;
-}
-
+/* Inputs */
 $id     = (int)($_POST['id'] ?? 0);
 $pageId = (int)($_POST['page_id'] ?? 0);
-
 if ($id < 1 || $pageId < 1) {
   $go($return, 'invalid');
 }
 
-/* Inspect page_files columns (schema tolerant) */
-$have = [];
-try {
-  $stc = $pdo->query("SHOW COLUMNS FROM page_files");
-  $rows = $stc ? ($stc->fetchAll(PDO::FETCH_ASSOC) ?: []) : [];
-  foreach ($rows as $r) {
-    $f = (string)($r['Field'] ?? '');
-    if ($f !== '') $have[$f] = true;
-  }
-} catch (Throwable $e) {
-  // If page_files itself is missing or inaccessible
-  $go($return, 'missing');
-}
-
-if (!isset($have['id'], $have['page_id'])) {
-  $go($return, 'missing');
-}
-
-/* Build SELECT dynamically */
-$cols = ['id', 'page_id'];
-foreach (['stored_name','filename','is_external','external_url','path','url'] as $c) {
-  if (isset($have[$c])) $cols[] = $c;
-}
-
-$sql = "SELECT " . implode(', ', array_unique($cols)) . " FROM page_files WHERE id = :id LIMIT 1";
-$stmt = $pdo->prepare($sql);
-$stmt->execute([':id' => $id]);
-$row = $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
-
-if (!$row || (int)($row['page_id'] ?? 0) !== $pageId) {
-  $go($return, 'missing');
-}
-
-$isExternal = !empty($row['is_external'] ?? 0);
-
-/* Delete DB row first */
-try {
-  $pdo->beginTransaction();
-  $del = $pdo->prepare("DELETE FROM page_files WHERE id = :id LIMIT 1");
-  $del->execute([':id' => $id]);
-  $pdo->commit();
-} catch (Throwable $e) {
-  if ($pdo->inTransaction()) $pdo->rollBack();
+/* DB */
+$pdo = staff_pdo();
+if (!$pdo instanceof PDO) {
   $go($return, 'error');
 }
 
-/* If external, do not touch disk */
-if ($isExternal) {
-  $go($return, 'deleted');
+/* Ensure table exists */
+try {
+  $stt = $pdo->prepare("
+    SELECT 1
+    FROM information_schema.TABLES
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'page_files'
+    LIMIT 1
+  ");
+  $stt->execute();
+  if (!$stt->fetchColumn()) $go($return, 'missing');
+} catch (Throwable $e) {
+  $go($return, 'error');
 }
 
-/* Local file delete (best-effort, strict path guard) */
-$missing = false;
-
-/* Prefer stored_name, fall back to basename(path/url) if present */
-$stored = '';
-if (isset($row['stored_name']) && is_string($row['stored_name'])) {
-  $stored = basename(trim($row['stored_name']));
-}
-if ($stored === '' && isset($row['path']) && is_string($row['path'])) {
-  $stored = basename(trim($row['path']));
-}
-if ($stored === '' && isset($row['url']) && is_string($row['url'])) {
-  $stored = basename(trim($row['url']));
+/* Schema-tolerant fetch */
+$cols = ['id','page_id'];
+foreach (['file_path','stored_path','stored_name','is_external','external_url'] as $c) {
+  if (pf__column_exists($pdo, 'page_files', $c)) $cols[] = $c;
 }
 
-if ($stored === '') {
-  $missing = true;
-} else {
-  $base = rtrim((string)PRIVATE_PATH, '/\\') . '/uploads/pages/' . $pageId;
-  $file = $base . '/' . $stored;
+$st = $pdo->prepare("
+  SELECT " . implode(', ', array_unique($cols)) . "
+  FROM page_files
+  WHERE id = :id AND page_id = :pid
+  LIMIT 1
+");
+$st->bindValue(':id', $id, PDO::PARAM_INT);
+$st->bindValue(':pid', $pageId, PDO::PARAM_INT);
+$st->execute();
+$row = $st->fetch(PDO::FETCH_ASSOC) ?: null;
 
-  $baseReal = realpath($base);
-  $fileReal = realpath($file);
+if (!$row) {
+  $go($return, 'missing');
+}
 
-  if ($baseReal !== false && $fileReal !== false) {
-    $baseReal = rtrim(str_replace('\\', '/', $baseReal), '/') . '/';
-    $fileReal = str_replace('\\', '/', $fileReal);
+/* Detect external rows (skip disk delete) */
+$isExternal = false;
+if (array_key_exists('is_external', $row)) {
+  $isExternal = ((int)($row['is_external'] ?? 0) === 1);
+}
+if (!$isExternal && !empty($row['external_url'] ?? '')) {
+  $isExternal = true;
+}
 
-    if (strpos($fileReal, $baseReal) === 0 && is_file($fileReal)) {
-      if (!@unlink($fileReal)) $missing = true;
-    } else {
-      $missing = true;
+/* Disk delete (local only, best-effort) */
+$deletedFile = false;
+$hadLocalCandidate = false;
+
+if (!$isExternal) {
+  $uploadsRoot = dirname(__DIR__, 2) . '/lib/uploads/page_files'; // /public_html/lib/uploads/page_files
+  $uploadsRootReal = realpath($uploadsRoot);
+
+  if ($uploadsRootReal && is_dir($uploadsRootReal)) {
+    $rootNorm = rtrim(str_replace('\\','/',$uploadsRootReal), '/');
+
+    // Prefer stored_path, then file_path
+    $relative = '';
+    $storedPath = isset($row['stored_path']) ? trim((string)$row['stored_path']) : '';
+    $filePath   = isset($row['file_path']) ? trim((string)$row['file_path']) : '';
+
+    if ($storedPath !== '') $relative = $storedPath;
+    elseif ($filePath !== '') $relative = $filePath;
+
+    if ($relative !== '') {
+      // If it looks like "/lib/uploads/page_files/..." map it into web root, else treat as relative under uploadsRootReal
+      $abs = $relative;
+
+      if ($abs[0] === '/' || $abs[0] === '\\') {
+        // try to map /lib/uploads/page_files/... to /public_html/lib/uploads/page_files/...
+        $needle = '/lib/uploads/page_files/';
+        $relNorm = str_replace('\\','/',$abs);
+        if (strpos($relNorm, $needle) === 0) {
+          $abs = $rootNorm . '/' . ltrim(substr($relNorm, strlen($needle)), '/');
+        } else {
+          // absolute path provided — allow only if it resolves under uploads root
+          $abs = $relNorm;
+        }
+      } else {
+        $abs = $rootNorm . '/' . ltrim($abs, '/\\');
+      }
+
+      $hadLocalCandidate = true;
+
+      $real = realpath($abs);
+      if ($real && is_file($real)) {
+        $realNorm = str_replace('\\','/',$real);
+        if (strpos($realNorm, $rootNorm . '/') === 0) {
+          $deletedFile = @unlink($real) ? true : false;
+        }
+      }
     }
-  } else {
-    $missing = true;
   }
 }
 
-$go($return, $missing ? 'missing' : 'deleted');
+/* DB delete is authoritative */
+try {
+  $del = $pdo->prepare("DELETE FROM page_files WHERE id = :id AND page_id = :pid LIMIT 1");
+  $del->bindValue(':id', $id, PDO::PARAM_INT);
+  $del->bindValue(':pid', $pageId, PDO::PARAM_INT);
+  $del->execute();
+} catch (Throwable $e) {
+  $go($return, 'error');
+}
+
+/* Outcome */
+if ($isExternal) {
+  $go($return, 'deleted');
+}
+if (!$hadLocalCandidate) {
+  // row existed but had no path columns populated (or no uploads root); DB deleted anyway
+  $go($return, 'deleted');
+}
+$go($return, $deletedFile ? 'deleted' : 'missing');

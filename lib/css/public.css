@@ -178,6 +178,119 @@ body {
   margin-bottom: 3rem;
 }
 
+/* =========================================================
+   Quick Links (shared component)
+   Source: previously inline in private/shared/quick_links.php
+   ========================================================= */
+
+.mk-quicklinks { margin-top: 14px; }
+
+.mk-quicklinks .mk-cta-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin: 0 0 12px 0;
+}
+.mk-quicklinks .mk-cta-row a{ text-decoration:none; }
+
+/* Buttons fallback */
+.mk-quicklinks .mk-btn,
+.mk-quicklinks a.mk-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:10px 14px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.04);
+  color: inherit;
+  line-height: 1;
+  transition: transform .05s ease, background .15s ease, border-color .15s ease;
+}
+.mk-quicklinks .mk-btn:hover,
+.mk-quicklinks a.mk-btn:hover{ transform: translateY(-1px); }
+
+.mk-quicklinks .mk-btn--primary,
+.mk-quicklinks a.mk-btn--primary{
+  border-color: rgba(37,99,235,.45);
+  background: rgba(37,99,235,.15);
+}
+
+/* Tip fallback */
+.mk-quicklinks .mk-tip{
+  margin: 0 0 14px 0;
+  opacity: .85;
+}
+.mk-quicklinks .mk-tip code{ opacity: .95; }
+
+/* Grid fallback */
+.mk-quicklinks .mk-ql-grid{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-top: 10px;
+}
+
+/* Card fallback */
+.mk-quicklinks .mk-ql-card{
+  position: relative;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.03);
+  overflow:hidden;
+}
+.mk-quicklinks .mk-ql-card::before{
+  content:"";
+  position:absolute;
+  inset:0 auto 0 0;
+  width: 5px;
+  background: var(--accent, #2563eb);
+  opacity: .85;
+}
+.mk-quicklinks .mk-ql-link{
+  display:block;
+  padding: 14px 14px 14px 16px;
+  color: inherit;
+  text-decoration: none;
+}
+.mk-quicklinks .mk-ql-top{ display:flex; gap:12px; align-items:flex-start; }
+.mk-quicklinks .mk-ql-badge{
+  width:42px;
+  height:42px;
+  border-radius:999px;
+  display:grid;
+  place-items:center;
+  font-weight:700;
+  border:1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.04);
+  flex: 0 0 auto;
+}
+.mk-quicklinks .mk-ql-title{ margin:0; font-size:1rem; }
+.mk-quicklinks .mk-ql-desc{
+  margin:6px 0 0 0;
+  opacity:.85;
+  line-height:1.35;
+}
+
+.mk-ql-heading{ margin:18px 0 10px; font-size:1.1rem; letter-spacing:.2px; }
+.mk-quicklinks .mk-ql-text{ min-width:0; }
+
+.mk-quicklinks .mk-ql-accent--blue  { --accent:#2563eb; }
+.mk-quicklinks .mk-ql-accent--purple{ --accent:#7c3aed; }
+.mk-quicklinks .mk-ql-accent--green { --accent:#059669; }
+.mk-quicklinks .mk-ql-accent--sky   { --accent:#0ea5e9; }
+.mk-quicklinks .mk-ql-accent--amber { --accent:#f59e0b; }
+
+.mk-quicklinks .mk-ql-text{ min-width:0; }
+
+/* Accent class mapping (replaces inline style="--accent:...") */
+.mk-quicklinks .mk-ql-accent--blue  { --accent:#2563eb; }
+.mk-quicklinks .mk-ql-accent--purple{ --accent:#7c3aed; }
+.mk-quicklinks .mk-ql-accent--green { --accent:#059669; }
+.mk-quicklinks .mk-ql-accent--sky   { --accent:#0ea5e9; }
+.mk-quicklinks .mk-ql-accent--amber { --accent:#f59e0b; }
+
+
 /* ---------------------------------------------------------
    End of public.css
 --------------------------------------------------------- */

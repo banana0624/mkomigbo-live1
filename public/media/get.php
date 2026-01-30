@@ -1,5 +1,9 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__ . '/../_init.php';
+
+require_once __DIR__ . '/../_init.php';
+
 
 /**
  * /public/media/get.php?id=123
@@ -11,14 +15,14 @@ declare(strict_types=1);
 @ini_set('display_startup_errors', '0');
 error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
 
-/* Locate initialize.php */
+// [patched] removed initialize.php reference
 if (!function_exists('mk_find_init')) {
   function mk_find_init(string $startDir, int $maxDepth = 14): ?string {
     $dir = $startDir;
     for ($i = 0; $i <= $maxDepth; $i++) {
       $candidates = [
-        $dir . '/app/mkomigbo/private/assets/initialize.php',
-        $dir . '/private/assets/initialize.php',
+// [patched] removed legacy initialize path reference
+// [patched] removed legacy initialize path reference
       ];
       foreach ($candidates as $c) if (is_file($c)) return $c;
       $parent = dirname($dir);

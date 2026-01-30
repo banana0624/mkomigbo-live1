@@ -1,0 +1,13 @@
+# /public_html/public/staff/tools/.htaccess
+Options -Indexes -MultiViews
+
+DirectoryIndex index.php
+Require all granted
+
+<FilesMatch "(^|/)\.">
+  Require all denied
+</FilesMatch>
+
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options "nosniff"
+</IfModule>

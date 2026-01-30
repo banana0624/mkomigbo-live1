@@ -1,5 +1,9 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__ . '/../_init.php';
+
+require_once __DIR__ . '/../_init.php';
+
 
 /**
  * project-root/public/platforms/igbo-calendar.php
@@ -16,7 +20,7 @@ error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
 
 /*
 |--------------------------------------------------------------------------
-| Locate initialize.php (walk upward, bounded)
+// [patched] removed initialize.php reference
 |--------------------------------------------------------------------------
 */
 $baseDir = __DIR__;
@@ -24,7 +28,7 @@ $initFile = null;
 $scanDir = $baseDir;
 
 for ($i = 0; $i < 12; $i++) {
-    $candidate = $scanDir . '/private/assets/initialize.php';
+// [patched] removed legacy initialize path reference
     if (is_file($candidate)) {
         $initFile = $candidate;
         break;

@@ -6,12 +6,15 @@ declare(strict_types=1);
  * Staff: New Contributor form (schema-tolerant)
  *
  * Improvements:
- * - UI consistency: textarea uses class="input"
- * - Slug UX: optional; auto-generated on save (when slug column exists)
- * - Bio note: stored as bio_raw, rendered as sanitized bio_html when available
+ * - Status uses a dropdown (when status column exists)
+ * - Slug optional; auto-generated on save when slug column exists
+ * - Bio stored as bio_raw; create.php will generate safe bio_html
+ * - No arrow functions
  */
 
 require_once __DIR__ . '/../_init.php';
+
+if (function_exists('require_staff_login')) { require_staff_login(); }
 
 /* ---------------------------------------------------------
    Helpers
@@ -103,7 +106,7 @@ if (!function_exists('pf__label')) {
   }
 }
 
-/* URL helper (no arrow functions) */
+/* URL helper */
 if (!function_exists('pf__u')) {
   function pf__u(string $path): string {
     return function_exists('url_for') ? url_for($path) : $path;
@@ -137,26 +140,29 @@ try {
   $warn = 'Unable to verify contributors table.';
 }
 
-/* Detect fields */
+/* Detect columns */
 $fields = [];
 $has_slug = false;
+$has_status = false;
 
 if ($table_ready) {
-  $candidates = ['display_name','name','username','slug','email','roles','avatar_path','status'];
+  $candidates = ['display_name','name','username','slug','email','roles','avatar_path'];
   foreach ($candidates as $f) {
     if (pf__column_exists($pdo, 'contributors', $f)) $fields[] = $f;
   }
-  $has_slug = in_array('slug', $fields, true);
+  $has_slug   = in_array('slug', $fields, true);
+  $has_status = pf__column_exists($pdo, 'contributors', 'status');
 }
 
 $has_bio_raw  = $table_ready && pf__column_exists($pdo, 'contributors', 'bio_raw');
 $has_bio_html = $table_ready && pf__column_exists($pdo, 'contributors', 'bio_html');
+$has_bio_legacy = $table_ready && pf__column_exists($pdo, 'contributors', 'bio');
 
 $pub_col = null;
 if ($table_ready && pf__column_exists($pdo, 'contributors', 'is_public')) $pub_col = 'is_public';
 elseif ($table_ready && pf__column_exists($pdo, 'contributors', 'visible')) $pub_col = 'visible';
 
-$nothing_writable = $table_ready && empty($fields) && !$has_bio_raw && !$has_bio_html && !$pub_col;
+$nothing_writable = $table_ready && empty($fields) && !$has_status && !$has_bio_raw && !$has_bio_html && !$has_bio_legacy && !$pub_col;
 
 /* Header */
 $active_nav = 'contributors';
@@ -208,7 +214,7 @@ $back_url    = pf__u($return);
 
   <div class="card">
     <div class="card__body">
-      <form method="post" action="<?php echo h($create_post); ?>" class="stack">
+      <form method="post" action="<?php echo h($create_post); ?>" class="stack" autocomplete="off">
         <?php echo csrf_field(); ?>
         <input type="hidden" name="return" value="<?php echo h($return); ?>">
 
@@ -222,6 +228,7 @@ $back_url    = pf__u($return);
                 id="<?php echo h($f); ?>"
                 name="<?php echo h($f); ?>"
                 value=""
+                <?php if ($f === 'email'): ?> type="email"<?php else: ?> type="text"<?php endif; ?>
                 placeholder="<?php echo h($f === 'slug' ? 'Optional (auto-generated if blank)' : ''); ?>">
               <?php if ($f === 'slug'): ?>
                 <div class="muted" style="font-size:.9rem; margin-top:6px;">
@@ -230,6 +237,19 @@ $back_url    = pf__u($return);
               <?php endif; ?>
             </div>
           <?php endforeach; ?>
+
+          <?php if ($has_status): ?>
+            <div class="field" style="align-self:flex-end;">
+              <label class="label" for="status">Status</label>
+              <select class="input" id="status" name="status">
+                <option value="active" selected>Active</option>
+                <option value="draft">Draft</option>
+              </select>
+              <div class="muted" style="font-size:.9rem; margin-top:6px;">
+                Active profiles can be shown publicly; Draft profiles should be hidden.
+              </div>
+            </div>
+          <?php endif; ?>
 
           <?php if ($pub_col): ?>
             <div class="field" style="align-self:flex-end;">
@@ -242,12 +262,12 @@ $back_url    = pf__u($return);
 
         </div>
 
-        <?php if ($has_bio_raw || $has_bio_html): ?>
+        <?php if ($has_bio_raw || $has_bio_html || $has_bio_legacy): ?>
           <div class="field">
             <label class="label" for="bio_raw">Bio (rich text allowed)</label>
             <textarea id="bio_raw" name="bio_raw" rows="10" class="input" style="width:100%;"></textarea>
             <div class="muted" style="font-size:.9rem; margin-top:6px;">
-              Saved as <code>bio_raw</code> and rendered publicly from sanitized <code>bio_html</code>.
+              Saved as <code>bio_raw</code>; displayed from safe/sanitized <code>bio_html</code> when available.
             </div>
           </div>
         <?php endif; ?>

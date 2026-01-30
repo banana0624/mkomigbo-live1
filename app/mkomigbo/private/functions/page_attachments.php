@@ -11,8 +11,9 @@ declare(strict_types=1);
  *
  * Security goals:
  * - Prevent path traversal and boundary escapes
- * - Enforce safe external redirects (no bypass)
+ * - Enforce safe external redirects (no SSRF)
  * - Enforce content-type allowlist and safe headers
+ * - Stream large files safely (Range support)
  */
 
 if (!defined('PRIVATE_PATH') || !is_string(PRIVATE_PATH) || PRIVATE_PATH === '') {
@@ -26,11 +27,11 @@ if (!defined('PRIVATE_PATH') || !is_string(PRIVATE_PATH) || PRIVATE_PATH === '')
 /**
  * External URL allowlist.
  * - Empty array means: allow any valid http/https URL (still blocks private/local hosts below).
- * - If you want to lock it down, add allowed hostnames:
+ * - To lock down, add allowed hostnames:
  *   ['mkomigbo.com', 'www.mkomigbo.com', 'cdn.example.com']
  */
 function mk_attachment_external_allowed_hosts(): array {
-  return []; // tighten later if you want
+  return [];
 }
 
 /**
@@ -50,7 +51,7 @@ function mk_attachment_inline_mimes(): array {
 
 /**
  * Allowed MIME types overall.
- * If a file sniffs to something else, we force download as application/octet-stream.
+ * If sniffed mime is not in this list, force octet-stream.
  */
 function mk_attachment_allowed_mimes(): array {
   return [
@@ -89,13 +90,7 @@ function mk_page_attachment_base_dir(int $pageId): string {
 
 function mk_page_attachment_path(int $pageId, string $storedName): string {
   $base = mk_page_attachment_base_dir($pageId);
-  // basename blocks traversal like ../../etc/passwd
   return $base . '/' . basename($storedName);
-}
-
-function mk_page_attachment_exists(int $pageId, string $storedName): bool {
-  $path = mk_page_attachment_path($pageId, $storedName);
-  return is_file($path) && is_readable($path);
 }
 
 function mk_attachment_fail(int $code, string $msg = ''): never {
@@ -105,17 +100,12 @@ function mk_attachment_fail(int $code, string $msg = ''): never {
   exit;
 }
 
-/**
- * Reject obvious bad filenames and enforce boundary via realpath.
- */
 function mk_attachment_resolve_local_path(int $pageId, string $storedName): string {
   $pageId = max(1, (int)$pageId);
 
   $storedName = trim((string)$storedName);
   if ($storedName === '') mk_attachment_fail(404, "File not found.\n");
 
-  // Allow safe filename characters only (tightens abuse vectors).
-  // If you store UUIDs, hashes, etc., they still pass.
   if (!preg_match('~^[A-Za-z0-9][A-Za-z0-9._-]{0,240}$~', basename($storedName))) {
     mk_attachment_fail(404, "File not found.\n");
   }
@@ -130,7 +120,6 @@ function mk_attachment_resolve_local_path(int $pageId, string $storedName): stri
     mk_attachment_fail(404, "File not found.\n");
   }
 
-  // Boundary check: file must live inside base dir
   $baseReal = rtrim(str_replace('\\', '/', $baseReal), '/') . '/';
   $fileRealNorm = str_replace('\\', '/', $fileReal);
 
@@ -145,13 +134,6 @@ function mk_attachment_resolve_local_path(int $pageId, string $storedName): stri
   return $fileRealNorm;
 }
 
-/**
- * Validate external URL strictly.
- * - Only http/https
- * - Valid URL
- * - Optional hostname allowlist
- * - Blocks localhost and private IP ranges by default
- */
 function mk_attachment_validate_external_url(?string $url): string {
   $url = trim((string)$url);
   if ($url === '') mk_attachment_fail(404, "Link not available.\n");
@@ -170,18 +152,15 @@ function mk_attachment_validate_external_url(?string $url): string {
   $host = strtolower((string)($parts['host'] ?? ''));
   if ($host === '') mk_attachment_fail(404, "Link not available.\n");
 
-  // Optional allowlist
   $allow = mk_attachment_external_allowed_hosts();
   if (is_array($allow) && count($allow) > 0 && !in_array($host, $allow, true)) {
     mk_attachment_fail(404, "Link not available.\n");
   }
 
-  // Block localhost-ish
   if ($host === 'localhost' || $host === '127.0.0.1' || $host === '::1') {
     mk_attachment_fail(404, "Link not available.\n");
   }
 
-  // If host is an IP, block private/reserved ranges
   if (filter_var($host, FILTER_VALIDATE_IP)) {
     $flags = FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE;
     if (!filter_var($host, FILTER_VALIDATE_IP, $flags)) {
@@ -209,7 +188,6 @@ function mk_attachment_safe_filename(string $name, string $fallback = 'download'
   $name = trim((string)$name);
   if ($name === '') $name = $fallback;
 
-  // Remove control chars and quotes; keep it simple and safe
   $name = preg_replace('/[\x00-\x1F\x7F]+/u', '', $name) ?? $name;
   $name = str_replace(['"', "'"], '', $name);
   $name = trim($name);
@@ -219,19 +197,21 @@ function mk_attachment_safe_filename(string $name, string $fallback = 'download'
 }
 
 /* ---------------------------------------------------------
-   Main streamer
+   Main streamer (Range capable)
 --------------------------------------------------------- */
-
 function mk_page_attachment_stream(array $file): never {
-  $isExternal = !empty($file['is_external']);
-
-  // Support HEAD: same headers, no body
   $method = strtoupper((string)($_SERVER['REQUEST_METHOD'] ?? 'GET'));
   $isHead = ($method === 'HEAD');
 
+  // Never allow caches to store attachment responses (safe default)
+  header('Cache-Control: private, no-store, no-cache, must-revalidate');
+  header('Pragma: no-cache');
+  header('Expires: 0');
+
+  $isExternal = !empty($file['is_external']);
   if ($isExternal) {
     $url = mk_attachment_validate_external_url($file['external_url'] ?? null);
-    header('Location: ' . $url, true, 302);
+    header('Location: ' . str_replace(["\r", "\n"], '', $url), true, 302);
     exit;
   }
 
@@ -255,35 +235,72 @@ function mk_page_attachment_stream(array $file): never {
   header('Referrer-Policy: no-referrer');
   header('X-Frame-Options: SAMEORIGIN');
 
-  // If inline, add a basic CSP to reduce risk (PDF/images/text)
   if ($disposition === 'inline') {
     header("Content-Security-Policy: default-src 'none'; img-src 'self' data:; media-src 'self'; style-src 'unsafe-inline';");
   }
 
+  $size = @filesize($path);
+  if (!is_int($size) || $size < 0) $size = null;
+
   header('Content-Type: ' . $mime);
   header('Content-Disposition: ' . $disposition . '; filename="' . $dlName . '"');
+  header('Accept-Ranges: bytes');
 
-  $size = @filesize($path);
-  if (is_int($size) && $size >= 0) {
-    header('Content-Length: ' . $size);
+  // Range support (best-effort)
+  $range = (string)($_SERVER['HTTP_RANGE'] ?? '');
+  $start = 0;
+  $end = ($size !== null) ? ($size - 1) : null;
+
+  if ($size !== null && $range !== '' && preg_match('/bytes=(\d*)-(\d*)/i', $range, $m)) {
+    $r1 = ($m[1] !== '') ? (int)$m[1] : null;
+    $r2 = ($m[2] !== '') ? (int)$m[2] : null;
+
+    if ($r1 !== null && $r1 >= 0 && $r1 < $size) {
+      $start = $r1;
+    }
+    if ($r2 !== null && $r2 >= $start && $r2 < $size) {
+      $end = $r2;
+    }
+
+    if ($start > 0 || ($end !== null && $end < ($size - 1))) {
+      http_response_code(206);
+      header("Content-Range: bytes {$start}-{$end}/{$size}");
+    }
   }
 
-  // Stream
+  if ($size !== null && $end !== null) {
+    $len = ($end - $start) + 1;
+    header('Content-Length: ' . $len);
+  }
+
   if ($isHead) exit;
 
-  // Clean output buffering if any
   while (ob_get_level() > 0) { @ob_end_clean(); }
 
   $fp = @fopen($path, 'rb');
   if (!$fp) mk_attachment_fail(404, "File not found.\n");
 
-  // Stream in chunks (safe for big files)
-  $chunk = 1024 * 1024; // 1MB
-  while (!feof($fp)) {
-    $buf = fread($fp, $chunk);
-    if ($buf === false) break;
-    echo $buf;
+  if ($start > 0) {
+    @fseek($fp, $start);
   }
+
+  $remaining = ($size !== null && $end !== null) ? (($end - $start) + 1) : null;
+  $chunk = 1024 * 1024; // 1MB
+
+  while (!feof($fp)) {
+    if ($remaining !== null && $remaining <= 0) break;
+
+    $read = ($remaining !== null) ? min($chunk, $remaining) : $chunk;
+    $buf = fread($fp, $read);
+    if ($buf === false || $buf === '') break;
+
+    echo $buf;
+
+    if ($remaining !== null) {
+      $remaining -= strlen($buf);
+    }
+  }
+
   fclose($fp);
   exit;
 }

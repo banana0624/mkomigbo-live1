@@ -7,10 +7,10 @@ declare(strict_types=1);
  * Staff bootstrap (single entry include for all staff pages).
  *
  * Responsibilities:
- * - Locate and load central bootstrap initialize.php (bounded scan)
- * - Start session (auth, CSRF, flash)
- * - Enforce staff auth if guards exist
- * - Provide canonical PDO accessor: staff_pdo()
+ * - Delegate to /public/_init.php (authoritative init, constants, libs)
+ * - Start session (auth, CSRF, flash) for staff routes
+ * - Enforce staff auth (tolerant)
+ * - Provide canonical PDO accessor: staff_pdo() (+ alias pdo())
  * - Provide unified staff helpers:
  *   - staff_id()
  *   - staff_csrf_token(), staff_csrf_field(), staff_csrf_verify(), staff_csrf_require()
@@ -18,65 +18,39 @@ declare(strict_types=1);
  *   - staff_redirect()
  *   - staff_require_shared()
  *   - staff_flash_set(), staff_flash_get()
+ *
+ * IMPORTANT:
+// [patched]  * - Never defines APP_ROOT / PRIVATE_PATH / etc. (initialize.php owns constants)
  */
 
 @ini_set('display_errors', '0');
 @ini_set('display_startup_errors', '0');
 error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
 
+if (!headers_sent()) {
+  header('Content-Type: text/html; charset=utf-8');
+}
+
 /* ---------------------------------------------------------
-   Locate initialize.php (bounded upward scan)
+   Idempotency
 --------------------------------------------------------- */
-if (!function_exists('mk_find_init')) {
-  function mk_find_init(string $startDir, int $maxDepth = 14): ?string {
-    $dir = $startDir;
-    for ($i = 0; $i <= $maxDepth; $i++) {
-      $candidates = [
-        $dir . '/app/mkomigbo/private/assets/initialize.php', // your current layout
-        $dir . '/private/assets/initialize.php',              // legacy
-        $dir . '/app/private/assets/initialize.php',          // optional
-      ];
-      foreach ($candidates as $c) {
-        if (is_file($c)) return $c;
-      }
-      $parent = dirname($dir);
-      if ($parent === $dir) break;
-      $dir = $parent;
-    }
-    return null;
-  }
-}
-
-/* Load initialize.php if not already loaded */
-$init = mk_find_init(__DIR__);
-/* If not found, fail in a controlled way (plain text, 500) */
-if (!$init) {
-  http_response_code(500);
-  header('Content-Type: text/plain; charset=utf-8');
-  echo "Staff bootstrap failed: initialize.php not found.\n";
-  echo "Start: " . __DIR__ . "\n";
-  echo "Expected one of:\n";
-  echo " - {dir}/app/mkomigbo/private/assets/initialize.php\n";
-  echo " - {dir}/private/assets/initialize.php\n";
-  echo " - {dir}/app/private/assets/initialize.php\n";
-  exit;
-}
-require_once $init;
+if (defined('MK_STAFF_INIT_LOADED') && MK_STAFF_INIT_LOADED === true) { return; }
+define('MK_STAFF_INIT_LOADED', true);
 
 /* ---------------------------------------------------------
-   Ensure APP_ROOT / PRIVATE_PATH are defined (defensive)
+   Ensure staff session policy (public/_init.php respects this)
 --------------------------------------------------------- */
-if (!defined('APP_ROOT')) {
-  $root  = realpath(__DIR__ . '/../../'); // /public/staff -> /public_html
-  $guess = $root ? ($root . '/app/mkomigbo') : null;
-  if ($guess && is_dir($guess)) define('APP_ROOT', $guess);
-}
-if (!defined('PRIVATE_PATH') && defined('APP_ROOT')) {
-  define('PRIVATE_PATH', APP_ROOT . '/private');
+if (!defined('MK_REQUIRE_SESSION')) {
+  define('MK_REQUIRE_SESSION', true);
 }
 
 /* ---------------------------------------------------------
-   Session (always)
+   Delegate to public init (single source of truth)
+--------------------------------------------------------- */
+require_once dirname(__DIR__) . '/_init.php';
+
+/* ---------------------------------------------------------
+   Session (always for staff)
 --------------------------------------------------------- */
 if (session_status() !== PHP_SESSION_ACTIVE) {
   @session_start();
@@ -126,27 +100,24 @@ if (!function_exists('redirect_to')) {
 --------------------------------------------------------- */
 if (!function_exists('staff_require_shared')) {
   function staff_require_shared(string $file): void {
-    $file = ltrim($file, '/');
+    $file = ltrim(trim($file), '/');
+    if ($file === '') return;
 
+    // Preferred: global shared include helper provided by /public/_init.php
     if (function_exists('mk_require_shared')) {
       mk_require_shared($file);
       return;
     }
 
+    // Fallback paths (should rarely happen)
     if (defined('PRIVATE_PATH')) {
       $path = rtrim((string)PRIVATE_PATH, '/') . '/shared/' . $file;
-      if (is_file($path)) {
-        require_once $path;
-        return;
-      }
+      if (is_file($path)) { require_once $path; return; }
     }
 
     if (defined('APP_ROOT')) {
       $path = rtrim((string)APP_ROOT, '/') . '/private/shared/' . $file;
-      if (is_file($path)) {
-        require_once $path;
-        return;
-      }
+      if (is_file($path)) { require_once $path; return; }
     }
 
     http_response_code(500);
@@ -178,7 +149,7 @@ if (!function_exists('staff_flash_get')) {
   }
 }
 
-/* Back-compat aliases used by your subjects pages */
+/* Back-compat aliases used by existing pages */
 if (!function_exists('pf__flash_set')) {
   function pf__flash_set(string $key, string $msg): void { staff_flash_set($key, $msg); }
 }
@@ -232,6 +203,7 @@ if (!function_exists('pdo')) {
 if (!function_exists('staff_id')) {
   function staff_id(): int {
     if (isset($_SESSION['staff_user_id'])) return (int)$_SESSION['staff_user_id'];
+    if (isset($_SESSION['staff_user']['id'])) return (int)$_SESSION['staff_user']['id'];
     if (isset($_SESSION['staff']['id']))   return (int)$_SESSION['staff']['id'];
     if (isset($_SESSION['staff_id']))      return (int)$_SESSION['staff_id'];
     if (isset($_SESSION['user_id']))       return (int)$_SESSION['user_id']; // legacy compatibility
@@ -244,6 +216,7 @@ if (!function_exists('staff_id')) {
 --------------------------------------------------------- */
 if (!function_exists('staff_csrf_token')) {
   function staff_csrf_token(): string {
+    if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
     if (empty($_SESSION['csrf_token']) || !is_string($_SESSION['csrf_token'])) {
       $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
     }
@@ -257,6 +230,7 @@ if (!function_exists('staff_csrf_field')) {
 }
 if (!function_exists('staff_csrf_verify')) {
   function staff_csrf_verify(?string $postedToken): bool {
+    if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
     $postedToken = is_string($postedToken) ? trim($postedToken) : '';
 
     if (function_exists('csrf_token_is_valid')) {
@@ -285,7 +259,7 @@ if (!function_exists('staff_csrf_require')) {
   }
 }
 
-/* Back-compat aliases your subjects module already uses */
+/* Back-compat aliases used across staff pages */
 if (!function_exists('csrf_token')) {
   function csrf_token(): string { return staff_csrf_token(); }
 }
@@ -297,7 +271,7 @@ if (!function_exists('csrf_require')) {
 }
 
 /* ---------------------------------------------------------
-   Safe return URL (staff-only)
+   Safe return URL (staff-only, prevents open redirects)
 --------------------------------------------------------- */
 if (!function_exists('staff_safe_return_url')) {
   function staff_safe_return_url(string $raw, string $default): string {
@@ -313,8 +287,6 @@ if (!function_exists('staff_safe_return_url')) {
     return $raw;
   }
 }
-
-/* Back-compat alias used across your staff pages */
 if (!function_exists('pf__safe_return_url')) {
   function pf__safe_return_url(string $raw, string $default): string {
     return staff_safe_return_url($raw, $default);
@@ -322,12 +294,39 @@ if (!function_exists('pf__safe_return_url')) {
 }
 
 /* ---------------------------------------------------------
-   Auth guard (centralized) — after helpers exist
+   Auth guard (centralized)
 --------------------------------------------------------- */
-if (function_exists('require_staff')) {
+$didEnforce = false;
+
+// Prefer explicit staff login guards if present
+if (function_exists('mk_require_staff_login')) {
+  mk_require_staff_login();
+  $didEnforce = true;
+} elseif (function_exists('require_staff_login')) {
+  require_staff_login();
+  $didEnforce = true;
+} elseif (function_exists('require_staff')) {
   require_staff();
+  $didEnforce = true;
 } elseif (function_exists('require_login')) {
   require_login();
+  $didEnforce = true;
+}
+
+if (!$didEnforce) {
+  // Fallback: minimal session-based gate
+  $loggedIn =
+    !empty($_SESSION['staff_user_id'])
+    || !empty($_SESSION['staff_user']['id'])
+    || !empty($_SESSION['staff']['id'])
+    || !empty($_SESSION['staff_id']);
+
+  if (!$loggedIn) {
+    $return = (string)($_SERVER['REQUEST_URI'] ?? '/staff/');
+    $to = (function_exists('url_for') ? url_for('/staff/login.php') : '/staff/login.php');
+    $sep = (strpos($to, '?') !== false) ? '&' : '?';
+    staff_redirect($to . $sep . 'return=' . rawurlencode($return), 302);
+  }
 }
 
 /* End of staff bootstrap */

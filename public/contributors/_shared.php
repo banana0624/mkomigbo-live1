@@ -1,5 +1,9 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__ . '/../_init.php';
+
+require_once __DIR__ . '/../_init.php';
+
 
 /**
  * /public/contributors/_shared.php
@@ -15,9 +19,9 @@ if (!function_exists('mk_find_init')) {
     $dir = $startDir;
     for ($i = 0; $i <= $maxDepth; $i++) {
       $candidates = [
-        $dir . '/private/assets/initialize.php',
-        $dir . '/app/mkomigbo/private/assets/initialize.php',
-        $dir . '/app/private/assets/initialize.php',
+// [patched] removed legacy initialize path reference
+// [patched] removed legacy initialize path reference
+// [patched] removed legacy initialize path reference
       ];
       foreach ($candidates as $candidate) {
         if (is_file($candidate)) return $candidate;
@@ -31,7 +35,7 @@ if (!function_exists('mk_find_init')) {
 }
 
 if (!defined('APP_ROOT') || !is_string(APP_ROOT) || APP_ROOT === '') {
-  // If initialize.php defines APP_ROOT, this is overridden after require_once.
+// [patched] removed initialize.php reference
   define('APP_ROOT', dirname(__DIR__, 2) . '/app/mkomigbo');
 }
 

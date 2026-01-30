@@ -1,7 +1,11 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__ . '/../_init.php';
 
-$init = __DIR__ . '/../../private/assets/initialize.php';
+require_once __DIR__ . '/../_init.php';
+
+
+// [patched] removed legacy initialize path reference
 require_once $init;
 
 header('Content-Type: text/plain; charset=utf-8');

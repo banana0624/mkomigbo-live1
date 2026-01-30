@@ -1,9 +1,21 @@
+# /public_html/public/contributors/.htaccess
 Options -Indexes -MultiViews
+
 <IfModule mod_rewrite.c>
 RewriteEngine On
+
+# Serve existing files/dirs
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
+
+# Index
 RewriteRule ^$ index.php [L,QSA]
-RewriteRule ^(.+?)/?$ view.php?slug=$1 [L,QSA,NC]
+
+# Numeric id route (must come BEFORE slug)
+RewriteRule ^id/([0-9]{1,20})/?$ view.php?id=$1 [L,QSA,NC]
+
+# Slug route
+RewriteRule ^([a-z0-9][a-z0-9_-]{0,190})/?$ view.php?slug=$1 [L,QSA,NC]
+
 </IfModule>

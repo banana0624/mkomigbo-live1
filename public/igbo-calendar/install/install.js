@@ -2,346 +2,401 @@
 (() => {
   "use strict";
 
-  const $ = (sel, root) => (root || document).querySelector(sel);
+  const $ = (id) => document.getElementById(id);
 
-  const btnInstall   = $("#btnInstall");
-  const btnCheck     = $("#btnCheck");
-  const statusEl     = $("#installStatus");
-  const diagBox      = $("#diagBox");
-  const btnCopyDebug = $("#btnCopyDebug");
+  const btnInstall  = $("btnInstall");
+  const btnCheck    = $("btnCheck");
+  const btnCopy     = $("btnCopyDebug");
+  const statusBox   = $("installStatus");
+  const diagBox     = $("diagBox");
 
-  if (!statusEl) return;
+  if (!statusBox) return;
 
-  const APP_SCOPE     = "/igbo-calendar/";
-  const MANIFEST_URL  = "/igbo-calendar/manifest.json";
-  const SW_URL        = "/igbo-calendar/service-worker.js";
-  const INSTALL_PAGE  = "/igbo-calendar/install/";
-  const APP_URL       = "/igbo-calendar/";
+  const cfg = window.__MK_PWA || {};
+  const BC_NAME = "mk_pwa_install";
 
-  const uaRaw = (navigator.userAgent || "");
-  const ua = uaRaw.toLowerCase();
-
-  const isIOS = /iphone|ipad|ipod/.test(ua);
-  const isAndroid = /android/.test(ua);
-  const isOpera = /\bopr\//.test(ua) || /\bopera\b/.test(ua);
-  const isEdge = /\bedg\//.test(ua);
-  const isChromium = /chrome|crios|chromium|edg|opr/.test(ua) && !/firefox/.test(ua);
-
-  const isStandaloneIOS = (() => {
-    try { return !!navigator.standalone; } catch { return false; }
-  })();
-
-  const isInstalledByDisplayMode = () => {
-    try { return !!(window.matchMedia && window.matchMedia("(display-mode: standalone)").matches); }
-    catch { return false; }
+  const ENDPOINTS = {
+    appUrl:      cfg.appUrl      || "/igbo-calendar/?pwa=1",
+    manifestUrl: cfg.manifestUrl || "/igbo-calendar/manifest.json",
+    swUrl:       cfg.swUrl       || "/igbo-calendar/service-worker.js",
+    scope:       cfg.scope       || "/igbo-calendar/",
+    installPage: "/igbo-calendar/install/"
   };
 
-  let deferredPrompt = null;
+  let deferredPrompt = null;     // Only valid on THIS page/tab
   let lastDiag = null;
-  let bipFired = false;          // did beforeinstallprompt actually fire on THIS page load?
-  let reloadedOnce = false;      // used for controllerchange reload safety
-  let warnedOpera = false;
 
-  const setStatus = (html, kind) => {
-    statusEl.classList.remove("mk-alert--danger", "mk-alert--ok");
-    if (kind === "danger") statusEl.classList.add("mk-alert--danger");
-    if (kind === "ok") statusEl.classList.add("mk-alert--ok");
-    statusEl.innerHTML = html;
-  };
+  function setStatus(html) {
+    try { statusBox.innerHTML = html; } catch (_) {}
+  }
 
-  const setInstallEnabled = (enabled) => {
-    if (!btnInstall) return;
-    btnInstall.disabled = !enabled;
-    btnInstall.setAttribute("aria-disabled", enabled ? "false" : "true");
-    btnInstall.title = enabled
-      ? "Install Igbo Calendar as an app"
-      : "Install will be enabled when your browser allows it.";
-  };
+  function setDiag(obj) {
+    lastDiag = obj;
+    if (!diagBox) return;
+    try { diagBox.textContent = JSON.stringify(obj, null, 2); } catch (_) {}
+  }
 
-  const safeJson = (obj) => {
-    try { return JSON.stringify(obj, null, 2); } catch { return String(obj); }
-  };
+  function safeUA() {
+    try { return navigator.userAgent || ""; } catch (_) { return ""; }
+  }
 
-  const pathOk = (() => {
-    try { return location.pathname.startsWith("/igbo-calendar/install"); } catch { return true; }
-  })();
+  function nowIso() {
+    try { return new Date().toISOString(); } catch (_) { return ""; }
+  }
 
-  const fetchHead = async (url) => {
+  function isStandaloneDisplayMode() {
+    try { return window.matchMedia("(display-mode: standalone)").matches; }
+    catch (_) { return false; }
+  }
+
+  function isIOS() {
+    const ua = safeUA();
+    return /iPad|iPhone|iPod/.test(ua) && !("MSStream" in window);
+  }
+
+  function isEdge() {
+    return safeUA().includes("Edg/");
+  }
+
+  function isChromium() {
+    const ua = safeUA();
+    return !!window.chrome || ua.includes("Chromium") || ua.includes("Chrome/");
+  }
+
+  async function headOk(url) {
     try {
       const res = await fetch(url, { method: "HEAD", cache: "no-store" });
       return { ok: res.ok, status: res.status, type: "HEAD" };
     } catch (e) {
-      try {
-        const res = await fetch(url + (url.includes("?") ? "&" : "?") + "t=" + Date.now(), { cache: "no-store" });
-        return { ok: res.ok, status: res.status, type: "GET" };
-      } catch (e2) {
-        return { ok: false, status: 0, type: "ERR", error: String(e2?.message || e2) };
-      }
+      return { ok: false, status: 0, type: "HEAD", error: String(e && e.message ? e.message : e) };
     }
-  };
-
-  // One-time reload when SW takes control, so this page becomes "controlled".
-  function armControllerReload() {
-    if (!("serviceWorker" in navigator)) return;
-    navigator.serviceWorker.addEventListener("controllerchange", () => {
-      if (reloadedOnce) return;
-      reloadedOnce = true;
-      // Mark so we do not loop if the browser triggers multiple controllerchange events
-      try { sessionStorage.setItem("mk_sw_reloaded", "1"); } catch {}
-      location.reload();
-    });
   }
 
-  function alreadyReloadedThisSession() {
-    try { return sessionStorage.getItem("mk_sw_reloaded") === "1"; } catch { return false; }
+  async function getInstalledRelatedAppsSafe() {
+    // Chromium-only, best-effort
+    try {
+      if (navigator.getInstalledRelatedApps) {
+        const apps = await navigator.getInstalledRelatedApps();
+        return Array.isArray(apps) ? apps : [];
+      }
+    } catch (_) {}
+    return null;
   }
 
-  async function ensureServiceWorker() {
-    if (!("serviceWorker" in navigator)) return { ok: false, note: "serviceWorker not supported" };
+  function platformHints() {
+    return {
+      isIOS: isIOS(),
+      isEdge: isEdge(),
+      isChromium: isChromium(),
+      standaloneDisplayMode: isStandaloneDisplayMode(),
+      isSecureContext: !!window.isSecureContext,
+      controller: !!(navigator.serviceWorker && navigator.serviceWorker.controller),
+      beforeinstallpromptFired: false
+    };
+  }
 
-    // Avoid infinite reload loops across sessions
-    if (!alreadyReloadedThisSession()) armControllerReload();
+  function installHelpHtml() {
+    // “Deep link” to native install UI is not supported; we give precise steps instead.
+    const browser = isEdge() ? "Edge" : (isChromium() ? "Chrome" : "your browser");
+
+    return (
+      `<strong>Install help (${browser}):</strong><br>` +
+      `1) Open the app page: <a class="btn btn--ghost" href="${ENDPOINTS.appUrl}">Open the App</a><br>` +
+      `2) Refresh once (Ctrl+Shift+R) and click any UI element.<br>` +
+      `3) Use the address bar install icon, or menu (⋯) → <strong>Install app</strong> / <strong>Apps</strong> → <strong>Install this site as an app</strong>.<br>` +
+      `Note: browsers may not fire an install prompt on demand (that is normal).`
+    );
+  }
+
+  function setInstallButtonMode(mode) {
+    if (!btnInstall) return;
+
+    // Modes:
+    // - "prompt": we have a deferredPrompt and can prompt
+    // - "help": no prompt; button opens help instructions
+    // - "installed": already installed
+    if (mode === "installed") {
+      btnInstall.disabled = true;
+      btnInstall.textContent = "Installed";
+      return;
+    }
+    if (mode === "prompt") {
+      btnInstall.disabled = false;
+      btnInstall.textContent = "Install App";
+      return;
+    }
+    // help mode
+    btnInstall.disabled = false;               // make it useful
+    btnInstall.textContent = "How to Install"; // truthful
+  }
+
+  function listenForBroadcast() {
+    try {
+      const bc = new BroadcastChannel(BC_NAME);
+      bc.onmessage = (ev) => {
+        const data = ev && ev.data ? ev.data : {};
+        if (data && (data.type === "bip" || data.type === "installed")) {
+          runDiagnostics().catch(() => {});
+        }
+      };
+    } catch (_) {}
+  }
+
+  async function ensureSWRegistered() {
+    const out = {
+      supported: ("serviceWorker" in navigator),
+      registerAttempted: false,
+      registerOk: false,
+      readyOk: false,
+      controller: !!(navigator.serviceWorker && navigator.serviceWorker.controller),
+      scope: null,
+      error: null
+    };
+
+    if (!out.supported) return out;
 
     try {
-      const reg = await navigator.serviceWorker.register(SW_URL, {
-        scope: APP_SCOPE,
-        updateViaCache: "none",
-      });
+      out.registerAttempted = true;
+      const reg = await navigator.serviceWorker.register(ENDPOINTS.swUrl, { scope: ENDPOINTS.scope });
+      out.registerOk = true;
+      out.scope = reg && reg.scope ? reg.scope : null;
 
-      // If an update is waiting, request immediate activation (requires SW message handler)
-      if (reg.waiting) {
-        try { reg.waiting.postMessage({ type: "SKIP_WAITING" }); } catch {}
-      }
+      await navigator.serviceWorker.ready;
+      out.readyOk = true;
 
-      reg.addEventListener("updatefound", () => {
-        const nw = reg.installing;
-        if (!nw) return;
-        nw.addEventListener("statechange", () => {
-          if (nw.state === "installed" && reg.waiting) {
-            try { reg.waiting.postMessage({ type: "SKIP_WAITING" }); } catch {}
-          }
-        });
-      });
-
-      try { await reg.update(); } catch {}
-
-      return { ok: true, reg };
+      out.controller = !!navigator.serviceWorker.controller;
+      return out;
     } catch (e) {
-      return { ok: false, error: String(e?.message || e) };
+      out.error = String(e && e.message ? e.message : e);
+      return out;
     }
   }
 
-  // Capture install prompt (Chromium).
+  async function getSWState() {
+    const out = {
+      ok: false,
+      scope: null,
+      active: false,
+      waiting: false,
+      installing: false,
+      controller: !!(navigator.serviceWorker && navigator.serviceWorker.controller)
+    };
+
+    if (!("serviceWorker" in navigator)) return out;
+
+    try {
+      const reg = await navigator.serviceWorker.getRegistration(ENDPOINTS.scope);
+      if (!reg) return out;
+
+      out.ok = true;
+      out.scope = reg.scope || null;
+      out.active = !!reg.active;
+      out.waiting = !!reg.waiting;
+      out.installing = !!reg.installing;
+      out.controller = !!navigator.serviceWorker.controller;
+      return out;
+    } catch (_) {
+      return out;
+    }
+  }
+
+  // Capture install prompt event (only when browser decides eligible)
   window.addEventListener("beforeinstallprompt", (e) => {
-    bipFired = true;
-    e.preventDefault();
+    try { e.preventDefault(); } catch (_) {}
     deferredPrompt = e;
-    setInstallEnabled(true);
-    setStatus("Install is available. Click <strong>Install App</strong>.", "ok");
+
+    const hints = platformHints();
+    hints.beforeinstallpromptFired = true;
+
+    setInstallButtonMode("prompt");
+    setStatus("Install is available on this page. Click <strong>Install App</strong>.");
+
+    // Hint other tabs (cannot pass the prompt itself)
+    try {
+      const bc = new BroadcastChannel(BC_NAME);
+      bc.postMessage({ type: "bip", ts: Date.now() });
+      bc.close();
+    } catch (_) {}
   });
 
   window.addEventListener("appinstalled", () => {
     deferredPrompt = null;
-    setInstallEnabled(false);
-    setStatus("App installed successfully. You can now open it from your home screen/app list.", "ok");
+    setInstallButtonMode("installed");
+    setStatus("Installed successfully.");
+
+    try {
+      const bc = new BroadcastChannel(BC_NAME);
+      bc.postMessage({ type: "installed", ts: Date.now() });
+      bc.close();
+    } catch (_) {}
   });
 
-  const runDiagnostics = async () => {
+  async function runDiagnostics() {
+    const hints = platformHints();
+
+    const installedRelated = await getInstalledRelatedAppsSafe();
+
+    const swEnsure = await ensureSWRegistered();
+    const reach = {
+      manifest: await headOk(ENDPOINTS.manifestUrl),
+      serviceWorker: await headOk(ENDPOINTS.swUrl)
+    };
+    const sw = await getSWState();
+
+    let manifestLink = null;
+    try { manifestLink = document.querySelector('link[rel="manifest"]'); } catch (_) {}
+
     const diag = {
-      ts: new Date().toISOString(),
-      location: (() => { try { return { href: location.href, pathname: location.pathname }; } catch { return {}; } })(),
-      ua: uaRaw,
-      platformHints: {
-        isIOS,
-        isAndroid,
-        isChromium,
-        isOpera,
-        isEdge,
-        isStandaloneIOS,
-        standaloneDisplayMode: isInstalledByDisplayMode(),
-        controller: !!(navigator.serviceWorker && navigator.serviceWorker.controller),
-        beforeinstallpromptFired: bipFired
-      },
+      ts: nowIso(),
+      location: { href: location.href, pathname: location.pathname },
+      ua: safeUA(),
+      platformHints: hints,
       supports: {
-        serviceWorker: "serviceWorker" in navigator,
-        fetch: "fetch" in window,
-        beforeinstallpromptProperty: ("onbeforeinstallprompt" in window) // informational only
+        serviceWorker: ("serviceWorker" in navigator),
+        fetch: ("fetch" in window),
+        broadcastChannel: ("BroadcastChannel" in window),
+        clipboard: !!(navigator.clipboard && navigator.clipboard.writeText),
+        getInstalledRelatedApps: !!navigator.getInstalledRelatedApps
       },
       endpoints: {
-        app: APP_URL,
-        manifest: MANIFEST_URL,
-        serviceWorker: SW_URL,
-        scope: APP_SCOPE,
-        installPage: INSTALL_PAGE
+        app: ENDPOINTS.appUrl,
+        manifest: ENDPOINTS.manifestUrl,
+        serviceWorker: ENDPOINTS.swUrl,
+        scope: ENDPOINTS.scope,
+        installPage: ENDPOINTS.installPage
       },
-      reachability: {},
-      serviceWorker: {}
+      document: {
+        manifestLinkPresent: !!manifestLink,
+        manifestHref: manifestLink ? (manifestLink.getAttribute("href") || "") : ""
+      },
+      reachability: reach,
+      serviceWorkerEnsure: swEnsure,
+      serviceWorker: sw,
+      installedRelatedApps: installedRelated,
+      install: {
+        hasDeferredPrompt: !!deferredPrompt
+      },
+      errors: []
     };
 
-    diag.reachability.manifest = await fetchHead(MANIFEST_URL);
-    diag.reachability.serviceWorker = await fetchHead(SW_URL);
+    if (!window.isSecureContext) diag.errors.push("Not a secure context. PWA install requires HTTPS (or localhost).");
+    if (!reach.manifest.ok) diag.errors.push("Manifest is not reachable (HEAD failed).");
+    if (!reach.serviceWorker.ok) diag.errors.push("Service worker script is not reachable (HEAD failed).");
+    if (!diag.document.manifestLinkPresent) diag.errors.push("No <link rel=\"manifest\"> found on this page.");
 
-    const sw = await ensureServiceWorker();
+    setDiag(diag);
 
-    if (!sw.ok) {
-      diag.serviceWorker = { ok: false, error: sw.error || sw.note || "unknown" };
-    } else {
-      const reg = sw.reg;
-      diag.serviceWorker = {
-        ok: true,
-        scope: reg.scope || null,
-        active: !!reg.active,
-        waiting: !!reg.waiting,
-        installing: !!reg.installing,
-        controller: !!(navigator.serviceWorker && navigator.serviceWorker.controller)
-      };
+    // Truthful UI decisions
+    if (hints.isIOS) {
+      setInstallButtonMode("help");
+      setStatus("iOS: install from Safari → Share → <strong>Add to Home Screen</strong>.");
+      return diag;
     }
 
-    lastDiag = diag;
+    // Installed detection (multiple signals)
+    const alreadyInstalled =
+      hints.standaloneDisplayMode ||
+      (window.navigator && window.navigator.standalone === true) ||
+      (Array.isArray(installedRelated) && installedRelated.length > 0);
+
+    if (alreadyInstalled) {
+      setInstallButtonMode("installed");
+      setStatus("This app is already installed (standalone mode detected).");
+      return diag;
+    }
+
+    // If prompt exists here, we can actually prompt
+    if (deferredPrompt) {
+      setInstallButtonMode("prompt");
+      setStatus("Install is available. Click <strong>Install App</strong>.");
+      return diag;
+    }
+
+    // Ensure SW control guidance (common first-visit behavior)
+    if ("serviceWorker" in navigator && !navigator.serviceWorker.controller) {
+      setInstallButtonMode("help");
+      setStatus("Service worker registered, but it is not controlling this page yet. Reload once, then run <strong>Install Check</strong> again.");
+      return diag;
+    }
+
+    // Browser gating: button becomes a helpful “How to Install”
+    setInstallButtonMode("help");
+    setStatus(installHelpHtml());
     return diag;
-  };
-
-  const showDiagnostics = async () => {
-    if (!diagBox) return;
-
-    diagBox.style.display = "block";
-    diagBox.textContent = "Running diagnostics…";
-
-    const diag = await runDiagnostics();
-
-    const manifestOk = !!diag.reachability?.manifest?.ok;
-    const swOk = !!diag.reachability?.serviceWorker?.ok;
-    const controllerOk = !!diag.serviceWorker?.controller;
-
-    // User-facing logic
-    if (!pathOk) {
-      setStatus(
-        "This install page may be served from an unexpected route. Confirm the URL is <strong>/igbo-calendar/install/</strong>.",
-        "danger"
-      );
-      setInstallEnabled(false);
-    } else if (!manifestOk || !swOk) {
-      setStatus(
-        "Install prerequisites failed: manifest or service worker is not reachable (must be 200). See diagnostics.",
-        "danger"
-      );
-      setInstallEnabled(false);
-    } else if (isInstalledByDisplayMode() || isStandaloneIOS) {
-      setStatus("This app appears to be installed already. Open it from your home screen/app list.", "ok");
-      setInstallEnabled(false);
-    } else if (isIOS && !isStandaloneIOS) {
-      setStatus("On iPhone/iPad, install via Safari: <strong>Share → Add to Home Screen</strong>.", "ok");
-      setInstallEnabled(false);
-    } else if (deferredPrompt) {
-      setStatus("Install is available. Click <strong>Install App</strong>.", "ok");
-      setInstallEnabled(true);
-    } else if (isChromium && !controllerOk) {
-      // The most common remaining blocker once SW is active
-      setStatus(
-        "Service worker is active but not controlling this page yet. Open <strong>/igbo-calendar/</strong>, refresh once, then return here and refresh.",
-        "danger"
-      );
-      setInstallEnabled(false);
-    } else if (isOpera && !warnedOpera) {
-      warnedOpera = true;
-      setStatus(
-        "Opera sometimes hides the install prompt. Use the browser menu or address-bar install icon. If you want the visible button, test once in Chrome/Edge.",
-        "ok"
-      );
-      setInstallEnabled(false);
-    } else if (isChromium) {
-      // Controlled but no event fired yet
-      setStatus(
-        "Install prompt has not fired on this page load. Open <strong>/igbo-calendar/</strong>, refresh, then return here. Also check the browser menu for <strong>Install app</strong>.",
-        "ok"
-      );
-      setInstallEnabled(false);
-    } else {
-      setStatus(
-        "This browser may not expose a direct install prompt. Try Chrome/Edge for desktop installs or Safari on iOS.",
-        "ok"
-      );
-      setInstallEnabled(false);
-    }
-
-    diagBox.textContent = safeJson(diag);
-  };
-
-  const installNow = async () => {
-    if (isInstalledByDisplayMode() || isStandaloneIOS) {
-      setStatus("This app appears to be installed already.", "ok");
-      setInstallEnabled(false);
-      return;
-    }
-
-    if (!deferredPrompt) {
-      if (isIOS) {
-        setStatus("iPhone/iPad: use <strong>Share → Add to Home Screen</strong> in Safari.", "ok");
-      } else if (isOpera) {
-        setStatus(
-          "Opera may not expose the install prompt event. Use the browser menu/address-bar install option, or test in Chrome/Edge.",
-          "danger"
-        );
-      } else {
-        setStatus(
-          "Install prompt is not available yet. Open <strong>/igbo-calendar/</strong>, refresh, then come back here and refresh.",
-          "danger"
-        );
-      }
-      return;
-    }
-
-    try {
-      setInstallEnabled(false);
-      setStatus("Opening install prompt…", "ok");
-
-      deferredPrompt.prompt();
-      const choice = await deferredPrompt.userChoice;
-
-      if (choice?.outcome === "accepted") {
-        setStatus("Install accepted. Completing setup…", "ok");
-      } else {
-        setStatus("Install dismissed. You can try again later.", "danger");
-        setInstallEnabled(true);
-      }
-    } catch (e) {
-      setStatus("Install failed to start. See diagnostics and try again.", "danger");
-      setInstallEnabled(true);
-    } finally {
-      deferredPrompt = null;
-    }
-  };
-
-  const copyDebug = async () => {
-    const text = lastDiag ? safeJson(lastDiag) : "No diagnostics captured yet.";
-    try {
-      await navigator.clipboard.writeText(text);
-      setStatus("Debug info copied.", "ok");
-    } catch {
-      try { window.prompt("Copy debug info:", text); } catch {}
-      setStatus("Copy may be blocked; manual copy prompt attempted.", "danger");
-    }
-  };
-
-  if (btnInstall) btnInstall.addEventListener("click", installNow);
-  if (btnCheck) btnCheck.addEventListener("click", showDiagnostics);
-  if (btnCopyDebug) btnCopyDebug.addEventListener("click", copyDebug);
-
-  setInstallEnabled(false);
-
-  // Initial message (before the diagnostics run)
-  if (isInstalledByDisplayMode() || isStandaloneIOS) {
-    setStatus("This app appears to be installed already.", "ok");
-  } else if (isIOS) {
-    setStatus("iPhone/iPad: install via Safari → <strong>Share → Add to Home Screen</strong>.", "ok");
-  } else {
-    setStatus("Checking install support…", "ok");
   }
 
-  window.addEventListener("load", () => {
-    // Reset the one-session reload guard after the page has fully loaded once
-    // (so the next real session can reload again if needed).
-    try { sessionStorage.removeItem("mk_sw_reloaded"); } catch {}
-    showDiagnostics().catch(() => {});
+  async function doInstallOrHelp() {
+    if (deferredPrompt) {
+      try {
+        setStatus("Showing install prompt…");
+        await deferredPrompt.prompt();
+
+        let choice = null;
+        try { choice = await deferredPrompt.userChoice; } catch (_) {}
+
+        deferredPrompt = null;
+
+        if (choice && choice.outcome) {
+          if (choice.outcome === "accepted") {
+            setStatus("Install accepted. If nothing happens, check your browser’s install UI/menu.");
+          } else {
+            setStatus("Install dismissed. You can try again later (browser may delay the prompt).");
+          }
+        } else {
+          setStatus("Install prompt requested. If nothing happens, use the browser menu → Install app.");
+        }
+      } catch (_) {
+        deferredPrompt = null;
+        setInstallButtonMode("help");
+        setStatus(installHelpHtml());
+      }
+      return;
+    }
+
+    // No prompt → help mode (truthful)
+    setInstallButtonMode("help");
+    setStatus(installHelpHtml());
+
+    // Optional: open the app page in a new tab for convenience
+    try { window.open(ENDPOINTS.appUrl, "_blank", "noopener"); } catch (_) {}
+  }
+
+  async function copyDebug() {
+    const txt = lastDiag ? JSON.stringify(lastDiag, null, 2) : "No diagnostics captured yet.";
+    try {
+      await navigator.clipboard.writeText(txt);
+      setStatus("Debug info copied.");
+      return;
+    } catch (_) {}
+
+    try {
+      const ta = document.createElement("textarea");
+      ta.value = txt;
+      ta.style.position = "fixed";
+      ta.style.left = "-9999px";
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+      setStatus("Debug info copied.");
+    } catch (_) {
+      setStatus("Could not copy debug in this browser. Copy from the Diagnostics box manually.");
+    }
+  }
+
+  // Wire buttons
+  if (btnInstall) btnInstall.addEventListener("click", () => { doInstallOrHelp().catch(() => {}); });
+  if (btnCheck) btnCheck.addEventListener("click", () => { runDiagnostics().catch(() => {}); });
+  if (btnCopy) btnCopy.addEventListener("click", () => { copyDebug().catch(() => {}); });
+
+  // Init
+  listenForBroadcast();
+
+  // Default state: be useful, not greyed out.
+  setInstallButtonMode("help");
+  runDiagnostics().catch(() => {
+    setStatus("Diagnostics failed to run.");
+    setDiag({ ok: false, error: "Diagnostics exception", ts: nowIso() });
   });
 })();

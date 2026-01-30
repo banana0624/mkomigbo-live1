@@ -1,0 +1,13 @@
+Options -Indexes -MultiViews
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
+
+# If a real file/dir exists, serve it
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Route /igbo-calendar/install/ to index.php
+RewriteRule ^$ index.php [L,QSA]
+</IfModule>

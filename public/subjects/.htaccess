@@ -1,23 +1,56 @@
-# /public/subjects/.htaccess
-Options -MultiViews
+Options -Indexes -MultiViews
+
+<IfModule mod_rewrite.c>
 RewriteEngine On
 
+# =========================================================
+# 1) 301 Redirect legacy controller URLs -> canonical pretty
+#    Robust: capture into ENV vars (LiteSpeed-safe)
+# =========================================================
+
+# ---- media.php ----
+RewriteCond %{THE_REQUEST} \s/+subjects/media\.php\? [NC]
+
+RewriteCond %{QUERY_STRING} (^|&)subject=([^&]+) [NC]
+RewriteRule ^ - [E=MK_SUBJECT:%2]
+RewriteCond %{QUERY_STRING} (^|&)page=([^&]+) [NC]
+RewriteRule ^ - [E=MK_PAGE:%2]
+RewriteCond %{QUERY_STRING} (^|&)file=([^&]+) [NC]
+RewriteRule ^ - [E=MK_FILE:%2]
+
+# dl=1 -> keep it
+RewriteCond %{QUERY_STRING} (^|&)dl=1(&|$) [NC]
+RewriteRule ^media\.php$ /subjects/%{ENV:MK_SUBJECT}/%{ENV:MK_PAGE}/media/%{ENV:MK_FILE}?dl=1 [R=301,L,NE]
+
+# no dl=1
+RewriteRule ^media\.php$ /subjects/%{ENV:MK_SUBJECT}/%{ENV:MK_PAGE}/media/%{ENV:MK_FILE} [R=301,L,NE]
+
+
+# ---- download.php ----
+RewriteCond %{THE_REQUEST} \s/+subjects/download\.php\? [NC]
+
+RewriteCond %{QUERY_STRING} (^|&)subject=([^&]+) [NC]
+RewriteRule ^ - [E=MK_SUBJECT:%2]
+RewriteCond %{QUERY_STRING} (^|&)page=([^&]+) [NC]
+RewriteRule ^ - [E=MK_PAGE:%2]
+RewriteCond %{QUERY_STRING} (^|&)file=([^&]+) [NC]
+RewriteRule ^ - [E=MK_FILE:%2]
+
+RewriteRule ^download\.php$ /subjects/%{ENV:MK_SUBJECT}/%{ENV:MK_PAGE}/download/%{ENV:MK_FILE}? [R=301,L,NE]
+
+
 # ---------------------------------------------------------
-# 1) Serve direct files/dirs
+# 0) Pass through real files/dirs
 # ---------------------------------------------------------
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
-# ---------------------------------------------------------
-# 2) Pretty routes within /public/subjects/
-# ---------------------------------------------------------
 
-# /public/subjects/
-RewriteRule ^$ index.php [L,QSA]
+# =========================================================
+# 2) Internal rewrite canonical pretty URLs -> central logic
+# =========================================================
+RewriteRule ^([^/]+)/([^/]+)/media/(.+)$ media.php?subject=$1&page=$2&file=$3 [L,QSA,NC]
+RewriteRule ^([^/]+)/([^/]+)/download/(.+)$ download.php?subject=$1&page=$2&file=$3 [L,QSA,NC]
 
-# /public/subjects/{subject-slug}/
-RewriteRule ^([a-z0-9_-]+)/?$ subject.php?slug=$1 [L,QSA]
-
-# /public/subjects/{subject-slug}/{page-slug}/
-RewriteRule ^([a-z0-9_-]+)/([a-z0-9_-]+)/?$ page.php?subject=$1&slug=$2 [L,QSA]
+</IfModule>

@@ -1,101 +1,85 @@
-/* /public/lib/css/subjects-grid.css
-   Restores subject cards grid + icon sizing for:
-   - /subjects/
-   - /subjects/{subject}/
+/* =========================================================
+   /public/lib/css/subjects-grid.css
+   Subjects grid + card system (single source of truth)
+   - styles legacy (.grid/.card/.logo) AND mk (.mk-*)
+   - avoids redefining ui.css tokens and avoids redefining body/hero
+   ========================================================= */
 
-   Works alongside ui.css and subjects-public.css
-*/
-
-:root{
-  --ink:#111;
-  --muted:#6c757d;
-  --line:rgba(0,0,0,.10);
-  --line-strong:rgba(0,0,0,.22);
-  --card:#fff;
-  --shadow:0 12px 28px rgba(0,0,0,.05);
-  --shadow-hover:0 18px 36px rgba(0,0,0,.08);
-  --radius-xl:20px;
-  --radius-lg:18px;
-  --radius-md:16px;
-}
-
-/* Page background polish */
-body{ background: rgba(0,0,0,.015); color:var(--ink); }
-.muted{ color:var(--muted); }
-
-/* Hero (optional: used if your template has .hero) */
-.hero{
-  border:1px solid var(--line);
-  border-radius: var(--radius-xl);
-  background: linear-gradient(180deg, rgba(0,0,0,0.02), #fff);
-  box-shadow: 0 20px 55px rgba(0,0,0,.10);
-  overflow:hidden;
-  position:relative;
-}
-.hero-bar{ height: 8px; background:#111; opacity:.88; }
-.hero-inner{ padding: 22px 18px 18px; }
-.hero h1{
-  margin:0 0 10px;
-  font-size: clamp(1.75rem, 3.2vw, 2.75rem);
-  line-height:1.06;
-  letter-spacing:-0.02em;
-}
-.hero p{ margin:0; max-width: 88ch; line-height:1.75; }
-
-/* SUBJECTS GRID
-   Use either:
-   - .subjects-grid (recommended)
-   - .grid (fallback if your HTML uses .grid already)
-*/
+/* ---------------------------------------------------------
+   GRID: legacy + mk
+--------------------------------------------------------- */
 .subjects-grid,
-.grid{
+.grid,
+.mk-grid.mk-grid--subjects{
   margin-top: 12px;
   display:grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr)); /* desktop: 4 cols */
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 14px;
 }
-
-/* Responsive */
 @media (max-width: 1100px){
-  .subjects-grid, .grid{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .subjects-grid, .grid, .mk-grid.mk-grid--subjects{
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 @media (max-width: 780px){
-  .subjects-grid, .grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .subjects-grid, .grid, .mk-grid.mk-grid--subjects{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 @media (max-width: 440px){
-  .subjects-grid, .grid{ grid-template-columns: 1fr; }
+  .subjects-grid, .grid, .mk-grid.mk-grid--subjects{
+    grid-template-columns: 1fr;
+  }
 }
 
-/* CARD */
+/* ---------------------------------------------------------
+   CARD: DO NOT override ui.css .card baseline globally.
+   Instead, scope to subject contexts by using these classes:
+   - .subject-card / .mk-subject-card / .card used within subjects pages
+--------------------------------------------------------- */
 .subject-card,
-.card{
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-  background: var(--card);
+.mk-card.mk-subject-card,
+.grid .card{
+  border: 1px solid rgba(0,0,0,.10);
+  border-radius: 18px;
+  background: var(--card, #fff);
   overflow:hidden;
-  box-shadow: var(--shadow);
+  box-shadow: 0 12px 28px rgba(0,0,0,.05);
   transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
   display:flex;
   flex-direction:column;
   min-height: 170px;
 }
+
 .subject-card:hover,
-.card:hover{
+.mk-card.mk-subject-card:hover,
+.grid .card:hover{
   transform: translateY(-1px);
-  border-color: var(--line-strong);
-  box-shadow: var(--shadow-hover);
+  border-color: rgba(0,0,0,.22);
+  box-shadow: 0 18px 36px rgba(0,0,0,.08);
 }
 
-/* Color bar (set --accent per card/subject) */
+/* Color bar */
 .subject-card__bar,
-.card-bar{
+.mk-card__bar,
+.grid .card-bar{
   height: 7px;
   background: var(--accent, #111);
 }
 
+/* Full-card links */
+.stretch,
+.mk-card__link{
+  text-decoration:none;
+  color:inherit;
+  display:block;
+  height:100%;
+}
+
 /* Body */
 .subject-card__body,
-.card-body{
+.mk-card__body,
+.grid .card-body{
   padding: 14px;
   display:flex;
   flex-direction:column;
@@ -103,21 +87,23 @@ body{ background: rgba(0,0,0,.015); color:var(--ink); }
   flex:1;
 }
 
-/* Top row: icon + text */
+/* Top row */
 .subject-card__top,
-.top{
+.mk-subject-card__top,
+.grid .top{
   display:flex;
   gap:12px;
   align-items:flex-start;
 }
 
-/* ICON SIZE FIX (your key requirement) */
+/* Logo/icon sizing (single definitive rule) */
 .subject-card__icon,
-.logo{
+.mk-subject-card__logo,
+.grid .logo{
   width: 56px;
   height: 56px;
   border-radius: 16px;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(0,0,0,.10);
   background: rgba(0,0,0,0.02);
   display:flex;
   align-items:center;
@@ -125,9 +111,12 @@ body{ background: rgba(0,0,0,.015); color:var(--ink); }
   overflow:hidden;
   flex: 0 0 auto;
   position:relative;
+  font-weight:900;
+  letter-spacing:-0.02em;
 }
 .subject-card__icon::after,
-.logo::after{
+.mk-subject-card__logo::after,
+.grid .logo::after{
   content:"";
   position:absolute;
   inset:0;
@@ -137,30 +126,42 @@ body{ background: rgba(0,0,0,.015); color:var(--ink); }
   opacity:.35;
 }
 .subject-card__icon img,
-.logo img{
+.mk-subject-card__logo img,
+.grid .logo img{
   width:100%;
   height:100%;
-  object-fit: cover; /* keeps icons nicely filled */
+  object-fit: cover;
   display:block;
 }
 
-/* Title/desc */
+/* Titles / text */
 .subject-card h3,
-.card h3{
+.mk-subject-card__title,
+.grid .card h3{
   margin: 2px 0 6px;
   font-size: 1.1rem;
   line-height:1.2;
   letter-spacing:-0.01em;
 }
 .subject-card p,
-.card p{
+.mk-subject-card__desc,
+.grid .card p{
   margin: 0;
   line-height: 1.6;
-  color: var(--ink);
 }
 
-/* Pills/meta */
-.pill{
+/* Slug line */
+.subject-card-slug,
+.mk-subject-card__slug,
+.grid .subject-slug{
+  margin-top: 2px;
+  font-size: .95rem;
+  color: var(--muted, #6b7280);
+}
+
+/* Pills / meta */
+.pill,
+.mk-pill{
   display:inline-block;
   padding: 4px 10px;
   border: 1px solid rgba(0,0,0,0.12);
@@ -169,17 +170,10 @@ body{ background: rgba(0,0,0,.015); color:var(--ink); }
   font-size: .85rem;
   color:#495057;
 }
-.meta{
+.meta,
+.mk-card__meta{
   margin-top:auto;
   display:flex;
   gap:10px;
   flex-wrap:wrap;
-}
-
-/* Make full card clickable if you use .stretch link */
-.stretch{
-  text-decoration:none;
-  color:inherit;
-  display:block;
-  height:100%;
 }

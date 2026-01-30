@@ -1,0 +1,180 @@
+/* =========================================================
+   /public/igbo-calendar/install/install.css
+   Igbo Calendar Install page – resilient, always-visible actions UI
+   ---------------------------------------------------------
+   Goals:
+   - Buttons never "disappear" due to inherited/overridden CSS
+   - Clean, consistent spacing and readable debug blocks
+   - Works even if global tokens are missing (fallbacks included)
+   ========================================================= */
+
+/* --------- Local token fallbacks (safe even if global ui.css missing) --------- */
+:root {
+  --mk-text: var(--text, #111827);
+  --mk-muted: var(--muted, #6b7280);
+  --mk-bg: var(--bg, #ffffff);
+  --mk-card: var(--card, #ffffff);
+  --mk-border: var(--border, rgba(0, 0, 0, 0.12));
+  --mk-primary: var(--primary, #111827);
+  --mk-primary-contrast: var(--primary-contrast, #ffffff);
+  --mk-radius: var(--radius, 12px);
+  --mk-shadow: var(--shadow, 0 10px 30px rgba(0, 0, 0, 0.08));
+}
+
+/* If your install page is inside a shared shell, scope lightly to avoid collisions */
+.igbo-install,
+.mk-install-page,
+body {
+  color: var(--mk-text);
+}
+
+/* --------- Install actions container: FORCE visible and layout-stable --------- */
+.mk-install-actions {
+  /* If any stylesheet previously hid it, this overrides safely */
+  display: flex !important;
+
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+
+  margin: 14px 0;
+  padding: 0;
+
+  /* Prevent "invisible" due to opacity/visibility */
+  opacity: 1 !important;
+  visibility: visible !important;
+
+  /* Prevent clipping in odd parent containers */
+  overflow: visible;
+}
+
+/* --------- Buttons: resilient base (works even if global .btn exists) --------- */
+.mk-install-actions .btn,
+.mk-install-actions button.btn,
+#btnInstall,
+#btnCheck,
+#btnCopyDebug {
+  appearance: none;
+  -webkit-appearance: none;
+
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 40px;
+  padding: 10px 14px;
+
+  font: inherit;
+  font-weight: 600;
+  line-height: 1.1;
+  text-decoration: none;
+  white-space: nowrap;
+
+  border-radius: calc(var(--mk-radius) - 4px);
+  border: 1px solid var(--mk-border);
+
+  color: var(--mk-primary-contrast);
+  background: var(--mk-primary);
+
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+
+  /* Helps prevent "collapsed" buttons */
+  max-width: 100%;
+}
+
+/* Hover/focus states */
+.mk-install-actions .btn:hover,
+.mk-install-actions button.btn:hover {
+  filter: brightness(1.03);
+}
+
+.mk-install-actions .btn:focus,
+.mk-install-actions button.btn:focus,
+.mk-install-actions .btn:focus-visible,
+.mk-install-actions button.btn:focus-visible {
+  outline: 2px solid rgba(59, 130, 246, 0.55);
+  outline-offset: 2px;
+}
+
+/* Disabled: clearly disabled, but still visible */
+.mk-install-actions .btn:disabled,
+.mk-install-actions button.btn:disabled,
+#btnInstall:disabled {
+  opacity: 0.55 !important;
+  cursor: not-allowed;
+  filter: none;
+}
+
+/* --------- Ghost button variant (matches your “btn--ghost” usage) --------- */
+.mk-install-actions .btn--ghost,
+.mk-install-actions button.btn--ghost,
+#btnCheck.btn--ghost,
+#btnCopyDebug.btn--ghost {
+  background: transparent;
+  color: var(--mk-primary);
+  border-color: var(--mk-border);
+}
+
+.mk-install-actions .btn--ghost:hover,
+.mk-install-actions button.btn--ghost:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+/* --------- Make buttons stack nicely on narrow screens --------- */
+@media (max-width: 520px) {
+  .mk-install-actions {
+    gap: 8px;
+  }
+
+  .mk-install-actions .btn,
+  .mk-install-actions button.btn,
+  #btnInstall,
+  #btnCheck,
+  #btnCopyDebug {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* --------- Debug block styling (common install pages show JSON or <pre>) --------- */
+.mk-install-debug,
+#mkInstallDebug,
+pre.mk-install-debug,
+pre#mkInstallDebug {
+  display: block;
+  margin: 12px 0 0 0;
+  padding: 12px;
+
+  background: var(--mk-card);
+  color: var(--mk-text);
+
+  border: 1px solid var(--mk-border);
+  border-radius: var(--mk-radius);
+  box-shadow: none;
+
+  overflow: auto;
+  max-width: 100%;
+
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 12.5px;
+  line-height: 1.45;
+
+  /* Avoid inherited rules that hide pre blocks */
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Optional: small muted helper text on the page */
+.mk-install-note,
+.mk-install-hint {
+  color: var(--mk-muted);
+  font-size: 0.95rem;
+}
+
+/* --------- Defensive: if any global CSS sets buttons to display:none in weird contexts --------- */
+.mk-install-actions [hidden] {
+  display: none !important;
+}

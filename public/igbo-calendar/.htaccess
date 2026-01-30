@@ -1,8 +1,38 @@
 Options -Indexes -MultiViews
+DirectoryIndex index.php
+
 <IfModule mod_rewrite.c>
 RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} -f [OR]
+
+# Always normalize to trailing slash for directories (avoid redirect loops)
 RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^(.+[^/])$ $1/ [R=301,L]
+
+# Direct routes
+RewriteRule ^install/?$ install/index.php [L,QSA]
+RewriteRule ^download/?$ download.php [L,QSA]
+
+# If file exists, serve it
+RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule ^ - [L]
+
+# Default: calendar app
 RewriteRule ^$ index.php [L,QSA]
+</IfModule>
+
+# Requested snippet (no-cache SW + manifest)
+<IfModule mod_headers.c>
+  <Files "service-worker.js">
+    Header always set Content-Type "application/javascript; charset=utf-8"
+    Header always set Cache-Control "no-cache, no-store, must-revalidate"
+    Header always set Pragma "no-cache"
+    Header always set Expires "0"
+  </Files>
+
+  <Files "manifest.json">
+    Header always set Content-Type "application/manifest+json; charset=utf-8"
+    Header always set Cache-Control "no-cache, no-store, must-revalidate"
+    Header always set Pragma "no-cache"
+    Header always set Expires "0"
+  </Files>
 </IfModule>

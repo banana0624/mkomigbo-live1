@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 /**
  * /public/staff/contributors/show.php
- * Staff: Show contributor (aligned to real schema)
+ * Staff: Show contributor (schema-tolerant)
  *
  * - Uses contributors.status (active/draft)
  * - Renders bio_html (sanitized) only
@@ -13,6 +13,11 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../_init.php';
 
+if (function_exists('require_staff_login')) { require_staff_login(); }
+
+/* ---------------------------------------------------------
+   Helpers (fallbacks)
+--------------------------------------------------------- */
 if (!function_exists('h')) {
   function h(string $value): string { return htmlspecialchars($value, ENT_QUOTES, 'UTF-8'); }
 }
@@ -46,6 +51,13 @@ if (!function_exists('pf__safe_return_url')) {
     return $raw;
   }
 }
+if (!function_exists('pf__table_exists')) {
+  function pf__table_exists(PDO $pdo, string $table): bool {
+    $st = $pdo->prepare("SELECT 1 FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=? LIMIT 1");
+    $st->execute([$table]);
+    return (bool)$st->fetchColumn();
+  }
+}
 if (!function_exists('pf__column_exists')) {
   function pf__column_exists(PDO $pdo, string $table, string $column): bool {
     static $cache = [];
@@ -61,13 +73,6 @@ if (!function_exists('pf__column_exists')) {
     $st->execute([$table, $column]);
     $cache[$key] = ((int)$st->fetchColumn() > 0);
     return (bool)$cache[$key];
-  }
-}
-if (!function_exists('pf__table_exists')) {
-  function pf__table_exists(PDO $pdo, string $table): bool {
-    $st = $pdo->prepare("SELECT 1 FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=? LIMIT 1");
-    $st->execute([$table]);
-    return (bool)$st->fetchColumn();
   }
 }
 if (!function_exists('pf__u')) {
@@ -94,12 +99,6 @@ if (!function_exists('pf__pill_for_status')) {
     return ['text' => strtoupper($s), 'class' => 'pill pill--muted'];
   }
 }
-
-/**
- * Roles display:
- * - If roles looks like JSON array, show as "A, B, C"
- * - Else show raw string
- */
 if (!function_exists('pf__roles_display')) {
   function pf__roles_display(string $raw): string {
     $raw = trim($raw);
@@ -120,6 +119,9 @@ if (!function_exists('pf__roles_display')) {
   }
 }
 
+/* ---------------------------------------------------------
+   DB
+--------------------------------------------------------- */
 $pdo = function_exists('staff_pdo') ? staff_pdo() : (function_exists('db') ? db() : null);
 if (!$pdo instanceof PDO) {
   http_response_code(500);
@@ -128,31 +130,41 @@ if (!$pdo instanceof PDO) {
   exit;
 }
 
+/* ---------------------------------------------------------
+   Inputs
+--------------------------------------------------------- */
 $id = (int)($_GET['id'] ?? 0);
 $default_return = '/staff/contributors/index.php';
 $return = pf__safe_return_url((string)($_GET['return'] ?? $default_return), $default_return);
-
-if ($id <= 0) redirect_to($return);
+if ($id <= 0) redirect_to(pf__u($return));
 
 $notice = pf__flash_get('notice');
 $error  = pf__flash_get('error');
 
-$contributor = null;
-$warn = '';
+/* Optional msg= support (harmless) */
+$msg = trim((string)($_GET['msg'] ?? ''));
+if ($msg !== '' && $notice === '' && $error === '') {
+  $notice = $msg;
+}
 
 /* ---------------------------------------------------------
    Load contributor (schema-tolerant)
 --------------------------------------------------------- */
+$contributor = null;
+$warn = '';
+
 try {
   if (!pf__table_exists($pdo, 'contributors')) {
     $warn = 'Table "contributors" not found yet.';
   } else {
     $select = ['id'];
+
     $wanted = [
       'display_name','email','roles','status',
       'created_at','updated_at',
       'bio_raw','bio_html',
-      'name','username','slug','avatar_path','bio'
+      'name','username','slug','avatar_path','bio',
+      'is_public','visible'
     ];
 
     foreach ($wanted as $c) {
@@ -173,6 +185,7 @@ try {
   }
 } catch (Throwable $e) {
   $warn = 'Failed to load contributor.';
+  $contributor = null;
 }
 
 /* Name */
@@ -202,18 +215,16 @@ $staff_subnav = [
 
 require_once APP_ROOT . '/private/shared/staff_header.php';
 
+/* URLs */
 $back_url = pf__u($return);
 $edit_url = pf__u('/staff/contributors/edit.php') . '?id=' . rawurlencode((string)$id) . '&return=' . rawurlencode($return);
 $del_url  = pf__u('/staff/contributors/delete.php') . '?id=' . rawurlencode((string)$id) . '&return=' . rawurlencode($return);
 
 /* Status pill */
-$status_val = ($contributor && array_key_exists('status', $contributor)) ? (string)$contributor['status'] : 'active';
+$status_val  = ($contributor && array_key_exists('status', $contributor)) ? (string)$contributor['status'] : 'active';
 $status_pill = pf__pill_for_status($status_val);
 
-/* Bio rendering rule:
-   - Render bio_html (already sanitized) if present
-   - Else show bio_raw or legacy bio as escaped text (never as HTML)
-*/
+/* Bio rendering rule */
 $bio_html = '';
 $bio_text = '';
 if ($contributor) {
@@ -222,20 +233,28 @@ if ($contributor) {
   } else {
     $candidate = '';
     if (isset($contributor['bio_raw']) && trim((string)$contributor['bio_raw']) !== '') $candidate = (string)$contributor['bio_raw'];
-    elseif (isset($contributor['bio']) && trim((string)$contributor['bio']) !== '')   $candidate = (string)$contributor['bio'];
+    elseif (isset($contributor['bio']) && trim((string)$contributor['bio']) !== '')     $candidate = (string)$contributor['bio'];
     $bio_text = $candidate;
   }
 }
 
 $created_at = ($contributor && array_key_exists('created_at', $contributor)) ? (string)$contributor['created_at'] : '';
 $updated_at = ($contributor && array_key_exists('updated_at', $contributor)) ? (string)$contributor['updated_at'] : '';
-
 $roles_display = '';
 if ($contributor && array_key_exists('roles', $contributor) && trim((string)$contributor['roles']) !== '') {
   $roles_display = pf__roles_display((string)$contributor['roles']);
 }
-
 $slug_val = ($contributor && array_key_exists('slug', $contributor)) ? trim((string)$contributor['slug']) : '';
+
+/* Public column (optional) */
+$pub_label = '';
+if ($contributor) {
+  if (array_key_exists('is_public', $contributor)) {
+    $pub_label = ((int)$contributor['is_public'] === 1) ? 'Yes' : 'No';
+  } elseif (array_key_exists('visible', $contributor)) {
+    $pub_label = ((int)$contributor['visible'] === 1) ? 'Yes' : 'No';
+  }
+}
 
 ?>
 <div class="container">
@@ -287,6 +306,13 @@ $slug_val = ($contributor && array_key_exists('slug', $contributor)) ? trim((str
             <div>
               <div class="muted small">Slug</div>
               <div class="mono"><?php echo h($slug_val); ?></div>
+            </div>
+          <?php endif; ?>
+
+          <?php if ($pub_label !== ''): ?>
+            <div>
+              <div class="muted small">Public</div>
+              <div class="mono"><?php echo h($pub_label); ?></div>
             </div>
           <?php endif; ?>
 

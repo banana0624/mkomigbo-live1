@@ -1,33 +1,82 @@
 /* =========================================================
    /public/igbo-calendar/igbo-calendar.css
-   Igbo Calendar — 4-column market grid (premium, centered)
+   Igbo Calendar — module stylesheet (SINGLE SOURCE OF TRUTH)
+   Scoped to .igbo-calendar-app to avoid collisions with ui.css
    ========================================================= */
 
-/* ---------- Layout ---------- */
-.mk-cal{ margin-top: 18px; }
+/* ---------------------------------------------------------
+   Calendar-scoped design tokens
+--------------------------------------------------------- */
+.igbo-calendar-app{
+  --cal-ink: #111;
+  --cal-muted: #6b7280;
+  --cal-line: rgba(0,0,0,.18);
+  --cal-line-strong: rgba(0,0,0,.28);
+  --cal-bg: #fff;
+  --cal-soft: rgba(0,0,0,.03);
 
-.mk-cal__note{
+  --cal-radius: 14px;
+  --cal-shadow: 0 12px 28px rgba(0,0,0,.06);
+
+  --cal-cell-pad-y: 10px;
+  --cal-cell-pad-x: 10px;
+
+  --cal-focus: 0 0 0 4px rgba(13,110,253,.20);
+}
+
+/* ---------------------------------------------------------
+   HARD table stability (covers any calendar tables)
+--------------------------------------------------------- */
+.igbo-calendar-app table,
+.igbo-calendar-app table.table{
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.igbo-calendar-app th,
+.igbo-calendar-app td{
+  text-align: left;
+  padding: 12px;
+  border-bottom: 1px solid var(--border, rgba(0,0,0,.14));
+  vertical-align: top;
+  white-space: nowrap;
+}
+
+.igbo-calendar-app thead th{
+  background: rgba(13,110,253,.08);
+  font-weight: 800;
+}
+
+/* ---------------------------------------------------------
+   Layout wrappers
+--------------------------------------------------------- */
+.igbo-calendar-app .mk-cal{ margin-top: 18px; color: var(--cal-ink); }
+
+.igbo-calendar-app .mk-cal__note{
   margin: 0 auto 12px;
   max-width: 70%;
+  color: var(--cal-muted);
 }
 
 /* Month card */
-.mk-cal-month{
+.igbo-calendar-app .mk-cal-month{
   margin: 16px auto;
   max-width: 70%;
-  border: 1px solid rgba(0,0,0,.20);
-  border-radius: 14px;
-  background: #fff;
+  border: 1px solid var(--cal-line);
+  border-radius: var(--cal-radius);
+  background: var(--cal-bg);
+  box-shadow: var(--cal-shadow);
   overflow: hidden;
 }
 
-.mk-cal-month__head{
+.igbo-calendar-app .mk-cal-month__head{
   padding: 12px 14px;
-  border-bottom: 1px solid rgba(0,0,0,.20);
-  background: rgba(0,0,0,.03);
+  border-bottom: 1px solid var(--cal-line);
+  background: var(--cal-soft);
 }
 
-.mk-cal-month__title{
+.igbo-calendar-app .mk-cal-month__title{
   margin: 0;
   font-weight: 850;
   letter-spacing: -0.01em;
@@ -35,71 +84,108 @@
   font-size: 1.05rem;
 }
 
-.mk-cal-month__meta{ margin-top: 6px; font-size: .92rem; }
+.igbo-calendar-app .mk-cal-month__meta{
+  margin-top: 6px;
+  font-size: .92rem;
+  color: var(--cal-muted);
+}
 
 /* Keep grid contained */
-.mk-cal-table-wrap{ overflow-x: hidden; }
+.igbo-calendar-app .mk-cal-table-wrap{
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
 
-/* ---------- Grid table ---------- */
-.mk-cal-grid{
+/* ---------------------------------------------------------
+   Grid table
+--------------------------------------------------------- */
+.igbo-calendar-app .mk-cal-grid{
   width: 100%;
   border-collapse: collapse;
   table-layout: fixed;
 }
 
-.mk-cal-grid th,
-.mk-cal-grid td{
-  border: 1px solid rgba(0,0,0,.28);
-  padding: 10px 10px;
+.igbo-calendar-app .mk-cal-grid th,
+.igbo-calendar-app .mk-cal-grid td{
+  border: 1px solid var(--cal-line-strong);
+  padding: var(--cal-cell-pad-y) var(--cal-cell-pad-x);
   vertical-align: top;
 }
 
-.mk-cal-grid th{
+.igbo-calendar-app .mk-cal-grid th{
   background: rgba(0,0,0,.05);
   font-weight: 900;
   text-align: left;
+  color: var(--cal-ink);
 }
 
 /* Empty cells */
-.mk-cal-empty{ background: rgba(0,0,0,.03); }
+.igbo-calendar-app .mk-cal-empty{ background: var(--cal-soft); }
 
-/* ---------- Cell content ---------- */
-.mk-cal-cell{
+/* ---------------------------------------------------------
+   Cell content
+--------------------------------------------------------- */
+.igbo-calendar-app .mk-cal-cell{
   display: flex;
   flex-direction: column;
   gap: 8px;
+  min-height: 78px;
 }
 
-.mk-cal-cell__top{
+.igbo-calendar-app .mk-cal-cell__top{
   display: flex;
   justify-content: space-between;
   gap: 10px;
   align-items: baseline;
 }
 
-.mk-cal-cell__day{ font-weight: 900; font-size: .95rem; }
-.mk-cal-cell__date{ font-size: .86rem; }
+.igbo-calendar-app .mk-cal-cell__day{ font-weight: 900; font-size: .95rem; }
+.igbo-calendar-app .mk-cal-cell__date{ font-size: .86rem; color: var(--cal-muted); }
 
-/* Key/value area inside the cell */
-.mk-cal-kv{
+.igbo-calendar-app .mk-cal-kv{
   display: flex;
   flex-direction: column;
   gap: 6px;
   font-size: .90rem;
   line-height: 1.25;
+  color: rgba(17,17,17,.92);
 }
 
-/* ---------- TODAY indicator (single source of truth) ---------- */
-/* NOTE: this class may appear on <td> and/or inner cell */
-.mk-cal-cell--today{
+/* Links/buttons inside cells */
+.igbo-calendar-app .mk-cal-grid a{
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: rgba(0,0,0,.25);
+  text-underline-offset: 2px;
+}
+.igbo-calendar-app .mk-cal-grid a:hover{
+  text-decoration-color: rgba(0,0,0,.55);
+}
+.igbo-calendar-app .mk-cal-grid a:focus-visible{
+  outline: none;
+  box-shadow: var(--cal-focus);
+  border-radius: 10px;
+}
+
+/* ---------------------------------------------------------
+   TODAY indicator
+--------------------------------------------------------- */
+.igbo-calendar-app .mk-cal-grid td.mk-cal-cell--today,
+.igbo-calendar-app .mk-cal-cell.mk-cal-cell--today{
+  background: linear-gradient(180deg, rgba(255,239,179,.55), rgba(255,255,255,1));
+  box-shadow: inset 0 0 0 2px rgba(17,17,17,.18), 0 0 0 4px rgba(255,210,90,.28);
+}
+
+.igbo-calendar-app .mk-cal-grid td.mk-cal-cell--today{
+  border-color: rgba(17,17,17,.28);
+}
+
+.igbo-calendar-app .mk-cal-cell.mk-cal-cell--today{
   border-radius: 12px;
-  outline: 2px solid rgba(17,17,17,.45);
-  outline-offset: -2px;
-  box-shadow: 0 0 0 4px rgba(255, 210, 90, .35);
-  background: linear-gradient(180deg, rgba(255, 239, 179, .55), rgba(255,255,255,1));
+  padding: 8px;
 }
 
-.mk-cal-today-badge{
+.igbo-calendar-app .mk-cal-today-badge{
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -110,13 +196,16 @@
   font-size: .78rem;
   font-weight: 800;
   letter-spacing: .06em;
-  background: rgba(255, 239, 179, .92);
+  background: rgba(255,239,179,.92);
   border: 1px solid rgba(17,17,17,.18);
   color: rgba(17,17,17,.92);
+  white-space: nowrap;
 }
 
-/* ---------- Legend (desktop only) ---------- */
-.mk-cal-legend{
+/* ---------------------------------------------------------
+   Legend (desktop only)
+--------------------------------------------------------- */
+.igbo-calendar-app .mk-cal-legend{
   margin-top: 8px;
   font-size: .88rem;
   opacity: .92;
@@ -124,39 +213,34 @@
   flex-wrap: wrap;
   gap: 8px;
   align-items: center;
+  color: var(--cal-muted);
 }
-
-.mk-cal-legend__dot{ opacity: .55; }
-.mk-cal-legend__item strong{ font-weight: 900; }
+.igbo-calendar-app .mk-cal-legend__dot{ opacity: .55; }
+.igbo-calendar-app .mk-cal-legend__item strong{ font-weight: 900; color: var(--cal-ink); }
 
 @media (max-width: 900px){
-  .mk-cal-legend{ display: none; }
+  .igbo-calendar-app .mk-cal-legend{ display: none; }
 }
 
 /* =========================================================
-   Moon UI (sprite is primary, emoji is fallback)
-   ========================================================= */
+   Moon UI
+========================================================= */
+.igbo-calendar-app .mk-moon{ font-size: 1.02rem; line-height: 1; }
 
-/* Emoji sizing (fallback only) */
-.mk-moon{ font-size: 1.02rem; line-height: 1; }
-
-/* Moon progress bar */
-.mk-moonbar{
+.igbo-calendar-app .mk-moonbar{
   height: 6px;
   border: 1px solid rgba(0,0,0,.18);
   border-radius: 999px;
   background: rgba(0,0,0,.05);
   overflow: hidden;
 }
-
-.mk-moonbar span{
+.igbo-calendar-app .mk-moonbar span{
   display: block;
   height: 100%;
   background: rgba(0,0,0,.75);
 }
 
-/* ---------- Detailed moon sprite (7x4 = 28 frames) ---------- */
-.mk-moon-sprite{
+.igbo-calendar-app .mk-moon-sprite{
   display: inline-block;
   width: 22px;
   height: 22px;
@@ -166,53 +250,45 @@
   background-repeat: no-repeat;
   background-size: 700% 400%;
   box-shadow: 0 3px 8px rgba(0,0,0,.18);
-  filter: none;
-
-  /* Deeper brown + brighter gold (keeps crater detail) */
 }
-/* FIX: Dual moon display
-   If sprite is present beside the emoji span, hide the emoji. */
-.mk-moon-sprite + .mk-moon{ display: none; }
+.igbo-calendar-app .mk-moon-sprite + .mk-moon{ display: none; }
 
-/* Frame mapping: col = f % 7, row = floor(f / 7) */
-.mk-moon-f0  { background-position:   0%      0%; }
-.mk-moon-f1  { background-position:  16.666%  0%; }
-.mk-moon-f2  { background-position:  33.333%  0%; }
-.mk-moon-f3  { background-position:  50%      0%; }
-.mk-moon-f4  { background-position:  66.666%  0%; }
-.mk-moon-f5  { background-position:  83.333%  0%; }
-.mk-moon-f6  { background-position: 100%      0%; }
+.igbo-calendar-app .mk-moon-f0  { background-position:   0%      0%; }
+.igbo-calendar-app .mk-moon-f1  { background-position:  16.666%  0%; }
+.igbo-calendar-app .mk-moon-f2  { background-position:  33.333%  0%; }
+.igbo-calendar-app .mk-moon-f3  { background-position:  50%      0%; }
+.igbo-calendar-app .mk-moon-f4  { background-position:  66.666%  0%; }
+.igbo-calendar-app .mk-moon-f5  { background-position:  83.333%  0%; }
+.igbo-calendar-app .mk-moon-f6  { background-position: 100%      0%; }
 
-.mk-moon-f7  { background-position:   0%     33.333%; }
-.mk-moon-f8  { background-position:  16.666% 33.333%; }
-.mk-moon-f9  { background-position:  33.333% 33.333%; }
-.mk-moon-f10 { background-position:  50%     33.333%; }
-.mk-moon-f11 { background-position:  66.666% 33.333%; }
-.mk-moon-f12 { background-position:  83.333% 33.333%; }
-.mk-moon-f13 { background-position: 100%     33.333%; }
+.igbo-calendar-app .mk-moon-f7  { background-position:   0%     33.333%; }
+.igbo-calendar-app .mk-moon-f8  { background-position:  16.666% 33.333%; }
+.igbo-calendar-app .mk-moon-f9  { background-position:  33.333% 33.333%; }
+.igbo-calendar-app .mk-moon-f10 { background-position:  50%     33.333%; }
+.igbo-calendar-app .mk-moon-f11 { background-position:  66.666% 33.333%; }
+.igbo-calendar-app .mk-moon-f12 { background-position:  83.333% 33.333%; }
+.igbo-calendar-app .mk-moon-f13 { background-position: 100%     33.333%; }
 
-.mk-moon-f14 { background-position:   0%     66.666%; }
-.mk-moon-f15 { background-position:  16.666% 66.666%; }
-.mk-moon-f16 { background-position:  33.333% 66.666%; }
-.mk-moon-f17 { background-position:  50%     66.666%; }
-.mk-moon-f18 { background-position:  66.666% 66.666%; }
-.mk-moon-f19 { background-position:  83.333% 66.666%; }
-.mk-moon-f20 { background-position: 100%     66.666%; }
+.igbo-calendar-app .mk-moon-f14 { background-position:   0%     66.666%; }
+.igbo-calendar-app .mk-moon-f15 { background-position:  16.666% 66.666%; }
+.igbo-calendar-app .mk-moon-f16 { background-position:  33.333% 66.666%; }
+.igbo-calendar-app .mk-moon-f17 { background-position:  50%     66.666%; }
+.igbo-calendar-app .mk-moon-f18 { background-position:  66.666% 66.666%; }
+.igbo-calendar-app .mk-moon-f19 { background-position:  83.333% 66.666%; }
+.igbo-calendar-app .mk-moon-f20 { background-position: 100%     66.666%; }
 
-.mk-moon-f21 { background-position:   0%    100%; }
-.mk-moon-f22 { background-position:  16.666% 100%; }
-.mk-moon-f23 { background-position:  33.333% 100%; }
-.mk-moon-f24 { background-position:  50%    100%; }
-.mk-moon-f25 { background-position:  66.666% 100%; }
-.mk-moon-f26 { background-position:  83.333% 100%; }
-.mk-moon-f27 { background-position: 100%    100%; }
+.igbo-calendar-app .mk-moon-f21 { background-position:   0%    100%; }
+.igbo-calendar-app .mk-moon-f22 { background-position:  16.666% 100%; }
+.igbo-calendar-app .mk-moon-f23 { background-position:  33.333% 100%; }
+.igbo-calendar-app .mk-moon-f24 { background-position:  50%    100%; }
+.igbo-calendar-app .mk-moon-f25 { background-position:  66.666% 100%; }
+.igbo-calendar-app .mk-moon-f26 { background-position:  83.333% 100%; }
+.igbo-calendar-app .mk-moon-f27 { background-position: 100%    100%; }
 
 /* =========================================================
-   Cowrie emblem (2x2, never huge, never black)
-   ========================================================= */
-
-/* Container: 2x2 "cosmic" layout */
-.mk-cowrie-emblem.mk-cowrie-grid{
+   Cowrie emblem
+========================================================= */
+.igbo-calendar-app .mk-cowrie-emblem.mk-cowrie-grid{
   display: grid;
   grid-template-columns: repeat(2, auto);
   gap: 10px 12px;
@@ -221,8 +297,7 @@
   place-items: center;
 }
 
-/* Each shell container */
-.mk-cowrie{
+.igbo-calendar-app .mk-cowrie{
   width: 34px;
   height: 34px;
   display: inline-flex;
@@ -235,44 +310,167 @@
   overflow: hidden;
 }
 
-/* Subtle individuality (do not look cloned) */
-.mk-cowrie:nth-child(1){ transform: rotate(-10deg); }
-.mk-cowrie:nth-child(2){ transform: rotate(8deg);  filter: brightness(1.03) contrast(1.02); }
-.mk-cowrie:nth-child(3){ transform: rotate(-4deg); filter: brightness(0.98) contrast(1.03); }
-.mk-cowrie:nth-child(4){ transform: rotate(6deg);  filter: brightness(1.01) contrast(1.01); }
+.igbo-calendar-app .mk-cowrie:nth-child(1){ transform: rotate(-10deg); }
+.igbo-calendar-app .mk-cowrie:nth-child(2){ transform: rotate(8deg);  filter: brightness(1.03) contrast(1.02); }
+.igbo-calendar-app .mk-cowrie:nth-child(3){ transform: rotate(-4deg); filter: brightness(0.98) contrast(1.03); }
+.igbo-calendar-app .mk-cowrie:nth-child(4){ transform: rotate(6deg);  filter: brightness(1.01) contrast(1.01); }
 
-.mk-cowrie-svg{
+.igbo-calendar-app .mk-cowrie-svg{
   width: 86%;
   height: 86%;
   display: block;
 }
 
-/* Explicit fills/strokes (prevents black render) */
-.mk-cowrie .shell-body{
+.igbo-calendar-app .mk-cowrie .shell-body{
   fill: #f6f1e6;
   stroke: rgba(20,20,20,.20);
   stroke-width: 1.25;
 }
-.mk-cowrie .shell-ridge{
+.igbo-calendar-app .mk-cowrie .shell-ridge{
   fill: #efe6d6;
   stroke: rgba(20,20,20,.10);
   stroke-width: 1;
 }
-.mk-cowrie .shell-slit{ fill: rgba(60, 35, 15, .30); }
-.mk-cowrie .shell-slit-edge{ fill: rgba(255,255,255,.32); }
-.mk-cowrie .shell-highlight{ fill: rgba(255,255,255,.80); }
-.mk-cowrie .shell-highlight-2{ fill: rgba(255,255,255,.40); }
+.igbo-calendar-app .mk-cowrie .shell-slit{ fill: rgba(60,35,15,.30); }
+.igbo-calendar-app .mk-cowrie .shell-slit-edge{ fill: rgba(255,255,255,.32); }
+.igbo-calendar-app .mk-cowrie .shell-highlight{ fill: rgba(255,255,255,.80); }
+.igbo-calendar-app .mk-cowrie .shell-highlight-2{ fill: rgba(255,255,255,.40); }
 
-/* ---------- Responsive ---------- */
+/* ---------------------------------------------------------
+   Responsive adjustments
+--------------------------------------------------------- */
 @media (max-width: 900px){
-  .mk-cal__note,
-  .mk-cal-month{ max-width: 92%; }
+  .igbo-calendar-app .mk-cal__note,
+  .igbo-calendar-app .mk-cal-month{ max-width: 92%; }
 
-  .mk-cal-grid th,
-  .mk-cal-grid td{ padding: 10px 8px; }
+  .igbo-calendar-app{
+    --cal-cell-pad-y: 10px;
+    --cal-cell-pad-x: 8px;
+  }
 
-  .mk-cowrie{ width: 28px; height: 28px; }
-  .mk-cowrie-svg{ width: 86%; height: 86%; }
+  .igbo-calendar-app .mk-cowrie{ width: 28px; height: 28px; }
+  .igbo-calendar-app .mk-moon-sprite{ width: 20px; height: 20px; }
+}
 
-  .mk-moon-sprite{ width: 20px; height: 20px; }
+@media (max-width: 520px){
+  .igbo-calendar-app .mk-cal-cell{ gap: 6px; min-height: 72px; }
+  .igbo-calendar-app .mk-cal-kv{ font-size: .88rem; }
+  .igbo-calendar-app .mk-cal-cell__day{ font-size: .92rem; }
+  .igbo-calendar-app .mk-cal-cell__date{ font-size: .84rem; }
+}
+
+/* =========================================================
+   Calendar UX: reduce bulk (sticky header + month paging)
+   Safe: only affects pages that have these classes.
+========================================================= */
+
+/* Sticky header area for calendar page */
+.igbo-calendar-app .igcal-sticky-header{
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--card, #fff);
+  border-bottom: 1px solid rgba(0,0,0,.08);
+  padding-bottom: 10px;
+}
+
+/* Toolbar inside sticky header */
+.igbo-calendar-app .igcal-toolbar{
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 10px 12px;
+}
+
+.igbo-calendar-app .igcal-toolbar .btn{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Month containers (JS will toggle aria-hidden / hidden) */
+.igbo-calendar-app .igcal-month[hidden]{ display: none !important; }
+
+/* Optional: 4-week window (JS adds this class on a month) */
+.igbo-calendar-app .igcal-month.is-4week tbody tr.is-hidden{ display: none !important; }
+
+/* Legacy month wrapper support (if month is .mk-cal-month instead of .igcal-month) */
+.igbo-calendar-app .mk-cal-month.is-4week tbody tr.is-hidden{ display: none !important; }
+
+/* Optional: keep controls tidy */
+.igbo-calendar-app .igcal-controls select.mk-input{ min-width: 220px; }
+
+/* =========================================================
+   Year box styling (prominent + user friendly)
+========================================================= */
+.igbo-calendar-app .igcal-yearbox{
+  width: min(980px, 100%);
+  margin: 0 auto;
+  padding: 12px 12px;
+  border: 1px solid rgba(0,0,0,.10);
+  border-radius: 16px;
+  background: rgba(255,255,255,.92);
+  box-shadow: 0 10px 22px rgba(0,0,0,.06);
+}
+
+.igbo-calendar-app .igcal-yearbox__label{
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  font-size: 1.02rem;
+  margin-bottom: 8px;
+  color: rgba(17,17,17,.92);
+}
+
+.igbo-calendar-app .igcal-yearbox__row{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.igbo-calendar-app .igcal-yearbox__row .btn{
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,.12);
+  background: rgba(0,0,0,.03);
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.igbo-calendar-app #igcalYearSelect.mk-input,
+.igbo-calendar-app .igcal-yearbox__row select.mk-input,
+.igbo-calendar-app .igcal-yearbox__row select{
+  min-width: 320px;
+  max-width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,.14);
+  font-weight: 800;
+  background: #fff;
+}
+
+.igbo-calendar-app .igcal-yearbox__meta{
+  margin-top: 10px;
+  font-size: .92rem;
+  color: rgba(0,0,0,.70);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.igbo-calendar-app .igcal-yearbox__dot{
+  opacity: .55;
+}
+
+@media (max-width: 520px){
+  .igbo-calendar-app .igcal-yearbox{ padding: 10px; }
+
+  .igbo-calendar-app #igcalYearSelect.mk-input,
+  .igbo-calendar-app .igcal-yearbox__row select.mk-input,
+  .igbo-calendar-app .igcal-yearbox__row select{
+    min-width: 220px;
+    width: 100%;
+  }
 }

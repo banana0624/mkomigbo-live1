@@ -3,23 +3,28 @@ declare(strict_types=1);
 
 /**
  * /app/mkomigbo/private/functions/auth.php
- * Staff RBAC auth helpers for staff_users (supports admin-only pages via role column)
+ * Staff RBAC auth helpers (staff_users + roles + staff_user_roles).
  *
- * Session keys:
- * - $_SESSION['staff_user_id'] (int)
- * - $_SESSION['staff_email']   (string)
- * - $_SESSION['staff_role']    ('admin'|'staff')
+ * Canonical session keys:
+ * - $_SESSION['staff_user_id']   (int)
+ * - $_SESSION['staff_email']     (string)
+ * - $_SESSION['staff_roles']     (array of role slugs, e.g. ['admin','editor'])
+ * - $_SESSION['staff_roles_ts']  (int timestamp for caching)
  *
  * Public API:
  * - mk_attempt_staff_login(email, password) => ['ok'=>bool,'id'=>int,'error'=>string]
  * - mk_is_staff_logged_in() => bool
- * - mk_require_staff_login() => redirects if not logged in (validates session vs DB)
- * - mk_require_staff_role('admin'|'staff') => gates admin-only pages
- * - mk_staff_logout() => clears session, regenerates id
- * - mk_staff_current_id() => int
- * - mk_staff_role() => string
- * - mk_is_admin() => bool
+ * - mk_require_staff_login() => redirects if not logged in (best-effort validates)
+ * - mk_staff_has_role('admin'|'owner'|...) => bool
+ * - mk_require_role('admin'|['admin','owner']) => enforce RBAC
+ * - mk_staff_logout()
+ * - mk_staff_current_id()
+ * - mk_staff_current_email()
  */
+
+@ini_set('display_errors', '0');
+@ini_set('display_startup_errors', '0');
+error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
 
 /* ---------------------------------------------------------
    HTTPS detection (works behind proxies)
@@ -40,17 +45,22 @@ if (!function_exists('mk__is_https')) {
 }
 
 /* ---------------------------------------------------------
-   Session start (secure cookies on HTTPS only)
+   Session start (prefer global mk_session_start if available)
 --------------------------------------------------------- */
 if (!function_exists('mk__session_start')) {
   function mk__session_start(): void {
     if (session_status() === PHP_SESSION_ACTIVE) return;
 
+    if (function_exists('mk_session_start')) {
+      mk_session_start(true);
+      return;
+    }
+
     if (!headers_sent()) {
       @session_set_cookie_params([
         'lifetime' => 0,
         'path'     => '/',
-        'secure'   => mk__is_https(), // do NOT force secure=true on HTTP dev env
+        'secure'   => mk__is_https(),
         'httponly' => true,
         'samesite' => 'Lax',
       ]);
@@ -120,29 +130,6 @@ if (!function_exists('mk_audit_from_session')) {
 }
 
 /* ---------------------------------------------------------
-   Role helpers
---------------------------------------------------------- */
-if (!function_exists('mk_staff_role_normalize')) {
-  function mk_staff_role_normalize($role): string {
-    $role = is_string($role) ? strtolower(trim($role)) : 'staff';
-    return in_array($role, ['admin', 'staff'], true) ? $role : 'staff';
-  }
-}
-
-if (!function_exists('mk_staff_role')) {
-  function mk_staff_role(): string {
-    mk__session_start();
-    return mk_staff_role_normalize($_SESSION['staff_role'] ?? 'staff');
-  }
-}
-
-if (!function_exists('mk_is_admin')) {
-  function mk_is_admin(): bool {
-    return mk_staff_role() === 'admin';
-  }
-}
-
-/* ---------------------------------------------------------
    Identity helpers
 --------------------------------------------------------- */
 if (!function_exists('mk_staff_current_id')) {
@@ -169,12 +156,26 @@ if (!function_exists('mk_staff_current_email')) {
 }
 
 /* ---------------------------------------------------------
-   Redirect helpers
+   Redirect helpers (internal-only)
 --------------------------------------------------------- */
-if (!function_exists('mk__safe_redirect')) {
-  function mk__safe_redirect(string $path, int $code = 302): void {
-    $dest = $path;
+if (!function_exists('mk__safe_internal_path')) {
+  function mk__safe_internal_path(string $path): string {
+    $path = str_replace(["\r", "\n"], '', trim($path));
+    if ($path === '') return '/';
 
+    if (preg_match('~^https?://~i', $path)) return '/';
+    if ($path[0] !== '/') $path = '/' . $path;
+    if (strpos($path, '\\') !== false) $path = str_replace('\\', '/', $path);
+
+    return $path;
+  }
+}
+
+if (!function_exists('mk__safe_redirect')) {
+  function mk__safe_redirect(string $path, int $code = 302): never {
+    $path = mk__safe_internal_path($path);
+
+    $dest = $path;
     if (function_exists('url_for')) {
       $dest = (string)url_for($path);
     }
@@ -186,7 +187,108 @@ if (!function_exists('mk__safe_redirect')) {
 }
 
 /* ---------------------------------------------------------
-   Validate session vs DB (and refresh role/email)
+   RBAC: load role slugs for user
+--------------------------------------------------------- */
+if (!function_exists('mk_staff_roles_load')) {
+  function mk_staff_roles_load(int $staff_user_id, bool $force = false): array {
+    mk__session_start();
+
+    $staff_user_id = (int)$staff_user_id;
+    if ($staff_user_id <= 0) return [];
+
+    // Cache roles in session (fast path)
+    if (!$force && isset($_SESSION['staff_roles']) && is_array($_SESSION['staff_roles']) && !empty($_SESSION['staff_roles'])) {
+      $roles = [];
+      foreach ($_SESSION['staff_roles'] as $r) {
+        if (is_string($r)) {
+          $s = strtolower(trim($r));
+          if ($s !== '') $roles[] = $s;
+        }
+      }
+      $roles = array_values(array_unique($roles));
+      if (!empty($roles)) return $roles;
+    }
+
+    // If db() is unavailable, do not brick access. Return empty roles.
+    if (!function_exists('db')) {
+      $_SESSION['staff_roles'] = [];
+      $_SESSION['staff_roles_ts'] = time();
+      return [];
+    }
+
+    try {
+      $pdo = db();
+      if (!$pdo instanceof PDO) throw new RuntimeException('db() did not return PDO');
+
+      // Confirm user exists + active (tightens session correctness)
+      $st = $pdo->prepare("SELECT id, email, is_active FROM staff_users WHERE id = ? LIMIT 1");
+      $st->execute([$staff_user_id]);
+      $u = $st->fetch(PDO::FETCH_ASSOC) ?: null;
+
+      if (!$u || (int)($u['is_active'] ?? 0) !== 1) {
+        $_SESSION['staff_roles'] = [];
+        $_SESSION['staff_roles_ts'] = time();
+        return [];
+      }
+
+      if (isset($u['email']) && is_string($u['email'])) {
+        $_SESSION['staff_email'] = trim($u['email']);
+      }
+
+      $sql = "
+        SELECT r.slug
+        FROM staff_user_roles sur
+        INNER JOIN roles r ON r.id = sur.role_id
+        WHERE sur.staff_user_id = ?
+      ";
+      $st2 = $pdo->prepare($sql);
+      $st2->execute([$staff_user_id]);
+
+      $roles = [];
+      while ($row = $st2->fetch(PDO::FETCH_ASSOC)) {
+        $slug = strtolower(trim((string)($row['slug'] ?? '')));
+        if ($slug !== '') $roles[] = $slug;
+      }
+
+      $roles = array_values(array_unique($roles));
+      $_SESSION['staff_roles'] = $roles;
+      $_SESSION['staff_roles_ts'] = time();
+
+      return $roles;
+
+    } catch (Throwable $e) {
+      // Fail-soft: keep session alive but with empty roles.
+      mk__auth_log('WARN', 'RBAC role load failed', ['id' => $staff_user_id, 'err' => $e->getMessage()]);
+      $_SESSION['staff_roles'] = is_array($_SESSION['staff_roles'] ?? null) ? $_SESSION['staff_roles'] : [];
+      $_SESSION['staff_roles_ts'] = time();
+      return is_array($_SESSION['staff_roles']) ? $_SESSION['staff_roles'] : [];
+    }
+  }
+}
+
+if (!function_exists('mk_staff_roles')) {
+  function mk_staff_roles(bool $refresh = false): array {
+    $id = mk_staff_current_id();
+    if ($id <= 0) return [];
+    return mk_staff_roles_load($id, $refresh);
+  }
+}
+
+if (!function_exists('mk_staff_has_role')) {
+  function mk_staff_has_role(string $roleSlug, bool $refresh = false): bool {
+    $roleSlug = strtolower(trim($roleSlug));
+    if ($roleSlug === '') return false;
+
+    $roles = mk_staff_roles($refresh);
+    foreach ($roles as $r) {
+      if (is_string($r) && strtolower($r) === $roleSlug) return true;
+    }
+    return false;
+  }
+}
+
+/* ---------------------------------------------------------
+   Validate session vs DB (best-effort)
 --------------------------------------------------------- */
 if (!function_exists('mk_staff_session_validate')) {
   function mk_staff_session_validate(): bool {
@@ -199,27 +301,19 @@ if (!function_exists('mk_staff_session_validate')) {
     $sid = mk_staff_current_id();
     if ($sid <= 0) { $ok = false; return $ok; }
 
-    // fail-open if db() missing (prevents accidental lockout)
+    // If DB is unavailable, avoid lockout.
     if (!function_exists('db')) { $ok = true; return $ok; }
 
     try {
       $pdo = db();
       if (!$pdo instanceof PDO) { $ok = true; return $ok; }
 
-      // Prefer selecting role; fallback if role column not present.
-      $row = null;
-      try {
-        $st = $pdo->prepare("SELECT id, is_active, email, role FROM staff_users WHERE id = ? LIMIT 1");
-        $st->execute([$sid]);
-        $row = $st->fetch(PDO::FETCH_ASSOC) ?: null;
-      } catch (Throwable $e) {
-        $st = $pdo->prepare("SELECT id, is_active, email FROM staff_users WHERE id = ? LIMIT 1");
-        $st->execute([$sid]);
-        $row = $st->fetch(PDO::FETCH_ASSOC) ?: null;
-      }
+      $st = $pdo->prepare("SELECT id, is_active, email FROM staff_users WHERE id = ? LIMIT 1");
+      $st->execute([$sid]);
+      $row = $st->fetch(PDO::FETCH_ASSOC) ?: null;
 
       if (!$row || (int)($row['is_active'] ?? 0) !== 1) {
-        unset($_SESSION['staff_user_id'], $_SESSION['staff_email'], $_SESSION['staff_role']);
+        unset($_SESSION['staff_user_id'], $_SESSION['staff_email'], $_SESSION['staff_roles'], $_SESSION['staff_roles_ts']);
         @session_regenerate_id(true);
         $ok = false;
         return $ok;
@@ -229,10 +323,12 @@ if (!function_exists('mk_staff_session_validate')) {
         $_SESSION['staff_email'] = trim($row['email']);
       }
 
-      if (isset($row['role'])) {
-        $_SESSION['staff_role'] = mk_staff_role_normalize($row['role']);
-      } elseif (!isset($_SESSION['staff_role'])) {
-        $_SESSION['staff_role'] = 'staff';
+      // refresh roles occasionally (or if missing)
+      $ts = isset($_SESSION['staff_roles_ts']) ? (int)$_SESSION['staff_roles_ts'] : 0;
+      $needs = empty($_SESSION['staff_roles']) || ($ts <= 0) || (time() - $ts > 120);
+
+      if ($needs) {
+        mk_staff_roles_load($sid, true);
       }
 
       $ok = true;
@@ -269,7 +365,7 @@ if (!function_exists('mk_require_staff_login')) {
    Professional 403 page
 --------------------------------------------------------- */
 if (!function_exists('mk_forbidden_page')) {
-  function mk_forbidden_page(string $title = 'Access denied', string $message = 'This page is restricted.'): void {
+  function mk_forbidden_page(string $title = 'Access denied', string $message = 'This page is restricted.'): never {
     http_response_code(403);
     header('Content-Type: text/html; charset=utf-8');
 
@@ -299,26 +395,43 @@ if (!function_exists('mk_forbidden_page')) {
 }
 
 /* ---------------------------------------------------------
-   Require role (admin-only gating)
+   Require role(s) (RBAC)
 --------------------------------------------------------- */
-if (!function_exists('mk_require_staff_role')) {
-  function mk_require_staff_role(string $requiredRole = 'admin'): void {
+if (!function_exists('mk_require_role')) {
+  /**
+   * @param string|array $required  e.g. 'admin' or ['admin','owner']
+   */
+  function mk_require_role($required): void {
     mk_require_staff_login();
 
-    $requiredRole = mk_staff_role_normalize($requiredRole);
-    $currentRole  = mk_staff_role();
-
-    $ok = ($requiredRole === 'staff')
-      ? in_array($currentRole, ['staff', 'admin'], true)
-      : ($currentRole === $requiredRole);
-
-    if (!$ok) {
-      mk_audit_log('staff_access_denied_role', mk_staff_current_id(), [
-        'required' => $requiredRole,
-        'role'     => $currentRole,
-      ]);
-      mk_forbidden_page('Access denied', 'This page is restricted to administrators.');
+    $need = [];
+    if (is_string($required)) {
+      $s = strtolower(trim($required));
+      if ($s !== '') $need[] = $s;
+    } elseif (is_array($required)) {
+      foreach ($required as $r) {
+        if (!is_string($r)) continue;
+        $s = strtolower(trim($r));
+        if ($s !== '') $need[] = $s;
+      }
     }
+    $need = array_values(array_unique($need));
+    if (empty($need)) return;
+
+    // Always treat owner as supreme (if you use it)
+    $hasOwner = mk_staff_has_role('owner');
+    if ($hasOwner) return;
+
+    foreach ($need as $slug) {
+      if (mk_staff_has_role($slug)) return;
+    }
+
+    mk_audit_log('staff_access_denied_role', mk_staff_current_id(), [
+      'required' => $need,
+      'roles'    => mk_staff_roles(false),
+    ]);
+
+    mk_forbidden_page('Access denied', 'This page is restricted.');
   }
 }
 
@@ -332,13 +445,13 @@ if (!function_exists('mk_staff_logout')) {
     $sid = mk_staff_current_id();
     mk_audit_log('staff_logout', ($sid > 0 ? $sid : null), []);
 
-    unset($_SESSION['staff_user_id'], $_SESSION['staff_email'], $_SESSION['staff_role']);
+    unset($_SESSION['staff_user_id'], $_SESSION['staff_email'], $_SESSION['staff_roles'], $_SESSION['staff_roles_ts']);
     @session_regenerate_id(true);
   }
 }
 
 /* ---------------------------------------------------------
-   Login attempt
+   Login attempt (loads RBAC roles)
 --------------------------------------------------------- */
 if (!function_exists('mk_attempt_staff_login')) {
   function mk_attempt_staff_login(string $email, string $password): array {
@@ -365,34 +478,13 @@ if (!function_exists('mk_attempt_staff_login')) {
         return ['ok' => false, 'id' => 0, 'error' => 'DB not available.'];
       }
 
-      // Prefer selecting role; fallback if role column doesn't exist yet.
-      $u = null;
-      try {
-        $sql = "SELECT id, email, password_hash, is_active, role
-                FROM staff_users
-                WHERE email = ?
-                LIMIT 1";
-        $st = $pdo->prepare($sql);
-        $st->execute([$email_norm]);
-        $u = $st->fetch(PDO::FETCH_ASSOC) ?: null;
+      $st = $pdo->prepare("SELECT id, email, password_hash, is_active FROM staff_users WHERE email = ? LIMIT 1");
+      $st->execute([$email_norm]);
+      $u = $st->fetch(PDO::FETCH_ASSOC) ?: null;
 
-        if (!$u && $email_norm !== $email) {
-          $st->execute([$email]);
-          $u = $st->fetch(PDO::FETCH_ASSOC) ?: null;
-        }
-      } catch (Throwable $e) {
-        $sql = "SELECT id, email, password_hash, is_active
-                FROM staff_users
-                WHERE email = ?
-                LIMIT 1";
-        $st = $pdo->prepare($sql);
-        $st->execute([$email_norm]);
+      if (!$u && $email_norm !== $email) {
+        $st->execute([$email]);
         $u = $st->fetch(PDO::FETCH_ASSOC) ?: null;
-
-        if (!$u && $email_norm !== $email) {
-          $st->execute([$email]);
-          $u = $st->fetch(PDO::FETCH_ASSOC) ?: null;
-        }
       }
 
       if (!$u) {
@@ -447,10 +539,14 @@ if (!function_exists('mk_attempt_staff_login')) {
 
       $_SESSION['staff_user_id'] = $uid;
       $_SESSION['staff_email']   = (string)($u['email'] ?? $email_norm);
-      $_SESSION['staff_role']    = mk_staff_role_normalize($u['role'] ?? 'staff');
 
-      mk__auth_log('INFO', 'Staff login OK.', ['id' => $uid, 'role' => $_SESSION['staff_role']]);
-      mk_audit_log('staff_login_ok', $uid, ['email' => $_SESSION['staff_email'], 'role' => $_SESSION['staff_role']]);
+      // Load RBAC roles into session
+      $roles = mk_staff_roles_load($uid, true);
+      $_SESSION['staff_roles'] = $roles;
+      $_SESSION['staff_roles_ts'] = time();
+
+      mk__auth_log('INFO', 'Staff login OK.', ['id' => $uid, 'roles' => $roles]);
+      mk_audit_log('staff_login_ok', $uid, ['email' => $_SESSION['staff_email'], 'roles' => $roles]);
 
       return ['ok' => true, 'id' => $uid, 'error' => ''];
 

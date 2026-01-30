@@ -3,137 +3,145 @@ declare(strict_types=1);
 
 /**
  * /private/shared/public_header.php
- * Global public header (single source of truth).
+ * Public header (single source of truth).
  *
- * Inputs (set before include):
- *   - $page_title (string)
- *   - $page_desc  (string)
- *   - $active_nav / $nav_active (string)
- *   - $extra_css (array|string) additional css paths or full URLs
- *
- * Responsibilities:
- *   - Output <head> and open <body>
- *   - Render public nav
- *   - Load CSS in a predictable order with cache-busting
+ * Optional inputs:
+ *   $page_title (string)
+ *   $page_desc  (string)
+ *   $nav_active (string) home|subjects|platforms|contributors|igbo-calendar|staff
+ *   $extra_css  (array)  additional hrefs (public-relative) to load
+ *   $extra_head (string) extra <head> tags (manifest, meta, etc.)
  */
 
-if (!function_exists('h')) {
-  function h(string $v): string { return htmlspecialchars($v, ENT_QUOTES, 'UTF-8'); }
+@ini_set('display_errors', '0');
+@ini_set('display_startup_errors', '0');
+error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
+
+if (!headers_sent()) {
+  header('Content-Type: text/html; charset=utf-8');
+  header('X-Content-Type-Options: nosniff');
 }
 
 if (!isset($page_title) || !is_string($page_title) || trim($page_title) === '') {
   $page_title = 'Mkomi Igbo';
 }
-if (!isset($page_desc) || !is_string($page_desc) || trim($page_desc) === '') {
-  $page_desc = 'Mkomi Igbo — knowledge, heritage, and people.';
+if (!isset($page_desc) || !is_string($page_desc)) {
+  $page_desc = '';
+}
+if (!isset($nav_active) || !is_string($nav_active)) {
+  $nav_active = '';
+}
+if (!isset($extra_css) || !is_array($extra_css)) {
+  $extra_css = (isset($GLOBALS['extra_css']) && is_array($GLOBALS['extra_css'])) ? $GLOBALS['extra_css'] : [];
+}
+if (!isset($extra_head) || !is_string($extra_head)) {
+  $extra_head = (isset($GLOBALS['extra_head']) && is_string($GLOBALS['extra_head'])) ? $GLOBALS['extra_head'] : '';
 }
 
-if (!isset($active_nav) || !is_string($active_nav)) $active_nav = '';
-if (!isset($nav_active) || !is_string($nav_active)) $nav_active = $active_nav;
-$active_nav = trim($active_nav);
-$nav_active = trim($nav_active);
-
-/* normalize extra_css to array */
-if (!isset($extra_css)) {
-  $extra_css = [];
-} elseif (is_string($extra_css)) {
-  $extra_css = [$extra_css];
-} elseif (!is_array($extra_css)) {
-  $extra_css = [];
+if (!function_exists('h')) {
+  function h($v): string { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
+}
+if (!function_exists('url_for')) {
+  function url_for(string $path): string { return $path; }
 }
 
-/* Absolute URL for current site (best-effort) */
-$scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-$host   = (string)($_SERVER['HTTP_HOST'] ?? '');
-$site_url = ($host !== '') ? ($scheme . '://' . $host) : '';
+$req = (string)($_SERVER['REQUEST_URI'] ?? '');
+$isSubjects = ($nav_active === 'subjects') || (strpos($req, '/subjects/') !== false);
+$isCalendar = ($nav_active === 'igbo-calendar') || (strpos($req, '/igbo-calendar/') !== false);
 
-/* Helper: normalize css path */
-$mk_norm_css = static function ($p): ?string {
-  if (!is_string($p)) return null;
-  $p = trim($p);
-  if ($p === '') return null;
-  if (preg_match('~^https?://~i', $p)) return $p;
-  if ($p[0] !== '/') $p = '/' . $p;
-  return $p;
-};
+/* ---------------------------------------------------------
+   Build CSS list
+--------------------------------------------------------- */
+$css = ['/lib/css/ui.css'];
 
-/* Helper: cache-bust local asset with filemtime (only if PUBLIC_PATH is defined) */
-$mk_css_href = static function (string $href) : string {
+/* Subjects CSS (only when needed) */
+if ($isSubjects) {
+  foreach (['/lib/css/subjects.css','/lib/css/subjects-public.css','/lib/css/subjects-grid.css','/lib/css/subjects-mk-bridge.css'] as $f) {
+    $css[] = $f;
+  }
+}
+
+/* Calendar CSS (only when needed) */
+if ($isCalendar) {
+  $css[] = '/igbo-calendar/igbo-calendar.css';
+  $css[] = '/igbo-calendar/install/install.css'; // optional (ok if 404)
+}
+
+/* Caller-provided css */
+foreach ($extra_css as $f) {
+  if (is_string($f) && $f !== '') $css[] = $f;
+}
+
+/* De-dup */
+$css = array_values(array_unique($css));
+
+/* ---------------------------------------------------------
+   Cache-busting for immutable CSS
+   - Your server sends: max-age=31536000, immutable
+   - Therefore the URL must change when the file changes
+--------------------------------------------------------- */
+$doc_root = rtrim((string)($_SERVER['DOCUMENT_ROOT'] ?? ''), "/\\");
+$with_ver = static function(string $href) use ($doc_root): string {
   $href = trim($href);
   if ($href === '') return $href;
 
-  // external URL, no local filemtime
-  if (preg_match('~^https?://~i', $href)) return $href;
+  // Only version local absolute-path URLs ("/lib/css/..", "/igbo-calendar/..")
+  if ($href[0] !== '/') return $href;
 
-  $v = null;
-  if (defined('PUBLIC_PATH')) {
-    $p = rtrim((string)PUBLIC_PATH, DIRECTORY_SEPARATOR) . str_replace('/', DIRECTORY_SEPARATOR, $href);
-    if (is_file($p)) {
-      $t = @filemtime($p);
-      if ($t !== false) $v = (string)$t;
+  // Do not double-version
+  if (strpos($href, '?') !== false) return $href;
+
+  // Map URL path -> filesystem path under DOCUMENT_ROOT
+  if ($doc_root !== '') {
+    $abs = $doc_root . $href;
+    if (is_file($abs)) {
+      return $href . '?v=' . rawurlencode((string)filemtime($abs));
     }
   }
-  if ($v === null) return $href;
-  return $href . (strpos($href, '?') === false ? '?v=' : '&v=') . rawurlencode($v);
+
+  return $href;
 };
 
-/* Build CSS list:
-   - ui.css is always first
-   - then $extra_css (deduped)
-*/
-$css = ['/lib/css/ui.css'];
-$seen = [strtolower('/lib/css/ui.css') => true];
+$asset = static function(string $path) use ($with_ver): string {
+  // Version then url_for then escape
+  $v = $with_ver($path);
+  return h(url_for($v));
+};
 
-foreach ($extra_css as $x) {
-  $n = $mk_norm_css($x);
-  if (!$n) continue;
-  $k = strtolower($n);
-  if (isset($seen[$k])) continue;
-  $seen[$k] = true;
-  $css[] = $n;
-}
-?>
-<!doctype html>
+/* Default icons */
+$appleTouchIcon = '/igbo-calendar/icons/icon-192.png';
+$faviconSvg     = '/lib/images/mk-logo.svg';
+
+?><!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="index,follow">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
   <title><?= h($page_title) ?></title>
-  <meta name="description" content="<?= h($page_desc) ?>">
 
-  <!-- Favicons -->
-  <link rel="icon" href="/lib/images/favicon.ico" sizes="any">
-  <link rel="icon" href="/lib/images/favicon.svg" type="image/svg+xml">
-
-  <!-- Open Graph -->
-  <meta property="og:site_name" content="Mkomi Igbo">
-  <meta property="og:title" content="<?= h($page_title) ?>">
-  <meta property="og:description" content="<?= h($page_desc) ?>">
-  <meta property="og:type" content="website">
-  <?php if ($site_url !== ''): ?>
-    <meta property="og:url" content="<?= h($site_url . (string)($_SERVER['REQUEST_URI'] ?? '/')) ?>">
+  <?php if ($page_desc !== ''): ?>
+    <meta name="description" content="<?= h($page_desc) ?>">
   <?php endif; ?>
 
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="<?= h($page_title) ?>">
-  <meta name="twitter:description" content="<?= h($page_desc) ?>">
-
-  <!-- CSS -->
   <?php foreach ($css as $href): ?>
-    <link rel="stylesheet" href="<?= h($mk_css_href($href)) ?>">
+    <link rel="stylesheet" href="<?= $asset($href) ?>">
   <?php endforeach; ?>
 
-  <!-- JS (defer) -->
-</head>
+  <?php
+    // Allow pages to inject extra head tags (manifest, meta, etc.) exactly once
+    if (!empty($extra_head)) {
+      echo "\n" . $extra_head . "\n";
+    }
+  ?>
 
-<body>
+  <link rel="icon" href="<?= $asset($faviconSvg) ?>" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="<?= $asset($appleTouchIcon) ?>">
+</head>
+<body class="mk-body">
+
 <?php
-/* Public nav */
 $nav_file = __DIR__ . '/public_nav.php';
-if (is_file($nav_file)) {
-  include $nav_file;
-}
+if (is_file($nav_file)) include $nav_file;
 ?>
-<main class="site-main" id="main">
+<main class="mk-main">

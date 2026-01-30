@@ -3,13 +3,15 @@ declare(strict_types=1);
 
 /**
  * /public/staff/subjects/pgs/edit.php
- * Staff: Edit a page + manage attachments (Phase 3).
+ * Staff: Edit a page + manage attachments (page_files).
  *
  * Uses centralized staff bootstrap: /public/staff/_init.php
- * - staff_pdo()
- * - staff_safe_return_url()
- * - staff_csrf_verify()
- * - staff_csrf_field()
+ *
+ * Supports:
+ * - schema-tolerant pages columns
+ * - optional topic_group (nav grouping)
+ * - attachments list + upload/delete
+ * - external link add (authoritative normalization via private function)
  */
 
 @ini_set('display_errors', '0');
@@ -26,9 +28,9 @@ if (!function_exists('h')) {
   function h(string $v): string { return htmlspecialchars($v, ENT_QUOTES, 'UTF-8'); }
 }
 if (!function_exists('redirect_to')) {
-  function redirect_to(string $location): void {
+  function redirect_to(string $location, int $code = 302): void {
     $location = str_replace(["\r", "\n"], '', $location);
-    header('Location: ' . $location, true, 302);
+    header('Location: ' . $location, true, $code);
     exit;
   }
 }
@@ -84,9 +86,89 @@ if (!function_exists('staff_pdo')) {
     return (function_exists('db') && db() instanceof PDO) ? db() : null;
   }
 }
+if (!function_exists('pf__column_exists')) {
+  function pf__column_exists(PDO $pdo, string $table, string $column): bool {
+    static $cache = [];
+    $key = strtolower($table . '.' . $column);
+    if (array_key_exists($key, $cache)) return (bool)$cache[$key];
+
+    try {
+      $st = $pdo->prepare("
+        SELECT 1
+        FROM information_schema.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME = ?
+          AND COLUMN_NAME = ?
+        LIMIT 1
+      ");
+      $st->execute([$table, $column]);
+      $cache[$key] = (bool)$st->fetchColumn();
+      return (bool)$cache[$key];
+    } catch (Throwable $e) {
+      $cache[$key] = false;
+      return false;
+    }
+  }
+}
+
+$u = static function(string $path): string {
+  return function_exists('url_for') ? (string)url_for($path) : $path;
+};
+
+if (!function_exists('pf__clean_topic_group')) {
+  function pf__clean_topic_group(string $raw): string {
+    $v = trim($raw);
+    if ($v === '') return '';
+    $v = preg_replace('/\s+/u', ' ', $v) ?? $v;
+    $v = str_replace(['<','>'], '', $v);
+    $v = trim($v);
+    if (function_exists('mb_substr')) $v = (string)mb_substr($v, 0, 80, 'UTF-8');
+    else $v = substr($v, 0, 80);
+    return trim($v);
+  }
+}
 
 /* ---------------------------------------------------------
-   Auth (defense-in-depth)
+   External URL normalization (authoritative input cleaning)
+--------------------------------------------------------- */
+if (!function_exists('pf__normalize_external_url')) {
+  function pf__normalize_external_url(string $url): string {
+    // strip control chars, trim
+    $url = preg_replace('/[\x00-\x1F\x7F]/u', '', $url) ?? $url;
+    $url = trim($url);
+    if ($url === '') return '';
+
+    // allow "<https://...>"
+    if ($url[0] === '<' && substr($url, -1) === '>') {
+      $url = trim(substr($url, 1, -1));
+    }
+
+    // keep first token only (handles "url label")
+    if (preg_match('/\s/u', $url)) {
+      $parts = preg_split('/\s+/u', $url);
+      if (is_array($parts) && isset($parts[0])) $url = trim((string)$parts[0]);
+    }
+
+    // strip trailing punctuation from copy/paste
+    $url = rtrim($url, " \t\n\r\0\x0B.,;:)]}'\"");
+
+    // normalize scheme-less inputs
+    if (strncmp($url, '//', 2) === 0) {
+      $url = 'https:' . $url;
+    } elseif (!preg_match('~^[a-zA-Z][a-zA-Z0-9+\-.]*://~', $url)) {
+      // if user pasted "en.wikipedia.org/wiki/..", force https
+      // but do NOT accept "/wiki/..." (relative)
+      if ($url !== '' && ($url[0] === '/' || $url[0] === '\\')) return '';
+      $url = 'https://' . $url;
+    }
+
+    return $url;
+  }
+}
+
+
+/* ---------------------------------------------------------
+   Auth
 --------------------------------------------------------- */
 if (function_exists('require_staff')) {
   require_staff();
@@ -105,156 +187,388 @@ if (!$pdo instanceof PDO) {
   exit;
 }
 
-/* Optional slug helpers */
+/* Optional slug helper */
 $slugFn = (defined('PRIVATE_PATH') ? (PRIVATE_PATH . '/functions/slug.php') : '');
-if ($slugFn !== '' && is_file($slugFn)) require_once $slugFn;
+if ($slugFn !== '' && is_file($slugFn)) { require_once $slugFn; }
 
 /* Inputs */
 $id = (int)($_GET['id'] ?? 0);
-if ($id <= 0) redirect_to('/staff/subjects/pgs/index.php');
+if ($id <= 0) redirect_to($u('/staff/subjects/pgs/index.php'));
 
 $return = staff_safe_return_url((string)($_GET['return'] ?? ($_POST['return'] ?? '')), '/staff/subjects/pgs/index.php');
 
 $notice = pf__flash_get('notice');
 $error  = pf__flash_get('error');
 
-/* Attachment notices from upload/delete controllers */
+/* Attachment notices */
 $attachNotice = strtolower(trim((string)($_GET['attach'] ?? '')));
 $attachMsg = '';
-if ($attachNotice === 'sent')    $attachMsg = 'Attachment uploaded.';
-if ($attachNotice === 'partial') $attachMsg = 'Some files uploaded; some failed.';
-if ($attachNotice === 'error')   $attachMsg = 'Attachment upload failed.';
-if ($attachNotice === 'deleted') $attachMsg = 'Attachment deleted.';
-if ($attachNotice === 'missing') $attachMsg = 'Attachment missing (already removed or file not found).';
-if ($attachNotice === 'denied')  $attachMsg = 'Action denied.';
-if ($attachNotice === 'csrf')    $attachMsg = 'Security check failed. Please retry.';
-if ($attachNotice === 'invalid') $attachMsg = 'Invalid attachment request.';
+if ($attachNotice === 'sent')      $attachMsg = 'Attachment saved.';
+if ($attachNotice === 'partial')   $attachMsg = 'Some files saved; some failed.';
+if ($attachNotice === 'error')     $attachMsg = 'Attachment action failed.';
+if ($attachNotice === 'deleted')   $attachMsg = 'Attachment deleted.';
+if ($attachNotice === 'missing')   $attachMsg = 'Attachment missing (already removed or file not found).';
+if ($attachNotice === 'denied')    $attachMsg = 'Action denied.';
+if ($attachNotice === 'csrf')      $attachMsg = 'Security check failed. Please retry.';
+if ($attachNotice === 'invalid')   $attachMsg = 'Invalid attachment request.';
+if ($attachNotice === 'too_large') $attachMsg = 'Upload too large (server rejected POST).';
+if ($attachNotice === 'nofile')    $attachMsg = 'No file received by server.';
+if ($attachNotice === 'badurl')    $attachMsg = 'External URL rejected (must be HTTPS + allowlisted host/path).';
+if ($attachNotice === 'saved')     $attachMsg = 'External link saved.';
+
+/* ---------------------------------------------------------
+   Schema: pages
+--------------------------------------------------------- */
+$has_subject_id  = pf__column_exists($pdo, 'pages', 'subject_id');
+$has_slug        = pf__column_exists($pdo, 'pages', 'slug');
+$has_topic_group = pf__column_exists($pdo, 'pages', 'topic_group');
+
+$title_col = pf__column_exists($pdo, 'pages', 'title') ? 'title'
+           : (pf__column_exists($pdo, 'pages', 'menu_name') ? 'menu_name'
+           : (pf__column_exists($pdo, 'pages', 'name') ? 'name' : null));
+
+$body_col  = pf__column_exists($pdo, 'pages', 'body_html') ? 'body_html'
+           : (pf__column_exists($pdo, 'pages', 'body') ? 'body'
+           : (pf__column_exists($pdo, 'pages', 'content') ? 'content' : null));
+
+$order_col = pf__column_exists($pdo, 'pages', 'nav_order') ? 'nav_order'
+           : (pf__column_exists($pdo, 'pages', 'position') ? 'position' : null);
+
+$pub_col   = pf__column_exists($pdo, 'pages', 'is_public') ? 'is_public'
+           : (pf__column_exists($pdo, 'pages', 'visible') ? 'visible'
+           : (pf__column_exists($pdo, 'pages', 'status') ? 'status' : null));
 
 /* Fetch current page */
-$st = $pdo->prepare("SELECT id, subject_id, title, slug, body, nav_order, is_public FROM pages WHERE id = :id LIMIT 1");
+$cols = ['id'];
+if ($has_subject_id)  $cols[] = 'subject_id';
+if ($has_slug)        $cols[] = 'slug';
+if ($has_topic_group) $cols[] = 'topic_group';
+if ($title_col)       $cols[] = "{$title_col} AS title";
+if ($body_col)        $cols[] = "{$body_col} AS body";
+if ($order_col)       $cols[] = "{$order_col} AS nav_order";
+if ($pub_col)         $cols[] = "{$pub_col} AS pub";
+
+$st = $pdo->prepare("SELECT " . implode(', ', $cols) . " FROM pages WHERE id = :id LIMIT 1");
 $st->execute([':id' => $id]);
-$page = $st->fetch(PDO::FETCH_ASSOC);
+$page = $st->fetch(PDO::FETCH_ASSOC) ?: null;
 
 if (!$page) {
   pf__flash_set('error', 'Page not found.');
-  redirect_to($return);
+  redirect_to($u($return));
 }
 
-/* Subjects dropdown */
-$subjects = [];
-try {
-  $sub_has_menu = ((int)$pdo->query("SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME='subjects' AND COLUMN_NAME='menu_name'")->fetchColumn() > 0);
-  $sub_has_name = ((int)$pdo->query("SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME='subjects' AND COLUMN_NAME='name'")->fetchColumn() > 0);
+$method = strtoupper((string)($_SERVER['REQUEST_METHOD'] ?? 'GET'));
 
-  $sub_title_col = $sub_has_menu ? 'menu_name' : ($sub_has_name ? 'name' : 'id');
-  $subjects = $pdo->query("SELECT id, {$sub_title_col} AS title, slug FROM subjects ORDER BY {$sub_title_col} ASC, id ASC")->fetchAll(PDO::FETCH_ASSOC) ?: [];
+/* ---------------------------------------------------------
+   Compute page_files existence EARLY
+--------------------------------------------------------- */
+$pageFilesExists = false;
+try {
+  $stt = $pdo->prepare("
+    SELECT 1
+    FROM information_schema.TABLES
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'page_files'
+    LIMIT 1
+  ");
+  $stt->execute();
+  $pageFilesExists = (bool)$stt->fetchColumn();
 } catch (Throwable $e) {
-  $subjects = [];
+  $pageFilesExists = false;
+}
+
+/* ---------------------------------------------------------
+   Handle POST: actions
+--------------------------------------------------------- */
+$action_post = ($method === 'POST') ? trim((string)($_POST['action'] ?? '')) : '';
+
+/* Add external link */
+if ($method === 'POST' && $action_post === 'add_external') {
+
+  if (!$pageFilesExists) {
+    redirect_to($u('/staff/subjects/pgs/edit.php?id=' . rawurlencode((string)$id) . '&return=' . rawurlencode($return) . '&attach=error'), 302);
+  }
+
+  $token = (string)($_POST['csrf_token'] ?? '');
+  if (!staff_csrf_verify($token)) {
+    redirect_to($u('/staff/subjects/pgs/edit.php?id=' . rawurlencode((string)$id) . '&return=' . rawurlencode($return) . '&attach=csrf'), 302);
+  }
+
+  $page_id = (int)($_POST['page_id'] ?? 0);
+  if ($page_id !== $id || $page_id <= 0) {
+    redirect_to($u('/staff/subjects/pgs/edit.php?id=' . rawurlencode((string)$id) . '&return=' . rawurlencode($return) . '&attach=invalid'), 302);
+  }
+
+  $staffId = function_exists('staff_id') ? (int)staff_id() : 0;
+  if ($staffId < 1) {
+    redirect_to($u('/staff/subjects/pgs/edit.php?id=' . rawurlencode((string)$id) . '&return=' . rawurlencode($return) . '&attach=denied'), 302);
+  }
+
+  if (!defined('PRIVATE_PATH') || !is_string(PRIVATE_PATH) || PRIVATE_PATH === '') {
+    redirect_to($u('/staff/subjects/pgs/edit.php?id=' . rawurlencode((string)$id) . '&return=' . rawurlencode($return) . '&attach=error'), 302);
+  }
+
+  $fn = rtrim(PRIVATE_PATH, '/\\') . '/functions/page_attachments_external.php';
+  if (!is_file($fn)) {
+    redirect_to($u('/staff/subjects/pgs/edit.php?id=' . rawurlencode((string)$id) . '&return=' . rawurlencode($return) . '&attach=error'), 302);
+  }
+  require_once $fn;
+
+  if (!function_exists('mk_staff_add_external_page_attachment')) {
+    redirect_to($u('/staff/subjects/pgs/edit.php?id=' . rawurlencode((string)$id) . '&return=' . rawurlencode($return) . '&attach=error'), 302);
+  }
+
+  $rawUrl   = (string)($_POST['external_url'] ?? '');
+  $cleanUrl = pf__normalize_external_url($rawUrl);
+
+  $label = trim((string)($_POST['label'] ?? ''));
+  $label = str_replace(["\r","\n"], '', $label);
+  if (function_exists('mb_substr')) $label = (string)mb_substr($label, 0, 255, 'UTF-8');
+  else $label = substr($label, 0, 255);
+
+  try {
+    $res = mk_staff_add_external_page_attachment($pdo, $id, $staffId, $cleanUrl, $label);
+
+    if (!is_array($res) || empty($res['ok'])) {
+      $err = strtolower(trim((string)($res['error'] ?? '')));
+      if ($err !== '' && (
+        str_contains($err, 'allow') ||
+        str_contains($err, 'https') ||
+        str_contains($err, 'host') ||
+        str_contains($err, 'path') ||
+        str_contains($err, 'url')
+      )) {
+        redirect_to($u('/staff/subjects/pgs/edit.php?id=' . rawurlencode((string)$id) . '&return=' . rawurlencode($return) . '&attach=badurl'), 302);
+      }
+      redirect_to($u('/staff/subjects/pgs/edit.php?id=' . rawurlencode((string)$id) . '&return=' . rawurlencode($return) . '&attach=error'), 302);
+    }
+
+    redirect_to($u('/staff/subjects/pgs/edit.php?id=' . rawurlencode((string)$id) . '&return=' . rawurlencode($return) . '&attach=saved'), 302);
+  } catch (Throwable $e) {
+    redirect_to($u('/staff/subjects/pgs/edit.php?id=' . rawurlencode((string)$id) . '&return=' . rawurlencode($return) . '&attach=error'), 302);
+  }
+}
+
+/* ---------------------------------------------------------
+   Subjects dropdown
+--------------------------------------------------------- */
+$subjects = [];
+if ($has_subject_id) {
+  try {
+    $sub_title_col = pf__column_exists($pdo, 'subjects', 'menu_name') ? 'menu_name'
+                   : (pf__column_exists($pdo, 'subjects', 'name') ? 'name' : null);
+
+    if ($sub_title_col) {
+      $subjects = $pdo->query("SELECT id, {$sub_title_col} AS title, slug FROM subjects ORDER BY {$sub_title_col} ASC, id ASC")
+                      ->fetchAll(PDO::FETCH_ASSOC) ?: [];
+    } else {
+      $subjects = $pdo->query("SELECT id, slug FROM subjects ORDER BY id ASC")
+                      ->fetchAll(PDO::FETCH_ASSOC) ?: [];
+      $subjects = array_map(static function(array $r): array {
+        $sid = (int)($r['id'] ?? 0);
+        return ['id' => $sid, 'title' => 'Subject #' . $sid, 'slug' => (string)($r['slug'] ?? '')];
+      }, $subjects);
+    }
+  } catch (Throwable $e) { $subjects = []; }
+}
+
+/* Topic group suggestions */
+$topic_groups = [];
+if ($has_topic_group && $has_subject_id) {
+  try {
+    $sid = (int)($page['subject_id'] ?? 0);
+    if ($sid > 0) {
+      $gst = $pdo->prepare("
+        SELECT DISTINCT topic_group
+        FROM pages
+        WHERE subject_id = :sid
+          AND topic_group IS NOT NULL
+          AND topic_group <> ''
+        ORDER BY topic_group ASC
+        LIMIT 200
+      ");
+      $gst->execute([':sid' => $sid]);
+      $topic_groups = $gst->fetchAll(PDO::FETCH_COLUMN, 0) ?: [];
+      $topic_groups = array_values(array_filter(array_map('strval', $topic_groups), static function(string $v): bool {
+        return trim($v) !== '';
+      }));
+    }
+  } catch (Throwable $e) { $topic_groups = []; }
 }
 
 /* Form state */
 $form = [
-  'subject_id' => (string)($page['subject_id'] ?? ''),
-  'title'      => (string)($page['title'] ?? ''),
-  'slug'       => (string)($page['slug'] ?? ''),
-  'body'       => (string)($page['body'] ?? ''),
-  'nav_order'  => (string)($page['nav_order'] ?? ''),
-  'is_public'  => ((int)($page['is_public'] ?? 0) === 1) ? '1' : '0',
+  'subject_id'  => (string)($page['subject_id'] ?? ''),
+  'title'       => (string)($page['title'] ?? ''),
+  'slug'        => (string)($page['slug'] ?? ''),
+  'topic_group' => (string)($page['topic_group'] ?? ''),
+  'body'        => (string)($page['body'] ?? ''),
+  'nav_order'   => (string)($page['nav_order'] ?? ''),
+  'pub'         => (string)($page['pub'] ?? ''),
 ];
 
-/* Handle POST update */
-if (strtoupper((string)($_SERVER['REQUEST_METHOD'] ?? 'GET')) === 'POST') {
+/* Normalize pub */
+$pub_is_bool   = in_array($pub_col, ['is_public','visible'], true);
+$pub_is_status = ($pub_col === 'status');
+
+$form_public_checked = false;
+if ($pub_is_bool) {
+  $form_public_checked = ((int)$form['pub'] === 1);
+} elseif ($pub_is_status) {
+  $v = strtolower(trim($form['pub']));
+  $form_public_checked = in_array($v, ['active','published','public'], true);
+}
+
+/* ---------------------------------------------------------
+   Handle POST update (page fields only)
+--------------------------------------------------------- */
+if ($method === 'POST' && $action_post === 'update_page') {
   $token = (string)($_POST['csrf_token'] ?? '');
   if (!staff_csrf_verify($token)) {
     pf__flash_set('error', 'Security check failed (CSRF). Please retry.');
-    redirect_to('/staff/subjects/pgs/edit.php?id=' . rawurlencode((string)$id) . '&return=' . rawurlencode($return));
+    redirect_to($u('/staff/subjects/pgs/edit.php?id=' . rawurlencode((string)$id) . '&return=' . rawurlencode($return)), 302);
   }
 
-  $form['subject_id'] = trim((string)($_POST['subject_id'] ?? ''));
-  $form['title']      = trim((string)($_POST['title'] ?? ''));
-  $form['slug']       = trim((string)($_POST['slug'] ?? ''));
-  $form['body']       = (string)($_POST['body'] ?? '');
-  $form['nav_order']  = trim((string)($_POST['nav_order'] ?? ''));
-  $form['is_public']  = ((string)($_POST['is_public'] ?? '0') === '1') ? '1' : '0';
+  $form['subject_id']  = trim((string)($_POST['subject_id'] ?? ''));
+  $form['title']       = trim((string)($_POST['title'] ?? ''));
+  $form['slug']        = trim((string)($_POST['slug'] ?? ''));
+  $form['topic_group'] = $has_topic_group ? pf__clean_topic_group((string)($_POST['topic_group'] ?? '')) : '';
+  $form['body']        = (string)($_POST['body'] ?? '');
+  $form['nav_order']   = trim((string)($_POST['nav_order'] ?? ''));
 
-  if ($form['subject_id'] === '') $error = 'Please choose a subject.';
-  elseif ($form['title'] === '')  $error = 'Please enter a title.';
+  $posted_public = ((string)($_POST['is_public'] ?? '0') === '1');
 
-  if ($error === '' && $form['slug'] === '' && function_exists('mk_slugify')) {
-    $form['slug'] = (string)mk_slugify($form['title']);
+  if ($has_subject_id && $form['subject_id'] === '') $error = 'Please choose a subject.';
+  elseif ($title_col && $form['title'] === '') $error = 'Please enter a title.';
+
+  if ($error === '' && $has_slug) {
+    if ($form['slug'] === '' && function_exists('mk_slugify')) {
+      $form['slug'] = (string)mk_slugify($form['title'] !== '' ? $form['title'] : ('page-' . $id));
+    }
+    if ($form['slug'] === '') $error = 'Please enter a slug.';
+    if ($error === '' && !preg_match('/^[a-z0-9][a-z0-9_-]{0,190}$/', strtolower($form['slug']))) {
+      $error = 'Slug must be lowercase and contain only letters, numbers, underscore or dash.';
+    }
   }
-  if ($error === '' && $form['slug'] === '') $error = 'Please enter a slug.';
 
-  if ($error === '' && function_exists('mk_slug_unique')) {
-    $sid = (int)$form['subject_id'];
-    $form['slug'] = (string)mk_slug_unique(
-      $pdo,
-      'pages',
-      $form['slug'],
-      'slug',
-      'subject_id = :sid AND id <> :id',
-      [':sid' => $sid, ':id' => $id]
-    );
+  if ($error === '' && $has_topic_group && $form['topic_group'] !== '') {
+    if (strlen($form['topic_group']) > 80) $error = 'Nav section (topic group) is too long (max 80 chars).';
+  }
+
+  /* Uniqueness */
+  if ($error === '' && $has_subject_id && $has_slug) {
+    $sid  = (int)$form['subject_id'];
+    $slug = strtolower((string)$form['slug']);
+
+    if ($has_topic_group) {
+      $tgVal = ($form['topic_group'] === '') ? null : (string)$form['topic_group'];
+
+      $chk = $pdo->prepare("
+        SELECT id
+        FROM pages
+        WHERE subject_id = :sid
+          AND slug = :slug
+          AND (topic_group <=> :tg)
+          AND id <> :id
+        LIMIT 1
+      ");
+      $chk->bindValue(':sid', $sid, PDO::PARAM_INT);
+      $chk->bindValue(':slug', $slug, PDO::PARAM_STR);
+      $chk->bindValue(':id', $id, PDO::PARAM_INT);
+      if ($tgVal === null) $chk->bindValue(':tg', null, PDO::PARAM_NULL);
+      else $chk->bindValue(':tg', $tgVal, PDO::PARAM_STR);
+      $chk->execute();
+
+      if ((int)$chk->fetchColumn() > 0) $error = 'Another page already uses this Subject + Nav section + Slug.';
+    } else {
+      $chk = $pdo->prepare("
+        SELECT id
+        FROM pages
+        WHERE subject_id = :sid
+          AND slug = :slug
+          AND id <> :id
+        LIMIT 1
+      ");
+      $chk->execute([':sid' => $sid, ':slug' => $slug, ':id' => $id]);
+      if ((int)$chk->fetchColumn() > 0) $error = 'Another page already uses this Subject + Slug.';
+    }
   }
 
   if ($error === '') {
     try {
-      $sql = "UPDATE pages
-              SET subject_id = :sid,
-                  title      = :title,
-                  slug       = :slug,
-                  body       = :body,
-                  nav_order  = :nav_order,
-                  is_public  = :is_public
-              WHERE id = :id
-              LIMIT 1";
-      $st = $pdo->prepare($sql);
-      $st->bindValue(':id', $id, PDO::PARAM_INT);
-      $st->bindValue(':sid', (int)$form['subject_id'], PDO::PARAM_INT);
-      $st->bindValue(':title', $form['title'], PDO::PARAM_STR);
-      $st->bindValue(':slug', $form['slug'], PDO::PARAM_STR);
-      $st->bindValue(':body', $form['body'], PDO::PARAM_STR);
-      if ($form['nav_order'] === '') $st->bindValue(':nav_order', null, PDO::PARAM_NULL);
-      else $st->bindValue(':nav_order', (int)$form['nav_order'], PDO::PARAM_INT);
-      $st->bindValue(':is_public', (int)$form['is_public'], PDO::PARAM_INT);
-      $st->execute();
+      $sets = [];
+      $bind = [':id' => $id];
+
+      if ($has_subject_id) { $sets[] = 'subject_id = :sid'; $bind[':sid'] = (int)$form['subject_id']; }
+      if ($title_col)      { $sets[] = "{$title_col} = :title"; $bind[':title'] = $form['title']; }
+      if ($has_slug)       { $sets[] = "slug = :slug"; $bind[':slug'] = strtolower($form['slug']); }
+      if ($has_topic_group) {
+        if ($form['topic_group'] === '') $sets[] = "topic_group = NULL";
+        else { $sets[] = "topic_group = :tg"; $bind[':tg'] = $form['topic_group']; }
+      }
+      if ($body_col) {
+        $sets[] = "{$body_col} = :body";
+        $bind[':body'] = $form['body'];
+      }
+      if ($order_col) {
+        if ($form['nav_order'] === '') $sets[] = "{$order_col} = NULL";
+        else { $sets[] = "{$order_col} = :ord"; $bind[':ord'] = (int)$form['nav_order']; }
+      }
+      if ($pub_col) {
+        if ($pub_is_bool) { $sets[] = "{$pub_col} = :pub"; $bind[':pub'] = $posted_public ? 1 : 0; }
+        elseif ($pub_is_status) { $sets[] = "status = :status"; $bind[':status'] = $posted_public ? 'active' : 'draft'; }
+      }
+
+      if (!$sets) throw new RuntimeException('No updatable columns detected for pages table.');
+
+      $sql = "UPDATE pages SET " . implode(', ', $sets) . " WHERE id = :id LIMIT 1";
+      $st2 = $pdo->prepare($sql);
+
+      foreach ($bind as $k => $v) {
+        if ($v === null) $st2->bindValue($k, null, PDO::PARAM_NULL);
+        elseif (is_int($v)) $st2->bindValue($k, $v, PDO::PARAM_INT);
+        else $st2->bindValue($k, (string)$v, PDO::PARAM_STR);
+      }
+
+      $st2->execute();
 
       pf__flash_set('notice', 'Page updated.');
-      redirect_to($return);
+      redirect_to($u($return), 302);
     } catch (Throwable $e) {
       $error = 'Update failed: ' . $e->getMessage();
     }
   }
 }
 
-/* Load attachments (schema tolerant) */
+/* ---------------------------------------------------------
+   Attachments list (page_files)
+--------------------------------------------------------- */
 $attachments = [];
-$pageFilesExists = false;
+if ($pageFilesExists) {
+  try {
+    $aCols = ['id'];
+    if (pf__column_exists($pdo, 'page_files', 'page_id')) $aCols[] = 'page_id';
 
-try {
-  $pageFilesExists = ((int)$pdo->query("SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'page_files'")->fetchColumn() > 0);
-
-  if ($pageFilesExists) {
-    $have = [];
-    $stc = $pdo->query("SHOW COLUMNS FROM page_files");
-    $rows = $stc ? ($stc->fetchAll(PDO::FETCH_ASSOC) ?: []) : [];
-    foreach ($rows as $r) {
-      $f = (string)($r['Field'] ?? '');
-      if ($f !== '') $have[$f] = true;
+    $wanted = [
+      'is_external','external_url','external_host',
+      'original_name','stored_name','stored_path','file_path',
+      'mime_type','file_size','sort_order','created_at'
+    ];
+    foreach ($wanted as $c) {
+      if (pf__column_exists($pdo, 'page_files', $c)) $aCols[] = $c;
     }
 
-    $select = ['id','page_id'];
-    foreach (['filename','stored_name','mime','filesize','is_external','external_url','created_at'] as $c) {
-      if (isset($have[$c])) $select[] = $c;
-    }
+    $order = pf__column_exists($pdo, 'page_files', 'sort_order')
+      ? "sort_order IS NULL, sort_order ASC, id DESC"
+      : "id DESC";
 
-    $sql = "SELECT " . implode(', ', array_unique($select)) . " FROM page_files WHERE page_id = :pid ORDER BY id DESC";
-    $st = $pdo->prepare($sql);
-    $st->execute([':pid' => $id]);
-    $attachments = $st->fetchAll(PDO::FETCH_ASSOC) ?: [];
+    $sqlA = "SELECT " . implode(', ', array_unique($aCols)) . " FROM page_files WHERE page_id = :pid ORDER BY {$order}";
+    $stA = $pdo->prepare($sqlA);
+    $stA->execute([':pid' => $id]);
+    $attachments = $stA->fetchAll(PDO::FETCH_ASSOC) ?: [];
+  } catch (Throwable $e) {
+    $attachments = [];
   }
-} catch (Throwable $e) {
-  $attachments = [];
 }
 
 /* Header */
@@ -262,18 +576,45 @@ $active_nav = 'pgs';
 $page_title = 'Edit Page • Staff';
 require_once APP_ROOT . '/private/shared/staff_header.php';
 
+/* Define one CSRF field HTML for reuse everywhere */
+$csrf_html = staff_csrf_field();
+
 /* URLs */
-$action = (function_exists('url_for') ? (string)url_for('/staff/subjects/pgs/edit.php') : '/staff/subjects/pgs/edit.php')
-  . '?id=' . rawurlencode((string)$id) . '&return=' . rawurlencode($return);
+$action_url = $u('/staff/subjects/pgs/edit.php') . '?id=' . rawurlencode((string)$id) . '&return=' . rawurlencode($return);
+$show_url   = $u('/staff/subjects/pgs/show.php') . '?id=' . rawurlencode((string)$id) . '&return=' . rawurlencode($return);
 
-$show_url = (function_exists('url_for') ? (string)url_for('/staff/subjects/pgs/show.php') : '/staff/subjects/pgs/show.php')
-  . '?id=' . rawurlencode((string)$id) . '&return=' . rawurlencode($return);
-
-$upload_action = function_exists('url_for') ? (string)url_for('/staff/pages/attachments_upload.php') : '/staff/pages/attachments_upload.php';
-$delete_action = function_exists('url_for') ? (string)url_for('/staff/pages/attachments_delete.php') : '/staff/pages/attachments_delete.php';
+/* Handlers */
+$upload_action   = $u('/staff/pages/attachments_upload.php');
+$delete_action   = $u('/staff/pages/attachments_delete.php');
+$download_action = $u('/staff/page-files/download.php');
+$open_action     = $u('/staff/page-files/open.php');
 
 $current_uri = (string)($_SERVER['REQUEST_URI'] ?? ('/staff/subjects/pgs/edit.php?id=' . $id));
 $current_uri = staff_safe_return_url($current_uri, '/staff/subjects/pgs/edit.php?id=' . $id);
+
+/* Diagnostics data */
+$diag_cols = [];
+try {
+  $stc = $pdo->prepare("
+    SELECT COLUMN_NAME
+    FROM information_schema.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'page_files'
+    ORDER BY ORDINAL_POSITION ASC
+  ");
+  $stc->execute();
+  $diag_cols = $stc->fetchAll(PDO::FETCH_COLUMN, 0) ?: [];
+  $diag_cols = array_values(array_filter(array_map('strval', $diag_cols)));
+} catch (Throwable $e) { $diag_cols = []; }
+
+$allow_cfg = [];
+$allow_cfg_path = (defined('APP_ROOT') ? rtrim((string)APP_ROOT, "/\\") : '') . '/private/config/external_attachments_allowlist.php';
+if ($allow_cfg_path !== '' && is_file($allow_cfg_path)) {
+  $tmp = require $allow_cfg_path;
+  $allow_cfg = is_array($tmp) ? $tmp : [];
+}
+$allow_keys = array_keys($allow_cfg);
+sort($allow_keys);
 
 ?>
 <div class="container">
@@ -282,10 +623,10 @@ $current_uri = staff_safe_return_url($current_uri, '/staff/subjects/pgs/edit.php
     <div class="hero__row">
       <div>
         <h1 class="hero__title">Edit Page</h1>
-        <p class="hero__sub"><?php echo h($form['title']); ?></p>
+        <p class="hero__sub"><?php echo h($form['title'] !== '' ? $form['title'] : ('Page #' . $id)); ?></p>
       </div>
       <div class="hero__actions">
-        <a class="btn btn--ghost" href="<?php echo h($return); ?>">← Back</a>
+        <a class="btn btn--ghost" href="<?php echo h($u($return)); ?>">← Back</a>
         <a class="btn" href="<?php echo h($show_url); ?>">View</a>
       </div>
     </div>
@@ -297,58 +638,88 @@ $current_uri = staff_safe_return_url($current_uri, '/staff/subjects/pgs/edit.php
 
   <div class="card">
     <div class="card__body">
-      <form method="post" action="<?php echo h($action); ?>" class="stack">
-        <?php echo staff_csrf_field(); ?>
+      <form method="post" action="<?php echo h($action_url); ?>" class="stack">
+        <?php echo $csrf_html; ?>
+        <input type="hidden" name="action" value="update_page">
         <input type="hidden" name="return" value="<?php echo h($return); ?>">
 
-        <div class="field">
-          <label class="label" for="subject_id">Subject</label>
-          <select class="input" id="subject_id" name="subject_id" required>
-            <option value="">— Choose —</option>
-            <?php foreach ($subjects as $s): ?>
-              <?php
-                $sid = (int)($s['id'] ?? 0);
-                $stitle = (string)($s['title'] ?? ('Subject #' . $sid));
-              ?>
-              <option value="<?php echo h((string)$sid); ?>" <?php echo ((string)$sid === $form['subject_id']) ? 'selected' : ''; ?>>
-                <?php echo h($stitle); ?>
-              </option>
-            <?php endforeach; ?>
-          </select>
-        </div>
+        <?php if ($has_subject_id): ?>
+          <div class="field">
+            <label class="label" for="subject_id">Subject</label>
+            <select class="input" id="subject_id" name="subject_id" required>
+              <option value="">— Choose —</option>
+              <?php foreach ($subjects as $s): ?>
+                <?php
+                  $sid = (int)($s['id'] ?? 0);
+                  $stitle = trim((string)($s['title'] ?? '')) ?: ('Subject #' . $sid);
+                ?>
+                <option value="<?php echo h((string)$sid); ?>" <?php echo ((string)$sid === $form['subject_id']) ? 'selected' : ''; ?>>
+                  <?php echo h($stitle); ?>
+                </option>
+              <?php endforeach; ?>
+            </select>
+          </div>
+        <?php endif; ?>
 
-        <div class="field">
-          <label class="label" for="title">Title</label>
-          <input class="input" id="title" name="title" value="<?php echo h($form['title']); ?>" required>
-        </div>
+        <?php if ($title_col): ?>
+          <div class="field">
+            <label class="label" for="title">Title</label>
+            <input class="input" id="title" name="title" value="<?php echo h($form['title']); ?>" required>
+          </div>
+        <?php endif; ?>
 
-        <div class="field">
-          <label class="label" for="slug">Slug</label>
-          <input class="input mono" id="slug" name="slug" value="<?php echo h($form['slug']); ?>" placeholder="auto if blank">
-        </div>
+        <?php if ($has_slug): ?>
+          <div class="field">
+            <label class="label" for="slug">Slug</label>
+            <input class="input mono" id="slug" name="slug" value="<?php echo h($form['slug']); ?>" placeholder="auto if blank">
+          </div>
+        <?php endif; ?>
 
-        <div class="field">
-          <label class="label" for="nav_order">Nav order</label>
-          <input class="input mono" id="nav_order" name="nav_order" type="number" value="<?php echo h($form['nav_order']); ?>" placeholder="10, 20, 30...">
-        </div>
+        <?php if ($has_topic_group): ?>
+          <div class="field">
+            <label class="label" for="topic_group">Nav section (topic group)</label>
+            <input class="input" id="topic_group" name="topic_group" maxlength="80"
+                   value="<?php echo h($form['topic_group']); ?>"
+                   placeholder="e.g. Background, Key figures, Timeline"
+                   list="topicGroupList">
+            <div class="muted" style="margin-top:6px;">Used to group links on the subject landing page.</div>
+            <?php if (!empty($topic_groups)): ?>
+              <datalist id="topicGroupList">
+                <?php foreach ($topic_groups as $tg): ?>
+                  <option value="<?php echo h((string)$tg); ?>"></option>
+                <?php endforeach; ?>
+              </datalist>
+            <?php endif; ?>
+          </div>
+        <?php endif; ?>
 
-        <div class="field">
-          <label class="check">
-            <input type="checkbox" name="is_public" value="1" <?php echo ($form['is_public'] === '1') ? 'checked' : ''; ?>>
-            <span>Public (published)</span>
-          </label>
-        </div>
+        <?php if ($order_col): ?>
+          <div class="field">
+            <label class="label" for="nav_order"><?php echo h($order_col === 'position' ? 'Position' : 'Nav order'); ?></label>
+            <input class="input mono" id="nav_order" name="nav_order" type="number" value="<?php echo h($form['nav_order']); ?>" placeholder="10, 20, 30...">
+          </div>
+        <?php endif; ?>
 
-        <div class="field">
-          <label class="label" for="body">Body</label>
-          <textarea class="input" id="body" name="body" rows="12"><?php echo h($form['body']); ?></textarea>
-        </div>
+        <?php if ($pub_col): ?>
+          <div class="field">
+            <label class="check">
+              <input type="checkbox" name="is_public" value="1" <?php echo $form_public_checked ? 'checked' : ''; ?>>
+              <span>Public (published)</span>
+            </label>
+          </div>
+        <?php endif; ?>
+
+        <?php if ($body_col): ?>
+          <div class="field">
+            <label class="label" for="body"><?php echo h($body_col === 'body_html' ? 'Body (HTML)' : 'Body'); ?></label>
+            <textarea class="input" id="body" name="body" rows="12"><?php echo h($form['body']); ?></textarea>
+          </div>
+        <?php endif; ?>
 
         <div class="row row--gap">
           <button class="btn btn--primary" type="submit">Save changes</button>
-          <a class="btn btn--ghost" href="<?php echo h($return); ?>">Cancel</a>
+          <a class="btn btn--ghost" href="<?php echo h($u($return)); ?>">Cancel</a>
         </div>
-
       </form>
     </div>
   </div>
@@ -367,17 +738,16 @@ $current_uri = staff_safe_return_url($current_uri, '/staff/subjects/pgs/edit.php
         </div>
       <?php else: ?>
 
+        <!-- Upload form -->
         <form method="post" action="<?php echo h($upload_action); ?>" enctype="multipart/form-data" class="stack" style="margin-top:12px;">
-          <?php echo staff_csrf_field(); ?>
+          <?php echo $csrf_html; ?>
           <input type="hidden" name="page_id" value="<?php echo (int)$id; ?>">
           <input type="hidden" name="return" value="<?php echo h($current_uri); ?>">
 
           <div class="field">
             <label class="label" for="attachments">Add attachments</label>
             <input class="input" id="attachments" type="file" name="attachments[]" multiple>
-            <div class="muted" style="margin-top:6px;">
-              Allowed types and max size are enforced by the upload handler.
-            </div>
+            <div class="muted" style="margin-top:6px;">Allowed types and max size are enforced by the upload handler.</div>
           </div>
 
           <div class="row row--gap">
@@ -385,14 +755,97 @@ $current_uri = staff_safe_return_url($current_uri, '/staff/subjects/pgs/edit.php
           </div>
         </form>
 
+        <!-- External link form -->
+        <form method="post" action="<?php echo h($action_url); ?>" class="stack" style="margin-top:12px;">
+          <?php echo $csrf_html; ?>
+          <input type="hidden" name="action" value="add_external">
+          <input type="hidden" name="page_id" value="<?php echo (int)$id; ?>">
+          <input type="hidden" name="return" value="<?php echo h($current_uri); ?>">
+
+          <div class="field">
+            <label class="label" for="external_url">Add external link (allowlisted HTTPS only)</label>
+            <input class="input" id="external_url" name="external_url" type="text"
+                   inputmode="url" autocomplete="off" spellcheck="false"
+                   placeholder="https://en.wikipedia.org/wiki/Igbo_people"
+                   required>
+            <div class="muted" style="margin-top:6px;">
+              You can paste a URL — the server will clean it and enforce allowlist rules.
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label" for="label">Label (optional)</label>
+            <input class="input" id="label" name="label" maxlength="255" placeholder="e.g. Source PDF, Documentary video">
+          </div>
+
+          <div class="row row--gap">
+            <button class="btn btn--ghost" type="submit">Add external link</button>
+          </div>
+        </form>
+
+        <!-- Tiny diagnostics -->
+        <details style="margin-top:10px;">
+          <summary class="muted" style="cursor:pointer;">Attachment diagnostics</summary>
+          <div class="muted" style="margin-top:8px; font-size:.92rem;">
+            <div><strong>Allowlist file:</strong> <code><?php echo h($allow_cfg_path); ?></code></div>
+            <div style="margin-top:6px;"><strong>Allowlisted roots:</strong>
+              <?php if (!$allow_keys): ?>
+                <em>none loaded</em>
+              <?php else: ?>
+                <code><?php echo h(implode(', ', $allow_keys)); ?></code>
+              <?php endif; ?>
+            </div>
+
+            <div style="margin-top:10px;"><strong>page_files columns:</strong>
+              <?php if (!$diag_cols): ?>
+                <em>not readable</em>
+              <?php else: ?>
+                <code><?php echo h(implode(', ', $diag_cols)); ?></code>
+              <?php endif; ?>
+            </div>
+
+            <div style="margin-top:10px;">
+              <strong>Normalizer preview:</strong>
+              <div class="mono" style="margin-top:4px; word-break:break-word;">
+                <div>input: <code id="pfDiagIn">—</code></div>
+                <div>clean: <code id="pfDiagClean">—</code></div>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <script>
+        (function(){
+          var el = document.getElementById('external_url');
+          var outIn = document.getElementById('pfDiagIn');
+          var outCl = document.getElementById('pfDiagClean');
+          if(!el || !outIn || !outCl) return;
+
+          function clean(v){
+            v = (v || '').replace(/[\x00-\x1F\x7F]/g,'').trim();
+            v = v.split(/\s+/)[0] || '';
+            v = v.replace(/[.,;:)\]}'"]+$/,'');
+            if(v.startsWith('<') && v.endsWith('>')) v = v.slice(1,-1).trim();
+            return v;
+          }
+          function update(){
+            outIn.textContent = el.value || '—';
+            outCl.textContent = clean(el.value) || '—';
+          }
+          el.addEventListener('input', update);
+          el.addEventListener('change', update);
+          update();
+        })();
+        </script>
+
         <?php if (empty($attachments)): ?>
           <p class="muted" style="margin-top:12px;"><em>No attachments yet.</em></p>
         <?php else: ?>
           <div style="margin-top:14px; overflow:auto;">
-            <table class="table" style="width:100%; min-width:720px;">
+            <table class="table" style="width:100%; min-width:860px;">
               <thead>
                 <tr>
-                  <th style="text-align:left;">Filename</th>
+                  <th style="text-align:left;">Name</th>
                   <th style="text-align:left;">Type</th>
                   <th style="text-align:right;">Size</th>
                   <th style="text-align:left;">Added</th>
@@ -402,39 +855,78 @@ $current_uri = staff_safe_return_url($current_uri, '/staff/subjects/pgs/edit.php
               <tbody>
                 <?php foreach ($attachments as $a): ?>
                   <?php
-                    $aid   = (int)($a['id'] ?? 0);
-                    $name  = trim((string)($a['filename'] ?? '')) ?: ('Attachment #' . $aid);
-                    $mime  = (string)($a['mime'] ?? '');
-                    $bytes = isset($a['filesize']) ? (int)$a['filesize'] : 0;
-                    $when  = (string)($a['created_at'] ?? '');
-                    $isExt = !empty($a['is_external']);
+                    $aid = (int)($a['id'] ?? 0);
 
-                    $publicHref = '/attachments/file.php?id=' . $aid;
+                    // Strict external detection:
+                    $isExternal = false;
+                    if (array_key_exists('is_external', $a)) {
+                      $isExternal = ((int)$a['is_external'] === 1);
+                    } elseif (!empty($a['external_url'])) {
+                      $isExternal = true;
+                    }
+
+                    $extUrl  = $isExternal ? trim((string)($a['external_url'] ?? '')) : '';
+                    $extHost = $isExternal ? trim((string)($a['external_host'] ?? '')) : '';
+
+                    $name = '';
+                    if (isset($a['original_name']) && is_string($a['original_name'])) $name = trim($a['original_name']);
+                    if ($name === '' && $isExternal && $extHost !== '') $name = 'External link (' . $extHost . ')';
+                    if ($name === '') $name = 'Attachment #' . $aid;
+
+                    $mime  = isset($a['mime_type']) ? (string)$a['mime_type'] : '';
+                    $bytes = isset($a['file_size']) ? (int)$a['file_size'] : 0;
+                    $when  = isset($a['created_at']) ? (string)$a['created_at'] : '';
+
+                    $typeLabel = $isExternal ? ('External' . ($extHost !== '' ? ' • ' . $extHost : '')) : ($mime !== '' ? $mime : 'Local');
 
                     $sizeLabel = '—';
-                    if ($bytes > 0) {
+                    if (!$isExternal && $bytes > 0) {
                       $kb = $bytes / 1024;
                       $mb = $kb / 1024;
                       $sizeLabel = ($mb >= 1) ? (number_format($mb, 2) . ' MB') : (number_format($kb, 0) . ' KB');
                     }
+
+                    $detail = '';
+                    if ($isExternal && $extUrl !== '') $detail = $extUrl;
+                    if (!$isExternal && !empty($a['file_path'])) $detail = (string)$a['file_path'];
                   ?>
                   <tr>
                     <td>
-                      <a href="<?php echo h($publicHref); ?>" target="_blank" rel="noopener">
-                        <?php echo h($name); ?>
-                      </a>
-                      <?php if ($isExt && !empty($a['external_url'])): ?>
-                        <div class="muted" style="margin-top:4px; font-size:.9rem;">
-                          External: <?php echo h((string)$a['external_url']); ?>
+                      <div style="display:flex; gap:8px; align-items:center;">
+                        <span><?php echo h($name); ?></span>
+                        <?php if ($isExternal): ?>
+                          <span class="muted">(external)</span>
+                        <?php endif; ?>
+                      </div>
+
+                      <?php if ($detail !== ''): ?>
+                        <div class="muted" style="margin-top:4px; font-size:.9rem; word-break:break-word;">
+                          <?php echo h($detail); ?>
                         </div>
                       <?php endif; ?>
                     </td>
-                    <td><?php echo h($mime !== '' ? $mime : '—'); ?></td>
+                    <td><?php echo h($typeLabel); ?></td>
                     <td style="text-align:right;"><?php echo h($sizeLabel); ?></td>
                     <td><?php echo h($when !== '' ? $when : '—'); ?></td>
-                    <td style="text-align:right;">
-                      <form method="post" action="<?php echo h($delete_action); ?>" style="display:inline;">
-                        <?php echo staff_csrf_field(); ?>
+                    <td style="text-align:right; white-space:nowrap;">
+                      <?php if ($isExternal): ?>
+                        <form method="post" action="<?php echo h($open_action); ?>" target="_blank" style="display:inline;">
+                          <?php echo $csrf_html; ?>
+                          <input type="hidden" name="file_id" value="<?php echo (int)$aid; ?>">
+                          <input type="hidden" name="page_id" value="<?php echo (int)$id; ?>">
+                          <button class="btn" type="submit">Open</button>
+                        </form>
+                      <?php else: ?>
+                        <form method="post" action="<?php echo h($download_action); ?>" target="_blank" style="display:inline;">
+                          <?php echo $csrf_html; ?>
+                          <input type="hidden" name="file_id" value="<?php echo (int)$aid; ?>">
+                          <input type="hidden" name="page_id" value="<?php echo (int)$id; ?>">
+                          <button class="btn" type="submit">Download</button>
+                        </form>
+                      <?php endif; ?>
+
+                      <form method="post" action="<?php echo h($delete_action); ?>" style="display:inline; margin-left:6px;">
+                        <?php echo $csrf_html; ?>
                         <input type="hidden" name="id" value="<?php echo (int)$aid; ?>">
                         <input type="hidden" name="page_id" value="<?php echo (int)$id; ?>">
                         <input type="hidden" name="return" value="<?php echo h($current_uri); ?>">
@@ -455,6 +947,4 @@ $current_uri = staff_safe_return_url($current_uri, '/staff/subjects/pgs/edit.php
 </div>
 
 <?php
-$staff_footer = APP_ROOT . '/private/shared/staff_footer.php';
-if (is_file($staff_footer)) require $staff_footer;
-else echo "</body></html>";
+require_once APP_ROOT . '/private/shared/staff_footer.php';

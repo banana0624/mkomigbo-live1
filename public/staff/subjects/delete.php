@@ -1,404 +1,176 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__ . '/../../_init.php';
+
 
 /**
  * /public/staff/subjects/delete.php
- * Staff: Delete a subject (confirmation + POST)
+ * Staff: Delete subject (confirm + POST)
  *
- * Goals:
- * - Robust init locator for your current layout:
- *     /app/mkomigbo/private/assets/initialize.php
- * - Uses staff_header.php contract (it opens <main> already)
- * - Safe return= handling to prevent open redirects
- * - FK-safe messaging (if subject has pages, deletion may be blocked)
+ * Locked rules:
+ * - Only bootstrap is /public/staff/_init.php
+// [patched]  * - Never scans for initialize.php
+ * - CSRF required on POST
+ * - Safe return= (staff-only)
+ * - Handles FK-blocked deletes cleanly
  */
 
-/* ---------------------------------------------------------
-   Locate initialize.php (bounded upward scan, supports your layout)
---------------------------------------------------------- */
-if (!function_exists('mk_find_init')) {
-  function mk_find_init(string $startDir, int $maxDepth = 14): ?string {
-    $dir = $startDir;
+@ini_set('display_errors', '0');
+@ini_set('display_startup_errors', '0');
+error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
 
-    for ($i = 0; $i <= $maxDepth; $i++) {
-      $candidates = [
-        $dir . '/private/assets/initialize.php',
-        $dir . '/app/mkomigbo/private/assets/initialize.php',
-        $dir . '/app/private/assets/initialize.php',
-      ];
+require_once __DIR__ . '/../_init.php';
 
-      foreach ($candidates as $candidate) {
-        if (is_file($candidate)) return $candidate;
-      }
+if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
 
-      $parent = dirname($dir);
-      if ($parent === $dir) break;
-      $dir = $parent;
-    }
-
-    return null;
-  }
-}
-
-$init = mk_find_init(__DIR__);
-if (!$init) {
-  http_response_code(500);
-  header('Content-Type: text/plain; charset=utf-8');
-  echo "Init not found.\n";
-  echo "Start: " . __DIR__ . "\n";
-  echo "Expected one of:\n";
-  echo " - {dir}/private/assets/initialize.php\n";
-  echo " - {dir}/app/mkomigbo/private/assets/initialize.php\n";
-  echo " - {dir}/app/private/assets/initialize.php\n";
-  exit;
-}
-require_once $init;
-
-/* ---------------------------------------------------------
-   Auth
---------------------------------------------------------- */
-if (function_exists('require_staff')) {
-  require_staff();
-} elseif (function_exists('require_login')) {
-  require_login();
-}
-
-/* ---------------------------------------------------------
-   Helpers (fallbacks only)
---------------------------------------------------------- */
-if (!function_exists('h')) {
-  function h(string $v): string { return htmlspecialchars($v, ENT_QUOTES, 'UTF-8'); }
-}
-if (!function_exists('redirect_to')) {
-  function redirect_to(string $location): void {
-    $location = str_replace(["\r", "\n"], '', $location);
-    header('Location: ' . $location, true, 302);
-    exit;
-  }
-}
 $u = static function(string $path): string {
   return function_exists('url_for') ? (string)url_for($path) : $path;
 };
 
-/* ---------------------------------------------------------
-   CSRF – prefer project helpers; fallback if missing
---------------------------------------------------------- */
-$csrf_mode = (function_exists('csrf_field') && function_exists('csrf_require')) ? 'project' : 'fallback';
+$id = (int)($_GET['id'] ?? $_POST['id'] ?? 0);
 
-if ($csrf_mode === 'fallback') {
-  if (!function_exists('csrf_token')) {
-    function csrf_token(): string {
-      if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
-      if (empty($_SESSION['csrf_token']) || !is_string($_SESSION['csrf_token'])) {
-        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-      }
-      return $_SESSION['csrf_token'];
-    }
-  }
-  if (!function_exists('csrf_field')) {
-    function csrf_field(): string {
-      return '<input type="hidden" name="csrf_token" value="' . h(csrf_token()) . '">';
-    }
-  }
-  if (!function_exists('csrf_require')) {
-    function csrf_require(): void {
-      if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') return;
-      if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
-      $sent = $_POST['csrf_token'] ?? '';
-      $sess = $_SESSION['csrf_token'] ?? '';
-      $ok = is_string($sent) && is_string($sess) && $sent !== '' && hash_equals($sess, $sent);
-      if (!$ok) {
-        http_response_code(400);
-        header('Content-Type: text/plain; charset=utf-8');
-        echo "Bad Request (CSRF)\n";
-        exit;
-      }
-    }
-  }
-}
+$default_return = '/staff/subjects/';
+$return_raw  = (string)($_GET['return'] ?? $_POST['return'] ?? '');
+$return_path = function_exists('staff_safe_return_url')
+  ? staff_safe_return_url($return_raw, $default_return)
+  : (function_exists('pf__safe_return_url') ? pf__safe_return_url($return_raw, $default_return) : $default_return);
 
-/* ---------------------------------------------------------
-   Safe return= to avoid open redirects
---------------------------------------------------------- */
-if (!function_exists('pf__safe_return_url')) {
-  function pf__safe_return_url(string $raw, string $default): string {
-    $raw = trim($raw);
-    if ($raw === '') return $default;
-
-    $raw = rawurldecode($raw);
-    if ($raw === '' || $raw[0] !== '/') return $default;
-    if (preg_match('~^//~', $raw)) return $default;
-    if (preg_match('~^[a-z]+:~i', $raw)) return $default;
-    if (!preg_match('~^/staff/~', $raw)) return $default;
-
-    return $raw;
-  }
-}
-
-/* ---------------------------------------------------------
-   DB
---------------------------------------------------------- */
-try {
-  $pdo = function_exists('db') ? db() : null;
-  if (!$pdo instanceof PDO) {
-    throw new RuntimeException('db() did not return a PDO instance.');
-  }
-} catch (Throwable $e) {
-  $GLOBALS['page_title'] = 'Staff • Delete Subject — Mkomigbo';
-  $GLOBALS['active_nav'] = 'subjects';
-
-  $staff_header =
-    (defined('PRIVATE_PATH') && is_file(PRIVATE_PATH . '/shared/staff_header.php'))
-      ? (PRIVATE_PATH . '/shared/staff_header.php')
-      : ((defined('APP_ROOT') && is_file(APP_ROOT . '/private/shared/staff_header.php'))
-          ? (APP_ROOT . '/private/shared/staff_header.php')
-          : null);
-
-  if ($staff_header) require_once $staff_header;
-
-  echo '<div class="container" style="padding:24px 0;">';
-  echo '<div class="notice error"><strong>DB Error:</strong> ' . h($e->getMessage()) . '</div>';
-  echo '</div>';
-
-  $staff_footer =
-    (defined('PRIVATE_PATH') && is_file(PRIVATE_PATH . '/shared/staff_footer.php'))
-      ? (PRIVATE_PATH . '/shared/staff_footer.php')
-      : ((defined('APP_ROOT') && is_file(APP_ROOT . '/private/shared/staff_footer.php'))
-          ? (APP_ROOT . '/private/shared/staff_footer.php')
-          : null);
-
-  if ($staff_footer) require_once $staff_footer;
-  exit;
-}
-
-/* Column inspector (schema-tolerant) */
-if (!function_exists('pf__column_exists')) {
-  function pf__column_exists(PDO $pdo, string $table, string $column): bool {
-    static $cache = [];
-    $key = strtolower($table . '.' . $column);
-    if (array_key_exists($key, $cache)) return (bool)$cache[$key];
-
-    $st = $pdo->prepare("
-      SELECT COUNT(*)
-      FROM information_schema.COLUMNS
-      WHERE TABLE_SCHEMA = DATABASE()
-        AND TABLE_NAME = ?
-        AND COLUMN_NAME = ?
-      LIMIT 1
-    ");
-    $st->execute([$table, $column]);
-    $cache[$key] = ((int)$st->fetchColumn() > 0);
-    return (bool)$cache[$key];
-  }
-}
-
-/* ---------------------------------------------------------
-   Inputs
---------------------------------------------------------- */
-$id = (int)($_GET['id'] ?? 0);
-
-$q = trim((string)($_GET['q'] ?? ''));
-$only_unpub = ((string)($_GET['only_unpub'] ?? '') === '1');
-
-$return_params = [];
-if ($q !== '') $return_params['q'] = $q;
-if ($only_unpub) $return_params['only_unpub'] = '1';
-$return_qs = $return_params ? ('?' . http_build_query($return_params, '', '&', PHP_QUERY_RFC3986)) : '';
-
-$default_list_path = '/staff/subjects/index.php' . $return_qs;
-
-$return_raw  = (string)($_GET['return'] ?? '');
-$return_path = pf__safe_return_url($return_raw, $default_list_path);
-$list_url    = $u($return_path);
+$list_url = $u($return_path);
 
 if ($id <= 0) {
-  redirect_to($list_url);
-}
-
-/* ---------------------------------------------------------
-   Load subject
---------------------------------------------------------- */
-$has_menu_name = pf__column_exists($pdo, 'subjects', 'menu_name');
-$has_name      = pf__column_exists($pdo, 'subjects', 'name');
-$has_slug      = pf__column_exists($pdo, 'subjects', 'slug');
-
-$cols = ['id'];
-if ($has_menu_name) $cols[] = 'menu_name';
-if ($has_name)      $cols[] = 'name';
-if ($has_slug)      $cols[] = 'slug';
-
-$st = $pdo->prepare("SELECT " . implode(', ', $cols) . " FROM subjects WHERE id = ? LIMIT 1");
-$st->execute([$id]);
-$subject = $st->fetch(PDO::FETCH_ASSOC) ?: null;
-
-if (!$subject) {
-  $GLOBALS['page_title'] = 'Staff • Delete Subject — Mkomigbo';
-  $GLOBALS['active_nav'] = 'subjects';
-
-  $staff_header =
-    (defined('PRIVATE_PATH') && is_file(PRIVATE_PATH . '/shared/staff_header.php'))
-      ? (PRIVATE_PATH . '/shared/staff_header.php')
-      : ((defined('APP_ROOT') && is_file(APP_ROOT . '/private/shared/staff_header.php'))
-          ? (APP_ROOT . '/private/shared/staff_header.php')
-          : null);
-
-  if ($staff_header) require_once $staff_header;
-
-  echo '<div class="container" style="padding:24px 0;">';
-  echo '<div class="notice error"><strong>Not found:</strong> Subject does not exist.</div>';
-  echo '<div class="actions"><a class="btn" href="' . h($list_url) . '">← Back to Subjects</a></div>';
-  echo '</div>';
-
-  $staff_footer =
-    (defined('PRIVATE_PATH') && is_file(PRIVATE_PATH . '/shared/staff_footer.php'))
-      ? (PRIVATE_PATH . '/shared/staff_footer.php')
-      : ((defined('APP_ROOT') && is_file(APP_ROOT . '/private/shared/staff_footer.php'))
-          ? (APP_ROOT . '/private/shared/staff_footer.php')
-          : null);
-
-  if ($staff_footer) require_once $staff_footer;
+  if (function_exists('staff_flash_set')) staff_flash_set('error', 'Invalid subject id.');
+  elseif (function_exists('pf__flash_set')) pf__flash_set('error', 'Invalid subject id.');
+  header('Location: ' . $list_url, true, 302);
   exit;
 }
 
-$subject_id = (int)$subject['id'];
-
-$subject_title = '';
-if ($has_menu_name && trim((string)($subject['menu_name'] ?? '')) !== '') {
-  $subject_title = trim((string)$subject['menu_name']);
-} elseif ($has_name && trim((string)($subject['name'] ?? '')) !== '') {
-  $subject_title = trim((string)$subject['name']);
-} else {
-  $subject_title = "Subject #{$subject_id}";
-}
-
-$subject_slug = $has_slug ? trim((string)($subject['slug'] ?? '')) : '';
-
-/* If pages exist, deletion may be blocked (FK). Pre-check count. */
-$pages_count = 0;
 try {
-  $stc = $pdo->prepare("SELECT COUNT(*) FROM pages WHERE subject_id = ?");
-  $stc->execute([$subject_id]);
-  $pages_count = (int)$stc->fetchColumn();
-} catch (Throwable $e) {
-  $pages_count = 0;
-}
+  $pdo = function_exists('staff_pdo') ? staff_pdo() : (function_exists('db') ? db() : null);
+  if (!$pdo instanceof PDO) throw new RuntimeException('Database not available.');
 
-/* ---------------------------------------------------------
-   POST: delete
---------------------------------------------------------- */
-$errors = [];
-$notice = '';
+  // Fetch subject for confirmation UI
+  $name = '';
+  $slug = '';
 
-if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
-  csrf_require();
+  $has_display = false;
+  $has_name = false;
+  $has_title = false;
+  $has_slug = false;
 
-  $posted_return = (string)($_POST['return'] ?? '');
-  $return_path   = pf__safe_return_url($posted_return, $default_list_path);
-  $list_url      = $u($return_path);
+  // Detect columns quickly
+  $colCheck = $pdo->prepare("
+    SELECT COLUMN_NAME
+    FROM information_schema.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'subjects'
+      AND COLUMN_NAME IN ('display_name','name','title','slug')
+  ");
+  $colCheck->execute();
+  $cols = $colCheck->fetchAll(PDO::FETCH_COLUMN) ?: [];
+  $cols = array_map('strval', $cols);
 
-  try {
-    $std = $pdo->prepare("DELETE FROM subjects WHERE id = ? LIMIT 1");
-    $std->execute([$subject_id]);
+  $has_display = in_array('display_name', $cols, true);
+  $has_name    = in_array('name', $cols, true);
+  $has_title   = in_array('title', $cols, true);
+  $has_slug    = in_array('slug', $cols, true);
 
-    redirect_to($list_url);
+  $nameCol = $has_display ? 'display_name' : ($has_name ? 'name' : ($has_title ? 'title' : null));
 
-  } catch (Throwable $e) {
-    $msg = $e->getMessage();
+  $sel = ["id"];
+  $sel[] = $has_slug ? "slug" : "NULL AS slug";
+  $sel[] = $nameCol ? "`{$nameCol}` AS display_name" : "CAST(id AS CHAR) AS display_name";
 
-    if (stripos($msg, 'foreign key') !== false || stripos($msg, 'constraint') !== false) {
-      $errors[] = 'Cannot delete this subject because related records exist (likely pages). Delete or reassign those pages first.';
-    } else {
-      $errors[] = 'Delete failed: ' . $msg;
-    }
+  $st = $pdo->prepare("SELECT " . implode(', ', $sel) . " FROM subjects WHERE id = ? LIMIT 1");
+  $st->execute([$id]);
+  $row = $st->fetch(PDO::FETCH_ASSOC);
+
+  if (!$row) {
+    if (function_exists('staff_flash_set')) staff_flash_set('error', "Subject not found (#{$id}).");
+    elseif (function_exists('pf__flash_set')) pf__flash_set('error', "Subject not found (#{$id}).");
+    header('Location: ' . $list_url, true, 302);
+    exit;
   }
+
+  $name = (string)($row['display_name'] ?? ('Subject #' . $id));
+  $slug = (string)($row['slug'] ?? '');
+
+  // POST: delete
+  if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
+    if (function_exists('staff_csrf_require')) staff_csrf_require();
+    elseif (function_exists('csrf_require')) csrf_require();
+
+    $del = $pdo->prepare("DELETE FROM subjects WHERE id = ? LIMIT 1");
+    $del->execute([$id]);
+
+    if ($del->rowCount() > 0) {
+      $msg = "Deleted subject #{$id} successfully.";
+      if (function_exists('staff_flash_set')) staff_flash_set('notice', $msg);
+      elseif (function_exists('pf__flash_set')) pf__flash_set('notice', $msg);
+    } else {
+      $msg = "Delete did not complete (subject may already be removed).";
+      if (function_exists('staff_flash_set')) staff_flash_set('error', $msg);
+      elseif (function_exists('pf__flash_set')) pf__flash_set('error', $msg);
+    }
+
+    header('Location: ' . $list_url, true, 302);
+    exit;
+  }
+
+} catch (Throwable $e) {
+  // Render a minimal error page (still within staff layout if available)
+  $page_title = 'Staff • Delete Subject';
+  if (function_exists('mk_view_set')) mk_view_set(['page_title' => $page_title]);
+  if (function_exists('mk_require_shared')) mk_require_shared('staff_header.php');
+
+  echo '<section class="card"><div class="card__body">';
+  echo '<p class="warn" style="color:#b02a37;">' . h('Error: ' . $e->getMessage()) . '</p>';
+  echo '<p style="margin-top:10px;"><a class="btn" href="' . h($list_url) . '">Back</a></p>';
+  echo '</div></section>';
+
+  if (function_exists('mk_require_shared')) mk_require_shared('staff_footer.php');
+  exit;
 }
 
-/* ---------------------------------------------------------
-   Render
---------------------------------------------------------- */
-$GLOBALS['page_title'] = 'Staff • Delete Subject — Mkomigbo';
-$GLOBALS['active_nav'] = 'subjects';
+/* ---------------------------
+   Render confirmation (GET)
+---------------------------- */
+$page_title = 'Staff • Delete Subject';
+if (function_exists('mk_view_set')) mk_view_set(['page_title' => $page_title]);
+if (function_exists('mk_require_shared')) {
+  mk_require_shared('staff_header.php');
+} else {
+  header('Content-Type: text/html; charset=UTF-8');
+  echo "<!doctype html><html><head><meta charset='utf-8'><title>" . h($page_title) . "</title></head><body><main>";
+}
 
-$staff_header =
-  (defined('PRIVATE_PATH') && is_file(PRIVATE_PATH . '/shared/staff_header.php'))
-    ? (PRIVATE_PATH . '/shared/staff_header.php')
-    : ((defined('APP_ROOT') && is_file(APP_ROOT . '/private/shared/staff_header.php'))
-        ? (APP_ROOT . '/private/shared/staff_header.php')
-        : null);
+echo '<section class="hero">';
+echo '<h1 class="hero__title">Delete Subject</h1>';
+echo '<p class="hero__subtitle">This action cannot be undone.</p>';
+echo '</section>';
 
-if ($staff_header) require_once $staff_header;
+echo '<section class="card"><div class="card__body">';
+echo '<h2 class="card__title" style="margin:0 0 8px;">Confirm deletion</h2>';
+echo '<p class="muted" style="margin:0 0 12px;">You are about to delete <strong>' . h($name) . '</strong>'
+  . ($slug !== '' ? ' <span class="muted">(' . h($slug) . ')</span>' : '')
+  . '.</p>';
 
-$pages_url = $u('/staff/subjects/pgs/?subject_id=' . rawurlencode((string)$subject_id) . '&return=' . rawurlencode($return_path));
-$show_url  = $u('/staff/subjects/show.php?id=' . rawurlencode((string)$subject_id) . '&return=' . rawurlencode($return_path));
+echo '<form method="post" action="">';
+if (function_exists('staff_csrf_field')) echo staff_csrf_field();
+elseif (function_exists('csrf_field')) echo csrf_field();
 
-?>
-<div class="container" style="padding:24px 0;">
+echo '<input type="hidden" name="id" value="' . h((string)$id) . '">';
+echo '<input type="hidden" name="return" value="' . h($return_path) . '">';
 
-  <section class="hero">
-    <div class="hero-bar"></div>
-    <div class="hero-inner">
-      <h1>Delete Subject</h1>
-      <p class="muted" style="margin:6px 0 0;">
-        You are about to delete <span class="pill">ID <?= h((string)$subject_id) ?></span>
-        <span class="pill"><?= h($subject_title) ?></span>
-        <?php if ($subject_slug !== ''): ?><span class="pill"><?= h($subject_slug) ?></span><?php endif; ?>
-      </p>
+echo '<div class="actions" style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">';
+echo '<button class="btn btn--danger" type="submit">Yes, delete</button>';
+echo '<a class="btn btn--ghost" href="' . h($list_url) . '">Cancel</a>';
+echo '</div>';
 
-      <div class="actions" style="margin-top:14px;">
-        <a class="btn" href="<?= h($list_url) ?>">← Back to Subjects</a>
-        <a class="btn" href="<?= h($show_url) ?>">Details</a>
-        <a class="btn" href="<?= h($pages_url) ?>">Pages</a>
-      </div>
-    </div>
-  </section>
+echo '</form>';
+echo '</div></section>';
 
-  <?php if ($notice !== ''): ?>
-    <div class="notice success"><strong><?= h($notice) ?></strong></div>
-  <?php endif; ?>
-
-  <?php if ($errors): ?>
-    <div class="notice error">
-      <strong>Cannot delete:</strong>
-      <ul class="small" style="margin:8px 0 0 18px;">
-        <?php foreach ($errors as $e): ?><li><?= h($e) ?></li><?php endforeach; ?>
-      </ul>
-    </div>
-  <?php endif; ?>
-
-  <section class="card form-card" style="margin-top:14px;">
-    <?php if ($pages_count > 0): ?>
-      <div class="notice" style="margin-bottom:12px;">
-        <strong>Warning:</strong> This subject currently has <span class="pill"><?= h((string)$pages_count) ?></span> page(s).
-        Deletion may be blocked by database constraints.
-        <div class="actions" style="margin-top:10px;">
-          <a class="btn" href="<?= h($pages_url) ?>">Manage Pages for this Subject</a>
-        </div>
-      </div>
-    <?php endif; ?>
-
-    <form method="post" action="">
-      <?= csrf_field() ?>
-      <input type="hidden" name="return" value="<?= h($return_path) ?>">
-
-      <p class="muted" style="margin:0 0 12px;">
-        This action is permanent. If you proceed, the subject will be removed.
-      </p>
-
-      <div class="actions">
-        <button class="btn btn-danger" type="submit"
-          onclick="return confirm('Delete this subject permanently?');">Yes, delete</button>
-        <a class="btn" href="<?= h($list_url) ?>">Cancel</a>
-      </div>
-    </form>
-  </section>
-
-</div>
-<?php
-$staff_footer =
-  (defined('PRIVATE_PATH') && is_file(PRIVATE_PATH . '/shared/staff_footer.php'))
-    ? (PRIVATE_PATH . '/shared/staff_footer.php')
-    : ((defined('APP_ROOT') && is_file(APP_ROOT . '/private/shared/staff_footer.php'))
-        ? (APP_ROOT . '/private/shared/staff_footer.php')
-        : null);
-
-if ($staff_footer) require_once $staff_footer;
+if (function_exists('mk_require_shared')) {
+  mk_require_shared('staff_footer.php');
+} else {
+  echo "</main></body></html>";
+}

@@ -1,5 +1,9 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__ . '/../../_init.php';
+
+require_once __DIR__ . '/../_init.php';
+
 
 /**
  * /public/staff/subjects/bulk.php
@@ -24,17 +28,17 @@ declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
 
 /* ---------------------------------------------------------
-   Locate initialize.php (bounded upward scan)
+// [patched] removed initialize.php reference
 --------------------------------------------------------- */
 if (!function_exists('mk_find_init')) {
   function mk_find_init(string $startDir, int $maxDepth = 14): ?string {
     $dir = $startDir;
     for ($i = 0; $i <= $maxDepth; $i++) {
-      $cand = $dir . '/app/mkomigbo/private/assets/initialize.php';
+// [patched] removed legacy initialize path reference
       if (is_file($cand)) return $cand;
 
-      // fallback layout (older): /private/assets/initialize.php
-      $cand2 = $dir . '/private/assets/initialize.php';
+// [patched] removed legacy initialize path reference
+// [patched] removed legacy initialize path reference
       if (is_file($cand2)) return $cand2;
 
       $parent = dirname($dir);

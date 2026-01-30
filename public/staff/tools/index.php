@@ -3,105 +3,556 @@ declare(strict_types=1);
 
 /**
  * /public/staff/tools/index.php
- * Staff-only Tools Hub
- * - Diagnostics (Health)
- * - Audit
- * - Scan
- * - Error Log (tail viewer)
+ * Staff Tools dashboard (registry-driven).
+ *
+ * Features:
+ * - Health Snapshot widget (latest quick_scan JSON)
+ * - Trend Preview sparkline (from quick_scan_history.csv)
+ * - Primary "Scan Project" CTA
+ * - Grouped listing from registry
+ * - Normalizes registry format (supports list or keyed map)
+ * - Default "last tool" session seed for first-time users
  */
 
-require_once __DIR__ . '/../../_init.php';
+@ini_set('display_errors', '0');
+@ini_set('display_startup_errors', '0');
+error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
 
-if (function_exists('require_staff')) {
-  require_staff();
-} elseif (function_exists('require_login')) {
-  require_login();
-}
+require_once __DIR__ . '/../_init.php';
+if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
 
 if (!function_exists('h')) {
   function h(string $v): string { return htmlspecialchars($v, ENT_QUOTES, 'UTF-8'); }
 }
+if (!function_exists('url_for')) {
+  function url_for(string $path): string { return '/' . ltrim($path, '/'); }
+}
 
-$staff_header = APP_ROOT . '/private/shared/staff_header.php';
-if (is_file($staff_header)) {
-  require_once $staff_header;
-  if (function_exists('staff_render_header')) {
-    staff_render_header('Tools', 'dashboard');
+/* Page vars */
+$page_title = 'Tools • Staff';
+$page_desc  = 'Diagnostics, audits, and scans (restricted).';
+$nav_active = 'tools';
+$active_nav = 'tools';
+
+/* Header (enforces login + permission via tools_header.php) */
+if (function_exists('mk_require_shared')) {
+  mk_require_shared('tools_header.php');
+} else {
+  header('Content-Type: text/html; charset=UTF-8');
+  echo "<!doctype html><html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>";
+  echo "<title>" . h($page_title) . "</title>";
+  echo "<link rel='stylesheet' href='/lib/css/ui.css'>";
+  echo "<link rel='stylesheet' href='/lib/css/staff.css'>";
+  echo "</head><body class='staff tools'><main class='site-main' id='main'><div class='container' style='padding:16px 0;'>";
+}
+
+/* ---------------------------------------------------------
+   Helpers
+--------------------------------------------------------- */
+$runUrl = static function(string $toolKey, string $render = ''): string {
+  $u = url_for('/staff/tools/run.php?tool=' . rawurlencode($toolKey));
+  if ($render !== '') $u .= '&render=' . rawurlencode($render);
+  return $u;
+};
+
+$badge = static function(string $label, string $tone = 'muted'): string {
+  $map = [
+    'ok'    => 'background:rgba(34,197,94,.14);border:1px solid rgba(34,197,94,.30);color:#14532d;',
+    'warn'  => 'background:rgba(245,158,11,.14);border:1px solid rgba(245,158,11,.32);color:#7c2d12;',
+    'bad'   => 'background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.30);color:#7f1d1d;',
+    'muted' => 'background:rgba(0,0,0,.05);border:1px solid rgba(0,0,0,.12);color:rgba(0,0,0,.70);',
+  ];
+  $css = $map[$tone] ?? $map['muted'];
+  return '<span style="display:inline-flex;align-items:center;padding:4px 10px;border-radius:999px;font-weight:900;font-size:.78rem;letter-spacing:.04em;' . $css . '">' . h($label) . '</span>';
+};
+
+$mk_norm_registry = static function($reg): array {
+  if (!is_array($reg) || !$reg) return [];
+
+  $out = [];
+
+  // list form: [ [entry], [entry] ... ]
+  $isList = (array_keys($reg) === range(0, count($reg) - 1));
+  if ($isList) {
+    foreach ($reg as $entry) {
+      if (!is_array($entry)) continue;
+      $k = isset($entry['key']) ? trim((string)$entry['key']) : '';
+      if ($k === '') continue;
+      $out[$k] = $entry;
+    }
+    return $out;
+  }
+
+  // map form: [ 'key' => entry, ... ]
+  foreach ($reg as $k => $entry) {
+    if (!is_array($entry)) continue;
+    $key = trim((string)$k);
+    if ($key === '') $key = isset($entry['key']) ? trim((string)$entry['key']) : '';
+    if ($key === '') continue;
+    $out[$key] = $entry;
+  }
+  return $out;
+};
+
+$mk_latest_quick_scan = static function(): array {
+  $appRoot = defined('APP_ROOT') ? rtrim((string)APP_ROOT, "/\\") : '';
+  if ($appRoot === '') return ['ok'=>false, 'reason'=>'APP_ROOT missing'];
+
+  $dir = $appRoot . '/logs/tools';
+  if (!is_dir($dir)) return ['ok'=>false, 'reason'=>'logs/tools missing'];
+
+  $glob = @glob($dir . '/quick_scan_*.json');
+  if (!is_array($glob) || !$glob) return ['ok'=>false, 'reason'=>'no quick_scan json found'];
+
+  // pick newest by mtime
+  usort($glob, static function($a, $b) {
+    $ta = @filemtime((string)$a) ?: 0;
+    $tb = @filemtime((string)$b) ?: 0;
+    return $tb <=> $ta;
+  });
+
+  $path = (string)$glob[0];
+  $raw = @file_get_contents($path);
+  if (!is_string($raw) || trim($raw) === '') return ['ok'=>false, 'reason'=>'cannot read json', 'path'=>$path];
+
+  $data = json_decode($raw, true);
+  if (!is_array($data)) return ['ok'=>false, 'reason'=>'invalid json', 'path'=>$path];
+
+  $health = $data['health'] ?? [];
+  $status = is_array($health) && isset($health['status']) ? (string)$health['status'] : 'UNKNOWN';
+  $score  = is_array($health) && isset($health['score'])  ? (int)$health['score'] : -1;
+
+  $sevCounts = is_array($health) && isset($health['severity_counts']) && is_array($health['severity_counts'])
+    ? $health['severity_counts']
+    : [];
+
+  $critical = isset($sevCounts['critical']) ? (int)$sevCounts['critical'] : 0;
+  $high     = isset($sevCounts['high']) ? (int)$sevCounts['high'] : 0;
+  $medium   = isset($sevCounts['medium']) ? (int)$sevCounts['medium'] : 0;
+  $low      = isset($sevCounts['low']) ? (int)$sevCounts['low'] : 0;
+
+  $meta = $data['meta'] ?? [];
+  $startedAt = is_array($meta) && isset($meta['started_at']) ? (string)$meta['started_at'] : '';
+  $duration  = is_array($meta) && isset($meta['duration_ms']) ? (int)$meta['duration_ms'] : 0;
+
+  return [
+    'ok' => true,
+    'path' => $path,
+    'status' => $status,
+    'score' => $score,
+    'critical' => $critical,
+    'high' => $high,
+    'medium' => $medium,
+    'low' => $low,
+    'started_at' => $startedAt,
+    'duration_ms' => $duration,
+    'raw' => $data,
+  ];
+};
+
+$mk_read_quick_scan_history = static function(int $limit = 24): array {
+  $appRoot = defined('APP_ROOT') ? rtrim((string)APP_ROOT, "/\\") : '';
+  if ($appRoot === '') return [];
+
+  $csv = $appRoot . '/logs/tools/quick_scan_history.csv';
+  if (!is_file($csv)) return [];
+
+  $fh = @fopen($csv, 'rb');
+  if (!$fh) return [];
+
+  $header = fgetcsv($fh);
+  if (!is_array($header)) { fclose($fh); return []; }
+
+  $rows = [];
+  while (($r = fgetcsv($fh)) !== false) {
+    $row = [];
+    foreach ($header as $i => $k) $row[(string)$k] = $r[$i] ?? '';
+    $rows[] = $row;
+  }
+  fclose($fh);
+
+  if (!$rows) return [];
+
+  usort($rows, static function($a, $b) {
+    return strtotime((string)($a['started_at'] ?? '')) <=> strtotime((string)($b['started_at'] ?? ''));
+  });
+
+  $rows = array_slice($rows, -max(6, min(120, $limit)));
+
+  $out = [];
+  foreach ($rows as $r) {
+    $score = (int)($r['score'] ?? 0);
+    if ($score < 0) $score = 0;
+    if ($score > 100) $score = 100;
+
+    $crit = (int)($r['critical'] ?? 0);
+    $status = strtoupper((string)($r['status'] ?? ''));
+
+    $out[] = [
+      'score' => $score,
+      'critical' => $crit,
+      'is_critical' => ($crit > 0 || $status === 'CRITICAL'),
+      'date' => (string)($r['started_at'] ?? ''),
+    ];
+  }
+  return $out;
+};
+
+$mk_svg_sparkline = static function(array $points): string {
+  if (count($points) < 2) return '';
+
+  $w = 320; $h = 64;
+  $pad = 6;
+  $plotW = $w - ($pad * 2);
+  $plotH = $h - ($pad * 2);
+
+  $n = count($points);
+  $dx = $plotW / max(1, ($n - 1));
+
+  $poly = [];
+  foreach ($points as $i => $p) {
+    $x = $pad + ($i * $dx);
+    $y = $pad + (1.0 - (((int)$p['score']) / 100.0)) * $plotH;
+    $poly[] = number_format($x, 2, '.', '') . ',' . number_format($y, 2, '.', '');
+  }
+  $polyStr = implode(' ', $poly);
+
+  $last = $points[$n-1];
+  $lastScore = (int)$last['score'];
+
+  $marks = '';
+  foreach ($points as $i => $p) {
+    if (empty($p['is_critical'])) continue;
+    $x = $pad + ($i * $dx);
+    $y = $pad + (1.0 - (((int)$p['score']) / 100.0)) * $plotH;
+    $marks .= "<circle cx='{$x}' cy='{$y}' r='5.8' fill='none' stroke='rgba(239,68,68,.85)' stroke-width='2'/>";
+  }
+
+  $lastX = $pad + (($n - 1) * $dx);
+  $lastY = $pad + (1.0 - ($lastScore / 100.0)) * $plotH;
+
+  return
+    "<svg viewBox='0 0 {$w} {$h}' width='100%' height='64' style='display:block;background:#fff;border:1px solid rgba(0,0,0,.10);border-radius:12px'>"
+    . "<polyline points='{$polyStr}' fill='none' stroke='rgba(17,24,39,.85)' stroke-width='2.5'/>"
+    . "<circle cx='{$lastX}' cy='{$lastY}' r='4.2' fill='rgba(17,24,39,.85)'/>"
+    . $marks
+    . "</svg>";
+};
+
+/* ---------------------------------------------------------
+   Load registry
+--------------------------------------------------------- */
+$registry = (defined('APP_ROOT') ? rtrim((string)APP_ROOT, '/\\') : '') . '/private/functions/staff_tools_registry.php';
+$toolsRaw = [];
+
+if ($registry !== '' && is_file($registry)) {
+  require_once $registry;
+  if (function_exists('mk_staff_tools_registry')) {
+    $toolsRaw = mk_staff_tools_registry();
+  }
+}
+
+$tools = $mk_norm_registry($toolsRaw);
+
+$hasRegistry = is_file($registry);
+$toolCount   = is_array($tools) ? count($tools) : 0;
+
+/* Determine Scan tool key (project-wide scan CTA) */
+$preferred = '';
+$scanCandidates = [
+  'diagnostics/staff-tools/scan-project',
+  'diagnostics/project-audit',
+  'diagnostics/diag',
+];
+foreach ($scanCandidates as $cand) {
+  if (isset($tools[$cand])) { $preferred = $cand; break; }
+}
+
+/* Seed default last tool ONLY if not already set */
+if (
+  (!isset($_SESSION['mk_last_tool']) || !is_string($_SESSION['mk_last_tool']) || trim($_SESSION['mk_last_tool']) === '')
+  && $preferred !== ''
+) {
+  $_SESSION['mk_last_tool'] = $preferred;
+}
+
+/* CTA */
+$scanHref = ($preferred !== '') ? $runUrl($preferred, 'pre') : '';
+
+/* Group tools by group label */
+$groups = [];
+foreach ($tools as $key => $meta) {
+  if (!is_string($key) || $key === '' || !is_array($meta)) continue;
+  $group = isset($meta['group']) && is_string($meta['group']) && trim($meta['group']) !== '' ? trim($meta['group']) : 'Tools';
+  if (!isset($groups[$group])) $groups[$group] = [];
+  $groups[$group][$key] = $meta;
+}
+
+/* Sort groups: Diagnostics first, then alpha */
+if ($groups) {
+  $ordered = [];
+  if (isset($groups['Diagnostics'])) {
+    $ordered['Diagnostics'] = $groups['Diagnostics'];
+    unset($groups['Diagnostics']);
+  }
+  ksort($groups);
+  foreach ($groups as $g => $items) $ordered[$g] = $items;
+  $groups = $ordered;
+}
+
+/* ---------------------------------------------------------
+   Health Snapshot (latest quick_scan json)
+--------------------------------------------------------- */
+$health = $mk_latest_quick_scan();
+
+/* Determine quick scan tool key for "Run Quick Scan" button */
+$quickScanKey = '';
+$quickScanCandidates = [
+  'diagnostics/lint/quick-scan',
+  'diagnostics/quick-scan',
+  'lint/quick-scan',
+];
+foreach ($quickScanCandidates as $cand) {
+  if (isset($tools[$cand])) { $quickScanKey = $cand; break; }
+}
+
+/* Determine trend chart tool key (optional) */
+$trendKey = '';
+$trendCandidates = [
+  'diagnostics/lint/trend-chart',
+  'diagnostics/trend-chart',
+  'lint/trend-chart',
+];
+foreach ($trendCandidates as $cand) {
+  if (isset($tools[$cand])) { $trendKey = $cand; break; }
+}
+
+/* HERO */
+echo '<section class="mk-hero" style="margin-top:14px;">';
+echo '  <div class="mk-hero__bar" aria-hidden="true"></div>';
+echo '  <div class="mk-hero__inner">';
+echo '    <h1 class="mk-hero__title">Staff Tools</h1>';
+echo '    <p class="mk-hero__subtitle">' . h($page_desc) . '</p>';
+
+echo '    <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;">';
+echo        $badge('Registry: ' . ($hasRegistry ? 'OK' : 'MISSING'), $hasRegistry ? 'ok' : 'bad');
+echo        $badge('Tools: ' . (string)$toolCount, $toolCount > 0 ? 'muted' : 'warn');
+echo        $badge('UTC: ' . gmdate('Y-m-d H:i:s'), 'muted');
+echo '    </div>';
+
+echo '    <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">';
+if ($scanHref !== '') {
+  echo '      <a class="btn" href="' . h($scanHref) . '">Scan Project</a>';
+  echo '      <a class="btn btn--ghost" href="' . h($runUrl($preferred, 'auto')) . '">Scan (Auto)</a>';
+} else {
+  echo '      <span class="mk-muted">No scan tool available (registry missing/empty).</span>';
+}
+echo '      <a class="btn btn--ghost" href="' . h(url_for('/staff/')) . '">Dashboard</a>';
+echo '    </div>';
+
+echo '  </div>';
+echo '</section>';
+
+/* Health Snapshot widget */
+echo '<section class="mk-card" style="padding:14px; margin-top:14px;">';
+echo '<div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px; flex-wrap:wrap;">';
+echo '  <div>';
+echo '    <h2 style="margin:0; font-size:1.05rem; font-weight:900;">Health Snapshot</h2>';
+echo '    <div class="mk-muted" style="margin-top:4px;">Latest Lint Quick Scan summary (from logs).</div>';
+echo '  </div>';
+
+echo '  <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">';
+if ($quickScanKey !== '') {
+  echo '    <a class="btn btn--small" href="' . h($runUrl($quickScanKey, 'auto')) . '">Run Quick Scan</a>';
+  echo '    <a class="btn btn--small btn--ghost" href="' . h($runUrl($quickScanKey, 'html')) . '">View HTML</a>';
+} else {
+  echo '    <span class="mk-muted">Quick Scan tool not registered.</span>';
+}
+echo '  </div>';
+echo '</div>';
+
+if (!$health['ok']) {
+  echo '<div class="mk-muted" style="margin-top:10px;">';
+  echo 'No snapshot available: <strong>' . h((string)($health['reason'] ?? 'unknown')) . '</strong>';
+  echo '</div>';
+
+  if (!empty($health['path'])) {
+    echo '<div class="mk-muted" style="margin-top:6px;"><code>' . h((string)$health['path']) . '</code></div>';
   }
 } else {
-  echo "<!doctype html><meta charset='utf-8'><title>Tools</title><body>";
+  $status = (string)$health['status'];
+  $score  = (int)$health['score'];
+  $crit   = (int)$health['critical'];
+  $high   = (int)$health['high'];
+  $med    = (int)$health['medium'];
+  $low    = (int)$health['low'];
+
+  $tone = 'muted';
+  if ($status === 'OK') $tone = 'ok';
+  elseif ($status === 'WARN') $tone = 'warn';
+  elseif ($status === 'AT RISK') $tone = 'bad';
+  elseif ($status === 'CRITICAL') $tone = 'bad';
+
+  echo '<div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">';
+  echo $badge('Status: ' . $status, $tone);
+  echo $badge('Score: ' . (string)$score . '/100', $tone);
+  echo $badge('Critical: ' . (string)$crit, $crit > 0 ? 'bad' : 'ok');
+  echo $badge('High: ' . (string)$high, $high > 0 ? 'warn' : 'muted');
+  echo $badge('Medium: ' . (string)$med, $med > 0 ? 'muted' : 'muted');
+  echo $badge('Low: ' . (string)$low, $low > 0 ? 'muted' : 'muted');
+  echo '</div>';
+
+  $startedAt = (string)($health['started_at'] ?? '');
+  $duration  = (int)($health['duration_ms'] ?? 0);
+  $path      = (string)($health['path'] ?? '');
+
+  echo '<div class="mk-muted" style="margin-top:10px;">';
+  if ($startedAt !== '') {
+    echo '<div><strong>Scan time:</strong> ' . h($startedAt) . ' • <strong>Duration:</strong> ' . h((string)$duration) . " ms</div>";
+  }
+  echo '<div><strong>JSON:</strong> <code>' . h($path) . '</code></div>';
+  echo '</div>';
+
+  $topRules = [];
+  if (!empty($health['raw']) && is_array($health['raw']) && isset($health['raw']['top_rules']) && is_array($health['raw']['top_rules'])) {
+    $topRules = $health['raw']['top_rules'];
+  }
+
+  if ($topRules) {
+    echo '<div style="margin-top:12px;">';
+    echo '<div style="font-weight:900; margin-bottom:6px;">Top Issues</div>';
+    echo '<div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:10px;">';
+
+    $shown = 0;
+    foreach ($topRules as $r) {
+      if (!is_array($r)) continue;
+      $label = isset($r['label']) ? (string)$r['label'] : '';
+      $sev   = isset($r['severity']) ? (string)$r['severity'] : 'low';
+      $cnt   = isset($r['count']) ? (int)$r['count'] : 0;
+      if ($label === '' || $cnt <= 0) continue;
+
+      $sevTone = 'muted';
+      if ($sev === 'critical') $sevTone = 'bad';
+      elseif ($sev === 'high') $sevTone = 'warn';
+      else $sevTone = 'muted';
+
+      echo '<div class="mk-card" style="padding:12px;">';
+      echo '<div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:center;">';
+      echo $badge(strtoupper($sev), $sevTone);
+      echo $badge('Count: ' . (string)$cnt, 'muted');
+      echo '</div>';
+      echo '<div style="margin-top:8px; font-weight:900;">' . h($label) . '</div>';
+      echo '</div>';
+
+      $shown++;
+      if ($shown >= 5) break;
+    }
+
+    echo '</div>';
+    echo '</div>';
+  }
 }
 
-/* ---- tools list ---- */
-$tools = [
-  [
-    'title' => 'Diagnostics (Linking + Capabilities)',
-    'desc'  => 'Checks core files, HTTP asset serving, permissions, and scans key templates for broken CSS/JS/img links.',
-    'href'  => (function_exists('url_for') ? url_for('/staff/tools/diagnostics.php') : '/staff/tools/diagnostics.php'),
-    'badge' => 'Health',
-  ],
-  [
-    'title' => 'Audit (Security + Performance)',
-    'desc'  => 'Heuristic scan for common weaknesses: CSRF gaps, raw input, unsafe echoes, risky SQL patterns, etc.',
-    'href'  => (function_exists('url_for') ? url_for('/staff/tools/audit.php') : '/staff/tools/audit.php'),
-    'badge' => 'Audit',
-  ],
-  [
-    'title' => 'Scan (Assets + Includes)',
-    'desc'  => 'Finds relative asset paths that break CSS at deeper URLs, missing /public assets, missing includes, optional lint.',
-    'href'  => (function_exists('url_for') ? url_for('/staff/tools/scan.php') : '/staff/tools/scan.php'),
-    'badge' => 'Scan',
-  ],
-  [
-    'title' => 'Error Log (Tail Viewer)',
-    'desc'  => 'View last lines of the PHP error log (staff-only). Helps debug 500 errors quickly.',
-    'href'  => (function_exists('url_for') ? url_for('/staff/tools/error_log.php') : '/staff/tools/error_log.php'),
-    'badge' => 'Logs',
-  ],
-];
+/* ---------------------------------------------------------
+   Trend Preview (your preferred snippet style)
+--------------------------------------------------------- */
+$spark = '';
+$sparkPoints = $mk_read_quick_scan_history(28);
+if ($sparkPoints) {
+  $spark = $mk_svg_sparkline($sparkPoints);
+}
 
-?>
-<div class="container" style="max-width:1100px; margin:0 auto; padding:18px;">
-  <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:12px; flex-wrap:wrap;">
-    <div>
-      <h1 style="margin:0; font:800 22px system-ui;">Staff Tools</h1>
-      <div style="margin-top:6px; color:#6b7280; font:400 14px system-ui;">
-        Diagnostics, audits, scans, and log tools (restricted).
-      </div>
-    </div>
-    <div>
-      <a href="<?= h(function_exists('url_for') ? url_for('/staff/') : '/staff/') ?>"
-         style="text-decoration:none; padding:9px 12px; border:1px solid #e5e7eb; border-radius:12px; background:#fff; color:#111827; font:700 13px system-ui;">
-        ← Back to Staff
-      </a>
-    </div>
-  </div>
+echo '<section class="mk-card" style="padding:14px; margin-top:14px;">';
+echo '  <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;">';
+echo '    <h2 style="margin:0;font-size:1.02rem;font-weight:900;">Trend Preview</h2>';
 
-  <div style="margin-top:16px; display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:12px;">
-    <?php foreach ($tools as $t): ?>
-      <a href="<?= h((string)$t['href']) ?>"
-         style="display:block; text-decoration:none; color:inherit; border:1px solid #e5e7eb; border-radius:16px; background:#fff; padding:14px;">
-        <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
-          <div style="font:800 15px system-ui;"><?= h((string)$t['title']) ?></div>
-          <div style="font:700 12px system-ui; color:#111827; border:1px solid #e5e7eb; background:#f9fafb; padding:4px 8px; border-radius:999px;">
-            <?= h((string)$t['badge']) ?>
-          </div>
-        </div>
-        <div style="margin-top:8px; color:#6b7280; font:400 13px system-ui; line-height:1.5;">
-          <?= h((string)$t['desc']) ?>
-        </div>
-      </a>
-    <?php endforeach; ?>
-  </div>
-
-  <div style="margin-top:16px; color:#6b7280; font:13px system-ui;">
-    Tip: bookmark <code>/staff/tools/</code> during development.
-  </div>
-</div>
-
-<?php
-if (function_exists('staff_render_footer')) {
-  staff_render_footer();
+if ($trendKey !== '') {
+  echo '    <a class="btn btn--small btn--ghost" href="' . h($runUrl($trendKey, 'html')) . '">Open Trend Chart</a>';
 } else {
-  echo "</body>";
+  echo '    <span class="mk-muted" style="font-size:.92rem;">Trend chart tool not registered.</span>';
 }
+echo '  </div>';
+
+if ($spark !== '') {
+  echo '  <div style="margin-top:10px;">' . $spark . '</div>';
+  echo '  <div class="mk-muted" style="margin-top:8px;font-size:.92rem;">Last ' . (int)count($sparkPoints) . ' exported scans (from CSV history).</div>';
+} else {
+  echo '  <p class="mk-muted" style="margin:10px 0 0 0;">No trend data yet. Run Quick Scan, then run “Export History CSV”.</p>';
+}
+echo '</section>';
+
+echo '</section>'; // end Health Snapshot card wrapper
+
+/* ---------------------------------------------------------
+   Tool list
+--------------------------------------------------------- */
+
+/* Empty state */
+if (!$groups) {
+  echo '<section class="mk-card" style="padding:14px; margin-top:14px;">';
+  echo '<p class="mk-muted" style="margin:0;">No tools available. Check registry file:<br><code>' . h($registry) . '</code></p>';
+  echo '</section>';
+} else {
+  echo '<section style="margin-top:16px; display:grid; gap:18px;">';
+
+  foreach ($groups as $groupName => $items) {
+
+    uasort($items, static function(array $a, array $b): int {
+      $ta = isset($a['title']) ? (string)$a['title'] : '';
+      $tb = isset($b['title']) ? (string)$b['title'] : '';
+      return strcasecmp($ta, $tb);
+    });
+
+    echo '<div>';
+    echo '<div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">';
+    echo '<h2 style="margin:0; font-size:1.05rem; font-weight:900;">' . h($groupName) . '</h2>';
+    echo '<div class="mk-muted" style="font-size:.92rem;">' . h((string)count($items)) . ' tool(s)</div>';
+    echo '</div>';
+
+    echo '<div style="margin-top:10px; display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:14px;">';
+
+    foreach ($items as $key => $meta) {
+      $title    = isset($meta['title']) ? (string)$meta['title'] : (string)$key;
+      $desc     = isset($meta['desc'])  ? (string)$meta['desc']  : '';
+      $minRole  = isset($meta['min_role']) ? strtolower(trim((string)$meta['min_role'])) : 'admin';
+      $mutating = !empty($meta['mutating']);
+
+      $hrefPre  = $runUrl((string)$key, 'pre');
+      $hrefHtml = $runUrl((string)$key, 'html');
+      $hrefAuto = $runUrl((string)$key, 'auto');
+
+      $roleTone = ($minRole === 'owner') ? 'warn' : 'muted';
+
+      echo '<article class="mk-card" style="padding:14px;">';
+      echo '  <div style="display:flex; gap:8px; align-items:center; justify-content:space-between; flex-wrap:wrap;">';
+      echo '    <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">';
+      echo        $badge($minRole === 'owner' ? 'OWNER' : 'ADMIN', $roleTone);
+      if ($mutating) echo $badge('MUTATING', 'warn');
+      echo        $badge('KEY: ' . (string)$key, 'muted');
+      echo '    </div>';
+      echo '    <div style="display:flex; gap:8px; flex-wrap:wrap;">';
+      echo '      <a class="btn btn--small" href="' . h($hrefPre) . '">Run</a>';
+      echo '      <a class="btn btn--small btn--ghost" href="' . h($hrefAuto) . '">Auto</a>';
+      echo '      <a class="btn btn--small btn--ghost" href="' . h($hrefHtml) . '">HTML</a>';
+      echo '    </div>';
+      echo '  </div>';
+
+      echo '  <h3 style="margin:10px 0 6px; font-size:1.05rem; font-weight:900;">' . h($title) . '</h3>';
+      echo '  <p class="mk-muted" style="margin:0;">' . h($desc !== '' ? $desc : 'No description provided.') . '</p>';
+      echo '</article>';
+    }
+
+    echo '</div>';
+    echo '</div>';
+  }
+
+  echo '</section>';
+}
+
+/* Footer */
+if (function_exists('mk_require_shared')) {
+  mk_require_shared('staff_footer.php');
+  return;
+}
+
+echo "</div></main></body></html>";

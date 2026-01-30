@@ -1,0 +1,339 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * /public/platforms/index.php
+ * Public Platforms landing (premium + robust).
+ *
+ * Goals:
+ * - Keep your premium UI + card grid
+ * - Keep quick_links.php inclusion
+ * - Show "Available now" if platform entry exists (file or folder/index.php)
+ * - Show "Coming soon" items as clickable placeholders (folder routes)
+ *
+ * Critical fixes:
+ * - DO NOT define APP_ROOT (initialize.php owns constants)
+ * - DO NOT locate/require initialize.php here (use /public/platforms/_init.php -> /public/_init.php)
+ */
+
+@ini_set('display_errors', '0');
+@ini_set('display_startup_errors', '0');
+error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
+
+require_once __DIR__ . '/_init.php';
+
+$page_title = 'Platforms — Mkomigbo';
+$nav_active = 'platforms';
+
+/* ---------------------------------------------------------
+ * Shared nav include (preferred) or fallback path
+ * --------------------------------------------------------- */
+$public_nav = null;
+if (function_exists('mk_require_shared')) {
+  // We'll call mk_require_shared('public_nav.php') in body.
+} else {
+  if (defined('PRIVATE_PATH')) {
+    $candidate = rtrim((string)PRIVATE_PATH, '/') . '/shared/public_nav.php';
+    if (is_file($candidate)) $public_nav = $candidate;
+  }
+}
+
+/* ---------------------------------------------------------
+ * Existence checks (public webroot aware)
+ * --------------------------------------------------------- */
+if (!function_exists('pf__platform_entry_exists')) {
+  function pf__platform_entry_exists(string $public_path): bool {
+    $public_path = '/' . ltrim($public_path, '/');
+
+    // Prefer PUBLIC_PATH if bootstrap defined it; otherwise derive safely.
+    $root = defined('PUBLIC_PATH')
+      ? rtrim((string)PUBLIC_PATH, '/')
+      : rtrim(dirname(__DIR__), '/'); // /public_html/public
+
+    $abs = $root . $public_path;
+
+    if (is_file($abs)) return true;
+
+    if (is_dir($abs)) {
+      $idx = rtrim($abs, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'index.php';
+      return is_file($idx);
+    }
+
+    return false;
+  }
+}
+
+/* ---------------------------------------------------------
+ * Platform definitions
+ * --------------------------------------------------------- */
+$platforms = [
+  [
+    'key'   => 'igbo-calendar',
+    'title' => 'Igbo Calendar',
+    'desc'  => 'Traditional timekeeping, market days, cultural calendar references, and educational notes.',
+    'href'  => function_exists('url_for') ? url_for('/platforms/igbo-calendar.php') : '/platforms/igbo-calendar.php',
+    'icon'  => 'IC',
+    'tag'   => 'Featured',
+    'accent'=> '#111111',
+    'exists'=> pf__platform_entry_exists('/platforms/igbo-calendar.php'),
+  ],
+
+  // Coming soon (clickable placeholders)
+  [
+    'key'   => 'blog',
+    'title' => 'Blog',
+    'desc'  => 'Long-form articles, editorials, and featured writings across subjects.',
+    'href'  => function_exists('url_for') ? url_for('/platforms/blog/') : '/platforms/blog/',
+    'icon'  => 'B',
+    'tag'   => 'Coming soon',
+    'accent'=> '#2F3A4A',
+    'exists'=> pf__platform_entry_exists('/platforms/blog/'),
+  ],
+  [
+    'key'   => 'forum',
+    'title' => 'Forum',
+    'desc'  => 'Community discussions, Q&A, and collaborative learning.',
+    'href'  => function_exists('url_for') ? url_for('/platforms/forum/') : '/platforms/forum/',
+    'icon'  => 'F',
+    'tag'   => 'Coming soon',
+    'accent'=> '#2F4A5A',
+    'exists'=> pf__platform_entry_exists('/platforms/forum/'),
+  ],
+  [
+    'key'   => 'podcast',
+    'title' => 'Podcast',
+    'desc'  => 'Audio episodes: conversations, history, interviews, and cultural insights.',
+    'href'  => function_exists('url_for') ? url_for('/platforms/podcast/') : '/platforms/podcast/',
+    'icon'  => 'PD',
+    'tag'   => 'Coming soon',
+    'accent'=> '#3C2F4A',
+    'exists'=> pf__platform_entry_exists('/platforms/podcast/'),
+  ],
+  [
+    'key'   => 'vlog',
+    'title' => 'Vlog',
+    'desc'  => 'Video stories, short explainers, interviews, and documentary-style content.',
+    'href'  => function_exists('url_for') ? url_for('/platforms/vlog/') : '/platforms/vlog/',
+    'icon'  => 'V',
+    'tag'   => 'Coming soon',
+    'accent'=> '#4A2F59',
+    'exists'=> pf__platform_entry_exists('/platforms/vlog/'),
+  ],
+  [
+    'key'   => 'gallery',
+    'title' => 'Gallery',
+    'desc'  => 'Curated photos, artefacts, maps, and historical visuals.',
+    'href'  => function_exists('url_for') ? url_for('/platforms/gallery/') : '/platforms/gallery/',
+    'icon'  => 'G',
+    'tag'   => 'Coming soon',
+    'accent'=> '#4A3F2F',
+    'exists'=> pf__platform_entry_exists('/platforms/gallery/'),
+  ],
+  [
+    'key'   => 'knowledge-index',
+    'title' => 'Knowledge Index',
+    'desc'  => 'Cross-subject discovery by tags, themes, timelines, and people.',
+    'href'  => function_exists('url_for') ? url_for('/platforms/knowledge-index/') : '/platforms/knowledge-index/',
+    'icon'  => 'KI',
+    'tag'   => 'Coming soon',
+    'accent'=> '#2F4A43',
+    'exists'=> pf__platform_entry_exists('/platforms/knowledge-index/'),
+  ],
+  [
+    'key'   => 'media-library',
+    'title' => 'Media Library',
+    'desc'  => 'Curated videos, reels, photos, and documentary references.',
+    'href'  => function_exists('url_for') ? url_for('/platforms/media-library/') : '/platforms/media-library/',
+    'icon'  => 'M',
+    'tag'   => 'Coming soon',
+    'accent'=> '#59312F',
+    'exists'=> pf__platform_entry_exists('/platforms/media-library/'),
+  ],
+];
+
+$available = array_values(array_filter($platforms, static fn($p) => !empty($p['exists'])));
+$coming    = array_values(array_filter($platforms, static fn($p) => empty($p['exists'])));
+
+?>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><?= function_exists('h') ? h($page_title) : htmlspecialchars($page_title, ENT_QUOTES, 'UTF-8') ?></title>
+
+  <link rel="stylesheet" href="<?= function_exists('h') ? h(url_for('/lib/css/ui.css')) : '/lib/css/ui.css' ?>">
+  <link rel="stylesheet" href="<?= function_exists('h') ? h(url_for('/lib/css/subjects.css')) : '/lib/css/subjects.css' ?>">
+
+  <style>
+    :root{
+      --ink:#111; --muted:#6c757d;
+      --line:rgba(0,0,0,.10); --line-strong:rgba(0,0,0,.22);
+      --card:#fff; --shadow:0 12px 28px rgba(0,0,0,.05); --shadow-hover:0 18px 36px rgba(0,0,0,.08);
+      --radius-xl:20px; --radius-lg:18px; --radius-md:16px;
+    }
+    body{ background: rgba(0,0,0,.015); color:var(--ink); }
+    .muted{ color:var(--muted); }
+
+    .hero{
+      border:1px solid var(--line);
+      border-radius: var(--radius-xl);
+      background: linear-gradient(180deg, rgba(0,0,0,0.02), #fff);
+      box-shadow: 0 20px 55px rgba(0,0,0,0.10);
+      overflow:hidden;
+    }
+    .hero-bar{ height:8px; background:#111; opacity:.88; }
+    .hero-inner{ padding:22px 18px 18px; }
+    .hero h1{ margin:0 0 10px; font-size: clamp(1.75rem, 3.2vw, 2.75rem); line-height:1.06; letter-spacing:-0.02em; }
+    .hero p{ margin:0; max-width:88ch; line-height:1.75; }
+
+    .section-title{ margin:24px 0 10px; display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+    .section-title h2{ margin:0; font-size:1.2rem; }
+
+    .grid{
+      margin-top:12px;
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap:14px;
+    }
+    .card{
+      border:1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background:var(--card);
+      overflow:hidden;
+      box-shadow: var(--shadow);
+      transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+      min-height: 170px;
+    }
+    .card:hover{ transform: translateY(-1px); border-color: var(--line-strong); box-shadow: var(--shadow-hover); }
+    .card-bar{ height:7px; background: var(--accent, #111); }
+    .card-body{ padding:14px; display:flex; flex-direction:column; gap:10px; height:100%; }
+    .top{ display:flex; gap:12px; align-items:flex-start; }
+
+    .icon{
+      width:56px; height:56px; border-radius:16px;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,0.02);
+      display:flex; align-items:center; justify-content:center;
+      font-weight:900; letter-spacing:-0.02em;
+      flex:0 0 auto;
+    }
+    .card h3{ margin:2px 0 6px; font-size:1.1rem; line-height:1.2; letter-spacing:-0.01em; }
+    .card p{ margin:0; line-height:1.6; }
+
+    .pill{
+      display:inline-block; padding:4px 10px;
+      border:1px solid rgba(0,0,0,0.12);
+      border-radius:999px; background:#fff;
+      font-size:.85rem; color:#495057;
+    }
+    .meta{ margin-top:auto; display:flex; gap:10px; flex-wrap:wrap; }
+    .stretch{ text-decoration:none; color:inherit; display:block; height:100%; }
+  </style>
+</head>
+
+<body>
+  <?php
+    if (function_exists('mk_require_shared')) {
+      mk_require_shared('public_nav.php');
+    } elseif (is_string($public_nav) && $public_nav !== '' && is_file($public_nav)) {
+      include_once $public_nav;
+    }
+  ?>
+
+  <main class="container" style="padding:24px 0;">
+    <section class="hero">
+      <div class="hero-bar"></div>
+      <div class="hero-inner">
+        <h1>Platforms</h1>
+        <p class="muted">
+          Platforms are interactive sections of Mkomigbo — tools, indexes, and features that complement the Subjects library.
+          This page shows what is available now and what is planned next.
+        </p>
+
+        <?php
+          // quick_links.php is part of your shared UI contract
+          $ql_title = 'Quick links';
+          $ql_tip = null;
+          $ql_include_staff = false;
+
+          if (defined('PRIVATE_PATH')) {
+            $ql = rtrim((string)PRIVATE_PATH, '/') . '/shared/quick_links.php';
+            if (is_file($ql)) require $ql;
+          }
+        ?>
+      </div>
+    </section>
+
+    <div class="section-title">
+      <h2>Available now</h2>
+    </div>
+
+    <?php if (count($available) === 0): ?>
+      <p class="muted">No platforms are enabled yet.</p>
+    <?php else: ?>
+      <section class="grid">
+        <?php foreach ($available as $p): ?>
+          <div class="card" style="--accent: <?= function_exists('h') ? h((string)$p['accent']) : htmlspecialchars((string)$p['accent'], ENT_QUOTES, 'UTF-8') ?>;">
+            <div class="card-bar"></div>
+            <a class="stretch" href="<?= function_exists('h') ? h((string)$p['href']) : htmlspecialchars((string)$p['href'], ENT_QUOTES, 'UTF-8') ?>">
+              <div class="card-body">
+                <div class="top">
+                  <div class="icon" aria-hidden="true"><?= function_exists('h') ? h((string)$p['icon']) : htmlspecialchars((string)$p['icon'], ENT_QUOTES, 'UTF-8') ?></div>
+                  <div style="min-width:0;">
+                    <h3><?= function_exists('h') ? h((string)$p['title']) : htmlspecialchars((string)$p['title'], ENT_QUOTES, 'UTF-8') ?></h3>
+                    <p class="muted"><?= function_exists('h') ? h((string)$p['desc']) : htmlspecialchars((string)$p['desc'], ENT_QUOTES, 'UTF-8') ?></p>
+                  </div>
+                </div>
+                <div class="meta">
+                  <span class="pill"><?= function_exists('h') ? h((string)$p['tag']) : htmlspecialchars((string)$p['tag'], ENT_QUOTES, 'UTF-8') ?></span>
+                  <span class="pill">Open</span>
+                </div>
+              </div>
+            </a>
+          </div>
+        <?php endforeach; ?>
+      </section>
+    <?php endif; ?>
+
+    <div class="section-title" style="margin-top:26px;">
+      <h2>Coming soon</h2>
+    </div>
+
+    <?php if (count($coming) === 0): ?>
+      <p class="muted">Nothing planned yet.</p>
+    <?php else: ?>
+      <section class="grid">
+        <?php foreach ($coming as $p): ?>
+          <div class="card" style="--accent: <?= function_exists('h') ? h((string)$p['accent']) : htmlspecialchars((string)$p['accent'], ENT_QUOTES, 'UTF-8') ?>;">
+            <div class="card-bar"></div>
+            <a class="stretch" href="<?= function_exists('h') ? h((string)$p['href']) : htmlspecialchars((string)$p['href'], ENT_QUOTES, 'UTF-8') ?>">
+              <div class="card-body">
+                <div class="top">
+                  <div class="icon" aria-hidden="true"><?= function_exists('h') ? h((string)$p['icon']) : htmlspecialchars((string)$p['icon'], ENT_QUOTES, 'UTF-8') ?></div>
+                  <div style="min-width:0;">
+                    <h3><?= function_exists('h') ? h((string)$p['title']) : htmlspecialchars((string)$p['title'], ENT_QUOTES, 'UTF-8') ?></h3>
+                    <p class="muted"><?= function_exists('h') ? h((string)$p['desc']) : htmlspecialchars((string)$p['desc'], ENT_QUOTES, 'UTF-8') ?></p>
+                  </div>
+                </div>
+                <div class="meta">
+                  <span class="pill"><?= function_exists('h') ? h((string)$p['tag']) : htmlspecialchars((string)$p['tag'], ENT_QUOTES, 'UTF-8') ?></span>
+                  <span class="pill">Preview</span>
+                </div>
+              </div>
+            </a>
+          </div>
+        <?php endforeach; ?>
+      </section>
+    <?php endif; ?>
+  </main>
+
+  <?php
+    if (function_exists('mk_require_shared')) {
+      mk_require_shared('public_footer.php');
+    } else {
+      echo '<footer class="site-footer"><div class="container">© ' . date('Y') . ' Mkomigbo</div></footer>';
+    }
+  ?>
+</body>
+</html>

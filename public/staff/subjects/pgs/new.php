@@ -4,89 +4,30 @@ declare(strict_types=1);
 /**
  * /public/staff/subjects/pgs/new.php
  * Staff: Create a new page.
+ *
+ * Adds:
+ * - topic_group (optional) if column exists
+ * - uniqueness check:
+ *     (subject_id, topic_group, slug) when topic_group exists
+ *     else (subject_id, slug)
  */
 
-/* ---------------------------------------------------------
-   Locate initialize.php (bounded upward scan)
---------------------------------------------------------- */
-function mk_find_init(string $startDir, int $maxDepth = 14): ?string {
-  $dir = $startDir;
+@ini_set('display_errors', '0');
+@ini_set('display_startup_errors', '0');
+error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
 
-  for ($i = 0; $i <= $maxDepth; $i++) {
-    $candidates = [
-      $dir . '/private/assets/initialize.php',
-      $dir . '/app/mkomigbo/private/assets/initialize.php',
-      $dir . '/app/private/assets/initialize.php',
-    ];
+require_once __DIR__ . '/../../_init.php';
+if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
 
-    foreach ($candidates as $candidate) {
-      if (is_file($candidate)) return $candidate;
-    }
-
-    $parent = dirname($dir);
-    if ($parent === $dir) break;
-    $dir = $parent;
-  }
-
-  return null;
-}
-
-$init = mk_find_init(__DIR__);
-if (!$init) {
-  http_response_code(500);
-  header('Content-Type: text/plain; charset=utf-8');
-  echo "Init not found.\n";
-  echo "Start: " . __DIR__ . "\n";
-  echo "Expected one of:\n";
-  echo " - {dir}/private/assets/initialize.php\n";
-  echo " - {dir}/app/mkomigbo/private/assets/initialize.php\n";
-  echo " - {dir}/app/private/assets/initialize.php\n";
-  exit;
-}
-require_once $init;
-
-if (function_exists('require_staff')) {
-  require_staff();
-} elseif (function_exists('require_login')) {
-  require_login();
-}
-
-if (!function_exists('h')) {
-  function h(string $v): string { return htmlspecialchars($v, ENT_QUOTES, 'UTF-8'); }
-}
+/* fallbacks */
+if (!function_exists('h')) { function h(string $v): string { return htmlspecialchars($v, ENT_QUOTES, 'UTF-8'); } }
 if (!function_exists('redirect_to')) {
-  function redirect_to(string $location): void {
+  function redirect_to(string $location, int $code = 302): void {
     $location = str_replace(["\r", "\n"], '', $location);
-    header('Location: ' . $location, true, 302);
+    header('Location: ' . $location, true, $code);
     exit;
   }
 }
-
-/* CSRF */
-if (!function_exists('csrf_token')) {
-  function csrf_token(): string {
-    if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
-    if (empty($_SESSION['csrf_token']) || !is_string($_SESSION['csrf_token'])) {
-      $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-    }
-    return $_SESSION['csrf_token'];
-  }
-}
-if (!function_exists('csrf_field')) {
-  function csrf_field(): string {
-    return '<input type="hidden" name="csrf_token" value="' . h(csrf_token()) . '">';
-  }
-}
-if (!function_exists('csrf_verify')) {
-  function csrf_verify(?string $token): bool {
-    if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
-    $sess = $_SESSION['csrf_token'] ?? '';
-    if (!is_string($sess) || $sess === '' || !is_string($token) || $token === '') return false;
-    return hash_equals($sess, $token);
-  }
-}
-
-/* Flash */
 if (!function_exists('pf__flash_set')) {
   function pf__flash_set(string $key, string $msg): void {
     if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
@@ -105,30 +46,47 @@ if (!function_exists('pf__flash_get')) {
     return $msg;
   }
 }
-
-/* Safe return */
-if (!function_exists('pf__safe_return_url')) {
-  function pf__safe_return_url(string $raw, string $default): string {
+if (!function_exists('staff_safe_return_url')) {
+  function staff_safe_return_url(string $raw, string $default): string {
     $raw = trim($raw);
     if ($raw === '') return $default;
     $raw = rawurldecode($raw);
     if ($raw === '' || $raw[0] !== '/') return $default;
     if (preg_match('~^//~', $raw)) return $default;
     if (preg_match('~^[a-z]+:~i', $raw)) return $default;
-    if (!preg_match('~^/staff/~', $raw)) return $default;
+    if (strpos($raw, '/staff/') !== 0) return $default;
     return $raw;
   }
 }
-
-/* Column inspector */
+if (!function_exists('staff_csrf_verify')) {
+  function staff_csrf_verify(string $token): bool {
+    if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
+    $sess = $_SESSION['csrf_token'] ?? '';
+    if (!is_string($sess) || $sess === '' || $token === '') return false;
+    return hash_equals($sess, $token);
+  }
+}
+if (!function_exists('staff_csrf_field')) {
+  function staff_csrf_field(): string {
+    if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
+    if (empty($_SESSION['csrf_token']) || !is_string($_SESSION['csrf_token'])) {
+      $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+    return '<input type="hidden" name="csrf_token" value="' . h((string)$_SESSION['csrf_token']) . '">';
+  }
+}
+if (!function_exists('staff_pdo')) {
+  function staff_pdo(): ?PDO {
+    return (function_exists('db') && db() instanceof PDO) ? db() : null;
+  }
+}
 if (!function_exists('pf__column_exists')) {
   function pf__column_exists(PDO $pdo, string $table, string $column): bool {
     static $cache = [];
     $key = strtolower($table . '.' . $column);
     if (array_key_exists($key, $cache)) return (bool)$cache[$key];
-
     $st = $pdo->prepare("
-      SELECT COUNT(*)
+      SELECT 1
       FROM information_schema.COLUMNS
       WHERE TABLE_SCHEMA = DATABASE()
         AND TABLE_NAME = ?
@@ -136,146 +94,225 @@ if (!function_exists('pf__column_exists')) {
       LIMIT 1
     ");
     $st->execute([$table, $column]);
-    $cache[$key] = ((int)$st->fetchColumn() > 0);
+    $cache[$key] = (bool)$st->fetchColumn();
     return (bool)$cache[$key];
   }
 }
 
+/* url helper (no arrow functions) */
+if (!function_exists('staff_u')) {
+  function staff_u(string $path): string {
+    return function_exists('url_for') ? (string)url_for($path) : $path;
+  }
+}
+
+/* auth */
+if (function_exists('require_staff')) {
+  require_staff();
+} elseif (function_exists('require_staff_login')) {
+  require_staff_login();
+} elseif (function_exists('mk_require_staff_login')) {
+  mk_require_staff_login();
+}
+
 /* DB */
-$pdo = function_exists('db') ? db() : null;
+$pdo = staff_pdo();
 if (!$pdo instanceof PDO) {
   http_response_code(500);
   header('Content-Type: text/plain; charset=utf-8');
-  echo "Database handle db() not available.\n";
+  echo "Database handle not available.\n";
   exit;
 }
 
 /* Return */
-$return = pf__safe_return_url((string)($_GET['return'] ?? ''), '/staff/subjects/pgs/index.php');
+$return = staff_safe_return_url((string)($_GET['return'] ?? ($_POST['return'] ?? '')), '/staff/subjects/pgs/index.php');
 
 $notice = pf__flash_get('notice');
 $error  = pf__flash_get('error');
 
 /* Schema */
-$has_title     = pf__column_exists($pdo, 'pages', 'title');
-$has_menu_name = pf__column_exists($pdo, 'pages', 'menu_name');
-$has_name      = pf__column_exists($pdo, 'pages', 'name');
+$has_subject_id  = pf__column_exists($pdo, 'pages', 'subject_id');
+$has_slug        = pf__column_exists($pdo, 'pages', 'slug');
+$has_topic_group = pf__column_exists($pdo, 'pages', 'topic_group');
 
-$has_slug      = pf__column_exists($pdo, 'pages', 'slug');
-$has_subject   = pf__column_exists($pdo, 'pages', 'subject_id');
+$title_col = pf__column_exists($pdo, 'pages', 'title') ? 'title'
+           : (pf__column_exists($pdo, 'pages', 'menu_name') ? 'menu_name'
+           : (pf__column_exists($pdo, 'pages', 'name') ? 'name' : null));
 
-$has_content   = pf__column_exists($pdo, 'pages', 'content');
-$has_body      = pf__column_exists($pdo, 'pages', 'body');
+$body_col = pf__column_exists($pdo, 'pages', 'body_html') ? 'body_html'
+         : (pf__column_exists($pdo, 'pages', 'body') ? 'body'
+         : (pf__column_exists($pdo, 'pages', 'content') ? 'content' : null));
 
-$has_nav_order = pf__column_exists($pdo, 'pages', 'nav_order');
-$has_position  = pf__column_exists($pdo, 'pages', 'position');
-$order_col     = $has_nav_order ? 'nav_order' : ($has_position ? 'position' : null);
+$order_col = pf__column_exists($pdo, 'pages', 'nav_order') ? 'nav_order'
+          : (pf__column_exists($pdo, 'pages', 'position') ? 'position' : null);
 
-$has_is_public = pf__column_exists($pdo, 'pages', 'is_public');
-$has_visible   = pf__column_exists($pdo, 'pages', 'visible');
-$pub_col       = $has_is_public ? 'is_public' : ($has_visible ? 'visible' : null);
+$pub_col = pf__column_exists($pdo, 'pages', 'is_public') ? 'is_public'
+        : (pf__column_exists($pdo, 'pages', 'visible') ? 'visible'
+        : (pf__column_exists($pdo, 'pages', 'status') ? 'status' : null));
 
-/* Subjects list for dropdown (if subject_id exists) */
+/* Subjects list */
 $subjects = [];
-if ($has_subject) {
-  $sub_has_menu = pf__column_exists($pdo, 'subjects', 'menu_name');
-  $sub_has_name = pf__column_exists($pdo, 'subjects', 'name');
-  $sub_title = $sub_has_menu ? 'menu_name' : ($sub_has_name ? 'name' : null);
+if ($has_subject_id) {
+  try {
+    $sub_title_col = pf__column_exists($pdo, 'subjects', 'menu_name') ? 'menu_name'
+                   : (pf__column_exists($pdo, 'subjects', 'name') ? 'name' : null);
 
-  if ($sub_title) {
-    $st = $pdo->query("SELECT id, {$sub_title} AS title FROM subjects ORDER BY {$sub_title} ASC, id ASC");
-    $subjects = $st->fetchAll(PDO::FETCH_ASSOC) ?: [];
-  } else {
-    $st = $pdo->query("SELECT id FROM subjects ORDER BY id ASC");
-    $subjects = array_map(fn($r) => ['id'=>$r['id'], 'title'=>'Subject #'.$r['id']], $st->fetchAll(PDO::FETCH_ASSOC) ?: []);
-  }
+    if ($sub_title_col) {
+      $subjects = $pdo->query("SELECT id, {$sub_title_col} AS title FROM subjects ORDER BY {$sub_title_col} ASC, id ASC")
+                      ->fetchAll(PDO::FETCH_ASSOC) ?: [];
+    } else {
+      $rows = $pdo->query("SELECT id FROM subjects ORDER BY id ASC")->fetchAll(PDO::FETCH_ASSOC) ?: [];
+      foreach ($rows as $r) {
+        $sid = (int)($r['id'] ?? 0);
+        if ($sid > 0) $subjects[] = ['id' => $sid, 'title' => 'Subject #' . $sid];
+      }
+    }
+  } catch (Throwable $e) { $subjects = []; }
 }
 
-/* Defaults */
+/* Optional slug helper */
+$slugFn = (defined('PRIVATE_PATH') ? (PRIVATE_PATH . '/functions/slug.php') : '');
+if ($slugFn !== '' && is_file($slugFn)) { require_once $slugFn; }
+
+/* Form */
 $form = [
-  'subject_id' => '',
-  'title'      => '',
-  'slug'       => '',
-  'content'    => '',
-  'order'      => '',
-  'is_public'  => '0',
+  'subject_id'   => '',
+  'topic_group'  => '',
+  'title'        => '',
+  'slug'         => '',
+  'body'         => '',
+  'nav_order'    => '',
+  'is_public'    => '0',
 ];
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  if (!csrf_verify((string)($_POST['csrf_token'] ?? ''))) {
+$pub_is_bool   = in_array($pub_col, ['is_public','visible'], true);
+$pub_is_status = ($pub_col === 'status');
+
+if (strtoupper((string)($_SERVER['REQUEST_METHOD'] ?? 'GET')) === 'POST') {
+  if (!staff_csrf_verify((string)($_POST['csrf_token'] ?? ''))) {
     pf__flash_set('error', 'Security check failed (CSRF). Please retry.');
-    redirect_to('/staff/subjects/pgs/new.php?return=' . rawurlencode($return));
+    redirect_to(staff_u('/staff/subjects/pgs/new.php?return=' . rawurlencode($return)), 302);
   }
 
-  $form['subject_id'] = trim((string)($_POST['subject_id'] ?? ''));
-  $form['title']      = trim((string)($_POST['title'] ?? ''));
-  $form['slug']       = trim((string)($_POST['slug'] ?? ''));
-  $form['content']    = (string)($_POST['content'] ?? '');
-  $form['order']      = trim((string)($_POST['order'] ?? ''));
-  $form['is_public']  = ((string)($_POST['is_public'] ?? '0') === '1') ? '1' : '0';
+  $form['subject_id']  = trim((string)($_POST['subject_id'] ?? ''));
+  $form['topic_group'] = trim((string)($_POST['topic_group'] ?? ''));
+  $form['title']       = trim((string)($_POST['title'] ?? ''));
+  $form['slug']        = trim((string)($_POST['slug'] ?? ''));
+  $form['body']        = (string)($_POST['body'] ?? '');
+  $form['nav_order']   = trim((string)($_POST['nav_order'] ?? ''));
+  $form['is_public']   = ((string)($_POST['is_public'] ?? '0') === '1') ? '1' : '0';
 
-  if ($has_subject && $form['subject_id'] === '') {
-    $error = 'Please choose a subject.';
-  } elseif ($form['title'] === '') {
-    $error = 'Please enter a title.';
+  if ($has_subject_id && $form['subject_id'] === '') $error = 'Please choose a subject.';
+  elseif ($title_col && $form['title'] === '') $error = 'Please enter a title.';
+
+  /* topic_group validation (optional) */
+  if ($error === '' && $has_topic_group && $form['topic_group'] !== '') {
+    $tg = strtolower($form['topic_group']);
+    if (!preg_match('/^[a-z0-9][a-z0-9_-]{0,64}$/', $tg)) {
+      $error = 'Topic group must be lowercase and contain only letters, numbers, underscore or dash (max 65 chars).';
+    } else {
+      $form['topic_group'] = $tg;
+    }
+  }
+
+  if ($error === '' && $has_slug) {
+    if ($form['slug'] === '' && function_exists('mk_slugify')) {
+      $form['slug'] = (string)mk_slugify($form['title'] !== '' ? $form['title'] : 'page');
+    }
+    if ($form['slug'] === '') $error = 'Please enter a slug.';
+    if ($error === '' && !preg_match('/^[a-z0-9][a-z0-9_-]{0,190}$/', strtolower($form['slug']))) {
+      $error = 'Slug must be lowercase and contain only letters, numbers, underscore or dash.';
+    } else {
+      $form['slug'] = strtolower($form['slug']);
+    }
   }
 
   if ($error === '') {
     try {
-      $fields = [];
-      $vals   = [];
-      $bind   = [];
+      $sid = (int)$form['subject_id'];
+      $slug = (string)$form['slug'];
 
-      if ($has_subject) {
-        $fields[] = 'subject_id';
-        $vals[] = ':subject_id';
-        $bind[':subject_id'] = (int)$form['subject_id'];
+      /* normalize topic_group to NULL when blank */
+      $tgVal = null;
+      if ($has_topic_group) {
+        $tgVal = ($form['topic_group'] === '') ? null : (string)$form['topic_group'];
       }
 
-      // choose best title column
-      if ($has_title) {
-        $fields[] = 'title'; $vals[] = ':title'; $bind[':title'] = $form['title'];
-      } elseif ($has_menu_name) {
-        $fields[] = 'menu_name'; $vals[] = ':title'; $bind[':title'] = $form['title'];
-      } elseif ($has_name) {
-        $fields[] = 'name'; $vals[] = ':title'; $bind[':title'] = $form['title'];
+      /* uniqueness check */
+      if ($has_subject_id && $has_slug) {
+        if ($has_topic_group) {
+          $chk = $pdo->prepare("SELECT id FROM pages WHERE subject_id = :sid AND slug = :slug AND (topic_group <=> :tg) LIMIT 1");
+          $chk->bindValue(':sid', $sid, PDO::PARAM_INT);
+          $chk->bindValue(':slug', $slug, PDO::PARAM_STR);
+          if ($tgVal === null) $chk->bindValue(':tg', null, PDO::PARAM_NULL);
+          else $chk->bindValue(':tg', $tgVal, PDO::PARAM_STR);
+          $chk->execute();
+        } else {
+          $chk = $pdo->prepare("SELECT id FROM pages WHERE subject_id = :sid AND slug = :slug LIMIT 1");
+          $chk->execute([':sid' => $sid, ':slug' => $slug]);
+        }
+        if ((int)$chk->fetchColumn() > 0) {
+          $error = $has_topic_group
+            ? 'A page with this Subject + Topic group + Slug already exists.'
+            : 'A page with this Subject + Slug already exists.';
+        }
       }
 
-      if ($has_slug) {
-        $fields[] = 'slug'; $vals[] = ':slug'; $bind[':slug'] = $form['slug'];
+      if ($error !== '') {
+        // fall through to render with error
+      } else {
+        $fields = [];
+        $vals   = [];
+        $bind   = [];
+
+        if ($has_subject_id) { $fields[]='subject_id'; $vals[]=':sid'; $bind[':sid']=(int)$form['subject_id']; }
+        if ($has_topic_group) {
+          $fields[]='topic_group';
+          if ($tgVal === null) { $vals[]='NULL'; }
+          else { $vals[]=':tg'; $bind[':tg']=$tgVal; }
+        }
+        if ($title_col)      { $fields[]=$title_col;   $vals[]=':title'; $bind[':title']=$form['title']; }
+        if ($has_slug)       { $fields[]='slug';       $vals[]=':slug'; $bind[':slug']=$slug; }
+        if ($body_col)       { $fields[]=$body_col;    $vals[]=':body'; $bind[':body']=$form['body']; }
+
+        if ($order_col) {
+          if ($form['nav_order'] === '') {
+            $fields[] = $order_col; $vals[] = 'NULL';
+          } else {
+            $fields[] = $order_col; $vals[] = ':ord'; $bind[':ord'] = (int)$form['nav_order'];
+          }
+        }
+
+        if ($pub_col) {
+          if ($pub_is_bool) {
+            $fields[] = $pub_col; $vals[] = ':pub'; $bind[':pub'] = ((int)$form['is_public'] === 1) ? 1 : 0;
+          } elseif ($pub_is_status) {
+            $fields[] = 'status'; $vals[] = ':status'; $bind[':status'] = ((int)$form['is_public'] === 1) ? 'active' : 'draft';
+          }
+        }
+
+        if (!$fields) throw new RuntimeException('No insertable columns found in pages table.');
+
+        $sql = "INSERT INTO pages (" . implode(',', $fields) . ") VALUES (" . implode(',', $vals) . ")";
+        $st = $pdo->prepare($sql);
+
+        foreach ($bind as $k => $v) {
+          if ($v === null) $st->bindValue($k, null, PDO::PARAM_NULL);
+          elseif (is_int($v)) $st->bindValue($k, $v, PDO::PARAM_INT);
+          else $st->bindValue($k, (string)$v, PDO::PARAM_STR);
+        }
+
+        $st->execute();
+        $new_id = (int)$pdo->lastInsertId();
+
+        pf__flash_set('notice', 'Page created.');
+
+        $edit_url = staff_u('/staff/subjects/pgs/edit.php')
+                  . '?id=' . rawurlencode((string)$new_id)
+                  . '&return=' . rawurlencode($return);
+
+        redirect_to($edit_url, 302);
       }
-
-      $content_col = $has_content ? 'content' : ($has_body ? 'body' : null);
-      if ($content_col) {
-        $fields[] = $content_col; $vals[] = ':content'; $bind[':content'] = $form['content'];
-      }
-
-      if ($order_col) {
-        $fields[] = $order_col; $vals[] = ':ord';
-        $bind[':ord'] = ($form['order'] === '') ? null : (int)$form['order'];
-      }
-
-      if ($pub_col) {
-        $fields[] = $pub_col; $vals[] = ':pub';
-        $bind[':pub'] = (int)$form['is_public'];
-      }
-
-      if (!$fields) {
-        throw new RuntimeException('No insertable columns found in pages table.');
-      }
-
-      $sql = "INSERT INTO pages (" . implode(',', $fields) . ") VALUES (" . implode(',', $vals) . ")";
-      $st = $pdo->prepare($sql);
-
-      foreach ($bind as $k => $v) {
-        if ($v === null) $st->bindValue($k, null, PDO::PARAM_NULL);
-        elseif (is_int($v)) $st->bindValue($k, $v, PDO::PARAM_INT);
-        else $st->bindValue($k, (string)$v, PDO::PARAM_STR);
-      }
-
-      $st->execute();
-      pf__flash_set('notice', 'Page created.');
-      redirect_to($return);
 
     } catch (Throwable $e) {
       $error = 'Create failed: ' . $e->getMessage();
@@ -284,12 +321,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 /* Render */
-$active_nav = 'staff';
+$active_nav = 'pgs';
 $page_title = 'New Page • Staff';
 require_once APP_ROOT . '/private/shared/staff_header.php';
 
-$action = function_exists('url_for') ? url_for('/staff/subjects/pgs/new.php?return=' . rawurlencode($return)) : '/staff/subjects/pgs/new.php?return=' . rawurlencode($return);
-
+$action = staff_u('/staff/subjects/pgs/new.php?return=' . rawurlencode($return));
 ?>
 <div class="container">
 
@@ -300,7 +336,7 @@ $action = function_exists('url_for') ? url_for('/staff/subjects/pgs/new.php?retu
         <p class="hero__sub">Create a new public page.</p>
       </div>
       <div class="hero__actions">
-        <a class="btn btn--ghost" href="<?php echo h($return); ?>">← Back</a>
+        <a class="btn btn--ghost" href="<?php echo h(staff_u($return)); ?>">← Back</a>
       </div>
     </div>
   </div>
@@ -311,15 +347,16 @@ $action = function_exists('url_for') ? url_for('/staff/subjects/pgs/new.php?retu
   <div class="card">
     <div class="card__body">
       <form method="post" action="<?php echo h($action); ?>" class="stack">
-        <?php echo csrf_field(); ?>
+        <?php echo staff_csrf_field(); ?>
+        <input type="hidden" name="return" value="<?php echo h($return); ?>">
 
-        <?php if ($has_subject): ?>
+        <?php if ($has_subject_id): ?>
           <div class="field">
             <label class="label" for="subject_id">Subject</label>
             <select class="input" id="subject_id" name="subject_id" required>
               <option value="">— Choose —</option>
               <?php foreach ($subjects as $s): ?>
-                <?php $sid = (int)($s['id'] ?? 0); $stitle = (string)($s['title'] ?? ('Subject #'.$sid)); ?>
+                <?php $sid = (int)($s['id'] ?? 0); $stitle = trim((string)($s['title'] ?? '')) ?: ('Subject #'.$sid); ?>
                 <option value="<?php echo h((string)$sid); ?>" <?php echo ((string)$sid === $form['subject_id']) ? 'selected' : ''; ?>>
                   <?php echo h($stitle); ?>
                 </option>
@@ -328,10 +365,24 @@ $action = function_exists('url_for') ? url_for('/staff/subjects/pgs/new.php?retu
           </div>
         <?php endif; ?>
 
-        <div class="field">
-          <label class="label" for="title">Title</label>
-          <input class="input" id="title" name="title" value="<?php echo h($form['title']); ?>" required>
-        </div>
+        <?php if ($has_topic_group): ?>
+          <div class="field">
+            <label class="label" for="topic_group">Topic group (optional)</label>
+            <input class="input mono" id="topic_group" name="topic_group"
+              value="<?php echo h($form['topic_group']); ?>"
+              placeholder="e.g. overview, timeline, sources">
+            <div class="muted" style="margin-top:6px;">
+              Used for grouping pages within a subject. Leave blank for “no group”.
+            </div>
+          </div>
+        <?php endif; ?>
+
+        <?php if ($title_col): ?>
+          <div class="field">
+            <label class="label" for="title">Title</label>
+            <input class="input" id="title" name="title" value="<?php echo h($form['title']); ?>" required>
+          </div>
+        <?php endif; ?>
 
         <?php if ($has_slug): ?>
           <div class="field">
@@ -340,17 +391,17 @@ $action = function_exists('url_for') ? url_for('/staff/subjects/pgs/new.php?retu
           </div>
         <?php endif; ?>
 
-        <?php if ($has_content || $has_body): ?>
+        <?php if ($body_col): ?>
           <div class="field">
-            <label class="label" for="content">Content</label>
-            <textarea class="input" id="content" name="content" rows="10"><?php echo h($form['content']); ?></textarea>
+            <label class="label" for="body"><?php echo h($body_col === 'body_html' ? 'Body (HTML)' : 'Body'); ?></label>
+            <textarea class="input" id="body" name="body" rows="10"><?php echo h($form['body']); ?></textarea>
           </div>
         <?php endif; ?>
 
         <?php if ($order_col): ?>
           <div class="field">
-            <label class="label" for="order">Order</label>
-            <input class="input mono" id="order" name="order" type="number" value="<?php echo h($form['order']); ?>" placeholder="10, 20, 30...">
+            <label class="label" for="nav_order"><?php echo h($order_col === 'position' ? 'Position' : 'Nav order'); ?></label>
+            <input class="input mono" id="nav_order" name="nav_order" type="number" value="<?php echo h($form['nav_order']); ?>" placeholder="10, 20, 30...">
           </div>
         <?php endif; ?>
 
@@ -363,17 +414,40 @@ $action = function_exists('url_for') ? url_for('/staff/subjects/pgs/new.php?retu
           </div>
         <?php endif; ?>
 
+        <hr class="sep">
+
+        <h3 style="margin:0 0 10px;">Attachments</h3>
+
+        <div class="alert alert--warning" style="margin-bottom:12px;">
+          Attachments require a page ID. Create the page first and you will be taken to <strong>Edit</strong> immediately to upload attachments.
+        </div>
+
+        <div class="card" style="border:1px dashed var(--line); background:transparent;">
+          <div class="card__body">
+            <div class="muted" style="margin-bottom:10px;">Add attachments</div>
+
+            <div class="row row--wrap row--gap" style="align-items:center;">
+              <input class="input" type="file" disabled>
+              <button class="btn" type="button" disabled>Upload</button>
+            </div>
+
+            <div class="muted" style="font-size:.9rem; margin-top:10px;">
+              Allowed types and max size are enforced by the upload handler.
+            </div>
+
+            <div class="muted" style="margin-top:12px;">
+              No attachments yet.
+            </div>
+          </div>
+        </div>
+
         <div class="row row--gap">
           <button class="btn btn--primary" type="submit">Create page</button>
-          <a class="btn btn--ghost" href="<?php echo h($return); ?>">Cancel</a>
+          <a class="btn btn--ghost" href="<?php echo h(staff_u($return)); ?>">Cancel</a>
         </div>
       </form>
     </div>
   </div>
 
 </div>
-
-<?php
-$staff_footer = APP_ROOT . '/private/shared/staff_footer.php';
-if (is_file($staff_footer)) require $staff_footer;
-else echo "</body></html>";
+<?php require_once APP_ROOT . '/private/shared/staff_footer.php'; ?>

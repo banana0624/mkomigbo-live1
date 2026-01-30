@@ -1,5 +1,9 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__ . '/../../../../_init.php';
+
+require_once __DIR__ . '/../../../_init.php';
+
 
 /**
  * /public/staff/subjects/pgs/files/upload.php
@@ -14,7 +18,7 @@ declare(strict_types=1);
  * And writes a DB row in page_files table.
  */
 
-$init = dirname(__DIR__, 5) . '/private/assets/initialize.php';
+// [patched] removed legacy initialize path reference
 if (!is_file($init)) {
   header('Content-Type: text/plain; charset=utf-8');
   echo "Init not found\nExpected: {$init}\n";

@@ -1,52 +1,119 @@
 <?php
 declare(strict_types=1);
 
-$init = __DIR__ . '/../../../private/assets/initialize.php';
-if (!is_file($init)) {
-  header('Content-Type: text/plain; charset=utf-8');
-  echo "Init not found\nExpected: {$init}\n";
-  exit;
+/**
+ * /public/platforms/forum/index.php
+ * Platform page (standard placeholder) — must never 500.
+ */
+
+@ini_set('display_errors', '0');
+@ini_set('display_startup_errors', '0');
+error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
+
+require_once __DIR__ . '/../_init.php';
+
+if (!function_exists('h')) { function h(string $v): string { return htmlspecialchars($v, ENT_QUOTES, 'UTF-8'); } }
+if (!function_exists('pf__u')) { function pf__u(string $p): string { return function_exists('url_for') ? (string)url_for($p) : $p; } }
+
+$pretty     = 'Forum';
+$page_title = $pretty . ' — Platforms — Mkomi Igbo';
+$page_desc  = 'Forum is coming soon: structured discussion and Q&A across topics.';
+
+$extra_css = [ pf__u('/lib/css/public.css'), pf__u('/lib/css/platforms.css') ];
+
+$GLOBALS['page_title']=$page_title; $GLOBALS['page_desc']=$page_desc;
+$GLOBALS['nav_active']='platforms'; $GLOBALS['active_nav']='platforms'; $GLOBALS['extra_css']=$extra_css;
+
+if (function_exists('mk_view_set')) {
+  try { mk_view_set([
+    'page_title'=>$page_title,'page_desc'=>$page_desc,
+    'nav_active'=>'platforms','active_nav'=>'platforms',
+    'extra_css'=>$extra_css,'meta_robots'=>'noindex, nofollow',
+  ]); } catch (Throwable $e) {}
 }
-require_once $init;
 
-$page_title = 'Forum — Platforms';
-$nav_active = 'platforms';
+$header_ok=false;
+if (function_exists('mk_require_shared')) { try { mk_require_shared('public_header.php'); $header_ok=true; } catch (Throwable $e) {} }
+if (!$header_ok) { header('Content-Type:text/html; charset=UTF-8'); echo "<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'><title>".h($page_title)."</title></head><body>"; }
 
-$public_nav = __DIR__ . '/../../../private/shared/public_nav.php';
-if (!is_file($public_nav)) {
-  header('Content-Type: text/plain; charset=utf-8');
-  echo "Public nav include missing\nExpected: {$public_nav}\n";
-  exit;
-}
+http_response_code(200);
 
+$platforms_url = pf__u('/platforms/');
+$home_url = pf__u('/');
+$subjects_url = pf__u('/subjects/');
+$contributors_url = pf__u('/contributors/');
 ?>
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title><?= h($page_title) ?> • Mkomigbo</title>
-  <link rel="stylesheet" href="<?= h(url_for('/lib/css/ui.css')) ?>">
-  <link rel="stylesheet" href="<?= h(url_for('/lib/css/subjects.css')) ?>">
-</head>
-<body>
-  <?php include_once $public_nav; ?>
+<main class="container mk-page">
 
-  <main class="container" style="padding:24px 0;">
-    <h1>Blog</h1>
-    <p class="muted" style="max-width:80ch;">
-      This platform is planned and will be enabled soon. For now, you can explore Subjects and Contributors.
-    </p>
+  <div class="mk-page-actions">
+    <a class="mk-btn mk-btn--ghost" href="<?= h($platforms_url) ?>">← Back to Platforms</a>
+    <a class="mk-btn mk-btn--ghost" href="<?= h($home_url) ?>">Home</a>
+  </div>
 
-    <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
-      <a class="btn" href="<?= h(url_for('/subjects/')) ?>">Explore Subjects</a>
-      <a class="btn" href="<?= h(url_for('/contributors/')) ?>">Meet Contributors</a>
-      <a class="btn" href="<?= h(url_for('/platforms/')) ?>">Back to Platforms</a>
+  <header class="mk-hero mk-hero--compact">
+    <div class="mk-hero__bar" aria-hidden="true"></div>
+    <div class="mk-hero__inner">
+      <h1 class="mk-hero__title"><?= h($pretty) ?></h1>
+      <p class="mk-muted mk-lede">
+        A moderated space for discussion, Q&amp;A, and collaborative learning tied to Subjects.
+      </p>
+      <div class="mk-hero__actions">
+        <a class="mk-btn" href="<?= h($subjects_url) ?>">Explore Subjects</a>
+        <a class="mk-btn" href="<?= h($contributors_url) ?>">Meet Contributors</a>
+        <a class="mk-btn mk-btn--ghost" href="<?= h($platforms_url) ?>">Back to Platforms</a>
+      </div>
     </div>
-  </main>
+  </header>
 
-  <footer class="site-footer">
-    <div class="container">© <?= date('Y') ?> Mkomigbo</div>
-  </footer>
-</body>
-</html>
+  <section class="pf-section">
+    <div class="pf-section__title"><h2>What to expect</h2></div>
+
+    <section class="pf-grid">
+      <article class="pf-card" style="--pf-accent:#2F4A5A;">
+        <div class="pf-card__bar"></div>
+        <div class="pf-card__body">
+          <div class="pf-card__top">
+            <div class="pf-icon" aria-hidden="true">F</div>
+            <div class="pf-card__text">
+              <h3 class="pf-card__title">Topic boards</h3>
+              <p class="pf-card__desc mk-muted">Board structure aligned to Subjects and themes.</p>
+            </div>
+          </div>
+          <div class="pf-card__meta"><span class="pf-pill">Planned</span><span class="pf-pill">Organized</span></div>
+        </div>
+      </article>
+
+      <article class="pf-card" style="--pf-accent:#3C2F4A;">
+        <div class="pf-card__bar"></div>
+        <div class="pf-card__body">
+          <div class="pf-card__top">
+            <div class="pf-icon" aria-hidden="true">?</div>
+            <div class="pf-card__text">
+              <h3 class="pf-card__title">Q&amp;A</h3>
+              <p class="pf-card__desc mk-muted">Answers can be cited and linked to source material.</p>
+            </div>
+          </div>
+          <div class="pf-card__meta"><span class="pf-pill">Planned</span><span class="pf-pill">Citations</span></div>
+        </div>
+      </article>
+
+      <article class="pf-card" style="--pf-accent:#4A3F2F;">
+        <div class="pf-card__bar"></div>
+        <div class="pf-card__body">
+          <div class="pf-card__top">
+            <div class="pf-icon" aria-hidden="true">M</div>
+            <div class="pf-card__text">
+              <h3 class="pf-card__title">Media-aware</h3>
+              <p class="pf-card__desc mk-muted">Support for images, documents, and referenced links.</p>
+            </div>
+          </div>
+          <div class="pf-card__meta"><span class="pf-pill">Planned</span><span class="pf-pill">Attachments</span></div>
+        </div>
+      </article>
+    </section>
+  </section>
+
+</main>
+<?php
+if (function_exists('mk_require_shared')) { try { mk_require_shared('public_footer.php'); } catch (Throwable $e) {} }
+else { echo "</body></html>"; }

@@ -3,19 +3,27 @@ declare(strict_types=1);
 
 /**
  * /public/staff/contributors/create.php
- * Staff: Create contributor (POST-only, schema-tolerant, constraint-safe roles, bio_html sanitizer, unique slug)
+ * Staff: Create contributor (POST-only, schema-tolerant)
+ *
+ * - CSRF protected
+ * - Roles normalized to JSON array (if roles column exists)
+ * - Slug: optional; generated + made unique (if slug column exists)
+ * - Bio: stores bio_raw; generates safe bio_html (sanitized/failsafe)
+ * - No arrow functions
  */
 
 require_once __DIR__ . '/../_init.php';
 
-require_once PRIVATE_PATH . '/functions/slug.php';
+if (function_exists('require_staff_login')) { require_staff_login(); }
 
-$slug = mk_slugify($_POST['slug'] ?? $_POST['title'] ?? $_POST['display_name'] ?? '');
-if ($slug === '') { $errors[] = "Slug is required."; }
+/* Optional project helper */
+if (defined('PRIVATE_PATH') && is_file(PRIVATE_PATH . '/functions/slug.php')) {
+  require_once PRIVATE_PATH . '/functions/slug.php';
+}
 
-$slug = mk_slug_unique(db(), 'subjects', $slug); // or contributors
-$slug = mk_slug_unique(db(), 'pages', $slug, 'slug', 'subject_id = :sid', [':sid' => $subject_id]);
-
+/* ---------------------------------------------------------
+   Helpers
+--------------------------------------------------------- */
 if (!function_exists('redirect_to')) {
   function redirect_to(string $loc): void {
     $loc = str_replace(["\r", "\n"], '', $loc);
@@ -23,8 +31,6 @@ if (!function_exists('redirect_to')) {
     exit;
   }
 }
-
-/* Flash */
 if (!function_exists('pf__flash_set')) {
   function pf__flash_set(string $key, string $msg): void {
     if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
@@ -32,8 +38,20 @@ if (!function_exists('pf__flash_set')) {
     $_SESSION['flash'][$key] = $msg;
   }
 }
+if (!function_exists('pf__safe_return_url')) {
+  function pf__safe_return_url(string $raw, string $default): string {
+    $raw = trim($raw);
+    if ($raw === '') return $default;
+    $raw = rawurldecode($raw);
+    if ($raw === '' || $raw[0] !== '/') return $default;
+    if (preg_match('~^//~', $raw)) return $default;
+    if (preg_match('~^[a-z]+:~i', $raw)) return $default;
+    if (!preg_match('~^/staff/~', $raw)) return $default;
+    return $raw;
+  }
+}
 
-/* CSRF (field name: csrf_token) */
+/* CSRF */
 if (!function_exists('csrf_require')) {
   function csrf_require(): void {
     if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') return;
@@ -49,17 +67,19 @@ if (!function_exists('csrf_require')) {
   }
 }
 
-/* Safe return */
-if (!function_exists('pf__safe_return_url')) {
-  function pf__safe_return_url(string $raw, string $default): string {
-    $raw = trim($raw);
-    if ($raw === '') return $default;
-    $raw = rawurldecode($raw);
-    if ($raw === '' || $raw[0] !== '/') return $default;
-    if (preg_match('~^//~', $raw)) return $default;
-    if (preg_match('~^[a-z]+:~i', $raw)) return $default;
-    if (!preg_match('~^/staff/~', $raw)) return $default;
-    return $raw;
+/* Schema */
+if (!function_exists('mk_table_exists')) {
+  function mk_table_exists(PDO $db, string $table): bool {
+    $st = $db->prepare("SELECT 1 FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=? LIMIT 1");
+    $st->execute([$table]);
+    return (bool)$st->fetchColumn();
+  }
+}
+if (!function_exists('mk_column_exists')) {
+  function mk_column_exists(PDO $db, string $table, string $column): bool {
+    $st = $db->prepare("SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=? AND COLUMN_NAME=? LIMIT 1");
+    $st->execute([$table, $column]);
+    return ((int)$st->fetchColumn() > 0);
   }
 }
 
@@ -77,7 +97,6 @@ if (!function_exists('pf__normalize_roles')) {
       return ['ok' => true, 'value' => '[]'];
     }
 
-    // JSON array?
     if (isset($raw[0]) && $raw[0] === '[') {
       $decoded = json_decode($raw, true);
       if (!is_array($decoded)) {
@@ -92,7 +111,6 @@ if (!function_exists('pf__normalize_roles')) {
       return ['ok' => true, 'value' => json_encode($out, JSON_UNESCAPED_UNICODE)];
     }
 
-    // CSV
     $parts = preg_split('/\s*,\s*/', $raw) ?: [];
     $out = [];
     foreach ($parts as $p) {
@@ -101,6 +119,58 @@ if (!function_exists('pf__normalize_roles')) {
     }
     $out = array_values(array_unique($out));
     return ['ok' => true, 'value' => json_encode($out, JSON_UNESCAPED_UNICODE)];
+  }
+}
+
+/* Failsafe: always safe HTML (no XSS) */
+if (!function_exists('mk_failsafe_bio_html')) {
+  function mk_failsafe_bio_html(string $raw): string {
+    $raw = trim($raw);
+    if ($raw === '') return '';
+    $escaped = htmlspecialchars($raw, ENT_QUOTES, 'UTF-8');
+    return nl2br($escaped, false);
+  }
+}
+
+/* Slug fallback */
+if (!function_exists('mk_slugify')) {
+  function mk_slugify(string $raw, string $fallback = 'contributor'): string {
+    $raw = trim($raw);
+    if ($raw === '') return $fallback;
+    $raw = strtolower($raw);
+    $raw = preg_replace('/[^a-z0-9]+/i', '-', $raw) ?? $raw;
+    $raw = trim($raw, '-');
+    return $raw !== '' ? $raw : $fallback;
+  }
+}
+
+/* Make unique contributor slug (fallback if project helper missing) */
+if (!function_exists('mk_unique_contributor_slug')) {
+  function mk_unique_contributor_slug(PDO $pdo, string $base, ?int $excludeId = null): string {
+    $base = trim($base);
+    if ($base === '') $base = 'contributor';
+
+    $slug = $base;
+    for ($i = 0; $i < 50; $i++) {
+      $check = $slug;
+      $sql = "SELECT id FROM contributors WHERE slug = ? ";
+      $params = [$check];
+
+      if ($excludeId !== null) {
+        $sql .= "AND id <> ? ";
+        $params[] = $excludeId;
+      }
+      $sql .= "LIMIT 1";
+
+      $st = $pdo->prepare($sql);
+      $st->execute($params);
+      $found = $st->fetch(PDO::FETCH_ASSOC);
+
+      if (!$found) return $slug;
+
+      $slug = $base . '-' . ($i + 2);
+    }
+    return $base . '-' . time();
   }
 }
 
@@ -127,22 +197,6 @@ if (!$pdo instanceof PDO) {
   exit;
 }
 
-/* Schema helpers: prefer helpers.php versions if present */
-if (!function_exists('mk_table_exists')) {
-  function mk_table_exists(PDO $db, string $table): bool {
-    $st = $db->prepare("SELECT 1 FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=? LIMIT 1");
-    $st->execute([$table]);
-    return (bool)$st->fetchColumn();
-  }
-}
-if (!function_exists('mk_column_exists')) {
-  function mk_column_exists(PDO $db, string $table, string $column): bool {
-    $st = $db->prepare("SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=? AND COLUMN_NAME=? LIMIT 1");
-    $st->execute([$table, $column]);
-    return ((int)$st->fetchColumn() > 0);
-  }
-}
-
 if (!mk_table_exists($pdo, 'contributors')) {
   pf__flash_set('error', 'contributors table not found.');
   redirect_to($return);
@@ -151,12 +205,16 @@ if (!mk_table_exists($pdo, 'contributors')) {
 /* Detect columns */
 $cols = [
   'display_name' => mk_column_exists($pdo, 'contributors', 'display_name'),
+  'name'         => mk_column_exists($pdo, 'contributors', 'name'),
+  'username'     => mk_column_exists($pdo, 'contributors', 'username'),
   'email'        => mk_column_exists($pdo, 'contributors', 'email'),
   'roles'        => mk_column_exists($pdo, 'contributors', 'roles'),
   'status'       => mk_column_exists($pdo, 'contributors', 'status'),
   'slug'         => mk_column_exists($pdo, 'contributors', 'slug'),
   'bio_raw'      => mk_column_exists($pdo, 'contributors', 'bio_raw'),
   'bio_html'     => mk_column_exists($pdo, 'contributors', 'bio_html'),
+  'bio'          => mk_column_exists($pdo, 'contributors', 'bio'),
+  'avatar_path'  => mk_column_exists($pdo, 'contributors', 'avatar_path'),
 ];
 
 $pub_col = null;
@@ -165,12 +223,16 @@ elseif (mk_column_exists($pdo, 'contributors', 'visible')) $pub_col = 'visible';
 
 /* Read inputs */
 $display_name = trim((string)($_POST['display_name'] ?? ''));
+$name         = trim((string)($_POST['name'] ?? ''));
+$username     = trim((string)($_POST['username'] ?? ''));
 $email        = trim((string)($_POST['email'] ?? ''));
 $roles_raw    = (string)($_POST['roles'] ?? '');
 $status       = trim((string)($_POST['status'] ?? 'active'));
-
 $slug_input   = trim((string)($_POST['slug'] ?? ''));
+$avatar_path  = trim((string)($_POST['avatar_path'] ?? ''));
 
+/* Validate required-ish */
+$label_for_slug = $display_name !== '' ? $display_name : ($name !== '' ? $name : ($username !== '' ? $username : ''));
 if ($cols['display_name'] && $display_name === '') {
   pf__flash_set('error', 'Display name is required.');
   redirect_to('/staff/contributors/new.php?return=' . rawurlencode($return));
@@ -192,10 +254,10 @@ if ($pub_col) {
   $pub_val = (isset($_POST[$pub_col]) && (string)$_POST[$pub_col] === '1') ? 1 : 0;
 }
 
-/* bio sanitize (only if columns exist) */
+/* bio sanitize */
 $bio_raw  = '';
 $bio_html = '';
-if ($cols['bio_raw'] || $cols['bio_html']) {
+if ($cols['bio_raw'] || $cols['bio_html'] || $cols['bio']) {
   $bio_raw = (string)($_POST['bio_raw'] ?? '');
 
   if (function_exists('mk_sanitize_bio_html')) {
@@ -203,29 +265,24 @@ if ($cols['bio_raw'] || $cols['bio_html']) {
   } elseif (function_exists('mk_sanitize_allowlist_html')) {
     $bio_html = mk_sanitize_allowlist_html($bio_raw);
   } else {
-    // fail-soft: store as-is
-    $bio_html = $bio_raw;
+    $bio_html = mk_failsafe_bio_html($bio_raw);
   }
 }
 
-/* slug generation (only if slug column exists) */
+/* slug generation */
 $slug_final = '';
 if ($cols['slug']) {
-  // Base slug: explicit slug field wins, else display_name
-  if (!function_exists('mk_slugify')) {
-    // absolute fallback if helpers.php not loaded for any reason
-    $base = trim($slug_input !== '' ? $slug_input : $display_name);
-    $base = strtolower($base);
-    $base = preg_replace('/[^a-z0-9]+/i', '-', $base) ?? $base;
-    $base = trim($base, '-');
-    $slug_final = $base !== '' ? $base : 'contributor';
-  } else {
-    $base = ($slug_input !== '') ? mk_slugify($slug_input, 'contributor') : mk_slugify($display_name, 'contributor');
-    if (function_exists('mk_unique_contributor_slug')) {
+  $base = ($slug_input !== '') ? mk_slugify($slug_input, 'contributor') : mk_slugify($label_for_slug, 'contributor');
+
+  if (function_exists('mk_slug_unique')) {
+    // If your slug.php offers mk_slug_unique(PDO $db, string $table, string $slug, ...), use it.
+    try {
+      $slug_final = mk_slug_unique($pdo, 'contributors', $base);
+    } catch (Throwable $e) {
       $slug_final = mk_unique_contributor_slug($pdo, $base, null);
-    } else {
-      $slug_final = $base;
     }
+  } else {
+    $slug_final = mk_unique_contributor_slug($pdo, $base, null);
   }
 }
 
@@ -234,13 +291,17 @@ try {
   $params = [];
 
   if ($cols['display_name']) { $fields[] = 'display_name'; $params[':display_name'] = $display_name; }
+  if ($cols['name'])         { $fields[] = 'name';         $params[':name'] = ($name === '' ? null : $name); }
+  if ($cols['username'])     { $fields[] = 'username';     $params[':username'] = ($username === '' ? null : $username); }
   if ($cols['slug'])         { $fields[] = 'slug';         $params[':slug'] = $slug_final; }
   if ($cols['email'])        { $fields[] = 'email';        $params[':email'] = ($email === '' ? null : $email); }
   if ($cols['roles'])        { $fields[] = 'roles';        $params[':roles'] = $roles_norm['value']; }
   if ($cols['status'])       { $fields[] = 'status';       $params[':status'] = ($status === '' ? 'active' : $status); }
+  if ($cols['avatar_path'])  { $fields[] = 'avatar_path';  $params[':avatar_path'] = ($avatar_path === '' ? null : $avatar_path); }
   if ($pub_col)              { $fields[] = $pub_col;       $params[':pub'] = $pub_val; }
   if ($cols['bio_raw'])      { $fields[] = 'bio_raw';      $params[':bio_raw'] = $bio_raw; }
   if ($cols['bio_html'])     { $fields[] = 'bio_html';     $params[':bio_html'] = $bio_html; }
+  if (!$cols['bio_raw'] && $cols['bio']) { $fields[] = 'bio'; $params[':bio'] = $bio_raw; }
 
   if (!$fields) {
     throw new RuntimeException('No writable columns detected for contributors.');
@@ -254,7 +315,6 @@ try {
 
   $sql = "INSERT INTO contributors (" . implode(', ', $fields) . ")
           VALUES (" . implode(', ', $placeholders) . ")";
-
   $st = $pdo->prepare($sql);
   $st->execute($params);
 

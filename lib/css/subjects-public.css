@@ -1,48 +1,100 @@
 /* =========================================================
    public/lib/css/subjects-public.css
-   Subjects landing page – premium "platforms" head-style system
-   (kept external for later centralization)
+   Subjects module — page-level chrome ONLY
+   - hero + crumbs + section titles + search row
+   - no grid/card definitions here
    ========================================================= */
 
-/* Tokens (match platforms page) */
+/* Module-scoped tokens (avoid colliding with ui.css tokens) */
 :root{
-  --ink:#111;
-  --muted:#6c757d;
-  --line:rgba(0,0,0,.10);
-  --line-strong:rgba(0,0,0,.22);
-  --card:#fff;
-  --shadow:0 12px 28px rgba(0,0,0,.05);
-  --shadow-hover:0 18px 36px rgba(0,0,0,.08);
-  --radius-xl:20px;
-  --radius-lg:18px;
-  --radius-md:16px;
+  --sb-ink:#111;
+  --sb-muted:#6c757d;
+  --sb-line:rgba(0,0,0,.10);
+  --sb-line-strong:rgba(0,0,0,.22);
+  --sb-shadow:0 12px 28px rgba(0,0,0,.05);
+  --sb-shadow-hover:0 18px 36px rgba(0,0,0,.08);
+  --sb-radius-xl:20px;
+  --sb-radius-lg:18px;
 }
 
-/* Baseline */
-body{ background: rgba(0,0,0,.015); color:var(--ink); }
-.muted{ color:var(--muted); }
+/* Light page polish. If you do NOT want this globally, move it to a wrapper later */
+body{
+  background: rgba(0,0,0,.015);
+  color: var(--sb-ink);
+}
 
-/* Hero (match platforms) */
-.hero{
-  border:1px solid var(--line);
-  border-radius: var(--radius-xl);
+/* Muted text helpers */
+.mk-muted{ color: var(--sb-muted); }
+/* NOTE: .muted is global from ui.css — do not override it here */
+
+/* ---------------------------------------------------------
+   Breadcrumbs: support legacy + mk
+--------------------------------------------------------- */
+.crumbs,
+.mk-crumbs{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  flex-wrap:wrap;
+  margin: 0 0 12px;
+  font-size: .95rem;
+  color: var(--sb-muted);
+}
+.crumbs a,
+.mk-crumbs a{
+  text-decoration:none;
+  color: inherit;
+}
+.crumbs a:hover,
+.mk-crumbs a:hover{ text-decoration: underline; }
+.crumbs .sep,
+.mk-crumbs__sep{ opacity:.75; }
+
+/* ---------------------------------------------------------
+   Hero: support legacy + mk
+--------------------------------------------------------- */
+.hero,
+.mk-hero{
+  border:1px solid var(--sb-line);
+  border-radius: var(--sb-radius-xl);
   background: linear-gradient(180deg, rgba(0,0,0,0.02), #fff);
-  box-shadow: 0 20px 55px rgba(0,0,0,0.10);
+  box-shadow: 0 20px 55px rgba(0,0,0,.10);
   overflow:hidden;
   position:relative;
 }
-.hero-bar{ height:8px; background:#111; opacity:.88; }
-.hero-inner{ padding:22px 18px 18px; }
-.hero h1{
+.hero-bar,
+.mk-hero__bar{
+  height:8px;
+  background:#111;
+  opacity:.88;
+}
+.hero-inner,
+.mk-hero__inner{
+  padding:22px 18px 18px;
+}
+.hero h1,
+.mk-hero__title{
   margin:0 0 10px;
   font-size: clamp(1.75rem, 3.2vw, 2.75rem);
   line-height:1.06;
   letter-spacing:-0.02em;
 }
-.hero p{ margin:0; max-width:88ch; line-height:1.75; }
-.cta-row{ display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }
+.hero p,
+.mk-hero__subtitle{
+  margin:0;
+  max-width:88ch;
+  line-height:1.75;
+}
+.cta-row{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:14px;
+}
 
-/* Section title (match platforms) */
+/* ---------------------------------------------------------
+   Section title row
+--------------------------------------------------------- */
 .section-title{
   margin:24px 0 10px;
   display:flex;
@@ -51,102 +103,14 @@ body{ background: rgba(0,0,0,.015); color:var(--ink); }
   gap:10px;
   flex-wrap:wrap;
 }
-.section-title h2{ margin:0; font-size:1.2rem; }
-
-/* Grid + cards (match platforms) */
-.grid{
-  margin-top:12px;
-  display:grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap:14px;
+.section-title h2{
+  margin:0;
+  font-size:1.2rem;
 }
 
-/* Card */
-.card{
-  border:1px solid var(--line);
-  border-radius: var(--radius-lg);
-  background:var(--card);
-  overflow:hidden;
-  box-shadow: var(--shadow);
-  transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
-  min-height: 170px;
-}
-.card:hover{
-  transform: translateY(-1px);
-  border-color: var(--line-strong);
-  box-shadow: var(--shadow-hover);
-}
-.card-bar{ height:7px; background: var(--accent, #111); }
-.card-body{
-  padding:14px;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  height:100%;
-}
-.top{ display:flex; gap:12px; align-items:flex-start; }
-.stretch{ text-decoration:none; color:inherit; display:block; height:100%; }
-
-/* Logo box (same size as platforms icon: 56x56) */
-.logo{
-  width:56px;
-  height:56px;
-  border-radius:16px;
-  border:1px solid var(--line);
-  background: rgba(0,0,0,0.02);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  overflow:hidden;
-  flex:0 0 auto;
-  position:relative;
-  font-weight:900;
-  letter-spacing:-0.02em;
-}
-.logo::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  border-radius:16px;
-  box-shadow: inset 0 0 0 2px rgba(255,255,255,.35);
-  pointer-events:none;
-  opacity:.35;
-}
-.logo img{
-  width:100%;
-  height:100%;
-  object-fit: cover; /* match platforms premium feel */
-  display:block;
-}
-
-/* Subject text */
-.card h3{
-  margin:2px 0 6px;
-  font-size:1.1rem;
-  line-height:1.2;
-  letter-spacing:-0.01em;
-}
-.card p{ margin:0; line-height:1.6; }
-
-/* Small subject slug line */
-.subject-slug{
-  margin-top: 2px;
-  font-size: .95rem;
-}
-
-/* Pills/meta (match platforms) */
-.pill{
-  display:inline-block;
-  padding:4px 10px;
-  border:1px solid rgba(0,0,0,0.12);
-  border-radius:999px;
-  background:#fff;
-  font-size:.85rem;
-  color:#495057;
-}
-.meta{ margin-top:auto; display:flex; gap:10px; flex-wrap:wrap; }
-
-/* Search row – match the premium vibe without fighting ui.css */
+/* ---------------------------------------------------------
+   Search row
+--------------------------------------------------------- */
 .search-row{
   display:flex;
   gap:10px;
@@ -158,30 +122,16 @@ body{ background: rgba(0,0,0,.015); color:var(--ink); }
   min-width: 220px;
   padding: 10px 12px;
   border-radius: 14px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--sb-line);
   background:#fff;
-  box-shadow: var(--shadow);
+  box-shadow: var(--sb-shadow);
 }
 .search-row input[type="search"]:focus{
   outline: none;
-  border-color: var(--line-strong);
+  border-color: var(--sb-line-strong);
 }
 
-/* Breadcrumbs – keep simple */
-.crumbs{
-  display:flex;
-  gap:8px;
-  align-items:center;
-  flex-wrap:wrap;
-  margin: 0 0 12px;
-  color: var(--muted);
-  font-size: .95rem;
-}
-.crumbs a{ text-decoration:none; color:inherit; }
-.crumbs a:hover{ text-decoration: underline; }
-.crumbs .sep{ opacity:.75; }
-
-/* Screen reader only */
+/* Screen reader only (safe global helper) */
 .sr-only{
   position:absolute !important;
   width:1px;height:1px;

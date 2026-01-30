@@ -5,28 +5,17 @@ declare(strict_types=1);
  * /public/staff/contributors/edit.php
  * Staff: Edit Contributor form (schema-tolerant, status-based)
  *
- * Your real schema includes:
- * - status (varchar(40)) default 'active'
- * - bio_raw, bio_html
- * - display_name, email, roles
+ * - Edits whichever columns exist
+ * - Provides Status dropdown when status column exists
+ * - Edits bio_raw (preferred) or bio (legacy) when available
+ * - No arrow functions
  *
- * This form:
- * - edits whichever columns exist
- * - provides Status dropdown when status column exists
- * - edits bio_raw (preferred) or bio (legacy) when available
- * - no arrow functions
+ * Note: slug uniqueness + bio_html sanitization should be enforced in update.php.
  */
 
 require_once __DIR__ . '/../_init.php';
 
-require_once PRIVATE_PATH . '/functions/slug.php';
-
-$slug = mk_slugify($_POST['slug'] ?? $_POST['title'] ?? $_POST['display_name'] ?? '');
-if ($slug === '') { $errors[] = "Slug is required."; }
-
-$slug = mk_slug_unique(db(), 'subjects', $slug); // or contributors
-$slug = mk_slug_unique(db(), 'pages', $slug, 'slug', 'subject_id = :sid', [':sid' => $subject_id]);
-
+if (function_exists('require_staff_login')) { require_staff_login(); }
 
 /* ---------------------------------------------------------
    Helpers
@@ -127,7 +116,16 @@ if (!function_exists('pf__label')) {
   }
 }
 
-/* DB */
+/* URL helper */
+if (!function_exists('pf__u')) {
+  function pf__u(string $path): string {
+    return function_exists('url_for') ? url_for($path) : $path;
+  }
+}
+
+/* ---------------------------------------------------------
+   DB
+--------------------------------------------------------- */
 $pdo = function_exists('staff_pdo') ? staff_pdo() : (function_exists('db') ? db() : null);
 if (!$pdo instanceof PDO) {
   http_response_code(500);
@@ -140,8 +138,7 @@ if (!$pdo instanceof PDO) {
 $id = (int)($_GET['id'] ?? 0);
 $default_return = '/staff/contributors/index.php';
 $return = pf__safe_return_url((string)($_GET['return'] ?? $default_return), $default_return);
-
-if ($id <= 0) redirect_to($return);
+if ($id <= 0) redirect_to(pf__u($return));
 
 /* Flash */
 $notice = pf__flash_get('notice');
@@ -150,15 +147,12 @@ $error  = pf__flash_get('error');
 /* Load contributor */
 $contributor = null;
 $warn = '';
-
 $table = 'contributors';
 
 try {
   if (!pf__table_exists($pdo, $table)) {
     $warn = 'Table "contributors" not found yet.';
   } else {
-
-    /* Columns we may render (schema-tolerant) */
     $candidates = [
       'id',
       'display_name','name','username','slug','email','roles','avatar_path',
@@ -172,11 +166,9 @@ try {
     }
     $select = array_values(array_unique($select));
 
-    /* Quote identifiers safely */
     $quoted = [];
     foreach ($select as $c) {
-      $c = (string)$c;
-      $c = str_replace('`', '', $c);
+      $c = str_replace('`', '', (string)$c);
       $quoted[] = '`' . $c . '`';
     }
     $cols_sql = implode(', ', $quoted);
@@ -201,10 +193,10 @@ $name = $contributor
 $name = trim($name) !== '' ? $name : ('Contributor #' . $id);
 
 /* Schema flags */
-$has_status   = pf__table_exists($pdo, $table) && pf__column_exists($pdo, $table, 'status');
-$has_bio_raw  = pf__table_exists($pdo, $table) && pf__column_exists($pdo, $table, 'bio_raw');
-$has_bio_html = pf__table_exists($pdo, $table) && pf__column_exists($pdo, $table, 'bio_html');
-$has_bio      = pf__table_exists($pdo, $table) && pf__column_exists($pdo, $table, 'bio');
+$table_ok    = pf__table_exists($pdo, $table);
+$has_status  = $table_ok && pf__column_exists($pdo, $table, 'status');
+$has_bio_raw = $table_ok && pf__column_exists($pdo, $table, 'bio_raw');
+$has_bio     = $table_ok && pf__column_exists($pdo, $table, 'bio');
 
 /* Header */
 $active_nav = 'contributors';
@@ -212,22 +204,29 @@ $page_title = 'Edit • ' . $name . ' • Staff';
 $page_desc  = 'Edit contributor details (schema-tolerant).';
 
 $staff_subnav = [
-  ['label' => 'Dashboard',    'href' => url_for('/staff/'),              'active' => false],
-  ['label' => 'Contributors', 'href' => url_for('/staff/contributors/'), 'active' => true],
-  ['label' => 'Public',       'href' => url_for('/contributors/'),       'active' => false],
+  ['label' => 'Dashboard',    'href' => pf__u('/staff/'),              'active' => false],
+  ['label' => 'Contributors', 'href' => pf__u('/staff/contributors/'), 'active' => true],
+  ['label' => 'Public',       'href' => pf__u('/contributors/'),       'active' => false],
 ];
 
 require_once APP_ROOT . '/private/shared/staff_header.php';
 
 /* URLs */
-$update_post = function_exists('url_for') ? url_for('/staff/contributors/update.php') : '/staff/contributors/update.php';
-$back_url    = function_exists('url_for') ? url_for($return) : $return;
-$show_url    = (function_exists('url_for') ? url_for('/staff/contributors/show.php') : '/staff/contributors/show.php')
+$update_post = pf__u('/staff/contributors/update.php');
+$back_url    = pf__u($return);
+$show_url    = pf__u('/staff/contributors/show.php')
              . '?id=' . rawurlencode((string)$id) . '&return=' . rawurlencode($return);
 
 /* Current status */
 $current_status = $contributor ? trim((string)($contributor['status'] ?? '')) : '';
 if ($current_status === '') $current_status = 'active';
+
+/* Bio value */
+$bio_value = '';
+if ($contributor) {
+  if ($has_bio_raw && array_key_exists('bio_raw', $contributor)) $bio_value = (string)$contributor['bio_raw'];
+  elseif ($has_bio && array_key_exists('bio', $contributor))     $bio_value = (string)$contributor['bio'];
+}
 
 ?>
 <div class="container">
@@ -262,7 +261,7 @@ if ($current_status === '') $current_status = 'active';
         <p class="muted">No contributor data to edit.</p>
       <?php else: ?>
 
-      <form method="post" action="<?php echo h($update_post); ?>" class="stack">
+      <form method="post" action="<?php echo h($update_post); ?>" class="stack" autocomplete="off">
         <?php echo csrf_field(); ?>
         <input type="hidden" name="id" value="<?php echo h((string)$id); ?>">
         <input type="hidden" name="return" value="<?php echo h($return); ?>">
@@ -276,7 +275,17 @@ if ($current_status === '') $current_status = 'active';
           ?>
             <div class="field">
               <label class="label" for="<?php echo h($f); ?>"><?php echo h(pf__label($f)); ?></label>
-              <input class="input" id="<?php echo h($f); ?>" name="<?php echo h($f); ?>" value="<?php echo h(pf__v($contributor, $f)); ?>">
+              <input
+                class="input"
+                id="<?php echo h($f); ?>"
+                name="<?php echo h($f); ?>"
+                value="<?php echo h(pf__v($contributor, $f)); ?>"
+                <?php if ($f === 'email'): ?> type="email"<?php else: ?> type="text"<?php endif; ?>>
+              <?php if ($f === 'slug'): ?>
+                <div class="muted" style="font-size:.9rem; margin-top:6px;">
+                  Slug must be unique. If update.php finds a collision, it should auto-adjust it (recommended).
+                </div>
+              <?php endif; ?>
             </div>
           <?php
             endif;
@@ -298,20 +307,12 @@ if ($current_status === '') $current_status = 'active';
 
         </div>
 
-        <?php
-          $show_bio_box = ($has_bio_raw || $has_bio_html || $has_bio);
-          $bio_value = '';
-          if ($has_bio_raw && array_key_exists('bio_raw', $contributor)) $bio_value = (string)$contributor['bio_raw'];
-          elseif ($has_bio && array_key_exists('bio', $contributor))     $bio_value = (string)$contributor['bio'];
-          elseif ($has_bio_html && array_key_exists('bio_html', $contributor)) $bio_value = (string)$contributor['bio_html'];
-        ?>
-
-        <?php if ($show_bio_box): ?>
+        <?php if ($has_bio_raw || $has_bio): ?>
           <div class="field">
             <label class="label" for="bio_raw">Bio (rich text allowed)</label>
             <textarea id="bio_raw" name="bio_raw" rows="10" class="input" style="width:100%;"><?php echo h($bio_value); ?></textarea>
-            <div class="mk-muted" style="font-size:.9rem; margin-top:6px;">
-              This is sanitized on save and displayed publicly as formatted bio.
+            <div class="muted" style="font-size:.9rem; margin-top:6px;">
+              This will be sanitized on save and displayed publicly as formatted bio.
             </div>
           </div>
         <?php endif; ?>
