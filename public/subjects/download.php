@@ -2,16 +2,16 @@
 declare(strict_types=1);
 
 /**
- * /public/subjects/download.php  (ALIAS SHIM)
- * Back-compat endpoint. Forwards to /public/download.php.
+ * /public/subjects/download.php  (LEGACY SHIM ONLY)
  *
- * Accepts legacy query:
- *   ?subject=&page=&file=&scope=
- *   ?s=&p=&f=&in=
+ * Old style:
+ *   /subjects/download.php?subject={subject}&page={page}&file={token}
  *
- * Forces:
- *   dl=1 / in=0 semantics via central /download.php
- *   scope=private default unless explicitly provided.
+ * Canonical:
+ *   /subjects/{subject}/{page}/download/{token}
+ *
+ * MUST NOT: stream, read links.json, query DB, validate allowlists.
+ * DOES: 301 -> canonical.
  */
 
 @ini_set('display_errors', '0');
@@ -20,15 +20,62 @@ error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
 
 require_once __DIR__ . '/../_init.php';
 
-/* Normalize params to central format */
-if (!isset($_GET['subject']) && isset($_GET['s'])) $_GET['subject'] = $_GET['s'];
-if (!isset($_GET['page'])    && isset($_GET['p'])) $_GET['page']    = $_GET['p'];
-if (!isset($_GET['file'])    && isset($_GET['f'])) $_GET['file']    = $_GET['f'];
+$norm = static function ($v): string {
+  $s = is_string($v) ? $v : (string)$v;
+  $s = preg_replace('/[\x00-\x1F\x7F]/u', '', $s) ?? $s;
+  return trim($s);
+};
 
-/* Default scope */
-if (!isset($_GET['scope']) || !is_scalar($_GET['scope']) || trim((string)$_GET['scope']) === '') {
-  $_GET['scope'] = 'private';
+$slug_ok = static function (string $s): bool {
+  return ($s !== '') && (bool)preg_match('/^[a-z0-9][a-z0-9_-]{0,190}$/', $s);
+};
+
+$fail = static function (int $code, string $msg): void {
+  if (!headers_sent()) {
+    http_response_code($code);
+    header('Content-Type: text/plain; charset=utf-8');
+    header('X-Content-Type-Options: nosniff');
+    header('Cache-Control: no-store');
+  }
+  echo $msg . "\n";
+  exit;
+};
+
+$subject = strtolower($norm($_GET['subject'] ?? ''));
+$page    = strtolower($norm($_GET['page'] ?? ''));
+$token   = $norm($_GET['file'] ?? '');
+
+if ($subject === '' || $page === '' || $token === '') $fail(400, 'Missing parameters.');
+if (!$slug_ok($subject) || !$slug_ok($page)) $fail(404, 'Not found.');
+
+$token = str_replace(["\r", "\n"], '', $token);
+$token = trim($token);
+
+if ($token === '') $fail(400, 'Invalid token.');
+
+// token must be a single path segment (no traversal)
+if (strpos($token, '/') !== false || strpos($token, '\\') !== false || strpos($token, '..') !== false) {
+  $fail(400, 'Invalid token.');
 }
 
-/* Hand off to central download wrapper */
-require __DIR__ . '/../download.php';
+// Optional extra hardening: keep tokens sane (numbers OR filename-ish)
+if (!preg_match('/^[A-Za-z0-9][A-Za-z0-9._-]{0,240}$/', $token)) {
+  $fail(400, 'Invalid token.');
+}
+
+$base = function_exists('url_for') ? (string)url_for('/') : '/';
+$base = rtrim($base, '/');
+
+$dest = $base
+  . '/subjects/'
+  . rawurlencode($subject) . '/'
+  . rawurlencode($page) . '/download/'
+  . rawurlencode($token);
+
+if (!headers_sent()) {
+  http_response_code(301);
+  header('Location: ' . $dest);
+  header('X-Content-Type-Options: nosniff');
+  header('Cache-Control: no-store');
+}
+exit;

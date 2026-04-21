@@ -1,6 +1,10 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/../../../_init.php';
+
+mk_require_staff_login();
+
 /**
  * /public/staff/subjects/pgs/edit.php
  * Staff: Edit a page + manage attachments (page_files).
@@ -17,10 +21,6 @@ declare(strict_types=1);
 @ini_set('display_errors', '0');
 @ini_set('display_startup_errors', '0');
 error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
-
-require_once __DIR__ . '/../../_init.php';
-if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
-
 /* ---------------------------------------------------------
    Minimal fallbacks (only if _init.php did not provide them)
 --------------------------------------------------------- */
@@ -36,15 +36,13 @@ if (!function_exists('redirect_to')) {
 }
 if (!function_exists('pf__flash_set')) {
   function pf__flash_set(string $key, string $msg): void {
-    if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
-    if (!isset($_SESSION['flash']) || !is_array($_SESSION['flash'])) $_SESSION['flash'] = [];
+if (!isset($_SESSION['flash']) || !is_array($_SESSION['flash'])) $_SESSION['flash'] = [];
     $_SESSION['flash'][$key] = $msg;
   }
 }
 if (!function_exists('pf__flash_get')) {
   function pf__flash_get(string $key): string {
-    if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
-    $msg = '';
+$msg = '';
     if (isset($_SESSION['flash']) && is_array($_SESSION['flash']) && array_key_exists($key, $_SESSION['flash'])) {
       $msg = (string)$_SESSION['flash'][$key];
       unset($_SESSION['flash'][$key]);
@@ -66,16 +64,14 @@ if (!function_exists('staff_safe_return_url')) {
 }
 if (!function_exists('staff_csrf_verify')) {
   function staff_csrf_verify(string $token): bool {
-    if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
-    $sess = $_SESSION['csrf_token'] ?? '';
+$sess = $_SESSION['csrf_token'] ?? '';
     if (!is_string($sess) || $sess === '' || $token === '') return false;
     return hash_equals($sess, $token);
   }
 }
 if (!function_exists('staff_csrf_field')) {
   function staff_csrf_field(): string {
-    if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
-    if (empty($_SESSION['csrf_token']) || !is_string($_SESSION['csrf_token'])) {
+if (empty($_SESSION['csrf_token']) || !is_string($_SESSION['csrf_token'])) {
       $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
     }
     return '<input type="hidden" name="csrf_token" value="' . h((string)$_SESSION['csrf_token']) . '">';
@@ -86,6 +82,13 @@ if (!function_exists('staff_pdo')) {
     return (function_exists('db') && db() instanceof PDO) ? db() : null;
   }
 }
+
+/**
+ * NOTE:
+ * Your MySQL user appears to have restricted access to information_schema.COLUMNS (returns empty).
+ * So we keep pf__column_exists() for "pages" (often allowed), but for page_files we use a known schema allowlist
+ * inside backfill and attachment listing to avoid false negatives.
+ */
 if (!function_exists('pf__column_exists')) {
   function pf__column_exists(PDO $pdo, string $table, string $column): bool {
     static $cache = [];
@@ -133,31 +136,24 @@ if (!function_exists('pf__clean_topic_group')) {
 --------------------------------------------------------- */
 if (!function_exists('pf__normalize_external_url')) {
   function pf__normalize_external_url(string $url): string {
-    // strip control chars, trim
     $url = preg_replace('/[\x00-\x1F\x7F]/u', '', $url) ?? $url;
     $url = trim($url);
     if ($url === '') return '';
 
-    // allow "<https://...>"
     if ($url[0] === '<' && substr($url, -1) === '>') {
       $url = trim(substr($url, 1, -1));
     }
 
-    // keep first token only (handles "url label")
     if (preg_match('/\s/u', $url)) {
       $parts = preg_split('/\s+/u', $url);
       if (is_array($parts) && isset($parts[0])) $url = trim((string)$parts[0]);
     }
 
-    // strip trailing punctuation from copy/paste
     $url = rtrim($url, " \t\n\r\0\x0B.,;:)]}'\"");
 
-    // normalize scheme-less inputs
     if (strncmp($url, '//', 2) === 0) {
       $url = 'https:' . $url;
     } elseif (!preg_match('~^[a-zA-Z][a-zA-Z0-9+\-.]*://~', $url)) {
-      // if user pasted "en.wikipedia.org/wiki/..", force https
-      // but do NOT accept "/wiki/..." (relative)
       if ($url !== '' && ($url[0] === '/' || $url[0] === '\\')) return '';
       $url = 'https://' . $url;
     }
@@ -166,17 +162,101 @@ if (!function_exists('pf__normalize_external_url')) {
   }
 }
 
+/* ---------------------------------------------------------
+   Backfill external attachment meta (schema-aligned)
+--------------------------------------------------------- */
+if (!function_exists('pf__infer_external_kind')) {
+  function pf__infer_external_kind(string $url, string $host): string {
+    $u2 = strtolower($url);
+    $h2 = strtolower($host);
+
+    if ($h2 === 'youtu.be' || str_contains($h2, 'youtube.com')) return 'video';
+    if (str_contains($h2, 'wikipedia.org')) return 'wiki';
+    if (preg_match('~\.pdf([?#]|$)~i', $u2)) return 'pdf';
+    if (preg_match('~\.(mp3|wav|m4a)([?#]|$)~i', $u2)) return 'audio';
+    if (preg_match('~\.(mp4|webm|mov)([?#]|$)~i', $u2)) return 'video';
+    return 'web';
+  }
+}
+
+if (!function_exists('pf__make_source_key')) {
+  function pf__make_source_key(string $host, string $url): string {
+    $h2 = strtolower(trim($host));
+    $hash = substr(sha1($url), 0, 12);
+    $key = $h2 . ':' . $hash;
+    return (strlen($key) > 64) ? substr($key, 0, 64) : $key;
+  }
+}
+
+if (!function_exists('pf__backfill_external_attachment_meta')) {
+  /**
+   * Backfill fields on page_files external rows using your real schema.
+   * This does NOT depend on information_schema (safe on restricted hosting).
+   */
+  function pf__backfill_external_attachment_meta(PDO $pdo, int $fileId, string $cleanUrl, string $label): void {
+    if ($fileId <= 0 || $cleanUrl === '') return;
+
+    $parts = @parse_url($cleanUrl);
+    $host = '';
+    if (is_array($parts) && !empty($parts['host'])) {
+      $host = strtolower(trim((string)$parts['host']));
+      $host = preg_replace('/^www\./i', '', $host) ?? $host;
+    }
+
+    $kind = pf__infer_external_kind($cleanUrl, $host);
+    $label = trim(str_replace(["\r","\n"], '', $label));
+
+    $sets = [];
+    $bind = [':id' => $fileId];
+
+    $sets[] = "is_external = 1";
+    $sets[] = "external_url = :url";        $bind[':url'] = $cleanUrl;
+
+    if ($host !== '') {
+      $sets[] = "external_host = :h1";      $bind[':h1'] = $host;
+      $sets[] = "host = :h2";               $bind[':h2'] = $host;
+    }
+
+    $sets[] = "canonical_url = :canon";     $bind[':canon'] = $cleanUrl;
+    $sets[] = "kind = :kind";               $bind[':kind'] = $kind;
+
+    if ($host !== '') {
+      $sets[] = "source_key = COALESCE(source_key, :skey)";
+      $bind[':skey'] = pf__make_source_key($host, $cleanUrl);
+    }
+
+    if ($label !== '') {
+      $sets[] = "source_label = COALESCE(source_label, :lbl1)"; $bind[':lbl1'] = $label;
+      $sets[] = "title = COALESCE(title, :lbl2)";               $bind[':lbl2'] = $label;
+      $sets[] = "original_name = COALESCE(NULLIF(original_name,''), :lbl3)"; $bind[':lbl3'] = $label;
+    } else {
+      if ($host !== '') {
+        $fallback = 'External link (' . $host . ')';
+        $sets[] = "source_label = COALESCE(source_label, :fb1)"; $bind[':fb1'] = $fallback;
+        $sets[] = "title = COALESCE(title, :fb2)";               $bind[':fb2'] = $fallback;
+        $sets[] = "original_name = COALESCE(NULLIF(original_name,''), :fb3)"; $bind[':fb3'] = $fallback;
+      }
+    }
+
+    if (!$sets) return;
+
+    $sql = "UPDATE page_files SET " . implode(', ', $sets) . " WHERE id = :id LIMIT 1";
+    $st = $pdo->prepare($sql);
+
+    foreach ($bind as $k => $v) {
+      if ($v === null) $st->bindValue($k, null, PDO::PARAM_NULL);
+      elseif (is_int($v)) $st->bindValue($k, $v, PDO::PARAM_INT);
+      else $st->bindValue($k, (string)$v, PDO::PARAM_STR);
+    }
+
+    $st->execute();
+  }
+}
 
 /* ---------------------------------------------------------
    Auth
 --------------------------------------------------------- */
-if (function_exists('require_staff')) {
-  require_staff();
-} elseif (function_exists('require_staff_login')) {
-  require_staff_login();
-} elseif (function_exists('mk_require_staff_login')) {
-  mk_require_staff_login();
-}
+mk_require_staff_login();
 
 /* DB */
 $pdo = staff_pdo();
@@ -264,15 +344,8 @@ $method = strtoupper((string)($_SERVER['REQUEST_METHOD'] ?? 'GET'));
 --------------------------------------------------------- */
 $pageFilesExists = false;
 try {
-  $stt = $pdo->prepare("
-    SELECT 1
-    FROM information_schema.TABLES
-    WHERE TABLE_SCHEMA = DATABASE()
-      AND TABLE_NAME = 'page_files'
-    LIMIT 1
-  ");
-  $stt->execute();
-  $pageFilesExists = (bool)$stt->fetchColumn();
+  $pdo->query("SELECT 1 FROM page_files LIMIT 1");
+  $pageFilesExists = true;
 } catch (Throwable $e) {
   $pageFilesExists = false;
 }
@@ -341,6 +414,37 @@ if ($method === 'POST' && $action_post === 'add_external') {
         redirect_to($u('/staff/subjects/pgs/edit.php?id=' . rawurlencode((string)$id) . '&return=' . rawurlencode($return) . '&attach=badurl'), 302);
       }
       redirect_to($u('/staff/subjects/pgs/edit.php?id=' . rawurlencode((string)$id) . '&return=' . rawurlencode($return) . '&attach=error'), 302);
+    }
+
+    $fileId = 0;
+    if (isset($res['id'])) $fileId = (int)$res['id'];
+    elseif (isset($res['file_id'])) $fileId = (int)$res['file_id'];
+    elseif (isset($res['attachment_id'])) $fileId = (int)$res['attachment_id'];
+
+    if ($fileId <= 0) {
+      try {
+        $q = $pdo->prepare("
+          SELECT id
+          FROM page_files
+          WHERE page_id = :pid
+            AND is_external = 1
+            AND external_url = :url
+          ORDER BY id DESC
+          LIMIT 1
+        ");
+        $q->execute([':pid' => $id, ':url' => $cleanUrl]);
+        $fileId = (int)$q->fetchColumn();
+      } catch (Throwable $e) {
+        $fileId = 0;
+      }
+    }
+
+    if ($fileId <= 0) {
+      try { $fileId = (int)$pdo->lastInsertId(); } catch (Throwable $e) { $fileId = 0; }
+    }
+
+    if ($fileId > 0) {
+      pf__backfill_external_attachment_meta($pdo, $fileId, $cleanUrl, $label);
     }
 
     redirect_to($u('/staff/subjects/pgs/edit.php?id=' . rawurlencode((string)$id) . '&return=' . rawurlencode($return) . '&attach=saved'), 302);
@@ -546,23 +650,18 @@ if ($method === 'POST' && $action_post === 'update_page') {
 $attachments = [];
 if ($pageFilesExists) {
   try {
-    $aCols = ['id'];
-    if (pf__column_exists($pdo, 'page_files', 'page_id')) $aCols[] = 'page_id';
-
-    $wanted = [
-      'is_external','external_url','external_host',
-      'original_name','stored_name','stored_path','file_path',
-      'mime_type','file_size','sort_order','created_at'
-    ];
-    foreach ($wanted as $c) {
-      if (pf__column_exists($pdo, 'page_files', $c)) $aCols[] = $c;
-    }
-
-    $order = pf__column_exists($pdo, 'page_files', 'sort_order')
-      ? "sort_order IS NULL, sort_order ASC, id DESC"
-      : "id DESC";
-
-    $sqlA = "SELECT " . implode(', ', array_unique($aCols)) . " FROM page_files WHERE page_id = :pid ORDER BY {$order}";
+    $sqlA = "
+      SELECT
+        id, page_id, is_external,
+        external_url, external_host,
+        stored_path, original_name, stored_name, file_path, mime_type,
+        kind, source_key, source_label, host, canonical_url, title, authors, pub_year, doi, isbn, lang,
+        file_size, sort_order, created_at
+      FROM page_files
+      WHERE page_id = :pid
+      ORDER BY
+        sort_order IS NULL, sort_order ASC, id DESC
+    ";
     $stA = $pdo->prepare($sqlA);
     $stA->execute([':pid' => $id]);
     $attachments = $stA->fetchAll(PDO::FETCH_ASSOC) ?: [];
@@ -589,24 +688,23 @@ $delete_action   = $u('/staff/pages/attachments_delete.php');
 $download_action = $u('/staff/page-files/download.php');
 $open_action     = $u('/staff/page-files/open.php');
 
+/* Signed URL helper (optional, loaded once) */
+$mk_signed_open_url = null;
+try {
+  if (defined('PRIVATE_PATH') && is_string(PRIVATE_PATH) && PRIVATE_PATH !== '') {
+    $sf = rtrim(PRIVATE_PATH, '/\\') . '/functions/staff_signed_open.php';
+    if (is_file($sf)) require_once $sf;
+    if (function_exists('mk_staff_signed_open_url')) {
+      $mk_signed_open_url = static fn(int $fid, int $pid): string => mk_staff_signed_open_url($fid, $pid, 900);
+    }
+  }
+} catch (Throwable $e) {}
+
+/* Current URI for return */
 $current_uri = (string)($_SERVER['REQUEST_URI'] ?? ('/staff/subjects/pgs/edit.php?id=' . $id));
 $current_uri = staff_safe_return_url($current_uri, '/staff/subjects/pgs/edit.php?id=' . $id);
 
-/* Diagnostics data */
-$diag_cols = [];
-try {
-  $stc = $pdo->prepare("
-    SELECT COLUMN_NAME
-    FROM information_schema.COLUMNS
-    WHERE TABLE_SCHEMA = DATABASE()
-      AND TABLE_NAME = 'page_files'
-    ORDER BY ORDINAL_POSITION ASC
-  ");
-  $stc->execute();
-  $diag_cols = $stc->fetchAll(PDO::FETCH_COLUMN, 0) ?: [];
-  $diag_cols = array_values(array_filter(array_map('strval', $diag_cols)));
-} catch (Throwable $e) { $diag_cols = []; }
-
+/* Allowlist preview (optional) */
 $allow_cfg = [];
 $allow_cfg_path = (defined('APP_ROOT') ? rtrim((string)APP_ROOT, "/\\") : '') . '/private/config/external_attachments_allowlist.php';
 if ($allow_cfg_path !== '' && is_file($allow_cfg_path)) {
@@ -796,14 +894,6 @@ sort($allow_keys);
               <?php endif; ?>
             </div>
 
-            <div style="margin-top:10px;"><strong>page_files columns:</strong>
-              <?php if (!$diag_cols): ?>
-                <em>not readable</em>
-              <?php else: ?>
-                <code><?php echo h(implode(', ', $diag_cols)); ?></code>
-              <?php endif; ?>
-            </div>
-
             <div style="margin-top:10px;">
               <strong>Normalizer preview:</strong>
               <div class="mono" style="margin-top:4px; word-break:break-word;">
@@ -826,6 +916,8 @@ sort($allow_keys);
             v = v.split(/\s+/)[0] || '';
             v = v.replace(/[.,;:)\]}'"]+$/,'');
             if(v.startsWith('<') && v.endsWith('>')) v = v.slice(1,-1).trim();
+            if(v.startsWith('//')) v = 'https:' + v;
+            if(v && !/^[a-zA-Z][a-zA-Z0-9+\-.]*:\/\//.test(v) && v[0] !== '/' && v[0] !== '\\') v = 'https://' + v;
             return v;
           }
           function update(){
@@ -842,11 +934,12 @@ sort($allow_keys);
           <p class="muted" style="margin-top:12px;"><em>No attachments yet.</em></p>
         <?php else: ?>
           <div style="margin-top:14px; overflow:auto;">
-            <table class="table" style="width:100%; min-width:860px;">
+            <table class="table" style="width:100%; min-width:980px;">
               <thead>
                 <tr>
                   <th style="text-align:left;">Name</th>
                   <th style="text-align:left;">Type</th>
+                  <th style="text-align:left;">Meta</th>
                   <th style="text-align:right;">Size</th>
                   <th style="text-align:left;">Added</th>
                   <th style="text-align:right;">Actions</th>
@@ -857,27 +950,29 @@ sort($allow_keys);
                   <?php
                     $aid = (int)($a['id'] ?? 0);
 
-                    // Strict external detection:
-                    $isExternal = false;
-                    if (array_key_exists('is_external', $a)) {
-                      $isExternal = ((int)$a['is_external'] === 1);
-                    } elseif (!empty($a['external_url'])) {
-                      $isExternal = true;
-                    }
+                    $isExternal = ((int)($a['is_external'] ?? 0) === 1) || (!empty($a['external_url']));
 
                     $extUrl  = $isExternal ? trim((string)($a['external_url'] ?? '')) : '';
                     $extHost = $isExternal ? trim((string)($a['external_host'] ?? '')) : '';
 
-                    $name = '';
-                    if (isset($a['original_name']) && is_string($a['original_name'])) $name = trim($a['original_name']);
+                    $name = trim((string)($a['original_name'] ?? ''));
                     if ($name === '' && $isExternal && $extHost !== '') $name = 'External link (' . $extHost . ')';
                     if ($name === '') $name = 'Attachment #' . $aid;
 
-                    $mime  = isset($a['mime_type']) ? (string)$a['mime_type'] : '';
-                    $bytes = isset($a['file_size']) ? (int)$a['file_size'] : 0;
-                    $when  = isset($a['created_at']) ? (string)$a['created_at'] : '';
+                    $mime  = trim((string)($a['mime_type'] ?? ''));
+                    $bytes = (int)($a['file_size'] ?? 0);
+                    $when  = trim((string)($a['created_at'] ?? ''));
 
-                    $typeLabel = $isExternal ? ('External' . ($extHost !== '' ? ' • ' . $extHost : '')) : ($mime !== '' ? $mime : 'Local');
+                    $kind = trim((string)($a['kind'] ?? ''));
+                    $host = trim((string)($a['host'] ?? ''));
+                    $canon = trim((string)($a['canonical_url'] ?? ''));
+                    $skey = trim((string)($a['source_key'] ?? ''));
+                    $slabel = trim((string)($a['source_label'] ?? ''));
+                    $title = trim((string)($a['title'] ?? ''));
+
+                    $typeLabel = $isExternal
+                      ? ('External' . ($extHost !== '' ? ' • ' . $extHost : ''))
+                      : ($mime !== '' ? $mime : 'Local');
 
                     $sizeLabel = '—';
                     if (!$isExternal && $bytes > 0) {
@@ -889,6 +984,18 @@ sort($allow_keys);
                     $detail = '';
                     if ($isExternal && $extUrl !== '') $detail = $extUrl;
                     if (!$isExternal && !empty($a['file_path'])) $detail = (string)$a['file_path'];
+
+                    $metaBits = [];
+                    if ($kind !== '') $metaBits[] = 'kind: ' . $kind;
+                    if ($host !== '') $metaBits[] = 'host: ' . $host;
+                    if ($skey !== '') $metaBits[] = 'key: ' . $skey;
+                    if ($slabel !== '' && $slabel !== $name) $metaBits[] = 'label: ' . $slabel;
+                    if ($title !== '' && $title !== $name && $title !== $slabel) $metaBits[] = 'title: ' . $title;
+                    if ($canon !== '' && $canon !== $extUrl) $metaBits[] = 'canon: ' . $canon;
+
+                    $metaLine = $metaBits ? implode(' • ', $metaBits) : '—';
+
+                    $signedCopy = is_callable($mk_signed_open_url) ? (string)$mk_signed_open_url($aid, (int)$id) : '';
                   ?>
                   <tr>
                     <td>
@@ -906,9 +1013,15 @@ sort($allow_keys);
                       <?php endif; ?>
                     </td>
                     <td><?php echo h($typeLabel); ?></td>
+                    <td>
+                      <div class="muted" style="font-size:.9rem; word-break:break-word;">
+                        <?php echo h($metaLine); ?>
+                      </div>
+                    </td>
                     <td style="text-align:right;"><?php echo h($sizeLabel); ?></td>
                     <td><?php echo h($when !== '' ? $when : '—'); ?></td>
                     <td style="text-align:right; white-space:nowrap;">
+
                       <?php if ($isExternal): ?>
                         <form method="post" action="<?php echo h($open_action); ?>" target="_blank" style="display:inline;">
                           <?php echo $csrf_html; ?>
@@ -917,12 +1030,30 @@ sort($allow_keys);
                           <button class="btn" type="submit">Open</button>
                         </form>
                       <?php else: ?>
-                        <form method="post" action="<?php echo h($download_action); ?>" target="_blank" style="display:inline;">
+                        <form method="post" action="<?php echo h($open_action); ?>" target="_blank" style="display:inline;">
                           <?php echo $csrf_html; ?>
                           <input type="hidden" name="file_id" value="<?php echo (int)$aid; ?>">
                           <input type="hidden" name="page_id" value="<?php echo (int)$id; ?>">
-                          <button class="btn" type="submit">Download</button>
+                          <button class="btn" type="submit">Open</button>
                         </form>
+
+                        <form method="post" action="<?php echo h($download_action); ?>" target="_blank" style="display:inline; margin-left:6px;">
+                          <?php echo $csrf_html; ?>
+                          <input type="hidden" name="file_id" value="<?php echo (int)$aid; ?>">
+                          <input type="hidden" name="page_id" value="<?php echo (int)$id; ?>">
+                          <button class="btn btn--ghost" type="submit">Download</button>
+                        </form>
+                      <?php endif; ?>
+
+                      <?php if ($signedCopy !== ''): ?>
+                        <button
+                          type="button"
+                          class="btn btn--secondary"
+                          data-copy="<?php echo h($signedCopy); ?>"
+                          data-copied-text="Copied"
+                          data-copy-reset-ms="1200"
+                          style="margin-left:6px;"
+                        >Copy signed link (15m)</button>
                       <?php endif; ?>
 
                       <form method="post" action="<?php echo h($delete_action); ?>" style="display:inline; margin-left:6px;">

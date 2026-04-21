@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/../../_init.php';
+
 /**
  * /public/staff/tools/health.php
  * Staff Tools: Health check dashboard (web-safe).
@@ -18,11 +20,6 @@ declare(strict_types=1);
 @ini_set('display_errors', '0');
 @ini_set('display_startup_errors', '0');
 error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
-
-require_once __DIR__ . '/../_init.php';
-
-if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
-
 if (!function_exists('h')) {
   function h(string $v): string { return htmlspecialchars($v, ENT_QUOTES, 'UTF-8'); }
 }

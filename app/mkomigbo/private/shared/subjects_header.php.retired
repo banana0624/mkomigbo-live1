@@ -1,0 +1,23 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * RETIRED: subjects_header.php
+ * Redirects to public_header.php only.
+ */
+
+if (defined('APP_DEBUG') && APP_DEBUG) {
+  throw new RuntimeException('subjects_header.php is retired. Use public_header.php');
+}
+
+$nav_active = 'subjects';
+$GLOBALS['nav_active'] = 'subjects';
+
+$page_title = $page_title ?? 'Subjects • Mkomi Igbo';
+$page_desc  = $page_desc  ?? 'Browse topics and explore their pages.';
+
+$extra_css = $extra_css ?? [];
+
+/* Delegate ONLY */
+
+mk_require_shared('public_header.php');

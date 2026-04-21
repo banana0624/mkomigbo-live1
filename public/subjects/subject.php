@@ -3,12 +3,19 @@ declare(strict_types=1);
 
 /**
  * /public/subjects/subject.php
- * Subject landing page:
- * - overview/intro
- * - grouped dropdown list of pages (CSS-first; light JS filter)
+ * Subject landing page (canonical + 5 core cards + "More pages").
  *
- * Routes:
- *   /subjects/{slug}/ -> this file
+ * Route:
+ *   /subjects/{slug}/
+ *
+ * Guarantees:
+ * - Never 500 (fatal shutdown handler + safe 404)
+ * - DB-first subject metadata
+ * - DB-first page listing, FS fallback only
+ * - Does NOT execute subject page PHP files
+ * - Core cards are ALWAYS the canonical 5 (fixed order):
+ *     intro -> overview -> topics -> people -> sources
+ * - Optional Sxx-P0y UI code pills for core pages
  */
 
 @ini_set('display_errors', '0');
@@ -16,6 +23,15 @@ declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
 
 require_once __DIR__ . '/../_init.php';
+if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
+
+/* Optional: registry helpers for stable UI codes (Sxx-P0y) */
+try {
+  if (defined('APP_ROOT')) {
+    $regHelpers = rtrim((string)APP_ROOT, "/\\") . '/private/functions/subjects_registry_helpers.php';
+    if (is_file($regHelpers)) require_once $regHelpers;
+  }
+} catch (Throwable $e) {}
 
 /* ---------------------------------------------------------
    Safe helpers
@@ -23,26 +39,30 @@ require_once __DIR__ . '/../_init.php';
 if (!function_exists('h')) {
   function h(string $v): string { return htmlspecialchars($v, ENT_QUOTES, 'UTF-8'); }
 }
-if (!function_exists('redirect_to')) {
-  function redirect_to(string $location, int $code = 302): void {
+if (!function_exists('mk_u')) {
+  function mk_u(string $path): string { return function_exists('url_for') ? (string)url_for($path) : $path; }
+}
+if (!function_exists('mk_safe_redirect')) {
+  function mk_safe_redirect(string $location, int $code = 302): void {
     $location = str_replace(["\r", "\n"], '', $location);
     header('Location: ' . $location, true, $code);
     exit;
   }
 }
-if (!function_exists('mk_u')) {
-  function mk_u(string $path): string {
-    return function_exists('url_for') ? (string)url_for($path) : $path;
+if (!function_exists('mk_is_slug')) {
+  function mk_is_slug(string $s): bool {
+    $s = strtolower(trim($s));
+    return $s !== '' && (bool)preg_match('/^[a-z0-9][a-z0-9_-]{0,190}$/', $s);
   }
 }
 if (!function_exists('mk_excerpt_text')) {
-  function mk_excerpt_text(string $html, int $limit = 180): string {
+  function mk_excerpt_text(string $html, int $limit = 160): string {
     $txt = trim(strip_tags($html));
     $txt = preg_replace('/\s+/u', ' ', $txt) ?? $txt;
     if ($txt === '') return '';
     if (function_exists('mb_strlen') && function_exists('mb_substr')) {
       if (mb_strlen($txt, 'UTF-8') <= $limit) return $txt;
-      return rtrim(mb_substr($txt, 0, $limit, 'UTF-8')) . '…';
+      return rtrim((string)mb_substr($txt, 0, $limit, 'UTF-8')) . '…';
     }
     if (strlen($txt) <= $limit) return $txt;
     return rtrim(substr($txt, 0, $limit)) . '…';
@@ -50,106 +70,175 @@ if (!function_exists('mk_excerpt_text')) {
 }
 
 /* ---------------------------------------------------------
-   404 helper (never 500)
+   Canonical core pages (single source of truth)
+--------------------------------------------------------- */
+if (!function_exists('mk_subject_core_slugs')) {
+  function mk_subject_core_slugs(): array { return ['intro','overview','topics','people','sources']; }
+}
+if (!function_exists('mk_subject_core_pos')) {
+  function mk_subject_core_pos(string $page_slug): int {
+    static $m = ['intro'=>1,'overview'=>2,'topics'=>3,'people'=>4,'sources'=>5];
+    $k = strtolower(trim($page_slug));
+    return (int)($m[$k] ?? 0);
+  }
+}
+if (!function_exists('mk_subject_core_title')) {
+  function mk_subject_core_title(string $slug): string {
+    $slug = strtolower(trim($slug));
+    if ($slug === 'intro') return 'Intro';
+    if ($slug === 'overview') return 'Overview';
+    if ($slug === 'topics') return 'Topics';
+    if ($slug === 'people') return 'People';
+    if ($slug === 'sources') return 'Sources';
+    return ucfirst(str_replace(['-','_'], ' ', $slug));
+  }
+}
+
+/* Optional Sxx-P0y code support */
+if (!function_exists('mk_subject_registry_id_for_slug')) {
+  function mk_subject_registry_id_for_slug(string $subject_slug): int {
+    $subject_slug = strtolower(trim($subject_slug));
+    if ($subject_slug === '') return 0;
+
+    if (function_exists('mk_registry_subjects_by_slug')) {
+      $map = mk_registry_subjects_by_slug();
+      $row = $map[$subject_slug] ?? null;
+      if (is_array($row) && isset($row['id']) && is_numeric($row['id'])) return (int)$row['id'];
+    }
+    return 0;
+  }
+}
+
+/* ---------------------------------------------------------
+   Crash-proofing (fatal shutdown handler)
+--------------------------------------------------------- */
+$req_id = bin2hex(random_bytes(6));
+$log_dir  = (defined('APP_ROOT') ? rtrim((string)APP_ROOT, "/\\") : '') . '/logs';
+$log_file = ($log_dir !== '') ? ($log_dir . '/public_errors.log') : '';
+
+$mk_log = static function(string $msg) use ($log_dir, $log_file, $req_id): void {
+  if ($log_file === '') return;
+  if (!is_dir($log_dir)) { @mkdir($log_dir, 0755, true); }
+  $line = '[' . gmdate('c') . '] req=' . $req_id . ' ' . $msg . "\n";
+  @file_put_contents($log_file, $line, FILE_APPEND);
+};
+
+register_shutdown_function(static function() use ($mk_log, $req_id) {
+  $e = error_get_last();
+  if (!$e) return;
+  $fatal = [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR];
+  if (!in_array((int)$e['type'], $fatal, true)) return;
+
+  http_response_code(500);
+  header('Content-Type: text/html; charset=utf-8');
+
+  $mk_log('FATAL type=' . $e['type'] . ' file=' . ($e['file'] ?? '') . ':' . ($e['line'] ?? '') . ' msg=' . ($e['message'] ?? ''));
+
+  echo "<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'>";
+  echo "<title>Server error</title></head><body>";
+  echo "<main style='max-width:920px;margin:24px auto;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;line-height:1.4'>";
+  echo "<h1>Server error</h1>";
+  echo "<p>Something went wrong while rendering this page.</p>";
+  echo "<p style='opacity:.75'>Request id: <code>" . htmlspecialchars($req_id, ENT_QUOTES, 'UTF-8') . "</code></p>";
+  echo "</main></body></html>";
+});
+
+/* ---------------------------------------------------------
+   Safe 404 (never 500)
 --------------------------------------------------------- */
 if (!function_exists('mk_subjects_not_found')) {
   function mk_subjects_not_found(string $title = 'Not Found', string $message = 'The page you requested does not exist.'): void {
     http_response_code(404);
 
-    $brand = defined('MK_BRAND_NAME') ? (string)MK_BRAND_NAME : 'Mkomi Igbo';
+    $brand = defined('MK_BRAND_NAME') ? (string)MK_BRAND_NAME : 'Mkomigbo';
     $page_title = $title . ' • ' . $brand;
 
-    try {
-      if (function_exists('mk_view_set')) {
+    $GLOBALS['page_title'] = $page_title;
+    $GLOBALS['page_desc']  = $message;
+    $GLOBALS['active_nav'] = 'subjects';
+    $GLOBALS['nav_active'] = 'subjects';
+
+    if (function_exists('mk_view_set')) {
+      try {
         mk_view_set([
           'page_title' => $page_title,
           'page_desc'  => $message,
           'active_nav' => 'subjects',
           'nav_active' => 'subjects',
-          'extra_css'  => [ mk_u('/lib/css/public.css'), mk_u('/lib/css/subjects.css') ],
         ]);
-      } else {
-        $GLOBALS['page_title'] = $page_title;
-        $GLOBALS['page_desc']  = $message;
-        $GLOBALS['active_nav'] = 'subjects';
-        $GLOBALS['nav_active'] = 'subjects';
-      }
+      } catch (Throwable $e) {}
+    }
 
-      $header_ok = false;
-      if (function_exists('mk_require_shared')) {
-        try { mk_require_shared('public_header.php'); $header_ok = true; } catch (Throwable $e) {}
-      }
-      if (!$header_ok) {
-        header('Content-Type: text/html; charset=utf-8');
-        echo "<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'>";
-        echo "<title>" . h($page_title) . "</title></head><body>";
-      }
+    $header_ok = false;
+    if (function_exists('mk_require_shared')) {
+      try { mk_require_shared('public_header.php'); $header_ok = true; } catch (Throwable $e) {}
+    }
+    if (!$header_ok) {
+      header('Content-Type: text/html; charset=utf-8');
+      echo "<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'>";
+      echo "<title>" . h($page_title) . "</title></head><body>";
+    }
 
-      $back = mk_u('/subjects/');
-      $home = mk_u('/');
+    $back = mk_u('/subjects/');
+    $home = mk_u('/');
 
-      echo '<main class="container mk-page">';
-      echo '  <div class="mk-page-actions">';
-      echo '    <a class="mk-btn mk-btn--ghost" href="' . h($back) . '">← Back to Subjects</a>';
-      echo '    <a class="mk-btn mk-btn--ghost" href="' . h($home) . '">Home</a>';
-      echo '  </div>';
-      echo '  <header class="mk-hero mk-hero--compact">';
-      echo '    <div class="mk-hero__bar" aria-hidden="true"></div>';
-      echo '    <div class="mk-hero__inner">';
-      echo '      <h1 class="mk-hero__title">' . h($title) . '</h1>';
-      echo '      <p class="mk-muted mk-lede">' . h($message) . '</p>';
-      echo '    </div>';
-      echo '  </header>';
-      echo '</main>';
+    echo '<main class="container mk-page">';
+    echo '  <div class="mk-page-actions">';
+    echo '    <a class="mk-btn mk-btn--ghost" href="' . h($back) . '">← Back to Subjects</a>';
+    echo '    <a class="mk-btn mk-btn--ghost" href="' . h($home) . '">Home</a>';
+    echo '  </div>';
+    echo '  <header class="mk-hero mk-hero--compact">';
+    echo '    <div class="mk-hero__bar" aria-hidden="true"></div>';
+    echo '    <div class="mk-hero__inner">';
+    echo '      <h1 class="mk-hero__title">' . h($title) . '</h1>';
+    echo '      <p class="mk-muted mk-lede">' . h($message) . '</p>';
+    echo '    </div>';
+    echo '  </header>';
+    echo '</main>';
 
-      if (function_exists('mk_require_shared')) {
-        mk_require_shared('public_footer.php');
-      } else {
-        echo "</body></html>";
-      }
-      exit;
-    } catch (Throwable $e) {}
-
-    header('Content-Type: text/plain; charset=utf-8');
-    echo "404 - " . $title . "\n" . $message;
+    if (function_exists('mk_require_shared')) {
+      try { mk_require_shared('public_footer.php'); } catch (Throwable $e) { echo "</body></html>"; }
+    } else {
+      echo "</body></html>";
+    }
     exit;
   }
 }
 
 /* ---------------------------------------------------------
-   Read and validate subject slug
+   Inputs + canonical enforcement
 --------------------------------------------------------- */
 $subject_slug = '';
 if (isset($_GET['slug']) && is_scalar($_GET['slug'])) $subject_slug = trim((string)$_GET['slug']);
 if ($subject_slug === '' && isset($_GET['subject']) && is_scalar($_GET['subject'])) $subject_slug = trim((string)$_GET['subject']);
 $subject_slug = strtolower($subject_slug);
 
-if ($subject_slug === '') redirect_to(mk_u('/subjects/'), 302);
-if (!preg_match('/^[a-z0-9][a-z0-9_-]{0,190}$/', $subject_slug)) {
-  mk_subjects_not_found('Subject not found', 'Invalid subject slug.');
+if ($subject_slug === '') mk_safe_redirect(mk_u('/subjects/'), 302);
+if (!mk_is_slug($subject_slug)) mk_subjects_not_found('Subject not found', 'Invalid subject slug.');
+
+/* Slug governance: redirect alias -> canonical (301) */
+if (function_exists('mk_subject_apply_subject_alias_redirect')) {
+  mk_subject_apply_subject_alias_redirect($subject_slug, '', 301, '/subjects/');
 }
 
-/* Canonical URL enforcement */
+/* Canonical redirect from controller path + normalize missing trailing slash */
 $req_path = (string)(parse_url((string)($_SERVER['REQUEST_URI'] ?? ''), PHP_URL_PATH) ?: '');
-$req_path_lc = strtolower($req_path);
-if (strpos($req_path_lc, '/subjects/subject.php') !== false || strpos($req_path_lc, '/public/subjects/subject.php') !== false) {
-  $pretty = '/subjects/' . rawurlencode($subject_slug) . '/';
-  redirect_to(mk_u($pretty), 301);
+$expected = '/subjects/' . $subject_slug . '/';
+if (stripos($req_path, '/subjects/subject.php') !== false || stripos($req_path, '/public/subjects/subject.php') !== false) {
+  mk_safe_redirect(mk_u($expected), 301);
+}
+if ($req_path === rtrim($expected, '/') && $req_path !== $expected) {
+  mk_safe_redirect(mk_u($expected), 301);
 }
 
 /* ---------------------------------------------------------
-   Column helper
+   Schema helper (DB)
 --------------------------------------------------------- */
-if (!function_exists('mk_subjects_has_column')) {
-  function mk_subjects_has_column(PDO $pdo, string $table, string $column): bool
-  {
-    if (function_exists('mk_has_column')) {
-      try { return (bool)mk_has_column($pdo, $table, $column); } catch (Throwable $e) {}
-    }
-
+if (!function_exists('mk_has_col')) {
+  function mk_has_col(PDO $pdo, string $table, string $column): bool {
     static $cache = [];
-    $k = strtolower($table . '.' . $column);
-    if (array_key_exists($k, $cache)) return (bool)$cache[$k];
+    $key = strtolower($table . '.' . $column);
+    if (array_key_exists($key, $cache)) return (bool)$cache[$key];
 
     try {
       $st = $pdo->prepare("
@@ -161,210 +250,69 @@ if (!function_exists('mk_subjects_has_column')) {
         LIMIT 1
       ");
       $st->execute([$table, $column]);
-      $cache[$k] = (bool)$st->fetchColumn();
-      return (bool)$cache[$k];
+      $cache[$key] = (bool)$st->fetchColumn();
+      return (bool)$cache[$key];
     } catch (Throwable $e) {
-      $cache[$k] = false;
+      $cache[$key] = false;
       return false;
     }
   }
 }
 
 /* ---------------------------------------------------------
-   Registry fallback loader
+   Filesystem index (NO execution)
+   We only list available slugs by filename.
 --------------------------------------------------------- */
-if (!function_exists('mk_subjects_load_registry')) {
-  function mk_subjects_load_registry(): void
-  {
-    $file = (defined('APP_ROOT') ? rtrim((string)APP_ROOT, '/') : '') . '/private/registry/subjects_register.php';
-    if ($file !== '' && is_file($file)) require_once $file;
-  }
-}
+$fs_map = []; // slug => ['slug','title','exists'=>true,'source'=>'fs']
+$fs_dir = __DIR__ . '/pages/' . $subject_slug;
+$fs_dir_real = is_dir($fs_dir) ? realpath($fs_dir) : false;
 
-/* ---------------------------------------------------------
-   Attachments count (folder scan only; zero-DB)
-   Canonical base: PRIVATE_PATH/subjects-media/{subject}/{page}/
---------------------------------------------------------- */
-function mk_subjects_media_base(): string {
-  if (defined('PRIVATE_PATH')) {
-    $p = rtrim((string)PRIVATE_PATH, "/\\") . '/subjects-media';
-    if (is_dir($p)) return $p;
-  }
-  if (defined('APP_ROOT')) {
-    $p = rtrim((string)APP_ROOT, "/\\") . '/private/subjects-media';
-    if (is_dir($p)) return $p;
-  }
-  return '';
-}
+if ($fs_dir_real !== false && is_readable($fs_dir_real)) {
+  $files = glob(rtrim($fs_dir_real, "/\\") . '/*.php') ?: [];
+  foreach ($files as $f) {
+    $slug = strtolower(trim((string)basename($f, '.php')));
+    if (!mk_is_slug($slug)) continue;
 
-if (!function_exists('mk_subjects_safe_media_dir')) {
-  function mk_subjects_safe_media_dir(string $subject_slug, string $page_slug): string {
-    $base = mk_subjects_media_base();
-    if ($base === '' || !is_dir($base)) return '';
-
-    $subject_slug = strtolower($subject_slug);
-    $page_slug    = strtolower($page_slug);
-
-    if (!preg_match('/^[a-z0-9][a-z0-9_-]{0,190}$/', $subject_slug)) return '';
-    if (!preg_match('/^[a-z0-9][a-z0-9_-]{0,190}$/', $page_slug)) return '';
-
-    $candidate = $base . '/' . $subject_slug . '/' . $page_slug;
-
-    $base_r = realpath($base);
-    $cand_r = realpath($candidate);
-
-    if ($base_r === false || $cand_r === false) return '';
-    $base_r = rtrim(str_replace('\\', '/', $base_r), '/');
-    $cand_r = rtrim(str_replace('\\', '/', $cand_r), '/');
-
-    if ($cand_r === $base_r) return '';
-    if (strpos($cand_r . '/', $base_r . '/') !== 0) return '';
-
-    return $cand_r;
-  }
-}
-
-if (!function_exists('mk_subjects_attachment_count')) {
-  function mk_subjects_attachment_count(string $subject_slug, string $page_slug): array {
-
-    static $cache = [];
-    $key = strtolower($subject_slug . '//' . $page_slug);
-    if (isset($cache[$key]) && is_array($cache[$key])) return $cache[$key];
-
-    $dir = mk_subjects_safe_media_dir($subject_slug, $page_slug);
-    if ($dir === '' || !is_dir($dir) || !is_readable($dir)) {
-      return $cache[$key] = ['local' => 0, 'external' => 0, 'total' => 0];
-    }
-
-    $allowed = [
-      'jpg','jpeg','png','webp','gif','svg',
-      'mp4','webm','mov',
-      'mp3','wav','ogg','m4a',
-      'pdf','txt','csv','doc','docx','ppt','pptx','xls','xlsx','zip'
+    $title = ucfirst(str_replace(['-','_'], ' ', $slug));
+    $fs_map[$slug] = [
+      'slug'    => $slug,
+      'title'   => $title,
+      'exists'  => true,
+      'source'  => 'fs',
+      'excerpt' => '',
+      'sort_order' => 999999,
     ];
-
-    $local = 0;
-    $external = 0;
-
-    try {
-      $it = new DirectoryIterator($dir);
-      foreach ($it as $f) {
-        if ($f->isDot()) continue;
-        if ($f->isDir()) continue;
-
-        $name = (string)$f->getFilename();
-        if ($name === '' || $name[0] === '.') continue;
-
-        if (strcasecmp($name, 'meta.json') === 0) continue;
-
-        if (strcasecmp($name, 'links.json') === 0) {
-          $raw = @file_get_contents($f->getPathname());
-          if (is_string($raw) && trim($raw) !== '') {
-            $j = json_decode($raw, true);
-            if (is_array($j)) {
-              $arr = $j['links'] ?? $j;
-              if (is_array($arr)) {
-                $n = 0;
-                foreach ($arr as $row) {
-                  if (is_array($row) && isset($row['url']) && is_string($row['url']) && trim($row['url']) !== '') $n++;
-                  elseif (is_string($row) && trim($row) !== '') $n++;
-                }
-                $external += $n;
-              }
-            }
-          }
-          continue;
-        }
-
-        $ext = strtolower((string)pathinfo($name, PATHINFO_EXTENSION));
-        if ($ext === '' || !in_array($ext, $allowed, true)) continue;
-        if (in_array($ext, ['php','phtml','phar','cgi','pl','py','js','html','htm','sh'], true)) continue;
-
-        $local++;
-      }
-    } catch (Throwable $e) {
-      return $cache[$key] = ['local' => 0, 'external' => 0, 'total' => 0];
-    }
-
-    $total = $local + $external;
-    return $cache[$key] = ['local' => $local, 'external' => $external, 'total' => $total];
   }
 }
 
 /* ---------------------------------------------------------
-   Grouping helpers (deterministic; improves when DB adds group columns)
+   Load subject + DB pages
 --------------------------------------------------------- */
-if (!function_exists('mk_subjects_pick_group_col')) {
-  function mk_subjects_pick_group_col(PDO $pdo): ?string {
-    $candidates = ['group_name','topic_group','section','category'];
-    foreach ($candidates as $c) {
-      if (mk_subjects_has_column($pdo, 'pages', $c)) return $c;
-    }
-    return null;
-  }
-}
-
-if (!function_exists('mk_subjects_infer_group')) {
-  function mk_subjects_infer_group(string $title): string {
-    $t = trim($title);
-    if ($t === '') return 'Pages';
-
-    // Patterns: "Group: Title", "Group — Title", "Group - Title"
-    if (preg_match('/^([^:—\-]{2,42})\s*[:—\-]\s+.+$/u', $t, $m)) {
-      $g = trim((string)$m[1]);
-      $g = preg_replace('/\s+/u', ' ', $g) ?? $g;
-      if ($g !== '' && mb_strlen($g, 'UTF-8') <= 42) return $g;
-    }
-    return 'Pages';
-  }
-}
-
-if (!function_exists('mk_subjects_sort_groups')) {
-  function mk_subjects_sort_groups(array $groups): array {
-    // Put "Pages" last; otherwise natural alpha
-    uksort($groups, function($a, $b) {
-      $a = (string)$a; $b = (string)$b;
-      if ($a === 'Pages' && $b !== 'Pages') return 1;
-      if ($b === 'Pages' && $a !== 'Pages') return -1;
-      return strnatcasecmp($a, $b);
-    });
-    return $groups;
-  }
-}
-
-/* ---------------------------------------------------------
-   Load subject + pages (DB-first, registry fallback)
---------------------------------------------------------- */
-$subject  = null;
-$pages    = [];
-$db_error = null;
-$used_registry = false;
+$subject = null;
+$db_error = '';
+$db_pages_map = []; // slug => merged page meta
 
 try {
   if (!function_exists('db')) throw new RuntimeException('db() not available.');
   $pdo = db();
   if (!$pdo instanceof PDO) throw new RuntimeException('DB connection not available.');
 
-  $nameCol = 'name';
-  if (!mk_subjects_has_column($pdo, 'subjects', 'name')) {
-    if (mk_subjects_has_column($pdo, 'subjects', 'menu_name')) $nameCol = 'menu_name';
-    elseif (mk_subjects_has_column($pdo, 'subjects', 'subject_name')) $nameCol = 'subject_name';
-    else $nameCol = 'slug';
-  }
+  $subNameCol = mk_has_col($pdo,'subjects','name') ? 'name'
+            : (mk_has_col($pdo,'subjects','menu_name') ? 'menu_name'
+            : (mk_has_col($pdo,'subjects','subject_name') ? 'subject_name' : 'slug'));
 
-  $descCol = null;
-  if (mk_subjects_has_column($pdo, 'subjects', 'meta_description')) $descCol = 'meta_description';
-  elseif (mk_subjects_has_column($pdo, 'subjects', 'short_desc')) $descCol = 'short_desc';
-  elseif (mk_subjects_has_column($pdo, 'subjects', 'description')) $descCol = 'description';
-  elseif (mk_subjects_has_column($pdo, 'subjects', 'content')) $descCol = 'content';
+  $subDescCol = mk_has_col($pdo,'subjects','meta_description') ? 'meta_description'
+            : (mk_has_col($pdo,'subjects','short_desc') ? 'short_desc'
+            : (mk_has_col($pdo,'subjects','description') ? 'description'
+            : (mk_has_col($pdo,'subjects','content') ? 'content' : null)));
 
-  $hasIcon = mk_subjects_has_column($pdo, 'subjects', 'icon_path');
+  $hasIcon = mk_has_col($pdo,'subjects','icon_path');
 
-  $cols = "id, slug, {$nameCol} AS name";
-  if ($descCol) $cols .= ", {$descCol} AS description";
-  if ($hasIcon) $cols .= ", icon_path";
+  $subCols = ['id','slug', "{$subNameCol} AS name"];
+  if ($subDescCol) $subCols[] = "{$subDescCol} AS description";
+  if ($hasIcon)    $subCols[] = "icon_path";
 
-  $st = $pdo->prepare("SELECT {$cols} FROM subjects WHERE slug = ? LIMIT 1");
+  $st = $pdo->prepare("SELECT " . implode(', ', $subCols) . " FROM subjects WHERE slug = ? LIMIT 1");
   $st->execute([$subject_slug]);
   $subject = $st->fetch(PDO::FETCH_ASSOC) ?: null;
 
@@ -372,109 +320,244 @@ try {
     $sid = (int)($subject['id'] ?? 0);
 
     if ($sid > 0) {
-      $titleCol = 'menu_name';
-      if (!mk_subjects_has_column($pdo, 'pages', 'menu_name')) {
-        $titleCol = mk_subjects_has_column($pdo, 'pages', 'title') ? 'title' : 'slug';
+      $hasTitle     = mk_has_col($pdo, 'pages', 'title');
+      $hasNavLabel  = mk_has_col($pdo, 'pages', 'nav_label');
+      $hasMenuName  = mk_has_col($pdo, 'pages', 'menu_name');
+      $hasName      = mk_has_col($pdo, 'pages', 'name');
+      $hasSlug      = mk_has_col($pdo, 'pages', 'slug');
+      $hasBodyHtml  = mk_has_col($pdo, 'pages', 'body_html');
+      $hasBody      = mk_has_col($pdo, 'pages', 'body');
+      $hasContent   = mk_has_col($pdo, 'pages', 'content');
+      $hasSummary   = mk_has_col($pdo, 'pages', 'summary');
+      $hasExcerpt   = mk_has_col($pdo, 'pages', 'excerpt');
+      $hasIsPublic  = mk_has_col($pdo, 'pages', 'is_public');
+      $hasVisible   = mk_has_col($pdo, 'pages', 'visible');
+      $hasStatus    = mk_has_col($pdo, 'pages', 'status');
+      $hasWF        = mk_has_col($pdo, 'pages', 'workflow_state');
+      $hasNavOrder  = mk_has_col($pdo, 'pages', 'nav_order');
+      $hasPosition  = mk_has_col($pdo, 'pages', 'position');
+
+      $titleExpr = "'Page'";
+      if ($hasTitle && $hasNavLabel) {
+        $titleExpr = "COALESCE(NULLIF(title,''), NULLIF(nav_label,''), slug)";
+      } elseif ($hasTitle) {
+        $titleExpr = "COALESCE(NULLIF(title,''), slug)";
+      } elseif ($hasNavLabel) {
+        $titleExpr = "COALESCE(NULLIF(nav_label,''), slug)";
+      } elseif ($hasMenuName) {
+        $titleExpr = "COALESCE(NULLIF(menu_name,''), slug)";
+      } elseif ($hasName) {
+        $titleExpr = "COALESCE(NULLIF(name,''), slug)";
+      } elseif ($hasSlug) {
+        $titleExpr = "slug";
       }
 
-      $excerptCol = null;
-      if (mk_subjects_has_column($pdo, 'pages', 'body_html')) $excerptCol = 'body_html';
-      elseif (mk_subjects_has_column($pdo, 'pages', 'body')) $excerptCol = 'body';
-      elseif (mk_subjects_has_column($pdo, 'pages', 'content')) $excerptCol = 'content';
-
-      $groupCol = mk_subjects_pick_group_col($pdo);
-
-      $where = "WHERE subject_id = ?";
-      if (mk_subjects_has_column($pdo, 'pages', 'status')) {
-        $where .= " AND status IN ('active','published','public')";
-      } elseif (mk_subjects_has_column($pdo, 'pages', 'is_public')) {
-        $where .= " AND is_public = 1";
-      } elseif (mk_subjects_has_column($pdo, 'pages', 'visible')) {
-        $where .= " AND visible = 1";
+      $excerptExpr = "''";
+      if ($hasSummary) {
+        $excerptExpr = "summary";
+      } elseif ($hasExcerpt) {
+        $excerptExpr = "excerpt";
+      } elseif ($hasBodyHtml) {
+        $excerptExpr = "body_html";
+      } elseif ($hasBody) {
+        $excerptExpr = "body";
+      } elseif ($hasContent) {
+        $excerptExpr = "content";
       }
 
-      $orderCol = mk_subjects_has_column($pdo, 'pages', 'nav_order') ? 'nav_order'
-               : (mk_subjects_has_column($pdo, 'pages', 'position') ? 'position' : 'id');
+      $orderExpr = "999999";
+      if ($hasNavOrder) {
+        $orderExpr = "COALESCE(nav_order, 999999)";
+      } elseif ($hasPosition) {
+        $orderExpr = "COALESCE(position, 999999)";
+      }
 
-      $select = "id, slug, {$titleCol} AS title";
-      if ($excerptCol) $select .= ", {$excerptCol} AS excerpt_html";
-      if ($groupCol)   $select .= ", {$groupCol} AS group_name";
+      $cols = [
+        "id",
+        "slug",
+        "{$titleExpr} AS page_title",
+        "{$excerptExpr} AS page_excerpt",
+        "{$orderExpr} AS sort_order",
+      ];
 
-      $pst = $pdo->prepare("
-        SELECT {$select}
-        FROM pages
-        {$where}
-        ORDER BY {$orderCol} IS NULL, {$orderCol} ASC, id ASC
-      ");
-      $pst->execute([$sid]);
-      $pages = $pst->fetchAll(PDO::FETCH_ASSOC) ?: [];
+      $where = ["subject_id = ?"];
+      $params = [$sid];
+
+      if ($hasSlug) {
+        $where[] = "slug IS NOT NULL";
+        $where[] = "slug <> ''";
+      }
+
+      if ($hasIsPublic) {
+        $where[] = "is_public = 1";
+      } elseif ($hasVisible) {
+        $where[] = "visible = 1";
+      }
+
+      if ($hasWF) {
+        $where[] = "LOWER(COALESCE(workflow_state,'')) IN ('published','review')";
+      } elseif ($hasStatus) {
+        $where[] = "LOWER(COALESCE(status,'')) IN ('published','active','public')";
+      }
+
+      $orderBy = "sort_order ASC, page_title ASC, slug ASC, id ASC";
+
+      $sql = "SELECT " . implode(', ', $cols) . " FROM pages WHERE " . implode(' AND ', $where) . " ORDER BY {$orderBy}";
+      $stp = $pdo->prepare($sql);
+      $stp->execute($params);
+      $pageRows = $stp->fetchAll(PDO::FETCH_ASSOC) ?: [];
+
+      foreach ($pageRows as $row) {
+        $slug = strtolower(trim((string)($row['slug'] ?? '')));
+        if (!mk_is_slug($slug)) continue;
+
+        $title = trim((string)($row['page_title'] ?? ''));
+        if ($title === '') $title = ucfirst(str_replace(['-','_'], ' ', $slug));
+
+        $excerptRaw = trim((string)($row['page_excerpt'] ?? ''));
+        $excerpt = $excerptRaw !== '' ? mk_excerpt_text($excerptRaw, 160) : '';
+
+        $db_pages_map[$slug] = [
+          'slug'       => $slug,
+          'title'      => $title,
+          'exists'     => true,
+          'source'     => 'db',
+          'excerpt'    => $excerpt,
+          'sort_order' => (int)($row['sort_order'] ?? 999999),
+        ];
+      }
     }
   }
 
 } catch (Throwable $e) {
   $db_error = $e->getMessage();
-}
-
-/* Registry fallback */
-if (!$subject) {
-  mk_subjects_load_registry();
-  if (function_exists('subject_by_slug_registry')) {
-    $r = subject_by_slug_registry($subject_slug);
-    if (is_array($r)) {
-      $subject = [
-        'id'          => (int)($r['id'] ?? 0),
-        'slug'        => (string)($r['slug'] ?? $subject_slug),
-        'name'        => (string)($r['name'] ?? $subject_slug),
-        'description' => (string)($r['description'] ?? ''),
-        'icon_path'   => '/lib/images/subjects/' . $subject_slug . '.svg',
-      ];
-      $used_registry = true;
-      $pages = [];
-    }
-  }
+  $mk_log('DB error: ' . $db_error);
 }
 
 if (!$subject) {
-  mk_subjects_not_found('Subject not found', 'No subject matched the requested slug: ' . $subject_slug);
+  $subject = [
+    'id' => 0,
+    'slug' => $subject_slug,
+    'name' => ucfirst(str_replace(['-','_'], ' ', $subject_slug)),
+    'description' => '',
+    'icon_path' => '',
+  ];
 }
 
 /* ---------------------------------------------------------
-   Page vars BEFORE header
+   Merge DB pages + FS pages
+   DB wins for title/excerpt/sort order; FS still supplies existence fallback
 --------------------------------------------------------- */
-$brand = defined('MK_BRAND_NAME') ? (string)MK_BRAND_NAME : 'Mkomi Igbo';
+$pages_map = $fs_map;
+foreach ($db_pages_map as $slug => $row) {
+  if (!isset($pages_map[$slug])) {
+    $pages_map[$slug] = $row;
+  } else {
+    $pages_map[$slug] = array_merge($pages_map[$slug], $row, ['exists' => true]);
+  }
+}
 
-$s_slug = (string)($subject['slug'] ?? $subject_slug);
-$s_name = trim((string)($subject['name'] ?? ''));
-if ($s_name === '') $s_name = $s_slug;
+/* ---------------------------------------------------------
+   Build core cards (always 5) + more pages
+--------------------------------------------------------- */
+$core_cards = [];
+foreach (mk_subject_core_slugs() as $core) {
+  $exists = isset($pages_map[$core]) && !empty($pages_map[$core]['exists']);
+
+  $title = mk_subject_core_title($core);
+  $excerpt = '';
+
+  if ($exists) {
+    $t = trim((string)($pages_map[$core]['title'] ?? ''));
+    if ($t !== '') $title = $t;
+
+    $ex = trim((string)($pages_map[$core]['excerpt'] ?? ''));
+    if ($ex !== '') $excerpt = $ex;
+  }
+
+  $core_cards[] = [
+    'slug'    => $core,
+    'title'   => $title,
+    'exists'  => $exists,
+    'excerpt' => $excerpt,
+  ];
+}
+
+$more_pages = [];
+foreach ($pages_map as $slug => $row) {
+  if (mk_subject_core_pos($slug) > 0) continue;
+
+  $title = trim((string)($row['title'] ?? ''));
+  if ($title === '') $title = ucfirst(str_replace(['-','_'], ' ', $slug));
+
+  $more_pages[] = [
+    'slug'       => $slug,
+    'title'      => $title,
+    'excerpt'    => trim((string)($row['excerpt'] ?? '')),
+    'sort_order' => (int)($row['sort_order'] ?? 999999),
+    'source'     => (string)($row['source'] ?? ''),
+  ];
+}
+
+usort($more_pages, static function(array $a, array $b): int {
+  $ao = (int)($a['sort_order'] ?? 999999);
+  $bo = (int)($b['sort_order'] ?? 999999);
+  if ($ao !== $bo) return $ao <=> $bo;
+
+  $at = strtolower(trim((string)($a['title'] ?? '')));
+  $bt = strtolower(trim((string)($b['title'] ?? '')));
+  if ($at !== $bt) return strcmp($at, $bt);
+
+  return strcmp((string)($a['slug'] ?? ''), (string)($b['slug'] ?? ''));
+});
+
+/* ---------------------------------------------------------
+   SEO + view vars BEFORE header
+--------------------------------------------------------- */
+$brand = defined('MK_BRAND_NAME') ? (string)MK_BRAND_NAME : 'Mkomigbo';
+
+$s_name = trim((string)($subject['name'] ?? $subject_slug));
+if ($s_name === '') $s_name = $subject_slug;
 
 $s_desc = trim((string)($subject['description'] ?? ''));
+$canonical_pretty = mk_u('/subjects/' . rawurlencode($subject_slug) . '/');
 
-$page_title = $s_name . ' • Subjects • ' . $brand;
-$page_desc  = $s_desc !== '' ? $s_desc : 'Browse pages under this subject.';
-$active_nav = 'subjects';
-$nav_active = 'subjects';
+$seo = [];
+if (function_exists('mk_seo_for_subject_slug')) {
+  try {
+    $tmp = mk_seo_for_subject_slug($subject_slug, ['name' => $s_name, 'description' => $s_desc]);
+    if (is_array($tmp)) $seo = $tmp;
+  } catch (Throwable $e) {}
+}
+if (!isset($seo['title']) || !is_string($seo['title']) || trim($seo['title']) === '') {
+  $seo['title'] = $s_name . ' • ' . $brand;
+}
+if (!isset($seo['description']) || !is_string($seo['description']) || trim($seo['description']) === '') {
+  $seo['description'] = ($s_desc !== '') ? $s_desc : ('Explore core pages and curated references under ' . $s_name . '.');
+}
+$seo['canonical'] = (isset($seo['canonical']) && is_string($seo['canonical']) && trim($seo['canonical']) !== '')
+  ? (string)$seo['canonical']
+  : $canonical_pretty;
 
-$extra_css = $GLOBALS['extra_css'] ?? [];
-if (!is_array($extra_css)) $extra_css = [];
-$extra_css[] = mk_u('/lib/css/subjects.css');
-$extra_css[] = mk_u('/lib/css/public.css');
-$GLOBALS['extra_css'] = array_values(array_unique($extra_css));
+$seo['og_type'] = (isset($seo['og_type']) && is_string($seo['og_type']) && trim($seo['og_type']) !== '')
+  ? (string)$seo['og_type']
+  : 'website';
+
+$GLOBALS['seo']         = $seo;
+$GLOBALS['page_title']  = (string)$seo['title'];
+$GLOBALS['page_desc']   = (string)$seo['description'];
+$GLOBALS['active_nav']  = 'subjects';
+$GLOBALS['nav_active']  = 'subjects';
 
 if (function_exists('mk_view_set')) {
   try {
     mk_view_set([
-      'page_title' => $page_title,
-      'page_desc'  => $page_desc,
-      'active_nav' => $active_nav,
-      'nav_active' => $nav_active,
-      'extra_css'  => $GLOBALS['extra_css'],
+      'page_title' => $GLOBALS['page_title'],
+      'page_desc'  => $GLOBALS['page_desc'],
+      'active_nav' => 'subjects',
+      'nav_active' => 'subjects',
     ]);
   } catch (Throwable $e) {}
-} else {
-  $GLOBALS['page_title'] = $page_title;
-  $GLOBALS['page_desc']  = $page_desc;
-  $GLOBALS['active_nav'] = $active_nav;
-  $GLOBALS['nav_active'] = $nav_active;
 }
 
 /* Header */
@@ -485,55 +568,36 @@ if (function_exists('mk_require_shared')) {
 if (!$header_ok) {
   header('Content-Type: text/html; charset=utf-8');
   echo "<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'>";
-  echo "<title>" . h($page_title) . "</title></head><body>";
+  echo "<title>" . h($GLOBALS['page_title']) . "</title></head><body>";
 }
 
 /* URLs */
 $home_url     = mk_u('/');
 $subjects_url = mk_u('/subjects/');
+$subject_url  = mk_u('/subjects/' . rawurlencode($subject_slug) . '/');
 
-/* Subject icon */
+/* Subject icon (best-effort) */
 $icon = trim((string)($subject['icon_path'] ?? ''));
-if ($icon === '') $icon = '/lib/images/subjects/' . $s_slug . '.svg';
+if ($icon === '') $icon = '/lib/images/subjects/' . $subject_slug . '.svg';
 $icon_url = mk_u($icon);
 
-/* if subject svg missing, fallback */
 $doc_root = rtrim((string)($_SERVER['DOCUMENT_ROOT'] ?? ''), '/');
 if ($doc_root !== '' && strpos($icon, '/') === 0) {
   $abs = $doc_root . $icon;
   if (!is_file($abs)) $icon_url = mk_u('/lib/images/subjects/_subject.svg');
 }
 
-/* ---------------------------------------------------------
-   Build grouped page index (DB group column -> inferred -> Pages)
---------------------------------------------------------- */
-$groups = [];
-foreach ($pages as $p) {
-  $p_slug = strtolower(trim((string)($p['slug'] ?? '')));
-  if ($p_slug === '' || !preg_match('/^[a-z0-9][a-z0-9_-]{0,190}$/', $p_slug)) continue;
-
-  $p_title = trim((string)($p['title'] ?? ''));
-  if ($p_title === '') $p_title = $p_slug;
-
-  $g = trim((string)($p['group_name'] ?? ''));
-  if ($g === '') $g = mk_subjects_infer_group($p_title);
-
-  $g = preg_replace('/\s+/u', ' ', $g) ?? $g;
-  if ($g === '') $g = 'Pages';
-
-  if (!isset($groups[$g])) $groups[$g] = [];
-  $groups[$g][] = $p;
-}
-$groups = mk_subjects_sort_groups($groups);
+/* UI code switch */
+$show_codes = (defined('MK_SHOW_SUBJECT_PAGE_CODES') && MK_SHOW_SUBJECT_PAGE_CODES === true)
+  || (isset($_GET['codes']) && (string)$_GET['codes'] === '1');
 
 ?>
-<?php if ($db_error && !$used_registry): ?>
-  <div class="container" style="padding:12px 0;">
-    <div class="notice error"><strong>DB Error:</strong> <?= h($db_error) ?></div>
-  </div>
-<?php elseif ($used_registry): ?>
-  <div class="container" style="padding:12px 0;">
-    <div class="notice" style="opacity:.9;">Showing registry fallback (DB unavailable or not yet seeded).</div>
+<?php if ($db_error !== ''): ?>
+  <div class="container mk-page">
+    <div class="mk-alert mk-alert--danger">
+      <strong>DB Error:</strong> <?= h($db_error) ?>
+      <div class="mk-muted">Request id: <code><?= h($req_id) ?></code></div>
+    </div>
   </div>
 <?php endif; ?>
 
@@ -552,17 +616,20 @@ $groups = mk_subjects_sort_groups($groups);
     <div class="mk-hero__inner">
       <div class="mk-subject-hero">
         <div class="mk-subject-hero__left">
-          <img class="mk-subject-hero__icon"
-               src="<?= h($icon_url) ?>"
-               alt="<?= h($s_name) ?>"
-               width="72" height="72"
-               loading="lazy">
+          <img
+            class="mk-subject-hero__icon"
+            src="<?= h($icon_url) ?>"
+            alt="<?= h($s_name) ?>"
+            width="72"
+            height="72"
+            loading="lazy"
+          >
           <div class="mk-subject-hero__text">
             <h1 class="mk-hero__title"><?= h($s_name) ?></h1>
             <?php if ($s_desc !== ''): ?>
               <p class="mk-hero__subtitle"><?= h($s_desc) ?></p>
             <?php else: ?>
-              <p class="mk-hero__subtitle">Explore pages in this subject.</p>
+              <p class="mk-hero__subtitle">Explore core pages and curated references in this subject.</p>
             <?php endif; ?>
           </div>
         </div>
@@ -576,157 +643,115 @@ $groups = mk_subjects_sort_groups($groups);
   </header>
 
   <section class="mk-subject-landing" aria-label="Subject landing content">
-    <div class="mk-card mk-subject-intro">
+
+    <div class="mk-card mk-section">
       <div class="mk-card__body">
-        <h2 class="mk-subject-intro__title">Overview</h2>
-        <p class="mk-subject-intro__text">
-          <?= h($s_desc !== '' ? $s_desc : 'This subject contains curated pages, media, and references. Use the grouped index below to browse.') ?>
-        </p>
+
+        <div class="mk-section-head">
+          <h2 class="mk-section-title">Core pages</h2>
+          <span class="mk-pill">5</span>
+        </div>
+
+        <div class="mk-grid subjects-grid" role="list">
+          <?php foreach ($core_cards as $cp): ?>
+            <?php
+              $p_slug  = (string)$cp['slug'];
+              $p_title = trim((string)($cp['title'] ?? $p_slug)) ?: $p_slug;
+              $p_url   = mk_u('/subjects/' . rawurlencode($subject_slug) . '/' . rawurlencode($p_slug) . '/');
+              $ex      = trim((string)($cp['excerpt'] ?? ''));
+              $exists  = (bool)($cp['exists'] ?? false);
+
+              $code = '';
+              if ($show_codes) {
+                $sid_reg = mk_subject_registry_id_for_slug($subject_slug);
+                $pos = mk_subject_core_pos($p_slug);
+                if ($sid_reg > 0 && $pos > 0 && function_exists('mk_page_ui_code')) {
+                  $code = (string)mk_page_ui_code($sid_reg, $pos);
+                }
+              }
+            ?>
+
+            <?php if ($exists): ?>
+              <a class="mk-card subjects-grid__item" href="<?= h($p_url) ?>" role="listitem">
+                <div class="mk-card__body">
+                  <div class="mk-card__meta">
+                    <span class="mk-pill" aria-hidden="true"><?= h(strtoupper(substr($p_slug, 0, 1))) ?></span>
+                    <?php if ($code !== ''): ?>
+                      <span class="mk-pill mk-pill--soft"><?= h($code) ?></span>
+                    <?php endif; ?>
+                  </div>
+
+                  <h3 class="mk-h3"><?= h($p_title) ?></h3>
+
+                  <?php if ($ex !== ''): ?>
+                    <p class="mk-muted"><?= h($ex) ?></p>
+                  <?php else: ?>
+                    <p class="mk-muted">Open this core page.</p>
+                  <?php endif; ?>
+                </div>
+              </a>
+            <?php else: ?>
+              <div class="mk-card subjects-grid__item is-disabled" aria-disabled="true" role="listitem">
+                <div class="mk-card__body">
+                  <div class="mk-card__meta">
+                    <span class="mk-pill" aria-hidden="true"><?= h(strtoupper(substr($p_slug, 0, 1))) ?></span>
+                    <?php if ($code !== ''): ?>
+                      <span class="mk-pill mk-pill--soft"><?= h($code) ?></span>
+                    <?php endif; ?>
+                  </div>
+
+                  <h3 class="mk-h3"><?= h($p_title) ?></h3>
+                  <p class="mk-muted">Coming soon.</p>
+                </div>
+              </div>
+            <?php endif; ?>
+
+          <?php endforeach; ?>
+        </div>
+
       </div>
     </div>
 
-    <?php if (count($pages) === 0): ?>
-      <div class="mk-card" style="margin-top:14px;">
+    <?php if (!empty($more_pages)): ?>
+      <div class="mk-card mk-section">
         <div class="mk-card__body">
-          <p class="mk-muted" style="margin:0;">No pages found under this subject yet.</p>
-        </div>
-      </div>
-    <?php else: ?>
 
-      <div class="mk-card mk-pages-index" style="margin-top:14px;">
-        <div class="mk-card__body">
-          <div class="mk-pages-index__head">
-            <h2 class="mk-pages-index__title">Browse pages</h2>
-            <div class="mk-pages-index__meta">
-              <span class="mk-pill"><?= (int)count($pages) ?> pages</span>
-            </div>
+          <div class="mk-section-head">
+            <h2 class="mk-section-title">More pages</h2>
+            <span class="mk-pill"><?= (int)count($more_pages) ?></span>
           </div>
 
-          <div class="mk-pages-index__tools">
-            <label class="mk-pages-search">
-              <span class="mk-pages-search__label">Filter</span>
-              <input id="mkPageFilter"
-                     class="mk-input mk-pages-search__input"
-                     type="search"
-                     placeholder="Type to filter pages…"
-                     autocomplete="off">
-            </label>
-            <button type="button" class="mk-btn mk-btn--ghost mk-pages-clear" id="mkPageClear" aria-label="Clear filter">Clear</button>
-          </div>
-
-          <div class="mk-ddlist" id="mkPageGroups">
-            <?php foreach ($groups as $gname => $list): ?>
+          <ul class="mk-aside__list">
+            <?php foreach ($more_pages as $mp): ?>
               <?php
-                $safe_id = 'grp_' . preg_replace('/[^a-z0-9]+/i', '_', strtolower($gname));
-                $safe_id = trim($safe_id, '_');
-                if ($safe_id === 'grp') $safe_id .= '_pages';
+                $mp_slug = strtolower(trim((string)($mp['slug'] ?? '')));
+                if (!mk_is_slug($mp_slug)) continue;
+
+                $mp_title = trim((string)($mp['title'] ?? ''));
+                if ($mp_title === '') $mp_title = $mp_slug;
+
+                $mp_url = mk_u('/subjects/' . rawurlencode($subject_slug) . '/' . rawurlencode($mp_slug) . '/');
               ?>
-              <details class="mk-dd" data-group="<?= h($gname) ?>">
-                <summary class="mk-dd__summary">
-                  <span class="mk-dd__title"><?= h($gname) ?></span>
-                  <span class="mk-dd__count"><?= (int)count($list) ?></span>
-                </summary>
-
-                <ul class="mk-dd__items" aria-label="<?= h($gname) ?> pages">
-                  <?php foreach ($list as $p): ?>
-                    <?php
-                      $p_slug = strtolower(trim((string)($p['slug'] ?? '')));
-                      if ($p_slug === '' || !preg_match('/^[a-z0-9][a-z0-9_-]{0,190}$/', $p_slug)) continue;
-
-                      $p_title = trim((string)($p['title'] ?? ''));
-                      if ($p_title === '') $p_title = $p_slug;
-
-                      $pretty = '/subjects/' . rawurlencode($s_slug) . '/' . rawurlencode($p_slug) . '/';
-                      $p_href = mk_u($pretty);
-
-                      $excerpt_html = is_string($p['excerpt_html'] ?? null) ? (string)$p['excerpt_html'] : '';
-                      $excerpt = mk_excerpt_text($excerpt_html, 140);
-
-                      $cnt = mk_subjects_attachment_count($s_slug, $p_slug);
-                      $total = (int)($cnt['total'] ?? 0);
-                      $badge = ($total === 1) ? '1 attachment' : ($total . ' attachments');
-                    ?>
-                    <li class="mk-dd__item" data-title="<?= h(mb_strtolower($p_title, 'UTF-8')) ?>" data-slug="<?= h($p_slug) ?>">
-                      <a class="mk-dd__link" href="<?= h($p_href) ?>">
-                        <span class="mk-dd__linktitle"><?= h($p_title) ?></span>
-                        <span class="mk-dd__slug"><?= h($p_slug) ?></span>
-                      </a>
-
-                      <div class="mk-dd__meta">
-                        <?php if ($excerpt !== ''): ?>
-                          <span class="mk-dd__excerpt"><?= h($excerpt) ?></span>
-                        <?php endif; ?>
-                        <span class="mk-pill mk-pill--soft"><?= h($badge) ?></span>
-                        <?php if (!empty($cnt['external'])): ?>
-                          <span class="mk-pill mk-pill--soft"><?= (int)$cnt['external'] ?> external</span>
-                        <?php endif; ?>
-                      </div>
-                    </li>
-                  <?php endforeach; ?>
-                </ul>
-              </details>
+              <li>
+                <a href="<?= h($mp_url) ?>">
+                  <?= h($mp_title) ?>
+                  <span class="mk-muted mk-aside__meta"><?= h($mp_slug) ?></span>
+                </a>
+              </li>
             <?php endforeach; ?>
-          </div>
-
-          <p class="mk-muted mk-pages-index__hint">
-            Tip: open a group, then filter to quickly find a page by title or slug.
-          </p>
+          </ul>
 
         </div>
       </div>
-
-      <script>
-      (function(){
-        var input = document.getElementById('mkPageFilter');
-        var clear = document.getElementById('mkPageClear');
-        var root  = document.getElementById('mkPageGroups');
-        if (!input || !root) return;
-
-        function norm(s){ return (s||'').toLowerCase().trim(); }
-
-        function apply(){
-          var q = norm(input.value);
-          var items = root.querySelectorAll('.mk-dd__item');
-          var anyVisibleInGroup = new Map();
-
-          items.forEach(function(li){
-            var t = li.getAttribute('data-title') || '';
-            var s = (li.getAttribute('data-slug') || '').toLowerCase();
-            var ok = (q === '') || (t.indexOf(q) !== -1) || (s.indexOf(q) !== -1);
-            li.style.display = ok ? '' : 'none';
-
-            var details = li.closest('details.mk-dd');
-            if (details) {
-              var key = details;
-              var prev = anyVisibleInGroup.get(key) || false;
-              anyVisibleInGroup.set(key, prev || ok);
-            }
-          });
-
-          var groups = root.querySelectorAll('details.mk-dd');
-          groups.forEach(function(d){
-            var ok = anyVisibleInGroup.has(d) ? anyVisibleInGroup.get(d) : true;
-            d.style.display = ok ? '' : 'none';
-            if (q !== '' && ok) d.open = true;
-            if (q === '') d.open = false;
-          });
-        }
-
-        input.addEventListener('input', apply);
-        if (clear) clear.addEventListener('click', function(){ input.value=''; apply(); input.focus(); });
-
-        apply();
-      })();
-      </script>
-
     <?php endif; ?>
+
   </section>
 
 </main>
 
 <?php
 if (function_exists('mk_require_shared')) {
-  mk_require_shared('public_footer.php');
+  try { mk_require_shared('public_footer.php'); } catch (Throwable $e) { echo "</body></html>"; }
 } else {
   echo "</body></html>";
 }

@@ -59,4 +59,5 @@ foreach ($merged as $href) {
 
 /* Delegate to canonical public header */
 $public_header = __DIR__ . '/public_header.php';
-require_once $public_header;
+
+mk_require_shared('public_header.php');

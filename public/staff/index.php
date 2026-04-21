@@ -1,110 +1,70 @@
 <?php
 declare(strict_types=1);
 
-/**
- * /public/staff/index.php
- * Staff dashboard (uses staff_header.php contract).
- *
- * Fixes:
- * - Removes duplicate Recent Tools section
- * - Places action buttons only where intended
- */
-
 require_once __DIR__ . '/../_init.php';
-if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
 
-/* No-cache for staff */
+require_once PRIVATE_PATH . '/functions/auth.php';
+
+if (!function_exists('mk_staff_current_id') || mk_staff_current_id() <= 0) {
+    header('Location: ' . url_for('/staff/login.php'));
+    exit;
+}
+
 header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
 header('Pragma: no-cache');
+header('Expires: 0');
 
-/* Ensure auth helpers exist */
-if (!function_exists('mk_require_staff_login')) {
-  $auth = null;
-  if (defined('PRIVATE_PATH') && is_string(PRIVATE_PATH) && PRIVATE_PATH !== '') {
-    $auth = PRIVATE_PATH . '/functions/auth.php';
-  } elseif (defined('APP_ROOT') && is_string(APP_ROOT) && APP_ROOT !== '') {
-    $auth = rtrim(APP_ROOT, "/\\") . '/private/functions/auth.php';
-  }
-  if ($auth && is_file($auth)) require_once $auth;
-}
-
-/* Guard */
-if (function_exists('mk_require_staff_login')) {
-  mk_require_staff_login();
-} else {
-  header('Location: /staff/login.php', true, 302);
-  exit;
-}
-
-/* Safety fallbacks */
 if (!function_exists('h')) {
-  function h(string $v): string { return htmlspecialchars($v, ENT_QUOTES, 'UTF-8'); }
+  function h(string $v): string {
+    return htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
+  }
 }
 if (!function_exists('url_for')) {
-  function url_for(string $path): string { return '/' . ltrim($path, '/'); }
-}
-
-/* ---------------------------------------------------------
-   Safe disk path helpers (optional "exists" checks)
---------------------------------------------------------- */
-function pf__public_root(): string {
-  if (defined('PUBLIC_PATH') && is_string(PUBLIC_PATH) && PUBLIC_PATH !== '') {
-    return rtrim(PUBLIC_PATH, "/\\");
+  function url_for(string $path): string {
+    return '/' . ltrim($path, '/');
   }
-  $guess = realpath(dirname(__DIR__)); // /public
-  return is_string($guess) && $guess !== '' ? rtrim($guess, "/\\") : rtrim(dirname(__DIR__), "/\\");
 }
-
-function pf__public_fs(string $web_path): string {
-  $root = pf__public_root();
-  $rel  = ltrim($web_path, "/\\");
-  return $root . DIRECTORY_SEPARATOR . str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $rel);
-}
-
-function pf__file_exists_web(string $web_path): bool {
-  return is_file(pf__public_fs($web_path));
-}
-
-function pf__dir_has_index(string $web_dir): bool {
-  $web_dir = trim($web_dir, "/\\") . '/';
-  $dirFs = pf__public_fs($web_dir);
-  if (!is_dir($dirFs)) return false;
-  return is_file(pf__public_fs($web_dir . 'index.php'));
-}
-
-function pf__route_if_exists(string $web_path): ?string {
-  $web_path = '/' . ltrim($web_path, '/');
-  $endsWithSlash = substr($web_path, -1) === '/';
-
-  if ($endsWithSlash) {
-    return pf__dir_has_index($web_path) ? url_for($web_path) : null;
+if (!function_exists('pf__public_root')) {
+  function pf__public_root(): string {
+    if (defined('PUBLIC_PATH') && is_string(PUBLIC_PATH) && PUBLIC_PATH !== '') {
+      return rtrim(PUBLIC_PATH, "/\\");
+    }
+    $guess = realpath(dirname(__DIR__));
+    return is_string($guess) && $guess !== ''
+      ? rtrim($guess, "/\\")
+      : rtrim(dirname(__DIR__), "/\\");
   }
-  return pf__file_exists_web($web_path) ? url_for($web_path) : null;
 }
-
-/* ---------------------------------------------------------
-   Recent tools (from /staff/tools/run.php session tracker)
---------------------------------------------------------- */
-$recent_tools = [];
-if (isset($_SESSION['staff_tools_recent']) && is_array($_SESSION['staff_tools_recent'])) {
-  foreach ($_SESSION['staff_tools_recent'] as $rt) {
-    if (!is_array($rt)) continue;
-    $k  = isset($rt['key'])   ? trim((string)$rt['key'])   : '';
-    $t  = isset($rt['title']) ? trim((string)$rt['title']) : '';
-    $u  = isset($rt['url'])   ? trim((string)$rt['url'])   : '';
-    $ts = isset($rt['ts'])    ? (int)$rt['ts']             : 0;
-
-    if ($k === '' || $u === '') continue;
-    if ($t === '') $t = $k;
-
-    $recent_tools[] = ['key'=>$k, 'title'=>$t, 'url'=>$u, 'ts'=>$ts];
+if (!function_exists('pf__public_fs')) {
+  function pf__public_fs(string $web_path): string {
+    $root = pf__public_root();
+    $rel  = ltrim($web_path, "/\\");
+    return $root . DIRECTORY_SEPARATOR . str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $rel);
   }
-
-  usort($recent_tools, static fn($a,$b) => ($b['ts'] <=> $a['ts']));
-  $recent_tools = array_slice($recent_tools, 0, 6);
 }
-$last_tool = $recent_tools[0] ?? null;
-
+if (!function_exists('pf__file_exists_web')) {
+  function pf__file_exists_web(string $web_path): bool {
+    return is_file(pf__public_fs($web_path));
+  }
+}
+if (!function_exists('pf__dir_has_index')) {
+  function pf__dir_has_index(string $web_dir): bool {
+    $web_dir = trim($web_dir, "/\\") . '/';
+    $dirFs = pf__public_fs($web_dir);
+    if (!is_dir($dirFs)) return false;
+    return is_file(pf__public_fs($web_dir . 'index.php'));
+  }
+}
+if (!function_exists('pf__route_if_exists')) {
+  function pf__route_if_exists(string $web_path): ?string {
+    $web_path = '/' . ltrim($web_path, '/');
+    $endsWithSlash = substr($web_path, -1) === '/';
+    if ($endsWithSlash) {
+      return pf__dir_has_index($web_path) ? url_for($web_path) : null;
+    }
+    return pf__file_exists_web($web_path) ? url_for($web_path) : null;
+  }
+}
 if (!function_exists('mk_time_ago')) {
   function mk_time_ago(int $ts): string {
     if ($ts <= 0) return '—';
@@ -115,289 +75,164 @@ if (!function_exists('mk_time_ago')) {
     if ($m < 60) return $m . 'm ago';
     $h = (int)floor($m / 60);
     if ($h < 48) return $h . 'h ago';
-    $days = (int)floor($h / 24);
-    return $days . 'd ago';
+    return (int)floor($h / 24) . 'd ago';
   }
 }
 
-/* ---------------------------------------------------------
-   Routes
---------------------------------------------------------- */
+$recent_tools = [];
+if (isset($_SESSION['staff_tools_recent']) && is_array($_SESSION['staff_tools_recent'])) {
+  foreach ($_SESSION['staff_tools_recent'] as $rt) {
+    if (!is_array($rt)) continue;
+    $k  = isset($rt['key'])   ? trim((string)$rt['key'])   : '';
+    $t  = isset($rt['title']) ? trim((string)$rt['title']) : '';
+    $u  = isset($rt['url'])   ? trim((string)$rt['url'])   : '';
+    $ts = isset($rt['ts'])    ? (int)$rt['ts']             : 0;
+    if ($k === '' || $u === '') continue;
+    if ($t === '') $t = $k;
+
+    $recent_tools[] = [
+      'key'   => $k,
+      'title' => $t,
+      'url'   => $u,
+      'ts'    => $ts,
+    ];
+  }
+  usort($recent_tools, static fn(array $a, array $b): int => ($b['ts'] <=> $a['ts']));
+  $recent_tools = array_slice($recent_tools, 0, 6);
+}
+
 $href_subjects = url_for('/staff/subjects/');
 $href_pages    = url_for('/staff/subjects/pgs/');
 $href_tools    = url_for('/staff/tools/');
 $href_logout   = url_for('/staff/logout.php');
+$href_account  = pf__route_if_exists('/staff/account/') ?? url_for('/staff/account/');
+$href_password = url_for('/staff/account/password.php');
+$href_audit    = url_for('/staff/audit/');
+$href_platforms = pf__route_if_exists('/staff/platforms/') ?? url_for('/staff/platforms/');
+$href_contrib   = pf__route_if_exists('/staff/contributors/') ?? url_for('/staff/contributors/');
 
-$href_account_password = url_for('/staff/account/password.php');
-$href_account_audit    = url_for('/staff/account/audit.php');
-$href_account_home     = pf__route_if_exists('/staff/account/') ?? url_for('/staff/account/');
-
-/* Optional modules */
-$href_platforms = pf__route_if_exists('/staff/platforms/') ?? pf__route_if_exists('/staff/platforms/index.php');
-if (!$href_platforms) $href_platforms = url_for('/platforms/');
-
-$href_contrib = pf__route_if_exists('/staff/contributors/') ?? pf__route_if_exists('/staff/contributors/index.php');
-if (!$href_contrib) $href_contrib = url_for('/staff/contributors/');
-
-/* ---------------------------------------------------------
-   Page + header
---------------------------------------------------------- */
-$page_title = 'Staff Dashboard • Mkomigbo';
-$page_desc  = 'Manage subjects, pages, contributors, platforms, and tools.';
-$active_nav = 'staff';
+$page_title = 'Staff Dashboard • Mkomi Igbo';
+$page_desc  = 'Manage content, contributors, platforms, diagnostics, and account security.';
 $nav_active = 'staff';
+$active_nav = 'staff';
+
+$cards = [
+  ['title' => 'Subjects',      'desc' => 'Create, arrange, and manage subject areas.',              'href' => $href_subjects, 'tag' => 'Content'],
+  ['title' => 'Pages',         'desc' => 'Edit, publish, and organize learning pages.',             'href' => $href_pages,    'tag' => 'Publishing'],
+  ['title' => 'Contributors',  'desc' => 'Manage contributor profiles and credits.',                'href' => $href_contrib,  'tag' => 'People'],
+  ['title' => 'Platforms',     'desc' => 'Maintain platform sections and feature areas.',           'href' => $href_platforms,'tag' => 'Structure'],
+  ['title' => 'Tools',         'desc' => 'Open diagnostics and internal operational tools.',        'href' => $href_tools,    'tag' => 'Internal'],
+  ['title' => 'Account',       'desc' => 'Review your account options and security settings.',      'href' => $href_account,  'tag' => 'Profile'],
+];
 
 $staff_header = (defined('PRIVATE_PATH') && is_string(PRIVATE_PATH) && PRIVATE_PATH !== '')
-  ? (PRIVATE_PATH . '/shared/staff_header.php')
-  : (defined('APP_ROOT') && is_string(APP_ROOT) && APP_ROOT !== '' ? (rtrim(APP_ROOT, "/\\") . '/private/shared/staff_header.php') : null);
+  ? (rtrim(PRIVATE_PATH, "/\\") . '/shared/staff_header.php')
+  : (defined('APP_ROOT') && is_string(APP_ROOT) && APP_ROOT !== ''
+      ? (rtrim(APP_ROOT, "/\\") . '/private/shared/staff_header.php')
+      : '');
+
+$staff_footer = (defined('PRIVATE_PATH') && is_string(PRIVATE_PATH) && PRIVATE_PATH !== '')
+  ? (rtrim(PRIVATE_PATH, "/\\") . '/shared/staff_footer.php')
+  : (defined('APP_ROOT') && is_string(APP_ROOT) && APP_ROOT !== ''
+      ? (rtrim(APP_ROOT, "/\\") . '/private/shared/staff_footer.php')
+      : '');
 
 if ($staff_header && is_file($staff_header)) {
   require $staff_header;
-} else {
-  http_response_code(500);
-  header('Content-Type: text/plain; charset=utf-8');
-  echo "Staff header missing.\n";
-  exit;
 }
-
-/* ---------------------------------------------------------
-   Cards
---------------------------------------------------------- */
-$cards = [
-  [
-    'title' => 'Manage Subjects',
-    'desc'  => 'Create, edit, order, and publish subjects.',
-    'href'  => $href_subjects,
-    'tag'   => 'Staff',
-    'icon'  => 'S',
-  ],
-  [
-    'title' => 'Manage Pages',
-    'desc'  => 'Manage pages under subjects (publish/order/edit).',
-    'href'  => $href_pages,
-    'tag'   => 'Staff',
-    'icon'  => 'P',
-  ],
-  [
-    'title' => 'Contributors',
-    'desc'  => 'Manage contributor profiles and credits.',
-    'href'  => $href_contrib,
-    'tag'   => 'Staff',
-    'icon'  => 'C',
-  ],
-  [
-    'title' => 'Platforms',
-    'desc'  => 'Manage platforms and feature sections.',
-    'href'  => $href_platforms,
-    'tag'   => (strpos((string)$href_platforms, '/staff/') !== false) ? 'Staff' : 'Public',
-    'icon'  => 'F',
-  ],
-  [
-    'title' => 'Tools',
-    'desc'  => 'Diagnostics and internal utilities (RBAC controlled).',
-    'href'  => $href_tools,
-    'tag'   => 'Staff',
-    'icon'  => 'T',
-  ],
-  [
-    'title' => 'Account',
-    'desc'  => 'Password, audit log, and account settings.',
-    'href'  => $href_account_home,
-    'tag'   => 'Account',
-    'icon'  => 'A',
-  ],
-  [
-    'title' => 'Change Password',
-    'desc'  => 'Update your password securely.',
-    'href'  => $href_account_password,
-    'tag'   => 'Account',
-    'icon'  => 'Lock',
-  ],
-  [
-    'title' => 'Audit Log',
-    'desc'  => 'Review login/logout and security events.',
-    'href'  => $href_account_audit,
-    'tag'   => 'Security',
-    'icon'  => 'Log',
-  ],
-  [
-    'title' => 'Logout',
-    'desc'  => 'Sign out of staff account securely.',
-    'href'  => $href_logout,
-    'tag'   => 'Account',
-    'icon'  => 'L',
-  ],
-];
-
 ?>
-<style>
-  .mk-sdash-hero{
-    border:1px solid rgba(0,0,0,.10);
-    border-radius:20px;
-    background: linear-gradient(180deg, rgba(0,0,0,0.02), #fff);
-    box-shadow: 0 18px 48px rgba(0,0,0,.10);
-    overflow:hidden;
-  }
-  .mk-sdash-hero__bar{ height:8px; background:#111; opacity:.88; }
-  .mk-sdash-hero__inner{ padding:22px 18px 18px; }
-  .mk-sdash-hero h1{ margin:0 0 10px; font-size: clamp(1.6rem, 3vw, 2.4rem); line-height:1.08; letter-spacing:-0.02em; }
-  .mk-sdash-grid{
-    margin-top:14px;
-    display:grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap:14px;
-  }
-  .mk-sdash-card{
-    border:1px solid rgba(0,0,0,.10);
-    border-radius:18px;
-    background:#fff;
-    overflow:hidden;
-    box-shadow: 0 12px 28px rgba(0,0,0,.05);
-    transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
-    min-height: 150px;
-  }
-  .mk-sdash-card:hover{ transform: translateY(-1px); border-color: rgba(0,0,0,.22); box-shadow: 0 18px 36px rgba(0,0,0,.08); }
-  .mk-sdash-card__bar{ height:7px; background:#111; }
-  .mk-sdash-card__body{ padding:14px; display:flex; flex-direction:column; gap:10px; }
-  .mk-sdash-top{ display:flex; gap:12px; align-items:flex-start; }
-  .mk-sdash-icon{
-    width:56px; height:56px; border-radius:16px;
-    border:1px solid rgba(0,0,0,.10);
-    background: rgba(0,0,0,0.02);
-    display:flex; align-items:center; justify-content:center;
-    font-weight:900;
-    flex:0 0 auto;
-  }
-  .mk-sdash-card h3{ margin:2px 0 6px; font-size:1.1rem; line-height:1.2; letter-spacing:-0.01em; }
-  .mk-sdash-card p{ margin:0; line-height:1.6; }
-  .mk-sdash-pill{
-    display:inline-block; padding:4px 10px;
-    border:1px solid rgba(0,0,0,0.12);
-    border-radius:999px; background:#fff;
-    font-size:.85rem; color:#495057;
-  }
-  .mk-sdash-meta{ margin-top:auto; display:flex; gap:10px; flex-wrap:wrap; }
-  .mk-sdash-link{ text-decoration:none; color:inherit; display:block; height:100%; }
 
-  .mk-tools-panel{
-    margin-top:18px;
-    border:1px solid rgba(0,0,0,.10);
-    border-radius:18px;
-    background:#fff;
-    box-shadow: 0 12px 28px rgba(0,0,0,.05);
-    overflow:hidden;
-  }
-  .mk-tools-panel__bar{ height:7px; background:#111; }
-  .mk-tools-panel__body{ padding:14px; }
-  .mk-tools-actions{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:10px; }
-  .mk-tools-btn{
-    display:inline-flex; align-items:center; justify-content:center;
-    padding:10px 12px; border-radius:12px;
-    border:1px solid rgba(0,0,0,.12);
-    background:#fff; text-decoration:none; color:#111;
-    font-weight:700;
-  }
-  .mk-tools-btn.primary{ background:#111; color:#fff; border-color:#111; }
-  .mk-tools-list{ margin:10px 0 0; padding-left:18px; }
-  .mk-tools-list li{ margin:8px 0; }
-  .mk-tools-time{ font-size:12px; color:#6b7280; margin-left:6px; }
-</style>
+<section class="staff-pagehead">
+  <h1 class="staff-pagehead__title">Staff dashboard</h1>
+  <p class="staff-pagehead__desc">
+    This workspace gives you a clean operational view of publishing, page management, contributors, tools, and account security.
+  </p>
+</section>
 
-<div class="container" style="padding:24px 0;">
-  <section class="mk-sdash-hero">
-    <div class="mk-sdash-hero__bar"></div>
-    <div class="mk-sdash-hero__inner">
-      <h1>Staff Dashboard</h1>
-      <p class="muted" style="margin:0;max-width:88ch;">
-        Manage subjects, pages, contributors, platforms, accounts, and audits — with stable routing and no dead-end flows.
-      </p>
-      <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;">
-        <span class="mk-sdash-pill">Protected</span>
-        <span class="mk-sdash-pill">Stable Links</span>
-        <span class="mk-sdash-pill">Fast</span>
-      </div>
-
-      <!-- Correct placement: primary tools actions in hero -->
-      <div class="mk-tools-actions" style="margin-top:14px;">
-        <a class="mk-tools-btn primary" href="<?= h($href_tools) ?>">Open Tools</a>
-        <?php if (is_array($last_tool)): ?>
-          <a class="mk-tools-btn" href="<?= h((string)$last_tool['url']) ?>">Run Last Tool Again</a>
-        <?php endif; ?>
+<section class="staff-section">
+  <div class="staff-card">
+    <div class="staff-card__body">
+      <div class="staff-actions" style="justify-content:space-between;align-items:flex-start;">
+        <div>
+          <div style="font-size:.78rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#667085;">Quick actions</div>
+          <h2 style="margin:6px 0 0;font-size:1.2rem;">Go where you work most</h2>
+        </div>
+        <div class="staff-actions">
+          <a class="staff-chip" href="<?= h($href_subjects) ?>">Subjects</a>
+          <a class="staff-chip" href="<?= h($href_pages) ?>">Pages</a>
+          <a class="staff-chip" href="<?= h($href_tools) ?>">Tools</a>
+          <a class="staff-chip" href="<?= h($href_audit) ?>">Audit</a>
+        </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <div class="section-title" style="margin-top:22px;">
-    <h2 style="margin:0;">Actions</h2>
+<section class="staff-section">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;">
+    <?php foreach ($cards as $card): ?>
+      <article class="staff-card">
+        <div class="staff-card__body" style="display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start;">
+            <h3 style="margin:0;font-size:1.06rem;line-height:1.2;"><?= h($card['title']) ?></h3>
+            <span style="display:inline-flex;align-items:center;padding:4px 10px;border-radius:999px;background:rgba(17,24,39,.05);border:1px solid rgba(17,24,39,.10);font-size:.76rem;font-weight:800;color:#667085;"><?= h($card['tag']) ?></span>
+          </div>
+          <p style="margin:0;color:#667085;line-height:1.6;"><?= h($card['desc']) ?></p>
+          <div style="margin-top:auto;padding-top:4px;">
+            <a class="staff-chip" href="<?= h($card['href']) ?>">Open</a>
+          </div>
+        </div>
+      </article>
+    <?php endforeach; ?>
+  </div>
+</section>
+
+<section class="staff-section" style="display:grid;grid-template-columns:1.2fr .8fr;gap:14px;">
+  <div class="staff-card">
+    <div class="staff-card__body">
+      <h2 style="margin:0 0 10px;font-size:1.15rem;">Operational overview</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;">
+        <div class="staff-note">
+          <div style="font-size:.78rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;">Publishing</div>
+          <div style="margin-top:6px;color:#667085;">Manage page publishing, visibility, and attachments from the pages workspace.</div>
+        </div>
+        <div class="staff-note">
+          <div style="font-size:.78rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;">Security</div>
+          <div style="margin-top:6px;color:#667085;">Review audit activity and keep account access and passwords current.</div>
+        </div>
+        <div class="staff-note">
+          <div style="font-size:.78rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;">Diagnostics</div>
+          <div style="margin-top:6px;color:#667085;">Use tools for health checks, diagnostics, and controlled maintenance tasks.</div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <section class="mk-sdash-grid" aria-label="Staff actions">
-    <?php foreach ($cards as $c): ?>
-      <div class="mk-sdash-card">
-        <div class="mk-sdash-card__bar"></div>
-        <a class="mk-sdash-link" href="<?= h((string)$c['href']) ?>">
-          <div class="mk-sdash-card__body">
-            <div class="mk-sdash-top">
-              <div class="mk-sdash-icon" aria-hidden="true"><?= h((string)$c['icon']) ?></div>
-              <div style="min-width:0;">
-                <h3><?= h((string)$c['title']) ?></h3>
-                <p class="muted"><?= h((string)$c['desc']) ?></p>
-              </div>
-            </div>
-            <div class="mk-sdash-meta">
-              <span class="mk-sdash-pill"><?= h((string)$c['tag']) ?></span>
-              <span class="mk-sdash-pill">Open</span>
-            </div>
-          </div>
-        </a>
-      </div>
-    <?php endforeach; ?>
-  </section>
-
-  <!-- Single Recent Tools panel (no duplicates) -->
-  <section class="mk-tools-panel" aria-label="Recent tools">
-    <div class="mk-tools-panel__bar"></div>
-    <div class="mk-tools-panel__body">
-      <h2 style="margin:0;">Recent Tools</h2>
-      <p class="muted" style="margin:6px 0 0;max-width:90ch;">
-        Quick access to recently executed diagnostics. This list is stored in your staff session.
-      </p>
-
-      <?php if (empty($recent_tools)): ?>
-        <div class="notice" style="margin-top:12px;">
-          No recent tools yet. Run a tool from <a href="<?= h($href_tools) ?>">Tools</a> and it will appear here.
+  <div class="staff-card staff-card--soft">
+    <div class="staff-card__body">
+      <h2 style="margin:0 0 10px;font-size:1.15rem;">Recent tools</h2>
+      <?php if ($recent_tools): ?>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <?php foreach ($recent_tools as $tool): ?>
+            <a href="<?= h((string)$tool['url']) ?>" style="display:flex;justify-content:space-between;gap:10px;align-items:center;text-decoration:none;padding:10px 12px;border:1px solid rgba(17,24,39,.10);border-radius:12px;background:#fff;color:#111827;">
+              <span style="font-weight:700;"><?= h((string)$tool['title']) ?></span>
+              <span style="font-size:.82rem;color:#667085;"><?= h(mk_time_ago((int)$tool['ts'])) ?></span>
+            </a>
+          <?php endforeach; ?>
         </div>
       <?php else: ?>
-        <ul class="mk-tools-list">
-          <?php foreach ($recent_tools as $rt): ?>
-            <li>
-              <a href="<?= h((string)$rt['url']) ?>" style="font-weight:800; text-decoration:none;">
-                <?= h((string)$rt['title']) ?>
-              </a>
-              <?php if (!empty($rt['ts'])): ?>
-                <span class="mk-tools-time"><?= h(mk_time_ago((int)$rt['ts'])) ?></span>
-              <?php endif; ?>
-            </li>
-          <?php endforeach; ?>
-        </ul>
+        <div class="staff-note">No recent tools recorded yet.</div>
       <?php endif; ?>
 
-      <div class="mk-tools-actions">
-        <a class="mk-tools-btn primary" href="<?= h($href_tools) ?>">Browse Tools</a>
-        <?php if (is_array($last_tool)): ?>
-          <a class="mk-tools-btn" href="<?= h((string)$last_tool['url']) ?>">Run Last Tool Again</a>
-        <?php endif; ?>
+      <div class="staff-actions" style="margin-top:12px;">
+        <a class="staff-chip" href="<?= h($href_password) ?>">Change password</a>
+        <a class="staff-chip" href="<?= h($href_logout) ?>">Logout</a>
       </div>
     </div>
-  </section>
-
-</div>
+  </div>
+</section>
 
 <?php
-$staff_footer = (defined('PRIVATE_PATH') && is_string(PRIVATE_PATH) && PRIVATE_PATH !== '')
-  ? (PRIVATE_PATH . '/shared/staff_footer.php')
-  : (defined('APP_ROOT') && is_string(APP_ROOT) && APP_ROOT !== '' ? (rtrim(APP_ROOT, "/\\") . '/private/shared/staff_footer.php') : null);
-
 if ($staff_footer && is_file($staff_footer)) {
   require $staff_footer;
 } else {

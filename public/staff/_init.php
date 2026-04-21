@@ -20,7 +20,7 @@ declare(strict_types=1);
  *   - staff_flash_set(), staff_flash_get()
  *
  * IMPORTANT:
-// [patched]  * - Never defines APP_ROOT / PRIVATE_PATH / etc. (initialize.php owns constants)
+ * - Never defines APP_ROOT / PRIVATE_PATH / etc. (initialize.php owns constants)
  */
 
 @ini_set('display_errors', '0');
@@ -50,12 +50,32 @@ if (!defined('MK_REQUIRE_SESSION')) {
 require_once dirname(__DIR__) . '/_init.php';
 
 /* ---------------------------------------------------------
+   Ensure auth helpers are available for staff routes
+   (belt+suspenders; public/_init.php now loads auth.php too)
+--------------------------------------------------------- */
+try {
+  if (
+    !function_exists('mk_require_staff_login')
+    || !function_exists('mk_attempt_staff_login')
+    || !function_exists('mk_staff_roles_load')
+    || !function_exists('mk_require_staff_permission')
+  ) {
+    $auth = '';
+    if (defined('PRIVATE_PATH') && is_string(PRIVATE_PATH) && PRIVATE_PATH !== '') {
+      $auth = rtrim((string)PRIVATE_PATH, "/\\") . '/functions/auth.php';
+    }
+    if (($auth === '' || !is_file($auth)) && defined('APP_ROOT') && is_string(APP_ROOT) && APP_ROOT !== '') {
+      $auth = rtrim((string)APP_ROOT, "/\\") . '/private/functions/auth.php';
+    }
+    if ($auth !== '' && is_file($auth)) {
+      require_once $auth;
+    }
+  }
+} catch (Throwable $e) {}
+
+/* ---------------------------------------------------------
    Session (always for staff)
 --------------------------------------------------------- */
-if (session_status() !== PHP_SESSION_ACTIVE) {
-  @session_start();
-}
-
 /* ---------------------------------------------------------
    Body class: always includes "staff"
 --------------------------------------------------------- */
@@ -132,15 +152,13 @@ if (!function_exists('staff_require_shared')) {
 --------------------------------------------------------- */
 if (!function_exists('staff_flash_set')) {
   function staff_flash_set(string $key, string $msg): void {
-    if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
-    if (!isset($_SESSION['flash']) || !is_array($_SESSION['flash'])) $_SESSION['flash'] = [];
+if (!isset($_SESSION['flash']) || !is_array($_SESSION['flash'])) $_SESSION['flash'] = [];
     $_SESSION['flash'][$key] = $msg;
   }
 }
 if (!function_exists('staff_flash_get')) {
   function staff_flash_get(string $key): string {
-    if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
-    $msg = '';
+$msg = '';
     if (isset($_SESSION['flash']) && is_array($_SESSION['flash']) && array_key_exists($key, $_SESSION['flash'])) {
       $msg = (string)$_SESSION['flash'][$key];
       unset($_SESSION['flash'][$key]);
@@ -176,9 +194,7 @@ if (!function_exists('staff_pdo')) {
           $GLOBALS['pdo'] = $d;
           return $cached = $d;
         }
-      } catch (Throwable $e) {
-        // caller handles null
-      }
+      } catch (Throwable $e) {}
     }
 
     foreach (['db', 'database', 'dbh'] as $k) {
@@ -216,8 +232,7 @@ if (!function_exists('staff_id')) {
 --------------------------------------------------------- */
 if (!function_exists('staff_csrf_token')) {
   function staff_csrf_token(): string {
-    if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
-    if (empty($_SESSION['csrf_token']) || !is_string($_SESSION['csrf_token'])) {
+if (empty($_SESSION['csrf_token']) || !is_string($_SESSION['csrf_token'])) {
       $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
     }
     return (string)$_SESSION['csrf_token'];
@@ -230,8 +245,7 @@ if (!function_exists('staff_csrf_field')) {
 }
 if (!function_exists('staff_csrf_verify')) {
   function staff_csrf_verify(?string $postedToken): bool {
-    if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
-    $postedToken = is_string($postedToken) ? trim($postedToken) : '';
+$postedToken = is_string($postedToken) ? trim($postedToken) : '';
 
     if (function_exists('csrf_token_is_valid')) {
       return (bool)csrf_token_is_valid($postedToken);
@@ -303,10 +317,10 @@ if (function_exists('mk_require_staff_login')) {
   mk_require_staff_login();
   $didEnforce = true;
 } elseif (function_exists('require_staff_login')) {
-  require_staff_login();
+mk_require_staff_login();
   $didEnforce = true;
 } elseif (function_exists('require_staff')) {
-  require_staff();
+mk_require_staff_login();
   $didEnforce = true;
 } elseif (function_exists('require_login')) {
   require_login();

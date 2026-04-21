@@ -9,4 +9,4 @@ if (!isset($page_title) || !is_string($page_title) || $page_title === '') {
   $page_title = 'Platforms — Mkomi Igbo';
 }
 
-require_once __DIR__ . '/public_header.php';
+mk_require_shared('public_header.php');

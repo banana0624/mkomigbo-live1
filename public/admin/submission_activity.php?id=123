@@ -1,0 +1,69 @@
+<?php
+declare(strict_types=1);
+
+require_once __DIR__ . '/../../_init.php';
+
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+
+require __DIR__ . '/auth.php';
+requireLogin();
+
+$db = mk_db();
+
+$id = (int)($_GET['id'] ?? 0);
+
+if (!$id) {
+    echo "Invalid submission ID";
+    exit;
+}
+
+$stmt = $db->prepare("
+    SELECT * FROM submission_audit_log
+    WHERE submission_id = ?
+    ORDER BY created_at DESC
+");
+$stmt->execute([$id]);
+
+$logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$title = "Submission Activity";
+require __DIR__ . '/layout.php';
+?>
+
+<h2>Activity Timeline (Submission #<?= $id ?>)</h2>
+
+<?php if (!$logs): ?>
+    <p>No activity found.</p>
+<?php else: ?>
+    <ul style="line-height:1.6;">
+    <?php foreach ($logs as $log): 
+        $old = json_decode($log['old_value'], true) ?? [];
+        $new = json_decode($log['new_value'], true) ?? [];
+    ?>
+        <li style="margin-bottom:10px;">
+            <strong><?= htmlspecialchars($log['action']) ?></strong><br>
+
+            <small>
+                By: <?= htmlspecialchars($log['actor']) ?> |
+                <?= $log['created_at'] ?>
+            </small><br>
+
+            <?php if ($old): ?>
+                <div>Old: <?= htmlspecialchars(json_encode($old)) ?></div>
+            <?php endif; ?>
+
+            <?php if ($new): ?>
+                <div>New: <?= htmlspecialchars(json_encode($new)) ?></div>
+            <?php endif; ?>
+        </li>
+    <?php endforeach; ?>
+    </ul>
+<?php endif; ?>
+
+<p>
+    <a href="submissions.php">← Back to submissions</a>
+</p>
+
+<?php require __DIR__ . '/layout_footer.php'; ?>

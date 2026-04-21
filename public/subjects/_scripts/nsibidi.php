@@ -24,7 +24,9 @@ require_once APP_ROOT . '/private/functions/scripts_repository.php';
 $page_title = 'Culture · Nsịbịdị (Heritage & Meaning)';
 $nav_active = 'subjects';
 
-include APP_ROOT . '/private/shared/public_header.php';
+if (function_exists('mk_require_shared')) {
+  mk_require_shared('public_header.php');
+}
 
 $script = mk_script_by_slug('nsibidi');
 $domains = mk_domains_for_script('nsibidi', 'public');

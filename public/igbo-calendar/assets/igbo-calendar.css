@@ -1,0 +1,38 @@
+/* =========================================================
+   Broader calendar views pass
+   ========================================================= */
+.mk-view-actions,
+.mk-view-nav{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin:10px 0 12px;
+}
+
+.mk-mini-btn{
+  appearance:none;
+  border:1px solid rgba(0,0,0,.12);
+  background:#fff;
+  color:inherit;
+  border-radius:999px;
+  padding:8px 12px;
+  line-height:1.2;
+  font:inherit;
+  cursor:pointer;
+}
+
+.mk-mini-btn:hover{
+  transform:translateY(-1px);
+}
+
+.mk-mini-btn:focus-visible{
+  outline:2px solid rgba(0,0,0,.25);
+  outline-offset:2px;
+}
+
+@media print{
+  .mk-view-actions,
+  .mk-view-nav{
+    display:none !important;
+  }
+}

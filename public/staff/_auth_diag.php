@@ -1,16 +1,14 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/../_init.php';
+mk_require_staff_login();
+
 /**
  * /public/staff/_auth_diag.php
  * Minimal auth/DB diagnostics for staff login.
  * Delete this file after we fix the issue.
  */
-
-require_once __DIR__ . '/../_init.php';
-
-if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
-
 header('Content-Type: text/plain; charset=utf-8');
 
 echo "RUNNING FILE: " . (__FILE__) . "\n";

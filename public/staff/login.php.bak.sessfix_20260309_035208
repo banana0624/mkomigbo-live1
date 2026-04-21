@@ -1,0 +1,143 @@
+<?php
+declare(strict_types=1);
+
+if (!ob_get_level()) { @ob_start(); }
+require_once __DIR__ . '/../_init.php';
+
+@ini_set('display_errors', '0');
+@ini_set('display_startup_errors', '0');
+error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
+
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+header('Expires: 0');
+
+if (!function_exists('h')) {
+  function h(string $v): string {
+    return htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
+  }
+}
+
+function is_post(): bool {
+  return (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST');
+}
+
+function safe_internal_return(string $v): string {
+  $v = str_replace(["\r", "\n"], '', trim($v));
+  if ($v === '') return '/staff/';
+  if (preg_match('~^https?://~i', $v)) return '/staff/';
+  if ($v[0] !== '/') $v = '/' . $v;
+  return $v;
+}
+
+function redirect_to(string $path, int $code = 302): never {
+  $dest = function_exists('url_for') ? (string)url_for($path) : $path;
+  $dest = str_replace(["\r", "\n"], '', $dest);
+  header('Location: ' . $dest, true, $code);
+  exit;
+}
+
+if (!function_exists('mk_attempt_staff_login')) {
+  $auth = null;
+  if (defined('PRIVATE_PATH') && is_string(PRIVATE_PATH) && PRIVATE_PATH !== '') {
+    $auth = rtrim(PRIVATE_PATH, "/\\") . '/functions/auth.php';
+  } elseif (defined('APP_ROOT') && is_string(APP_ROOT) && APP_ROOT !== '') {
+    $auth = rtrim(APP_ROOT, "/\\") . '/private/functions/auth.php';
+  }
+  if ($auth && is_file($auth)) {
+    require_once $auth;
+  }
+}
+
+if (function_exists('mk__session_start')) {
+  mk__session_start();
+} elseif (session_status() !== PHP_SESSION_ACTIVE) {
+  @session_start();
+}
+
+$return = safe_internal_return((string)($_GET['return'] ?? ($_POST['return'] ?? '/staff/')));
+$force  = ((string)($_GET['force'] ?? '') === '1');
+
+$email = '';
+$error = '';
+
+if (((string)($_GET['forced'] ?? '')) === '1') {
+  $error = 'Your session expired or was invalidated. Please sign in again.';
+}
+
+if (!$force && function_exists('mk_is_staff_logged_in') && mk_is_staff_logged_in()) {
+  $uid = (int)($_SESSION['staff_user_id'] ?? 0);
+
+  if (function_exists('mk_staff_session_version_valid') && !$force && !$uid ? false : !mk_staff_session_version_valid($uid)) {
+    if (function_exists('mk_force_staff_logout_local')) {
+      mk_force_staff_logout_local();
+    }
+  } else {
+    redirect_to($return, 302);
+  }
+}
+
+if (is_post()) {
+  $email = trim((string)($_POST['email'] ?? ''));
+  $pass  = (string)($_POST['password'] ?? '');
+
+  if (!function_exists('mk_attempt_staff_login')) {
+    $error = 'Auth system not loaded.';
+  } else {
+    $res = mk_attempt_staff_login($email, $pass);
+    if (!empty($res['ok'])) {
+      redirect_to($return, 302);
+    }
+    $error = (string)($res['error'] ?? 'Login failed.');
+  }
+}
+?>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Staff Login</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#f6f7f9;color:#111827}
+    .wrap{max-width:520px;margin:60px auto;padding:0 16px}
+    .card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:18px;box-shadow:0 10px 30px rgba(0,0,0,.06)}
+    h1{margin:0 0 10px;font-size:20px}
+    label{display:block;font-size:12px;color:#374151;margin-top:10px}
+    input{width:100%;padding:10px 12px;border:1px solid #cfd4dc;border-radius:12px;margin-top:6px;box-sizing:border-box}
+    button{margin-top:14px;width:100%;padding:10px 12px;border:0;border-radius:12px;background:#111827;color:#fff;font-weight:650;cursor:pointer}
+    .err{margin:10px 0 0;padding:10px 12px;border-radius:12px;background:#fef2f2;border:1px solid #fecaca;color:#991b1b;font-size:13px}
+    .hint{margin-top:10px;font-size:12px;color:#6b7280}
+    a{color:#2563eb;text-decoration:none}
+    a:hover{text-decoration:underline}
+    code{background:#f3f4f6;padding:1px 4px;border-radius:6px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Staff Login</h1>
+
+      <?php if ($error !== ''): ?>
+        <div class="err"><?= h($error) ?></div>
+      <?php endif; ?>
+
+      <form method="post" autocomplete="on">
+        <input type="hidden" name="return" value="<?= h($return) ?>">
+
+        <label for="email">Email</label>
+        <input id="email" type="email" name="email" value="<?= h($email) ?>" required>
+
+        <label for="password">Password</label>
+        <input id="password" type="password" name="password" required>
+
+        <button type="submit">Sign in</button>
+      </form>
+
+      <div class="hint">
+        Tip: append <code>?force=1</code> to show this form even if you’re already logged in.
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Igbo Calendar cowrie emblem">
+  <defs>
+    <linearGradient id="shellBody" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f7f0dc"/>
+      <stop offset="0.55" stop-color="#eadfbe"/>
+      <stop offset="1" stop-color="#d8c79f"/>
+    </linearGradient>
+
+    <linearGradient id="shellRidge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fffaf0" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#c8b78c" stop-opacity="0.75"/>
+    </linearGradient>
+
+    <linearGradient id="shellSlit" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7b5b2e"/>
+      <stop offset="0.5" stop-color="#4f3717"/>
+      <stop offset="1" stop-color="#8a6534"/>
+    </linearGradient>
+
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#000000" flood-opacity="0.22"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#softShadow)">
+    <path
+      d="M64 14
+         C44 14, 28 29, 28 49
+         C28 73, 44 102, 64 114
+         C84 102, 100 73, 100 49
+         C100 29, 84 14, 64 14 Z"
+      fill="url(#shellBody)"
+      stroke="#b89e6b"
+      stroke-width="3"
+      stroke-linejoin="round"/>
+
+    <path
+      d="M64 22
+         C48 22, 35 34, 35 50
+         C35 69, 47 92, 64 103
+         C81 92, 93 69, 93 50
+         C93 34, 80 22, 64 22 Z"
+      fill="none"
+      stroke="url(#shellRidge)"
+      stroke-width="2.2"
+      stroke-linecap="round"/>
+
+    <path
+      d="M64 31
+         C57 31, 51 36, 49 44
+         C46 56, 47 73, 54 87
+         C57 94, 60 98, 64 101
+         C68 98, 71 94, 74 87
+         C81 73, 82 56, 79 44
+         C77 36, 71 31, 64 31 Z"
+      fill="url(#shellSlit)"
+      stroke="#f1e3bb"
+      stroke-width="1.7"
+      stroke-linejoin="round"/>
+
+    <path
+      d="M64 36
+         C59 36, 55 40, 54 47
+         C52 57, 53 72, 58 83
+         C60 88, 62 91, 64 93
+         C66 91, 68 88, 70 83
+         C75 72, 76 57, 74 47
+         C73 40, 69 36, 64 36 Z"
+      fill="none"
+      stroke="#2f2010"
+      stroke-opacity="0.35"
+      stroke-width="1.2"/>
+
+    <ellipse cx="51" cy="39" rx="7" ry="4" fill="#fffdf7" opacity="0.55" transform="rotate(-28 51 39)"/>
+    <ellipse cx="77" cy="42" rx="5" ry="3" fill="#fffdf7" opacity="0.28" transform="rotate(22 77 42)"/>
+  </g>
+</svg>

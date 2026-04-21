@@ -1,0 +1,12 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * Attachments engine for Mkomigbo
+ * Storage: lib/uploads/page_files/...
+ * DB: page_files (aligned to your schema)
+ *
+ * Public handler: /attachments/file.php?id=PAGE_FILE_ID
+ */
+
+if (!function_exists('mk

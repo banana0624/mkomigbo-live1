@@ -1,0 +1,62 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * /public/staff/logout.php
+ * Logout endpoint (idempotent + dedupe double-hits).
+ *
+ * If the browser hits this twice within ~ 3 seconds, we still clear the session,
+ * but we avoid writing a duplicate staff_logout audit row.
+ */
+
+if (!ob_get_level()) { @ob_start(); }
+require_once __DIR__ . '/../_init.php';
+
+// Start session with canonical policy if available
+if (function_exists('mk__session_start')) {
+  mk__session_start();
+} else {
+  if (session_status() !== PH_SESSION_ACTIVE) { @session_start(); }
+}
+
+$now  = time();
+$last = isset($_SESSION['_mk_last_logout_ts']) ? (int)$_SESSION['_mk_last_logout_ts'] : 0;
+$dedupe = (($now - $last) <= 3);
+$_SESSION['_mk_last_logout_ts'] = $now;
+
+// Identify staff id best-effort (for fallback audit)
+$sid = 0;
+if (function_exists('mk__staff_current_id')) {
+  $sid = (int)mk__staff_current_id();
+} elseif (!empty($_SESSION['staff_user_id']) && is_numeric($_SESSION['staff_user_id'])) {
+  $sid = (int)$_SESSION['staff_user_id'];
+}
+
+// If not a duplicate hit, prefer canonical logout (it audits once)
+if (!$dedupe && function_exists('mk_staff_logout')) {
+  mk_staff_logout();
+} else {
+  // Always clear session keys
+  unset(
+    $_SESSION['staff_user_id'],
+    $_SESSION['staff_email'],
+    $_SESSION['staff_roles'],
+    $_SESSION['staff_roles_ts']
+  );
+  @session_regenerate_id(true);
+
+  // Only audit in fallback path when not deduping
+  if (!$dedupe && function_exists('mk_staff_audit_log')) {
+    try {
+      mk_staff_audit_log('staff_logout', ['via' => 'logout.php', 'dedupe_guard' => 'v1'], ($sid > 0 ? $sid : 0));
+    } catch (Throwable $e) {
+      // swallow
+    }
+  }
+}
+
+// Redirect out
+$dest = '/staff/login.php?loggedout=1&ts=' . $now;
+if (function_exists('url_for')) { $dest = (string)url_for($dest); }
+header('Location: ' . $dest, true, 302);
+exit;

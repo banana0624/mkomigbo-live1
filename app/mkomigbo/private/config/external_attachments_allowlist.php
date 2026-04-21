@@ -1,27 +1,25 @@
 <?php
-declare(strict_types=1);
-
 /**
  * /app/mkomigbo/private/config/external_attachments_allowlist.php
  *
  * External attachment allowlist.
  *
  * SECURITY MODEL:
- * - Only allow HTTPS URLs
+ * - Only allow HTTPS URLs (enforced in validator)
  * - Only allow hosts explicitly listed here
  * - Subdomains are allowed ONLY when 'subdomains' => true
- * - Optional 'paths' restrict allowed path prefixes
+ * - Optional 'paths' restrict allowed path prefixes (string prefix match)
  * - We never fetch remote content server-side
- * - Public "open" (staff) is a redirect after re-validation
+ * - Staff "open" is a redirect after re-validation
  *
  * FORMAT:
  * return [
  *   'example.com' => [
- *     'subdomains' => true,      // allow *.example.com too
- *     'paths' => ['/wiki/', '/watch'],  // optional
+ *     'subdomains' => true,           // allow *.example.com too
+ *     'paths' => ['/a/', '/b/index'], // optional path-prefix allowlist
  *   ],
- *   'exact.host.com' => [
- *     'paths' => ['/'],
+ *   '*.example.org' => [
+ *     'paths' => ['/wiki/'],          // wildcard host keys supported too
  *   ],
  * ];
  */
@@ -47,20 +45,39 @@ return [
     ],
   ],
   'youtu.be' => [
-    'paths' => ['/'], // short links
+    // short links: /{id}
+    'paths' => ['/'],
   ],
 
   /* -----------------------------
-     Wikipedia / Wikimedia
+     Wikipedia
   ----------------------------- */
 
   'wikipedia.org' => [
     'subdomains' => true, // en.wikipedia.org, ig.wikipedia.org, etc.
-    'paths' => ['/wiki/'],
+    'paths' => [
+      '/wiki/',        // standard articles
+      '/w/index.php',  // search, oldid, etc.
+    ],
   ],
+
+  /* -----------------------------
+     Wikimedia (commons + uploads)
+  ----------------------------- */
+
   'wikimedia.org' => [
-    'subdomains' => true, // commons.wikimedia.org, upload.wikimedia.org, etc.
-    'paths' => ['/'],
+    'subdomains' => true,
+    'paths' => [
+      '/wiki/',       // commons.wikimedia.org/wiki/...
+      '/w/index.php', // commons searches
+    ],
+  ],
+  'upload.wikimedia.org' => [
+    'paths' => [
+      '/wikipedia/',  // direct media under upload.wikimedia.org/wikipedia/...
+      '/wikimedia/',  // direct media under upload.wikimedia.org/wikimedia/...
+      '/commons/',    // direct media under upload.wikimedia.org/commons/...
+    ],
   ],
 
   /* -----------------------------
@@ -88,8 +105,8 @@ return [
   ],
 
   /* -----------------------------
-     Optional media platforms (safe defaults)
-     (Leave them if you want them; remove if not needed)
+     Optional media platforms (safe-ish defaults)
+     Remove anything you don't need.
   ----------------------------- */
 
   'vimeo.com' => [
@@ -100,6 +117,4 @@ return [
     'subdomains' => true,
     'paths' => ['/'],
   ],
-
-  // Add more trusted domains here...
 ];

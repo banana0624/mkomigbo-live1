@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/../_init.php'; // adjust depth as needed
+
 /**
  * /public/staff/account/password.php
  * Staff: Change own password (permanent)
@@ -17,11 +19,6 @@ declare(strict_types=1);
 @ini_set('display_errors', '0');
 @ini_set('display_startup_errors', '0');
 error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
-
-require_once __DIR__ . '/../../_init.php';
-
-if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
-
 /* No-cache for account pages */
 header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
 header('Pragma: no-cache');

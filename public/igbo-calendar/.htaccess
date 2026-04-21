@@ -4,35 +4,60 @@ DirectoryIndex index.php
 <IfModule mod_rewrite.c>
 RewriteEngine On
 
-# Always normalize to trailing slash for directories (avoid redirect loops)
-RewriteCond %{REQUEST_FILENAME} -d
-RewriteRule ^(.+[^/])$ $1/ [R=301,L]
-
-# Direct routes
-RewriteRule ^install/?$ install/index.php [L,QSA]
-RewriteRule ^download/?$ download.php [L,QSA]
-
-# If file exists, serve it
+# ------------------------------------------------------------
+# 1) Serve existing files immediately
+# ------------------------------------------------------------
 RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule ^ - [L]
 
-# Default: calendar app
+# ------------------------------------------------------------
+# 2) Normalize trailing slash for real directories only
+#    (avoids loops / keeps canonical URLs stable)
+# ------------------------------------------------------------
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteCond %{REQUEST_URI} !/$
+RewriteRule ^(.+)$ $1/ [R=301,L]
+
+# ------------------------------------------------------------
+# 3) Direct routes
+# ------------------------------------------------------------
+RewriteRule ^install/?$ install/index.php [L,QSA]
+RewriteRule ^download/?$ download.php [L,QSA]
+
+# ------------------------------------------------------------
+# 4) Default: calendar app
+# ------------------------------------------------------------
 RewriteRule ^$ index.php [L,QSA]
 </IfModule>
 
-# Requested snippet (no-cache SW + manifest)
+# ------------------------------------------------------------
+# PWA headers: SW + manifest MUST NOT be cached aggressively
+# (pwa-hook.js stays immutable; you cache-bust via $asset() in index.php)
+# ------------------------------------------------------------
 <IfModule mod_headers.c>
-  <Files "service-worker.js">
+
+  # Service worker entrypoints (keep fresh)
+  <FilesMatch "^(?:service-worker|sw)\.js$">
     Header always set Content-Type "application/javascript; charset=utf-8"
     Header always set Cache-Control "no-cache, no-store, must-revalidate"
     Header always set Pragma "no-cache"
     Header always set Expires "0"
-  </Files>
+  </FilesMatch>
 
-  <Files "manifest.json">
+  # Manifest (keep fresh so installability updates propagate)
+  <FilesMatch "^manifest\.json$">
     Header always set Content-Type "application/manifest+json; charset=utf-8"
     Header always set Cache-Control "no-cache, no-store, must-revalidate"
     Header always set Pragma "no-cache"
     Header always set Expires "0"
-  </Files>
+  </FilesMatch>
+  
+  <IfModule mod_headers.c>
+      # DEV: do not lock CSS/JS for 1 year
+      <FilesMatch "\.(css|js)$">
+        Header set Cache-Control "no-cache, must-revalidate, max-age=0"
+      </FilesMatch>
+    </IfModule>
+
+
 </IfModule>

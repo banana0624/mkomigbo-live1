@@ -1,0 +1,378 @@
+<?php
+declare(strict_types=1);
+
+require_once __DIR__ . '/../../_init.php';
+
+/**
+ * /public/staff/page-files/normalize.php
+ * Staff: Backfill/normalize metadata columns in page_files.
+ *
+ * Idempotent:
+ * - Only fills missing kind/source_key/source_label/host/canonical_url (and optionally title).
+ * - No network calls. Pure parsing.
+ */
+
+@ini_set('display_errors', '0');
+@ini_set('display_startup_errors', '0');
+error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
+mk_require_staff_login();
+
+if (!function_exists('h')) {
+  function h(string $v): string { return htmlspecialchars($v, ENT_QUOTES, 'UTF-8'); }
+}
+if (!function_exists('staff_csrf_verify')) {
+  function staff_csrf_verify(string $token): bool {
+$sess = $_SESSION['csrf_token'] ?? '';
+    if (!is_string($sess) || $sess === '' || $token === '') return false;
+    return hash_equals($sess, $token);
+  }
+}
+if (!function_exists('staff_csrf_field')) {
+  function staff_csrf_field(): string {
+if (empty($_SESSION['csrf_token']) || !is_string($_SESSION['csrf_token'])) {
+      $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+    return '<input type="hidden" name="csrf_token" value="' . h((string)$_SESSION['csrf_token']) . '">';
+  }
+}
+if (!function_exists('pf__column_exists')) {
+  function pf__column_exists(PDO $pdo, string $table, string $column): bool {
+    static $cache = [];
+    $key = strtolower($table . '.' . $column);
+    if (array_key_exists($key, $cache)) return (bool)$cache[$key];
+    try {
+      $st = $pdo->prepare("
+        SELECT 1
+        FROM information_schema.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME = ?
+          AND COLUMN_NAME = ?
+        LIMIT 1
+      ");
+      $st->execute([$table, $column]);
+      $cache[$key] = (bool)$st->fetchColumn();
+      return (bool)$cache[$key];
+    } catch (Throwable $e) {
+      $cache[$key] = false;
+      return false;
+    }
+  }
+}
+
+$u = static function(string $path): string {
+  return function_exists('url_for') ? (string)url_for($path) : $path;
+};
+
+$pdo = (function_exists('db') && db() instanceof PDO) ? db() : null;
+if (!$pdo instanceof PDO) {
+  http_response_code(500);
+  header('Content-Type: text/plain; charset=utf-8');
+  echo "Database handle not available.\n";
+  exit;
+}
+
+/* Hard requirement: new columns exist */
+$has_kind      = pf__column_exists($pdo, 'page_files', 'kind');
+$has_sourcekey = pf__column_exists($pdo, 'page_files', 'source_key');
+$has_sourcelab = pf__column_exists($pdo, 'page_files', 'source_label');
+$has_host      = pf__column_exists($pdo, 'page_files', 'host');
+$has_canon     = pf__column_exists($pdo, 'page_files', 'canonical_url');
+$has_title     = pf__column_exists($pdo, 'page_files', 'title');
+
+if (!$has_kind && !$has_sourcekey && !$has_host && !$has_canon) {
+  http_response_code(500);
+  header('Content-Type: text/plain; charset=utf-8');
+  echo "Normalization columns not detected on page_files.\n";
+  exit;
+}
+
+/* ---------- Normalization helpers (no network) ---------- */
+
+$host_from_url = static function(string $url): string {
+  $p = @parse_url($url);
+  $host = isset($p['host']) ? strtolower((string)$p['host']) : '';
+  $host = preg_replace('/^www\./i', '', $host) ?? $host;
+  return $host ?: '';
+};
+
+$clean_url = static function(string $url): string {
+  $p = @parse_url($url);
+  if (!$p || empty($p['scheme']) || empty($p['host'])) return $url;
+
+  $scheme = (string)$p['scheme'];
+  $host   = (string)$p['host'];
+  $path   = (string)($p['path'] ?? '');
+  $query  = (string)($p['query'] ?? '');
+  $frag   = (string)($p['fragment'] ?? '');
+
+  if ($query !== '') {
+    parse_str($query, $q);
+    foreach (array_keys($q) as $k) {
+      $lk = strtolower((string)$k);
+      if (str_starts_with($lk, 'utm_') || in_array($lk, ['fbclid','gclid','mc_cid','mc_eid'], true)) {
+        unset($q[$k]);
+      }
+    }
+    $query = http_build_query($q);
+  }
+
+  $out = $scheme . '://' . $host . $path;
+  if ($query !== '') $out .= '?' . $query;
+  if ($frag !== '')  $out .= '#' . $frag;
+  return $out;
+};
+
+$source_from_host = static function(string $host): array {
+  $h = strtolower($host);
+  $h = preg_replace('/^www\./i', '', $h) ?? $h;
+
+  $map = [
+    'wikipedia.org'      => ['wikipedia', 'Wikipedia'],
+    'wikimedia.org'      => ['wikimedia', 'Wikimedia'],
+    'youtu.be'           => ['youtube', 'YouTube'],
+    'youtube.com'        => ['youtube', 'YouTube'],
+    'archive.org'        => ['internet_archive', 'Internet Archive'],
+    'openlibrary.org'    => ['openlibrary', 'Open Library'],
+    'doi.org'            => ['doi', 'DOI'],
+    'jstor.org'          => ['jstor', 'JSTOR'],
+    'books.google.com'   => ['google_books', 'Google Books'],
+    'scholar.google.com' => ['google_scholar', 'Google Scholar'],
+  ];
+
+  foreach ($map as $domain => $pair) {
+    if ($h === $domain || str_ends_with($h, '.' . $domain)) return $pair;
+  }
+
+  return [$h !== '' ? 'web' : 'unknown', $h !== '' ? $h : 'Unknown'];
+};
+
+$guess_kind = static function(array $row): string {
+  $is_external = !empty($row['is_external']) || !empty($row['external_url']);
+  $host = strtolower((string)($row['host'] ?? $row['external_host'] ?? ''));
+  $mime = strtolower((string)($row['mime_type'] ?? ''));
+  $name = (string)($row['original_name'] ?? $row['file_path'] ?? $row['stored_name'] ?? '');
+
+  if ($is_external) {
+    if (preg_match('~(^|\.)youtu\.be$|(^|\.)youtube\.com$~', $host)) return 'video';
+    return 'web';
+  }
+
+  if ($mime !== '') {
+    if (str_starts_with($mime, 'application/pdf')) return 'pdf';
+    if (str_starts_with($mime, 'image/')) return 'image';
+    if (str_starts_with($mime, 'audio/')) return 'audio';
+    if (str_starts_with($mime, 'video/')) return 'video';
+  }
+
+  $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+  if ($ext === 'pdf') return 'pdf';
+  if (in_array($ext, ['png','jpg','jpeg','gif','webp','svg'], true)) return 'image';
+  if (in_array($ext, ['mp3','wav','ogg','m4a','flac'], true)) return 'audio';
+  if (in_array($ext, ['mp4','webm','mov','mkv'], true)) return 'video';
+  if (in_array($ext, ['csv','tsv','json','xml'], true)) return 'dataset';
+
+  return 'doc';
+};
+
+/* ---------- Controller ---------- */
+
+$active_nav = 'page-files';
+$page_title = 'Normalize Attachments • Staff';
+require_once APP_ROOT . '/private/shared/staff_header.php';
+
+$method = strtoupper((string)($_SERVER['REQUEST_METHOD'] ?? 'GET'));
+$ok_msg = '';
+$err_msg = '';
+$report = [];
+
+if ($method === 'POST') {
+  $token = (string)($_POST['csrf_token'] ?? '');
+  if (!staff_csrf_verify($token)) {
+    $err_msg = 'Security check failed (CSRF).';
+  } else {
+    $page_id = (int)($_POST['page_id'] ?? 0);
+    $limit   = (int)($_POST['limit'] ?? 200);
+    if ($limit < 1) $limit = 200;
+    if ($limit > 2000) $limit = 2000;
+
+    $dry = ((string)($_POST['dry_run'] ?? '0') === '1');
+    $fill_title = ((string)($_POST['fill_title'] ?? '0') === '1');
+
+    $where = [];
+    $bind  = [];
+
+    if ($page_id > 0) { $where[] = 'page_id = :pid'; $bind[':pid'] = $page_id; }
+
+    // Only rows missing *something* we care about
+    $miss = [];
+    if ($has_kind)      $miss[] = "(kind IS NULL OR kind = '')";
+    if ($has_sourcekey) $miss[] = "(source_key IS NULL OR source_key = '')";
+    if ($has_sourcelab) $miss[] = "(source_label IS NULL OR source_label = '')";
+    if ($has_host)      $miss[] = "(host IS NULL OR host = '')";
+    if ($has_canon)     $miss[] = "(canonical_url IS NULL OR canonical_url = '')";
+    if ($has_title && $fill_title) $miss[] = "(title IS NULL OR title = '')";
+
+    if ($miss) $where[] = '(' . implode(' OR ', $miss) . ')';
+
+    $sql = "SELECT * FROM page_files";
+    if ($where) $sql .= " WHERE " . implode(' AND ', $where);
+    $sql .= " ORDER BY id ASC LIMIT " . (int)$limit;
+
+    $st = $pdo->prepare($sql);
+    foreach ($bind as $k => $v) $st->bindValue($k, $v, PDO::PARAM_INT);
+    $st->execute();
+    $rows = $st->fetchAll(PDO::FETCH_ASSOC) ?: [];
+
+    $updated = 0;
+
+    foreach ($rows as $r) {
+      $id = (int)($r['id'] ?? 0);
+      if ($id < 1) continue;
+
+      $is_external = ((int)($r['is_external'] ?? 0) === 1) || (!empty($r['external_url'] ?? ''));
+
+      $ext = trim((string)($r['external_url'] ?? ''));
+      $host = trim((string)($r['host'] ?? ''));
+      if ($host === '' && $is_external && $ext !== '') $host = $host_from_url($ext);
+
+      $canon = trim((string)($r['canonical_url'] ?? ''));
+      if ($canon === '' && $is_external && $ext !== '') $canon = $clean_url($ext);
+
+      $kind = trim((string)($r['kind'] ?? ''));
+      if ($kind === '') $kind = $guess_kind(array_merge($r, ['host' => $host]));
+
+      $source_key = trim((string)($r['source_key'] ?? ''));
+      $source_lab = trim((string)($r['source_label'] ?? ''));
+      if ($source_key === '' || $source_lab === '') {
+        [$sk, $sl] = $source_from_host($host);
+        if ($source_key === '') $source_key = $sk;
+        if ($source_lab === '') $source_lab = $sl;
+      }
+
+      $title = trim((string)($r['title'] ?? ''));
+      if ($has_title && $fill_title && $title === '') {
+        $title = trim((string)($r['original_name'] ?? ''));
+        if ($title === '' && $is_external && $source_lab !== '') $title = $source_lab;
+      }
+
+      $set = [];
+      $b = [':id' => $id];
+
+      if ($has_kind && (empty($r['kind']) || $r['kind'] === null)) { $set[] = "kind = :k"; $b[':k'] = $kind; }
+      if ($has_sourcekey && (empty($r['source_key']) || $r['source_key'] === null)) { $set[] = "source_key = :sk"; $b[':sk'] = $source_key; }
+      if ($has_sourcelab && (empty($r['source_label']) || $r['source_label'] === null)) { $set[] = "source_label = :sl"; $b[':sl'] = $source_lab; }
+      if ($has_host && (empty($r['host']) || $r['host'] === null)) { $set[] = "host = :h"; $b[':h'] = $host; }
+      if ($has_canon && (empty($r['canonical_url']) || $r['canonical_url'] === null)) { $set[] = "canonical_url = :cu"; $b[':cu'] = $canon; }
+      if ($has_title && $fill_title && (empty($r['title']) || $r['title'] === null)) { $set[] = "title = :t"; $b[':t'] = $title; }
+
+      if (!$set) continue;
+
+      $report[] = [
+        'id' => $id,
+        'page_id' => (int)($r['page_id'] ?? 0),
+        'set' => implode(', ', $set),
+        'dry' => $dry ? 'yes' : 'no'
+      ];
+
+      if (!$dry) {
+        $sqlU = "UPDATE page_files SET " . implode(', ', $set) . " WHERE id = :id LIMIT 1";
+        $stU = $pdo->prepare($sqlU);
+        foreach ($b as $k => $v) {
+          if ($v === null) $stU->bindValue($k, null, PDO::PARAM_NULL);
+          elseif (is_int($v)) $stU->bindValue($k, $v, PDO::PARAM_INT);
+          else $stU->bindValue($k, (string)$v, PDO::PARAM_STR);
+        }
+        $stU->execute();
+      }
+
+      $updated++;
+    }
+
+    $ok_msg = $dry
+      ? "Dry-run complete. Would update {$updated} row(s)."
+      : "Normalization complete. Updated {$updated} row(s).";
+  }
+}
+
+?>
+<div class="container">
+
+  <div class="hero" style="margin-bottom:16px;">
+    <div class="hero__row" style="display:flex; gap:14px; justify-content:space-between; align-items:flex-start; flex-wrap:wrap;">
+      <div>
+        <h1 class="hero__title">Normalize / Backfill</h1>
+        <p class="hero__sub">Fill missing metadata fields in <code>page_files</code> (idempotent, safe).</p>
+      </div>
+      <div class="hero__actions" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:4px;">
+        <a class="btn btn--ghost" href="<?php echo h($u('/staff/page-files/index.php')); ?>">← Back to Attachments</a>
+      </div>
+    </div>
+  </div>
+
+  <?php if ($ok_msg !== ''): ?><div class="alert alert--success"><?php echo h($ok_msg); ?></div><?php endif; ?>
+  <?php if ($err_msg !== ''): ?><div class="alert alert--danger"><?php echo h($err_msg); ?></div><?php endif; ?>
+
+  <div class="card">
+    <div class="card__body">
+      <form method="post" action="<?php echo h($u('/staff/page-files/normalize.php')); ?>" class="row row--gap" style="flex-wrap:wrap; align-items:flex-end;">
+        <?php echo staff_csrf_field(); ?>
+
+        <div class="field" style="min-width:160px;">
+          <label class="label">page_id (optional)</label>
+          <input class="input mono" type="number" name="page_id" placeholder="e.g. 123">
+        </div>
+
+        <div class="field" style="min-width:160px;">
+          <label class="label">limit</label>
+          <input class="input mono" type="number" name="limit" value="200" min="1" max="2000">
+        </div>
+
+        <label class="check" style="margin-bottom:6px;">
+          <input type="checkbox" name="dry_run" value="1" checked>
+          <span>Dry-run</span>
+        </label>
+
+        <?php if ($has_title): ?>
+          <label class="check" style="margin-bottom:6px;">
+            <input type="checkbox" name="fill_title" value="1">
+            <span>Also fill empty title</span>
+          </label>
+        <?php endif; ?>
+
+        <button class="btn btn--primary" type="submit">Run</button>
+      </form>
+    </div>
+  </div>
+
+  <?php if ($report): ?>
+    <div class="card" style="margin-top:14px;">
+      <div class="card__body">
+        <h2 style="margin:0;">Preview</h2>
+        <div style="margin-top:10px; overflow:auto;">
+          <table class="table" style="width:100%; min-width:820px;">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>page_id</th>
+                <th>Updates</th>
+                <th>Dry</th>
+              </tr>
+            </thead>
+            <tbody>
+              <?php foreach ($report as $r): ?>
+                <tr>
+                  <td class="mono"><?php echo (int)$r['id']; ?></td>
+                  <td class="mono"><?php echo (int)$r['page_id']; ?></td>
+                  <td class="muted"><?php echo h((string)$r['set']); ?></td>
+                  <td class="mono"><?php echo h((string)$r['dry']); ?></td>
+                </tr>
+              <?php endforeach; ?>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  <?php endif; ?>
+
+</div>
+<?php require_once APP_ROOT . '/private/shared/staff_footer.php'; ?>

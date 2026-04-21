@@ -1,0 +1,214 @@
+/* /public/igbo-calendar/calendar-ux.js */
+(function () {
+  "use strict";
+
+  window.__igcalUxLoaded = "2026-03-15-safe-fallback";
+
+  function qs(sel, root){ return (root || document).querySelector(sel); }
+  function qsa(sel, root){ return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
+
+  function clampInt(v, lo, hi, fallback) {
+    var s = (v === null || v === undefined) ? "" : String(v);
+    var n = parseInt(s, 10);
+    if (!isFinite(n)) return fallback;
+    if (n < lo) return lo;
+    if (n > hi) return hi;
+    return n;
+  }
+
+  function app(){
+    var all = document.querySelectorAll('[data-app="igbo-calendar"]');
+    return (all && all.length) ? all[all.length - 1] : null;
+  }
+
+  function getState(a){
+    var yAttr = a.getAttribute("data-selected-year");
+    var y = clampInt(yAttr, 1, 9999, (new Date()).getUTCFullYear());
+
+    var mAttr = a.getAttribute("data-selected-month");
+    var m = clampInt(mAttr, 1, 13, 1);
+
+    return { y: y, m: m };
+  }
+
+  function hardNav(y, m){
+    window.location.href =
+      "/igbo-calendar/?year=" + encodeURIComponent(String(y)) +
+      "&m=" + encodeURIComponent(String(m));
+  }
+
+  function setLoading(a, isLoading){
+    var loading = qs(".igcal-loading", a);
+    var mount = qs("#igcal-mount", a);
+    if (loading) loading.hidden = !isLoading;
+    if (mount) mount.setAttribute("aria-busy", isLoading ? "true" : "false");
+  }
+
+  function showOnlyMonth(a, m){
+    var mount = qs("#igcal-mount", a);
+    if (!mount) return;
+
+    var list = mount.querySelectorAll('.igcal-month[data-ig-month]');
+    for (var i = 0; i < list.length; i++) {
+      var s = list[i];
+      var mm = parseInt(s.getAttribute("data-ig-month") || "0", 10);
+      var on = (mm === m);
+      s.hidden = !on;
+      s.setAttribute("aria-hidden", on ? "false" : "true");
+    }
+  }
+
+  function updateViewedDaySummary(a, cell){
+    var box = qs("#igcal-viewed-day-summary", a);
+    if (!box) return;
+
+    if (!cell) {
+      box.textContent = "Select a day from the calendar.";
+      return;
+    }
+
+    var market = cell.getAttribute("data-market") || "";
+    var symbol = cell.getAttribute("data-market-symbol") || "";
+    var igboDay = cell.getAttribute("data-igbo-day") || "";
+    var longDate = cell.getAttribute("data-weekday-long") || cell.getAttribute("data-iso") || "";
+    var moonStage = cell.getAttribute("data-moon-stage") || "";
+    var moonEmoji = cell.getAttribute("data-moon-emoji") || "";
+    var moonPct = cell.getAttribute("data-moon-pct") || "";
+
+    qsa(".mk-cal-cell.is-selected", a).forEach(function (x) {
+      x.classList.remove("is-selected");
+      var btn = qs(".mk-cal-cell__button", x);
+      if (btn) btn.setAttribute("aria-pressed", "false");
+    });
+
+    cell.classList.add("is-selected");
+    var btn = qs(".mk-cal-cell__button", cell);
+    if (btn) btn.setAttribute("aria-pressed", "true");
+
+    box.innerHTML = '' +
+      '<div class="igcal-summary-line"><strong>' + String(market + (symbol ? " " + symbol : "")).replace(/</g, "&lt;") + '</strong></div>' +
+      '<div class="igcal-summary-line">Igbo Day: <strong>' + String(igboDay).replace(/</g, "&lt;") + '</strong></div>' +
+      '<div class="igcal-summary-line">' + String(longDate).replace(/</g, "&lt;") + '</div>' +
+      '<div class="igcal-summary-line">Moon: <strong>' + String(moonStage).replace(/</g, "&lt;") + '</strong> ' +
+      String(moonEmoji).replace(/</g, "&lt;") + ' · ' + String(moonPct).replace(/</g, "&lt;") + '%</div>';
+  }
+
+  function updateMonthSummary(a){
+    var box = qs("#igcal-viewed-month-summary", a);
+    if (!box) return;
+    var st = getState(a);
+    box.innerHTML =
+      '<div class="igcal-summary-line"><strong>Viewed Month</strong></div>' +
+      '<div class="igcal-summary-line">Month: <strong>' + st.m + '</strong></div>' +
+      '<div class="igcal-summary-line">Igbo Year: <strong>' + st.y + '</strong></div>';
+  }
+
+  function updateYearSummary(a){
+    var box = qs("#igcal-viewed-year-summary", a);
+    if (!box) return;
+    var st = getState(a);
+    box.innerHTML =
+      '<div class="igcal-summary-line"><strong>Igbo Year ' + st.y + '</strong></div>' +
+      '<div class="igcal-summary-line">Month 7 always has 29 days.</div>';
+  }
+
+  function updateRangeSummary(a){
+    var box = qs("#igcal-year-range-summary", a);
+    if (!box) return;
+    var st = getState(a);
+    box.innerHTML =
+      '<div class="igcal-summary-line"><strong>Igbo Year ' + st.y + '</strong></div>' +
+      '<div class="igcal-summary-line">Range view available online.</div>';
+  }
+
+  function bindDayClicks(a){
+    qsa(".mk-cal-cell__button", a).forEach(function(btn){
+      btn.addEventListener("click", function(e){
+        e.preventDefault();
+        var cell = btn.closest(".mk-cal-cell");
+        if (!cell) return;
+        updateViewedDaySummary(a, cell);
+      });
+    });
+  }
+
+  function chooseDefaultViewedCell(a){
+    var st = getState(a);
+    var todayIso = a.getAttribute("data-today-iso") || "";
+    var currentMonthToday = qs('.igcal-month[data-ig-month="' + String(st.m) + '"] .mk-cal-cell[data-iso="' + todayIso + '"]', a);
+    if (currentMonthToday) return currentMonthToday;
+    return qs('.igcal-month[data-ig-month="' + String(st.m) + '"] .mk-cal-cell', a);
+  }
+
+  function bind(){
+    var a = app();
+    if (!a) return;
+
+    var prev = qs("#igcal-prev-month", a);
+    var next = qs("#igcal-next-month", a);
+    var curr = qs("#igcal-current-month", a);
+    var monthSel = qs("#igcal-month-select", a);
+    var yearSel  = qs("#igcal-year-select", a);
+    var yearBtn  = qs("#igcal-apply-year", a);
+
+    function navMonth(delta){
+      var st = getState(a);
+      var y = st.y;
+      var m = st.m + delta;
+
+      if (m < 1) { m = 13; y -= 1; }
+      if (m > 13) { m = 1; y += 1; }
+
+      hardNav(y, m);
+    }
+
+    if (prev) prev.addEventListener("click", function(e){ e.preventDefault(); navMonth(-1); });
+    if (next) next.addEventListener("click", function(e){ e.preventDefault(); navMonth(1); });
+
+    if (curr) {
+      curr.addEventListener("click", function(e){
+        e.preventDefault();
+        hardNav(getState(a).y, getState(a).m);
+      });
+    }
+
+    if (monthSel) {
+      monthSel.addEventListener("change", function(){
+        hardNav(getState(a).y, clampInt(monthSel.value, 1, 13, 1));
+      });
+    }
+
+    if (yearBtn) {
+      yearBtn.addEventListener("click", function(){
+        hardNav(clampInt(yearSel ? yearSel.value : getState(a).y, 1, 9999, getState(a).y), 1);
+      });
+    }
+
+    updateMonthSummary(a);
+    updateYearSummary(a);
+    updateRangeSummary(a);
+    setLoading(a, true);
+  }
+
+  function onRendered(){
+    var a = app();
+    if (!a) return;
+
+    setLoading(a, false);
+
+    var st = getState(a);
+    showOnlyMonth(a, clampInt(st.m, 1, 13, 1));
+    bindDayClicks(a);
+    updateMonthSummary(a);
+    updateYearSummary(a);
+    updateRangeSummary(a);
+
+    var defaultCell = chooseDefaultViewedCell(a);
+    if (defaultCell) updateViewedDaySummary(a, defaultCell);
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", bind);
+  else bind();
+
+  window.addEventListener("igcal:rendered", onRendered);
+})();

@@ -23,3 +23,26 @@ app/mkomigbo/private/config/db.php
 
 # secrets
 app/mkomigbo/private/config/db.php
+^U
+# Environment
+.env
+
+# Logs
+*.log
+
+# Sessions / cache
+/tmp
+/cache
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Vendor (if using composer later)
+/vendor/
+
+# Node (if ever used)
+/node_modules/
+
+# Uploads (if applicable)
+/public/uploads/

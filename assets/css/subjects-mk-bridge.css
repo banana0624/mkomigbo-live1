@@ -1,0 +1,11 @@
+/* =========================================================
+   /public/lib/css/subjects-mk-bridge.css
+   Keep this SMALL: mk-only micro-fixes not worth putting elsewhere.
+   ========================================================= */
+
+.mk-card__link:focus{ outline: none; }
+.mk-card__link:focus-visible{
+  outline: 2px solid rgba(17,17,17,.30);
+  outline-offset: 3px;
+  border-radius: 12px;
+}

@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/../../../../_init.php';
+
 /**
  * /public/staff/subjects/pgs/files/download.php
  * Legacy GET shim -> POST /staff/page-files/download.php
@@ -17,22 +19,12 @@ declare(strict_types=1);
 @ini_set('display_errors', '0');
 @ini_set('display_startup_errors', '0');
 error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
-
-require_once __DIR__ . '/../_init.php';
-if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
-
 if (!function_exists('h')) {
   function h(string $v): string { return htmlspecialchars($v, ENT_QUOTES, 'UTF-8'); }
 }
 
 /* Staff auth */
-if (function_exists('require_staff')) {
-  require_staff();
-} elseif (function_exists('require_staff_login')) {
-  require_staff_login();
-} elseif (function_exists('mk_require_staff_login')) {
-  mk_require_staff_login();
-}
+mk_require_staff_login();
 
 /* Inputs */
 $fileId = (int)($_GET['id'] ?? 0);

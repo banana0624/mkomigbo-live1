@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
+
 require_once __DIR__ . '/../../../../_init.php';
 
-require_once __DIR__ . '/../../../_init.php';
-
+mk_require_staff_login();
 
 /**
  * /public/staff/subjects/pgs/files/delete.php
@@ -44,14 +44,13 @@ if (!function_exists('pf__flash_set')) {
       mk_flash_set($key, $msg);
       return;
     }
-    if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
-    $_SESSION[$key] = $msg;
+$_SESSION[$key] = $msg;
   }
 }
 
 /* Auth guard */
 if (function_exists('require_staff')) {
-  require_staff();
+mk_require_staff_login();
 } elseif (function_exists('require_login')) {
   require_login();
 }
@@ -165,8 +164,7 @@ if ($method === 'POST') {
     csrf_require();
   } else {
     $sent = (string)($_POST['csrf_token'] ?? '');
-    if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
-    $sess = (string)($_SESSION['csrf_token'] ?? '');
+$sess = (string)($_SESSION['csrf_token'] ?? '');
     if ($sent === '' || $sess === '' || !hash_equals($sess, $sent)) {
       $errors[] = 'Security check failed (CSRF). Please reload and try again.';
     }
@@ -231,8 +229,7 @@ staff_render_header('Staff • Delete Attachment — Mkomigbo', 'pages');
         <?= csrf_field() ?>
       <?php else: ?>
         <?php
-          if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
-          if (empty($_SESSION['csrf_token']) || !is_string($_SESSION['csrf_token'])) {
+if (empty($_SESSION['csrf_token']) || !is_string($_SESSION['csrf_token'])) {
             $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
           }
         ?>

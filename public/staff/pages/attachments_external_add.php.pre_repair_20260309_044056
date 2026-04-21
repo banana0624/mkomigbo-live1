@@ -1,0 +1,223 @@
+<?php
+declare(strict_types=1);
+
+require_once __DIR__ . '/../../_init.php';
+
+mk_require_staff_login();
+
+@ini_set('display_errors', '0');
+@ini_set('display_startup_errors', '0');
+error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
+
+mk_staff_session_start();
+
+$method = strtoupper((string)($_SERVER['REQUEST_METHOD'] ?? 'GET'));
+if ($method !== 'POST') { http_response_code(405); header('Allow: POST'); exit; }
+
+if (!function_exists('staff_safe_return_url')) {
+  function staff_safe_return_url(string $raw, string $default): string {
+    $raw = trim($raw);
+    if ($raw === '') return $default;
+    $raw = rawurldecode($raw);
+    if ($raw === '' || $raw[0] !== '/') return $default;
+    if (preg_match('~^//~', $raw)) return $default;
+    if (preg_match('~^[a-z]+:~i', $raw)) return $default;
+    if (strpos($raw, '/staff/') !== 0) return $default;
+    return $raw;
+  }
+}
+if (!function_exists('staff_redirect')) {
+  function staff_redirect(string $location, int $code = 302): void {
+    $location = str_replace(["\r","\n"], '', $location);
+    header('Location: ' . $location, true, $code);
+    exit;
+  }
+}
+if (!function_exists('staff_pdo')) {
+  function staff_pdo(): ?PDO {
+    return (function_exists('db') && db() instanceof PDO) ? db() : null;
+  }
+}
+if (!function_exists('staff_csrf_verify')) {
+  function staff_csrf_verify(string $token): bool {
+    mk_staff_session_start();
+    if ($token === '') return false;
+
+    foreach (['csrf_verify', 'mk_csrf_verify', 'csrf_check'] as $fn) {
+      if (function_exists($fn)) {
+        try {
+          if ($fn($token) === true) return true;
+        } catch (Throwable $e) {
+          // continue
+        }
+      }
+    }
+
+    $sessionCandidates = [];
+    foreach (['csrf_token', 'csrf', '_token'] as $k) {
+      if (!empty($_SESSION[$k]) && is_string($_SESSION[$k])) {
+        $sessionCandidates[] = (string)$_SESSION[$k];
+      }
+    }
+    $sessionCandidates = array_values(array_unique(array_filter($sessionCandidates, static fn($v) => $v !== '')));
+
+    foreach ($sessionCandidates as $sess) {
+      if (hash_equals($sess, $token)) return true;
+    }
+
+    return false;
+  }
+}
+if (!function_exists('pf__column_exists')) {
+  function pf__column_exists(PDO $pdo, string $table, string $column): bool {
+    static $cache = [];
+    $key = strtolower($table . '.' . $column);
+    if (array_key_exists($key, $cache)) return (bool)$cache[$key];
+    try {
+      $st = $pdo->prepare("
+        SELECT 1
+        FROM information_schema.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME = ?
+          AND COLUMN_NAME = ?
+        LIMIT 1
+      ");
+      $st->execute([$table, $column]);
+      $cache[$key] = (bool)$st->fetchColumn();
+      return (bool)$cache[$key];
+    } catch (Throwable $e) {
+      $cache[$key] = false;
+      return false;
+    }
+  }
+}
+
+$return = staff_safe_return_url((string)($_POST['return'] ?? ''), '/staff/pages/index.php');
+$go = static function (string $return, string $code): never {
+  $target = $return . (strpos($return, '?') === false ? '?' : '&') . 'attach=' . rawurlencode($code);
+  if (function_exists('url_for')) $target = (string)url_for($target);
+  staff_redirect($target, 303);
+};
+
+$staffId = (int)($_SESSION['staff_user_id'] ?? 0);
+if ($staffId < 1) $go($return, 'denied');
+
+$token = (string)($_POST['csrf_token'] ?? ($_POST['csrf'] ?? ($_POST['_token'] ?? '')));
+if (!staff_csrf_verify($token)) $go($return, 'csrf');
+
+$pageId = (int)($_POST['page_id'] ?? 0);
+$rawUrl = trim((string)($_POST['external_url'] ?? ''));
+$label  = trim((string)($_POST['label'] ?? ''));
+
+if ($pageId < 1) $go($return, 'invalid');
+if ($rawUrl === '') $go($return, 'invalid');
+
+$rawUrl = preg_replace('/[\x00-\x1F\x7F]/u', '', $rawUrl) ?? $rawUrl;
+$rawUrl = trim($rawUrl);
+
+if (strncmp($rawUrl, '//', 2) === 0) $rawUrl = 'https:' . $rawUrl;
+if (!preg_match('~^[a-zA-Z][a-zA-Z0-9+\-.]*://~', $rawUrl)) $rawUrl = 'https://' . $rawUrl;
+
+$parts = @parse_url($rawUrl);
+if (!is_array($parts) || empty($parts['scheme']) || empty($parts['host'])) $go($return, 'badurl');
+
+$scheme = strtolower((string)$parts['scheme']);
+if ($scheme !== 'https') $go($return, 'badurl');
+
+$host = strtolower((string)$parts['host']);
+$host = preg_replace('/^www\./i', '', $host) ?? $host;
+$host = rtrim($host, '.');
+
+$url = $rawUrl;
+if (!empty($parts['query'])) {
+  parse_str((string)$parts['query'], $q);
+  if (is_array($q)) {
+    foreach (array_keys($q) as $k) {
+      $lk = strtolower((string)$k);
+      if (str_starts_with($lk, 'utm_') || in_array($lk, ['fbclid','gclid','mc_cid','mc_eid'], true)) unset($q[$k]);
+    }
+    $query = http_build_query($q);
+    $url = $scheme . '://' . (string)$parts['host'] . (string)($parts['path'] ?? '');
+    if ($query !== '') $url .= '?' . $query;
+    if (!empty($parts['fragment'])) $url .= '#' . (string)$parts['fragment'];
+  }
+}
+
+$guess_kind = static function(string $host, string $url): string {
+  $h = strtolower($host);
+  if (preg_match('~(^|\.)youtu\.be$|(^|\.)youtube\.com$~', $h)) return 'video';
+  $p = @parse_url($url);
+  $path = is_array($p) ? (string)($p['path'] ?? '') : '';
+  $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+  if ($ext === 'pdf') return 'pdf';
+  return 'web';
+};
+
+$source_from_host = static function(string $host): array {
+  $h = strtolower($host);
+  $h = preg_replace('/^www\./i', '', $h) ?? $h;
+  $map = [
+    'wikipedia.org'      => ['wikipedia', 'Wikipedia'],
+    'wikimedia.org'      => ['wikimedia', 'Wikimedia'],
+    'youtu.be'           => ['youtube', 'YouTube'],
+    'youtube.com'        => ['youtube', 'YouTube'],
+    'archive.org'        => ['internet_archive', 'Internet Archive'],
+    'openlibrary.org'    => ['openlibrary', 'Open Library'],
+    'doi.org'            => ['doi', 'DOI'],
+    'jstor.org'          => ['jstor', 'JSTOR'],
+    'books.google.com'   => ['google_books', 'Google Books'],
+    'scholar.google.com' => ['google_scholar', 'Google Scholar'],
+  ];
+  foreach ($map as $domain => $pair) {
+    if ($h === $domain || str_ends_with($h, '.' . $domain)) return $pair;
+  }
+  return ($h !== '') ? ['web', $h] : ['unknown', 'Unknown'];
+};
+
+$kind = $guess_kind($host, $url);
+[$sourceKey, $sourceLabel] = $source_from_host($host);
+
+$pdo = staff_pdo();
+if (!$pdo instanceof PDO) $go($return, 'error');
+
+$has = static function(string $col) use ($pdo): bool { return pf__column_exists($pdo, 'page_files', $col); };
+
+$cols = [];
+$vals = [];
+$params = [];
+
+if ($has('page_id'))       { $cols[]='page_id';       $vals[]='?'; $params[]=$pageId; }
+if ($has('is_external'))   { $cols[]='is_external';   $vals[]='?'; $params[]=1; }
+if ($has('external_url'))  { $cols[]='external_url';  $vals[]='?'; $params[]=$url; }
+if ($has('external_host')) { $cols[]='external_host'; $vals[]='?'; $params[]=$host; }
+if ($has('kind'))          { $cols[]='kind';          $vals[]='?'; $params[]=$kind; }
+if ($has('source_key'))    { $cols[]='source_key';    $vals[]='?'; $params[]=$sourceKey; }
+if ($has('source_label'))  { $cols[]='source_label';  $vals[]='?'; $params[]=$sourceLabel; }
+if ($has('canonical_url')) { $cols[]='canonical_url'; $vals[]='?'; $params[]=$url; }
+if ($has('title'))         { $cols[]='title';         $vals[]='?'; $params[]=$label; }
+if ($has('host'))          { $cols[]='host';          $vals[]='?'; $params[]=(string)($_SERVER['HTTP_HOST'] ?? ''); }
+if ($has('created_at'))    { $cols[]='created_at';    $vals[]='NOW()'; }
+
+if ($has('sort_order')) {
+  $next = 1;
+  try {
+    $st = $pdo->prepare("SELECT COALESCE(MAX(sort_order),0) FROM page_files WHERE page_id = ?");
+    $st->execute([$pageId]);
+    $next = ((int)$st->fetchColumn()) + 1;
+  } catch (Throwable $e) { $next = 1; }
+  $cols[]='sort_order'; $vals[]='?'; $params[]=$next;
+}
+
+if (!$cols) $go($return, 'error');
+
+$sql = "INSERT INTO page_files (" . implode(',', $cols) . ") VALUES (" . implode(',', $vals) . ")";
+$sql .= " ON DUPLICATE KEY UPDATE id = id";
+
+try {
+  $st = $pdo->prepare($sql);
+  $st->execute($params);
+} catch (Throwable $e) {
+  $go($return, 'error');
+}
+
+$go($return, 'saved');

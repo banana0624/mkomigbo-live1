@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
+
 require_once __DIR__ . '/../../../../_init.php';
 
-require_once __DIR__ . '/../../../_init.php';
-
+mk_require_staff_login();
 
 /**
  * /public/staff/subjects/pgs/files/upload.php
@@ -49,14 +49,13 @@ if (!function_exists('pf__flash_set')) {
       mk_flash_set($key, $msg);
       return;
     }
-    if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
-    $_SESSION[$key] = $msg;
+$_SESSION[$key] = $msg;
   }
 }
 
 /* Auth guard */
 if (function_exists('require_staff')) {
-  require_staff();
+mk_require_staff_login();
 } elseif (function_exists('require_login')) {
   require_login();
 }
@@ -134,8 +133,7 @@ if (!function_exists('pf__csrf_normalize_post')) {
     }
 
     // As a last resort, if your CSRF system stores it in session, copy it (optional)
-    if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
-    $sv = $_SESSION['csrf_token'] ?? $_SESSION['_csrf_token'] ?? null;
+$sv = $_SESSION['csrf_token'] ?? $_SESSION['_csrf_token'] ?? null;
     if (is_string($sv) && $sv !== '') {
       $_POST['csrf_token'] = $sv;
     }

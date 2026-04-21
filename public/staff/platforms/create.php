@@ -1,0 +1,172 @@
+<?php
+declare(strict_types=1);
+
+require_once __DIR__ . '/../../_init.php';
+mk_require_staff_login();
+
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+header('Expires: 0');
+if (!function_exists('redirect_to')) {
+  function redirect_to(string $location): void {
+    $location = str_replace(["\r","\n"], '', $location);
+    header('Location: ' . $location, true, 302);
+    exit;
+  }
+}
+
+if (!function_exists('flash_set')) {
+  function flash_set(string $key, string $msg): void {
+    if (!isset($_SESSION['flash']) || !is_array($_SESSION['flash'])) $_SESSION['flash'] = [];
+    $_SESSION['flash'][$key] = $msg;
+  }
+}
+if (!function_exists('safe_return')) {
+  function safe_return(string $raw, string $default): string {
+    $raw = trim($raw);
+    if ($raw === '') return $default;
+    $raw = rawurldecode($raw);
+    if ($raw === '' || $raw[0] !== '/') return $default;
+    if (preg_match('~^//~', $raw)) return $default;
+    if (preg_match('~^[a-z]+:~i', $raw)) return $default;
+    if (!preg_match('~^/staff/~', $raw)) return $default;
+    return $raw;
+  }
+}
+if (!function_exists('mk_slugify_local')) {
+  function mk_slugify_local(string $raw, string $fallback = 'platform'): string {
+    $raw = trim($raw);
+    if ($raw === '') return $fallback;
+    $raw = strtolower($raw);
+    $raw = preg_replace('/[^a-z0-9]+/i', '-', $raw) ?? $raw;
+    $raw = trim($raw, '-');
+    return $raw !== '' ? $raw : $fallback;
+  }
+}
+if (!function_exists('mk_unique_platform_slug')) {
+  function mk_unique_platform_slug(PDO $pdo, string $base, ?int $excludeId = null): string {
+    $base = trim($base);
+    if ($base === '') $base = 'platform';
+    $slug = $base;
+
+    for ($i = 0; $i < 50; $i++) {
+      $sql = "SELECT id FROM platforms WHERE slug = ?";
+      $params = [$slug];
+      if ($excludeId !== null) {
+        $sql .= " AND id <> ?";
+        $params[] = $excludeId;
+      }
+      $sql .= " LIMIT 1";
+
+      $st = $pdo->prepare($sql);
+      $st->execute($params);
+      if (!$st->fetch(PDO::FETCH_ASSOC)) return $slug;
+
+      $slug = $base . '-' . ($i + 2);
+    }
+
+    return $base . '-' . time();
+  }
+}
+if (!function_exists('normalize_sections_json')) {
+  function normalize_sections_json(string $raw): array {
+    $raw = trim($raw);
+    if ($raw === '') return ['ok' => true, 'value' => null];
+
+    $decoded = json_decode($raw, true);
+    if (!is_array($decoded)) {
+      return ['ok' => false, 'value' => null, 'error' => 'Sections JSON must be a valid JSON array or object.'];
+    }
+
+    return ['ok' => true, 'value' => json_encode($decoded, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)];
+  }
+}
+
+if (!function_exists('redirect_to')) {
+  function redirect_to(string $location): void {
+    $location = str_replace(["\r","\n"], '', trim($location));
+    if ($location === '') {
+      $location = '/staff/platforms/index.php';
+    }
+
+    if ($location[0] === '/') {
+      header('Location: ' . $location, true, 302);
+      exit;
+    }
+
+    if (function_exists('url_for')) {
+      $location = (string)url_for($location);
+    }
+
+    header('Location: ' . $location, true, 302);
+    exit;
+  }
+}
+
+if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
+  http_response_code(405);
+  header('Allow: POST');
+  echo "Method Not Allowed";
+  exit;
+}
+
+$token = (string)($_POST['csrf_token'] ?? '');
+$sess  = (string)($_SESSION['csrf_token'] ?? '');
+if ($token === '' || $sess === '' || !hash_equals($sess, $token)) {
+  http_response_code(403);
+  echo "Invalid CSRF token.";
+  exit;
+}
+
+$return       = safe_return((string)($_POST['return'] ?? '/staff/platforms/index.php'), '/staff/platforms/index.php');
+$name         = trim((string)($_POST['name'] ?? ''));
+$slug_raw     = trim((string)($_POST['slug'] ?? ''));
+$description  = trim((string)($_POST['description'] ?? ''));
+$status       = trim((string)($_POST['status'] ?? 'draft'));
+$is_public    = ((string)($_POST['is_public'] ?? '1') === '1') ? 1 : 0;
+$sort_order   = (int)($_POST['sort_order'] ?? 0);
+$sections_raw = trim((string)($_POST['sections_json'] ?? ''));
+
+if ($name === '') {
+  flash_set('error', 'Name is required.');
+  redirect_to($return);
+}
+if (!in_array($status, ['draft', 'live'], true)) {
+  $status = 'draft';
+}
+
+$sections = normalize_sections_json($sections_raw);
+if (empty($sections['ok'])) {
+  flash_set('error', (string)$sections['error']);
+  redirect_to($return);
+}
+
+$pdo = db();
+
+try {
+  $slug_base = mk_slugify_local($slug_raw !== '' ? $slug_raw : $name, 'platform');
+  $slug = mk_unique_platform_slug($pdo, $slug_base);
+
+  $st = $pdo->prepare("
+    INSERT INTO platforms
+      (slug, name, description, status, is_public, sort_order, sections_json, created_at, updated_at, deleted_at)
+    VALUES
+      (?, ?, ?, ?, ?, ?, ?, NOW(), NOW(), NULL)
+  ");
+  $st->execute([
+    $slug,
+    $name,
+    ($description !== '' ? $description : null),
+    $status,
+    $is_public,
+    $sort_order,
+    $sections['value'],
+  ]);
+
+  flash_set('notice', 'Platform created successfully.');
+  redirect_to('/staff/platforms/index.php');
+
+} catch (Throwable $e) {
+  flash_set('error', 'Create failed: ' . $e->getMessage());
+  redirect_to($return);
+}

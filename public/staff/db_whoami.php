@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
-require_once __DIR__ . '/../_init.php';
 
 require_once __DIR__ . '/../_init.php';
 
+mk_require_staff_login();
 
 // [patched] removed legacy initialize path reference
 require_once $init;

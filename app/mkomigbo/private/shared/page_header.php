@@ -25,4 +25,4 @@ if (!isset($page_title) || !is_string($page_title) || trim($page_title) === '') 
   $page_title = $brand_name;
 }
 
-require_once __DIR__ . '/public_header.php';
+mk_require_shared('public_header.php');

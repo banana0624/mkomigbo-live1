@@ -12,9 +12,6 @@ declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
 
 require_once __DIR__ . '/../_init.php';
-
-if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
-
 if (!function_exists('db')) {
   http_response_code(500);
   header('Content-Type: text/plain; charset=utf-8');

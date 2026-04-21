@@ -92,7 +92,7 @@ $items[] = [
   'href'   => $igbo_calendar_url,
   'badge'  => 'I',
   'title'  => 'Igbo Calendar',
-  'desc'   => 'Download the Igbo Calendar for reference.',
+  'desc'   => 'Install the Igbo Calendar as an app.',
   'accent' => '#f59e0b',
 ];
 
@@ -103,7 +103,7 @@ $items[] = [
     <a class="mk-btn mk-btn--primary" href="<?= h($subjects_url) ?>">Explore Subjects</a>
     <a class="mk-btn" href="<?= h($platforms_url) ?>">Browse Platforms</a>
     <a class="mk-btn" href="<?= h($contributors_url) ?>">Meet Contributors</a>
-    <a class="mk-btn" href="<?= h($igbo_calendar_url) ?>">Download Igbo Calendar</a>
+    <a class="mk-btn" href="<?= h($igbo_calendar_url) ?>">Install Igbo Calendar</a>
   </div>
 
   <?php if ($ql_tip !== null): ?>

@@ -13,6 +13,21 @@ declare(strict_types=1);
  *   - url_for()
  *   - h()   (fallback provided if missing)
  */
+ 
+ require_once APP_ROOT . '/private/functions/subjects_registry_helpers.php';
+$subjects = mk_subjects_registry_sorted();
+
+$pageIds = ['intro'=>1,'overview'=>2,'topics'=>3,'people'=>4,'sources'=>5];
+
+foreach ($subjects as $s) {
+  $sid = (int)$s['id'];
+  $slug = (string)$s['slug'];
+  $title = (string)($s['title'] ?? $slug);
+
+  // Example dropdown entry for the subject itself:
+  // <a href="/subjects/{slug}/overview/">History <span class="mk-nav__code">S01</span></a>
+}
+
 
 if (!function_exists('h')) {
   function h(string $v): string { return htmlspecialchars($v, ENT_QUOTES, 'UTF-8'); }
@@ -108,6 +123,9 @@ if ($is_staff) {
       <?= pf__nav_a('igbo-calendar', $igbo_calendar_url, 'Igbo Calendar', $nav_active) ?>
       <?= pf__nav_a('staff',         $staff_url,         'Staff',         $nav_active) ?>
     </nav>
+    
+    
+    
   </div>
 
   <?php if ($is_staff): ?>

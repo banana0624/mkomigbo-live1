@@ -5,14 +5,23 @@ declare(strict_types=1);
  * /private/shared/public_footer.php
  * Shared footer wrapper.
  *
- * GLOBAL CONTRACT (standardized):
- * - public_header.php opens <main class="site-main" id="main"> once.
- * - This footer closes </main> once, then prints footer and closes body/html.
+ * Contract:
+ * - public_header.php opens: <div class="mk-main">
+ * - public_footer.php closes it exactly once, then prints footer + closes body/html.
  *
  * Optional variables:
  * - $page_scripts (string) raw HTML scripts (set before including footer)
  * - $footer_variant (string) e.g. 'Public' (default) or 'Staff' or 'Subjects'
  */
+
+if (defined('MK_PUBLIC_FOOTER_INCLUDED')) {
+  $dbg = defined('APP_DEBUG') ? (bool)APP_DEBUG : false;
+  if ($dbg) {
+    throw new RuntimeException('public_footer.php included twice');
+  }
+  return;
+}
+define('MK_PUBLIC_FOOTER_INCLUDED', true);
 
 if (!function_exists('h')) {
   function h(string $v): string { return htmlspecialchars($v, ENT_QUOTES, 'UTF-8'); }
@@ -24,10 +33,25 @@ $footer_variant = (isset($footer_variant) && is_string($footer_variant) && trim(
   ? trim($footer_variant)
   : 'Public';
 
-/* Close <main> once if it was opened */
-if (isset($GLOBALS['mk__main_open']) && $GLOBALS['mk__main_open'] === true) {
-  echo "</main>\n";
-  $GLOBALS['mk__main_open'] = false;
+/**
+ * Close wrapper exactly once.
+ * Primary signal: $GLOBALS['mk__main_open'] === true
+ * Fallback: if header ran but the flag was not set, close once (guarded by constant).
+ */
+$mainClosed = defined('MK_PUBLIC_MAIN_CLOSED');
+
+if (!$mainClosed) {
+
+  if (isset($GLOBALS['mk__main_open']) && $GLOBALS['mk__main_open'] === true) {
+    echo "</div>\n";
+    $GLOBALS['mk__main_open'] = false;
+    define('MK_PUBLIC_MAIN_CLOSED', true);
+
+  } elseif (defined('MK_PUBLIC_HEADER_INCLUDED')) {
+    // Header ran; close the wrapper once even if the flag wasn't set.
+    echo "</div>\n";
+    define('MK_PUBLIC_MAIN_CLOSED', true);
+  }
 }
 ?>
 
@@ -43,7 +67,7 @@ if (isset($GLOBALS['mk__main_open']) && $GLOBALS['mk__main_open'] === true) {
 </footer>
 
 <?php
-/* Optional page-level scripts (raw HTML, intentional) */
+// Optional page-level scripts (raw HTML, intentional)
 if (isset($page_scripts) && is_string($page_scripts) && trim($page_scripts) !== '') {
   echo $page_scripts;
 }

@@ -4,25 +4,103 @@ declare(strict_types=1);
 /**
  * /private/registry/subjects_register.php
  *
- * Static seed/registry for Subjects (fallback/reference only).
- * Used for:
- * - SEO fallbacks (when DB is unavailable / before DB is ready)
- * - Routing fallbacks (subject slug → id/name/meta)
- * - Public index fallback (guarantee 19 subjects exist even with empty DB)
+ * Canonical static registry for Subjects (source of truth for the public list order).
  *
- * SAFETY:
- * - MUST NOT collide with DB/bootstrap helpers.
- * - Keep functions guarded with function_exists().
+ * Used for:
+ * - Public index fallback (guarantee 19 subjects exist even if DB is empty)
+ * - Routing fallbacks (slug → id/name/meta/icon)
+ * - SEO meta fallbacks per subject
+ *
+ * HARD RULE:
+ * - MUST NOT invent subjects outside this registry.
+ * - Order is by id/nav_order (1..19) and is stable.
  */
 
-if (defined('MK_REGISTRY_SUBJECTS_LOADED')) {
-  return;
-}
+if (defined('MK_REGISTRY_SUBJECTS_LOADED')) { return; }
 define('MK_REGISTRY_SUBJECTS_LOADED', true);
 
+/* ---------------------------------------------------------
+   Helpers (internal)
+--------------------------------------------------------- */
+if (!function_exists('mk__subjects_registry_slug_ok')) {
+  function mk__subjects_registry_slug_ok(string $slug): bool
+  {
+    $slug = strtolower(trim($slug));
+    return $slug !== '' && (bool)preg_match('/^[a-z0-9][a-z0-9_-]{0,190}$/', $slug);
+  }
+}
+
+if (!function_exists('mk__subjects_registry_normalize')) {
+  /**
+   * Normalizes and validates rows.
+   * @param array<int,array<string,mixed>> $rows
+   * @return array<int,array<string,mixed>> keyed by id
+   */
+  function mk__subjects_registry_normalize(array $rows): array
+  {
+    $out = [];
+    $seenSlug = [];
+    $seenOrder = [];
+
+    foreach ($rows as $k => $row) {
+      if (!is_array($row)) continue;
+
+      $id = (int)($row['id'] ?? $k);
+      if ($id <= 0) continue;
+
+      $slug = strtolower(trim((string)($row['slug'] ?? '')));
+      if (!mk__subjects_registry_slug_ok($slug))) continue;
+
+      if (isset($seenSlug[$slug])) continue;
+      $seenSlug[$slug] = true;
+
+      $name = trim((string)($row['name'] ?? ''));
+      if ($name === '') $name = ucfirst(str_replace(['-','_'], ' ', $slug));
+
+      $nav = (int)($row['nav_order'] ?? $id);
+      if ($nav <= 0) $nav = $id;
+
+      // Keep nav_order unique if possible; if duplicate, fall back to id for sorting.
+      if (isset($seenOrder[$nav])) {
+        $nav = $id;
+      }
+      $seenOrder[$nav] = true;
+
+      $desc = '';
+      if (isset($row['description']) && is_string($row['description'])) $desc = trim($row['description']);
+      elseif (isset($row['meta_description']) && is_string($row['meta_description'])) $desc = trim($row['meta_description']);
+
+      $keys = isset($row['meta_keywords']) && is_string($row['meta_keywords']) ? trim($row['meta_keywords']) : '';
+      $icon = isset($row['icon']) && is_string($row['icon']) ? trim($row['icon']) : '';
+      $status = isset($row['status']) && is_string($row['status']) ? trim($row['status']) : 'active';
+      if ($status === '') $status = 'active';
+
+      $out[$id] = [
+        'id'            => $id,
+        'slug'          => $slug,
+        'name'          => $name,
+        'nav_order'     => $nav,
+        'description'   => $desc,
+        'meta_keywords' => $keys,
+        'icon'          => $icon,
+        'status'        => $status,
+      ];
+    }
+
+    // Ensure stable ordering keys are consistent
+    ksort($out, SORT_NUMERIC);
+
+    return $out;
+  }
+}
+
+/* ---------------------------------------------------------
+   Registry data (keyed by numeric id)
+   NOTE: This is your canonical set. If you later change slugs/names,
+         do it here and in DB seed, but keep IDs stable.
+--------------------------------------------------------- */
+
 /**
- * Registry data (keyed by numeric id).
- *
  * @var array<int,array<string,mixed>>
  */
 $SUBJECTS_REGISTRY = [
@@ -47,152 +125,108 @@ $SUBJECTS_REGISTRY = [
   19 => ['id'=>19, 'name'=>'About',        'slug'=>'about',        'nav_order'=>19, 'description'=>'About this website.',               'meta_keywords'=>'about, information, project, overview',   'icon'=>'/lib/images/subjects/about.svg',        'status'=>'active'],
 ];
 
-/* --------------------------------------------------------------------------
- * Internal: normalize rows defensively
- * -------------------------------------------------------------------------- */
-if (!function_exists('mk__subjects_registry_normalize')) {
-  /**
-   * @param array<int,array<string,mixed>> $rows
-   * @return array<int,array<string,mixed>>
-   */
-  function mk__subjects_registry_normalize(array $rows): array {
-    $out = [];
-
-    foreach ($rows as $k => $row) {
-      if (!is_array($row)) continue;
-
-      $id   = isset($row['id']) ? (int)$row['id'] : (int)$k;
-      $slug = isset($row['slug']) ? trim((string)$row['slug']) : '';
-      $name = isset($row['name']) ? trim((string)$row['name']) : '';
-
-      if ($id <= 0 || $slug === '' || $name === '') continue;
-
-      $out[$id] = [
-        'id'            => $id,
-        'slug'          => $slug,
-        'name'          => $name,
-        'nav_order'     => isset($row['nav_order']) ? (int)$row['nav_order'] : PHP_INT_MAX,
-        'description'   => isset($row['description']) ? (string)$row['description'] : (string)($row['meta_description'] ?? ''),
-        'meta_keywords' => isset($row['meta_keywords']) ? (string)$row['meta_keywords'] : '',
-        'icon'          => isset($row['icon']) ? (string)$row['icon'] : '',
-        'status'        => isset($row['status']) ? (string)$row['status'] : 'active',
-      ];
-    }
-
-    return $out;
-  }
-}
-
-/**
- * Internal: optional validator (no output; safe to ignore)
- */
-if (!function_exists('mk__subjects_registry_assert_valid')) {
-  function mk__subjects_registry_assert_valid(array $rows): void {
-    $seenOrder = [];
-    foreach ($rows as $r) {
-      if (!is_array($r)) continue;
-      $id = (int)($r['id'] ?? 0);
-      $o  = (int)($r['nav_order'] ?? 0);
-      if ($id < 1 || $o < 1) continue;
-
-      if (isset($seenOrder[$o])) {
-        // keep silent in production by default
-        // error_log("Duplicate subjects nav_order={$o} for ids {$seenOrder[$o]} and {$id}");
-      } else {
-        $seenOrder[$o] = $id;
-      }
-    }
-  }
-}
-
-/* --------------------------------------------------------------------------
- * Public accessors
- * -------------------------------------------------------------------------- */
+/* ---------------------------------------------------------
+   Public accessors (canonical contract)
+--------------------------------------------------------- */
 if (!function_exists('subjects_all_registry')) {
-  function subjects_all_registry(): array {
+  /**
+   * @return array<int,array<string,mixed>> keyed by id
+   */
+  function subjects_all_registry(): array
+  {
     global $SUBJECTS_REGISTRY;
-    $rows = is_array($SUBJECTS_REGISTRY ?? null) ? $SUBJECTS_REGISTRY : [];
+    $rows = (isset($SUBJECTS_REGISTRY) && is_array($SUBJECTS_REGISTRY)) ? $SUBJECTS_REGISTRY : [];
     $norm = mk__subjects_registry_normalize($rows);
+    return is_array($norm) ? $norm : [];
+  }
+}
 
-    // optional silent validator (no runtime impact)
-    mk__subjects_registry_assert_valid($norm);
+if (!function_exists('subjects_sorted_registry')) {
+  /**
+   * @return array<int,array<string,mixed>> list, ordered by nav_order then id
+   */
+  function subjects_sorted_registry(): array
+  {
+    $all = subjects_all_registry();
 
-    return $norm;
+    uasort($all, static function ($a, $b): int {
+      $oa = is_array($a) ? (int)($a['nav_order'] ?? $a['id'] ?? PHP_INT_MAX) : PHP_INT_MAX;
+      $ob = is_array($b) ? (int)($b['nav_order'] ?? $b['id'] ?? PHP_INT_MAX) : PHP_INT_MAX;
+      if ($oa !== $ob) return $oa <=> $ob;
+
+      $ia = is_array($a) ? (int)($a['id'] ?? PHP_INT_MAX) : PHP_INT_MAX;
+      $ib = is_array($b) ? (int)($b['id'] ?? PHP_INT_MAX) : PHP_INT_MAX;
+      return $ia <=> $ib;
+    });
+
+    return array_values($all);
   }
 }
 
 if (!function_exists('subject_by_id_registry')) {
-  function subject_by_id_registry(int $id): ?array {
+  function subject_by_id_registry(int $id): ?array
+  {
     $all = subjects_all_registry();
     return $all[$id] ?? null;
   }
 }
 
 if (!function_exists('subject_by_slug_registry')) {
-  function subject_by_slug_registry(string $slug): ?array {
-    $slug = trim($slug);
-    if ($slug === '') return null;
+  function subject_by_slug_registry(string $slug): ?array
+  {
+    $slug = strtolower(trim($slug));
+    if (!mk__subjects_registry_slug_ok($slug)) return null;
 
     foreach (subjects_all_registry() as $row) {
-      if (($row['slug'] ?? '') === $slug) return $row;
+      if (!is_array($row)) continue;
+      if (isset($row['slug']) && strtolower((string)$row['slug']) === $slug) return $row;
     }
     return null;
   }
 }
 
-if (!function_exists('subjects_sorted_registry')) {
-  function subjects_sorted_registry(): array {
-    $all = subjects_all_registry();
-
-    uasort($all, static function ($a, $b): int {
-      $na = is_array($a) ? (int)($a['nav_order'] ?? PHP_INT_MAX) : PHP_INT_MAX;
-      $nb = is_array($b) ? (int)($b['nav_order'] ?? PHP_INT_MAX) : PHP_INT_MAX;
-
-      if ($na !== $nb) return $na <=> $nb;
-
-      // Stable tie-breaker: ID (NOT name). Guarantees “no change” ordering.
-      $ia = is_array($a) ? (int)($a['id'] ?? PHP_INT_MAX) : PHP_INT_MAX;
-      $ib = is_array($b) ? (int)($b['id'] ?? PHP_INT_MAX) : PHP_INT_MAX;
-      return $ia <=> $ib;
-    });
-
-    return $all;
+/* ---------------------------------------------------------
+   Compat shim: unified name expected by your public code
+   (Your subjects index already calls mk_subjects_registry_sorted())
+--------------------------------------------------------- */
+if (!function_exists('mk_subjects_registry_sorted')) {
+  /**
+   * @return array<int,array<string,mixed>> list in canonical order (id 1..19)
+   */
+  function mk_subjects_registry_sorted(): array
+  {
+    return subjects_sorted_registry();
   }
 }
 
-/* --------------------------------------------------------------------------
- * SEO fallback helper (used by seo_helpers.php)
- * -------------------------------------------------------------------------- */
+/* ---------------------------------------------------------
+   SEO helper (compat-friendly)
+--------------------------------------------------------- */
 if (!function_exists('mk_subject_meta_fallback')) {
   /**
-   * Return meta fallbacks for a subject slug using registry.
-   *
-   * @return array{meta_description:string, meta_keywords:string, icon:string, name?:string}
+   * @return array<string,string>
    */
   function mk_subject_meta_fallback(string $slug): array
   {
-    $slug = trim($slug);
-    if ($slug === '') {
-      return ['meta_description' => '', 'meta_keywords' => '', 'icon' => ''];
-    }
-
-    // Ensure registry file is loaded (this file is the registry, so usually already true)
-    if (!function_exists('subject_by_slug_registry')) {
-      return ['meta_description' => '', 'meta_keywords' => '', 'icon' => ''];
-    }
-
+    $slug = strtolower(trim($slug));
     $row = subject_by_slug_registry($slug);
-    if (!is_array($row)) {
-      return ['meta_description' => '', 'meta_keywords' => '', 'icon' => ''];
-    }
 
-    // Your registry uses 'description' (not 'meta_description')
-    $desc = trim((string)($row['description'] ?? ($row['meta_description'] ?? '')));
-    $keys = trim((string)($row['meta_keywords'] ?? ''));
-    $icon = trim((string)($row['icon'] ?? ''));
-    $name = trim((string)($row['name'] ?? ''));
+    $name = is_array($row) ? trim((string)($row['name'] ?? '')) : '';
+    $desc = is_array($row) ? trim((string)($row['description'] ?? '')) : '';
+    $keys = is_array($row) ? trim((string)($row['meta_keywords'] ?? '')) : '';
+    $icon = is_array($row) ? trim((string)($row['icon'] ?? '')) : '';
+
+    $brand = defined('MK_BRAND_NAME') ? trim((string)MK_BRAND_NAME) : 'Mkomigbo';
+    if ($brand === '') $brand = 'Mkomigbo';
+
+    $title = ($name !== '') ? ($name . ' • ' . $brand) : '';
 
     return [
+      // legacy-ish
+      'title'            => $title,
+      'description'      => $desc,
+      'keywords'         => $keys,
+      // meta keys some code uses
       'meta_description' => $desc,
       'meta_keywords'    => $keys,
       'icon'             => $icon,
@@ -201,51 +235,19 @@ if (!function_exists('mk_subject_meta_fallback')) {
   }
 }
 
-/**
- * Merge DB subject row (partial) into registry row (fallback base).
- * DB wins for: name, description, nav_order (if non-null).
- * If DB indicates non-public (status/is_public/visible), caller should filter it out before merge.
- */
-if (!function_exists('subject_merge_registry_with_db')) {
-  function subject_merge_registry_with_db(array $registryRow, array $dbRow): array {
-    $out = $registryRow;
-
-    if (isset($dbRow['id']) && (int)$dbRow['id'] > 0) {
-      $out['id'] = (int)$dbRow['id'];
-    }
-
-    if (isset($dbRow['slug']) && trim((string)$dbRow['slug']) !== '') {
-      $out['slug'] = trim((string)$dbRow['slug']);
-    }
-
-    $dbName = isset($dbRow['name']) ? trim((string)$dbRow['name']) : '';
-    if ($dbName !== '') $out['name'] = $dbName;
-
-    $dbDesc = isset($dbRow['description']) ? trim((string)$dbRow['description']) : '';
-    if ($dbDesc !== '') $out['description'] = $dbDesc;
-
-    if (array_key_exists('nav_order', $dbRow) && $dbRow['nav_order'] !== null && $dbRow['nav_order'] !== '') {
-      $out['nav_order'] = (int)$dbRow['nav_order'];
-    }
-
-    return $out;
-  }
-}
-
-/**
- * URL helper (staff-aware by default).
- * - staff=true  => /staff/subjects/{slug}/
- * - staff=false => /subjects/{slug}/
- */
+/* ---------------------------------------------------------
+   URL helper
+--------------------------------------------------------- */
 if (!function_exists('subject_url_registry')) {
-  function subject_url_registry($subject, bool $staff = true): string {
+  function subject_url_registry($subject, bool $staff = false): string
+  {
     $slug = is_array($subject) ? (string)($subject['slug'] ?? '') : (string)$subject;
-    $slug = trim($slug);
+    $slug = strtolower(trim($slug));
+    if (!mk__subjects_registry_slug_ok($slug)) $slug = trim((string)$slug);
 
     $base = $staff ? '/staff/subjects/' : '/subjects/';
     $path = $base . $slug . '/';
 
-    if (function_exists('url_for')) return (string)url_for($path);
-    return $path;
+    return function_exists('url_for') ? (string)url_for($path) : $path;
   }
 }

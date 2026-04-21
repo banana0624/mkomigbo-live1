@@ -1,66 +1,19 @@
 <?php
 declare(strict_types=1);
 
-/**
- * /public/staff/contributors/edit.php
- * Staff: Edit Contributor form (schema-tolerant, status-based)
- *
- * - Edits whichever columns exist
- * - Provides Status dropdown when status column exists
- * - Edits bio_raw (preferred) or bio (legacy) when available
- * - No arrow functions
- *
- * Note: slug uniqueness + bio_html sanitization should be enforced in update.php.
- */
-
 require_once __DIR__ . '/../_init.php';
+mk_require_staff_login();
 
-if (function_exists('require_staff_login')) { require_staff_login(); }
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+header('Expires: 0');
 
-/* ---------------------------------------------------------
-   Helpers
---------------------------------------------------------- */
 if (!function_exists('h')) {
-  function h(string $value): string { return htmlspecialchars($value, ENT_QUOTES, 'UTF-8'); }
+  function h(string $v): string { return htmlspecialchars($v, ENT_QUOTES, 'UTF-8'); }
 }
-if (!function_exists('redirect_to')) {
-  function redirect_to(string $location): void {
-    $location = str_replace(["\r", "\n"], '', $location);
-    header('Location: ' . $location, true, 302);
-    exit;
-  }
+if (!function_exists('url_for')) {
+  function url_for(string $path): string { return '/' . ltrim($path, '/'); }
 }
-
-/* CSRF field */
-if (!function_exists('csrf_token')) {
-  function csrf_token(): string {
-    if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
-    if (empty($_SESSION['csrf_token']) || !is_string($_SESSION['csrf_token'])) {
-      $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-    }
-    return (string)$_SESSION['csrf_token'];
-  }
-}
-if (!function_exists('csrf_field')) {
-  function csrf_field(): string {
-    return '<input type="hidden" name="csrf_token" value="' . h(csrf_token()) . '">';
-  }
-}
-
-/* Flash */
-if (!function_exists('pf__flash_get')) {
-  function pf__flash_get(string $key): string {
-    if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
-    $msg = '';
-    if (isset($_SESSION['flash']) && is_array($_SESSION['flash']) && array_key_exists($key, $_SESSION['flash'])) {
-      $msg = (string)$_SESSION['flash'][$key];
-      unset($_SESSION['flash'][$key]);
-    }
-    return $msg;
-  }
-}
-
-/* Safe return */
 if (!function_exists('pf__safe_return_url')) {
   function pf__safe_return_url(string $raw, string $default): string {
     $raw = trim($raw);
@@ -69,265 +22,191 @@ if (!function_exists('pf__safe_return_url')) {
     if ($raw === '' || $raw[0] !== '/') return $default;
     if (preg_match('~^//~', $raw)) return $default;
     if (preg_match('~^[a-z]+:~i', $raw)) return $default;
-    if (!preg_match('~^/staff/~', $raw)) return $default;
+    if (strpos($raw, '/staff/') !== 0) return $default;
     return $raw;
   }
 }
-
-/* Schema helpers */
-if (!function_exists('pf__column_exists')) {
-  function pf__column_exists(PDO $pdo, string $table, string $column): bool {
-    static $cache = [];
-    $key = strtolower($table . '.' . $column);
-    if (array_key_exists($key, $cache)) return (bool)$cache[$key];
-
-    $sql = "SELECT COUNT(*)
-            FROM information_schema.COLUMNS
-            WHERE TABLE_SCHEMA = DATABASE()
-              AND TABLE_NAME = ?
-              AND COLUMN_NAME = ?
-            LIMIT 1";
-    $st = $pdo->prepare($sql);
-    $st->execute([$table, $column]);
-    $cache[$key] = ((int)$st->fetchColumn() > 0);
-    return (bool)$cache[$key];
+if (!function_exists('pf__csrf_token')) {
+  function pf__csrf_token(): string {
+    mk_staff_session_start();
+    if (function_exists('csrf_token')) {
+      try {
+        $v = (string)csrf_token();
+        if ($v !== '') return $v;
+      } catch (Throwable $e) {
+      }
+    }
+    if (empty($_SESSION['csrf_token']) || !is_string($_SESSION['csrf_token'])) {
+      $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+    return (string)$_SESSION['csrf_token'];
   }
 }
-if (!function_exists('pf__table_exists')) {
-  function pf__table_exists(PDO $pdo, string $table): bool {
-    $st = $pdo->prepare("SELECT 1 FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=? LIMIT 1");
-    $st->execute([$table]);
-    return (bool)$st->fetchColumn();
+if (!function_exists('pf__csrf_field')) {
+  function pf__csrf_field(): string {
+    if (function_exists('csrf_field')) {
+      try { return (string)csrf_field(); } catch (Throwable $e) {}
+    }
+    return '<input type="hidden" name="csrf_token" value="' . h(pf__csrf_token()) . '">';
   }
 }
 
-/* Value getter */
-if (!function_exists('pf__v')) {
-  function pf__v(?array $row, string $key): string {
-    if (!$row || !array_key_exists($key, $row)) return '';
-    return (string)$row[$key];
-  }
-}
+$u = static function(string $path): string {
+  return function_exists('url_for') ? (string)url_for($path) : $path;
+};
 
-/* Friendly label */
-if (!function_exists('pf__label')) {
-  function pf__label(string $field): string {
-    return ucwords(str_replace('_', ' ', $field));
-  }
-}
+$pdo = db();
+$id = (int)($_GET['id'] ?? 0);
+$return = pf__safe_return_url((string)($_GET['return'] ?? '/staff/contributors/index.php'), '/staff/contributors/index.php');
 
-/* URL helper */
-if (!function_exists('pf__u')) {
-  function pf__u(string $path): string {
-    return function_exists('url_for') ? url_for($path) : $path;
-  }
-}
-
-/* ---------------------------------------------------------
-   DB
---------------------------------------------------------- */
-$pdo = function_exists('staff_pdo') ? staff_pdo() : (function_exists('db') ? db() : null);
-if (!$pdo instanceof PDO) {
-  http_response_code(500);
-  header('Content-Type: text/plain; charset=utf-8');
-  echo "Database handle not available.\n";
+if ($id <= 0) {
+  header('Location: ' . $u($return), true, 302);
   exit;
 }
 
-/* Inputs */
-$id = (int)($_GET['id'] ?? 0);
-$default_return = '/staff/contributors/index.php';
-$return = pf__safe_return_url((string)($_GET['return'] ?? $default_return), $default_return);
-if ($id <= 0) redirect_to(pf__u($return));
+$st = $pdo->prepare("
+  SELECT id, slug, display_name, email, roles, status, is_public, sort_order, bio_raw, bio_html, deleted_at
+  FROM contributors
+  WHERE id = ?
+  LIMIT 1
+");
+$st->execute([$id]);
+$row = $st->fetch(PDO::FETCH_ASSOC);
 
-/* Flash */
-$notice = pf__flash_get('notice');
-$error  = pf__flash_get('error');
+if (!$row) {
+  http_response_code(404);
+  echo "Contributor not found.";
+  exit;
+}
 
-/* Load contributor */
-$contributor = null;
-$warn = '';
-$table = 'contributors';
-
-try {
-  if (!pf__table_exists($pdo, $table)) {
-    $warn = 'Table "contributors" not found yet.';
+$roles_value = '';
+if (!empty($row['roles'])) {
+  $decoded = json_decode((string)$row['roles'], true);
+  if (is_array($decoded)) {
+    $roles_value = implode(', ', array_map('strval', $decoded));
   } else {
-    $candidates = [
-      'id',
-      'display_name','name','username','slug','email','roles','avatar_path',
-      'status',
-      'bio_raw','bio_html','bio'
-    ];
-
-    $select = [];
-    foreach ($candidates as $c) {
-      if ($c === 'id' || pf__column_exists($pdo, $table, $c)) $select[] = $c;
-    }
-    $select = array_values(array_unique($select));
-
-    $quoted = [];
-    foreach ($select as $c) {
-      $c = str_replace('`', '', (string)$c);
-      $quoted[] = '`' . $c . '`';
-    }
-    $cols_sql = implode(', ', $quoted);
-
-    $sql = "SELECT {$cols_sql} FROM {$table} WHERE id = ? LIMIT 1";
-    $st = $pdo->prepare($sql);
-    $st->execute([$id]);
-    $contributor = $st->fetch(PDO::FETCH_ASSOC) ?: null;
-
-    if (!$contributor) $warn = 'Contributor not found.';
+    $roles_value = (string)$row['roles'];
   }
-} catch (Throwable $e) {
-  $warn = 'Failed to load contributor.';
-  $contributor = null;
 }
 
-/* Name */
-$name = $contributor
-  ? (string)($contributor['display_name'] ?? $contributor['name'] ?? $contributor['username'] ?? $contributor['email'] ?? $contributor['slug'] ?? ('Contributor #' . $id))
-  : ('Contributor #' . $id);
-
-$name = trim($name) !== '' ? $name : ('Contributor #' . $id);
-
-/* Schema flags */
-$table_ok    = pf__table_exists($pdo, $table);
-$has_status  = $table_ok && pf__column_exists($pdo, $table, 'status');
-$has_bio_raw = $table_ok && pf__column_exists($pdo, $table, 'bio_raw');
-$has_bio     = $table_ok && pf__column_exists($pdo, $table, 'bio');
-
-/* Header */
+$page_title = 'Edit Contributor • Staff';
+$page_desc  = 'Update contributor identity, visibility, roles, and bio.';
+$nav_active = 'contributors';
 $active_nav = 'contributors';
-$page_title = 'Edit • ' . $name . ' • Staff';
-$page_desc  = 'Edit contributor details (schema-tolerant).';
 
-$staff_subnav = [
-  ['label' => 'Dashboard',    'href' => pf__u('/staff/'),              'active' => false],
-  ['label' => 'Contributors', 'href' => pf__u('/staff/contributors/'), 'active' => true],
-  ['label' => 'Public',       'href' => pf__u('/contributors/'),       'active' => false],
-];
-
-require_once APP_ROOT . '/private/shared/staff_header.php';
-
-/* URLs */
-$update_post = pf__u('/staff/contributors/update.php');
-$back_url    = pf__u($return);
-$show_url    = pf__u('/staff/contributors/show.php')
-             . '?id=' . rawurlencode((string)$id) . '&return=' . rawurlencode($return);
-
-/* Current status */
-$current_status = $contributor ? trim((string)($contributor['status'] ?? '')) : '';
-if ($current_status === '') $current_status = 'active';
-
-/* Bio value */
-$bio_value = '';
-if ($contributor) {
-  if ($has_bio_raw && array_key_exists('bio_raw', $contributor)) $bio_value = (string)$contributor['bio_raw'];
-  elseif ($has_bio && array_key_exists('bio', $contributor))     $bio_value = (string)$contributor['bio'];
+if (function_exists('mk_view_set')) {
+  try {
+    mk_view_set([
+      'page_title' => $page_title,
+      'page_desc'  => $page_desc,
+      'nav_active' => $nav_active,
+      'active_nav' => $active_nav,
+    ]);
+  } catch (Throwable $e) {
+  }
 }
 
+$staff_header = (defined('PRIVATE_PATH') && is_string(PRIVATE_PATH) && PRIVATE_PATH !== '')
+  ? (rtrim(PRIVATE_PATH, "/\\") . '/shared/staff_header.php')
+  : (defined('APP_ROOT') && is_string(APP_ROOT) && APP_ROOT !== ''
+      ? (rtrim(APP_ROOT, "/\\") . '/private/shared/staff_header.php')
+      : '');
+
+$staff_footer = (defined('PRIVATE_PATH') && is_string(PRIVATE_PATH) && PRIVATE_PATH !== '')
+  ? (rtrim(PRIVATE_PATH, "/\\") . '/shared/staff_footer.php')
+  : (defined('APP_ROOT') && is_string(APP_ROOT) && APP_ROOT !== ''
+      ? (rtrim(APP_ROOT, "/\\") . '/private/shared/staff_footer.php')
+      : '');
+
+if ($staff_header && is_file($staff_header)) {
+  require $staff_header;
+}
 ?>
-<div class="container">
 
-  <div class="hero">
-    <div class="hero__row">
-      <div>
-        <h1 class="hero__title">Edit Contributor</h1>
-        <p class="hero__sub"><?php echo h($name); ?></p>
-      </div>
-      <div class="hero__actions">
-        <a class="btn btn--ghost" href="<?php echo h($back_url); ?>">← Back</a>
-        <a class="btn" href="<?php echo h($show_url); ?>">View</a>
-      </div>
-    </div>
-  </div>
+<section class="staff-pagehead">
+  <h1 class="staff-pagehead__title">Edit contributor</h1>
+  <p class="staff-pagehead__desc">Update contributor settings for <strong><?= h((string)$row['display_name']) ?></strong>.</p>
+</section>
 
-  <?php if ($notice !== ''): ?>
-    <div class="alert alert--success"><?php echo h($notice); ?></div>
-  <?php endif; ?>
-  <?php if ($error !== ''): ?>
-    <div class="alert alert--danger"><?php echo h($error); ?></div>
-  <?php endif; ?>
-  <?php if ($warn !== ''): ?>
-    <div class="alert alert--warning"><?php echo h($warn); ?></div>
-  <?php endif; ?>
-
-  <div class="card">
-    <div class="card__body">
-
-      <?php if (!$contributor): ?>
-        <p class="muted">No contributor data to edit.</p>
-      <?php else: ?>
-
-      <form method="post" action="<?php echo h($update_post); ?>" class="stack" autocomplete="off">
-        <?php echo csrf_field(); ?>
-        <input type="hidden" name="id" value="<?php echo h((string)$id); ?>">
-        <input type="hidden" name="return" value="<?php echo h($return); ?>">
-
-        <div class="grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:14px;">
-
-          <?php
-          $fields = ['display_name','name','username','slug','email','roles','avatar_path'];
-          foreach ($fields as $f):
-            if (array_key_exists($f, $contributor)):
-          ?>
-            <div class="field">
-              <label class="label" for="<?php echo h($f); ?>"><?php echo h(pf__label($f)); ?></label>
-              <input
-                class="input"
-                id="<?php echo h($f); ?>"
-                name="<?php echo h($f); ?>"
-                value="<?php echo h(pf__v($contributor, $f)); ?>"
-                <?php if ($f === 'email'): ?> type="email"<?php else: ?> type="text"<?php endif; ?>>
-              <?php if ($f === 'slug'): ?>
-                <div class="muted" style="font-size:.9rem; margin-top:6px;">
-                  Slug must be unique. If update.php finds a collision, it should auto-adjust it (recommended).
-                </div>
-              <?php endif; ?>
-            </div>
-          <?php
-            endif;
-          endforeach;
-          ?>
-
-          <?php if ($has_status && array_key_exists('status', $contributor)): ?>
-            <div class="field" style="align-self:flex-end;">
-              <label class="label" for="status">Status</label>
-              <select class="input" id="status" name="status">
-                <option value="active" <?php echo ($current_status === 'active') ? 'selected' : ''; ?>>Active</option>
-                <option value="draft"  <?php echo ($current_status === 'draft')  ? 'selected' : ''; ?>>Draft</option>
-              </select>
-              <div class="muted" style="font-size:.9rem; margin-top:6px;">
-                Active profiles can be shown publicly; Draft profiles should be hidden.
-              </div>
-            </div>
-          <?php endif; ?>
-
+<section class="staff-section">
+  <div class="staff-card">
+    <div class="staff-card__body">
+      <div class="staff-actions" style="justify-content:space-between;align-items:flex-start;">
+        <div>
+          <h2 style="margin:0;font-size:1.15rem;">Contributor record</h2>
+          <p style="margin:6px 0 0;color:#667085;"><?= h((string)$row['slug']) ?></p>
         </div>
+        <div class="staff-actions">
+          <a class="staff-chip" href="<?= h($return) ?>">Back</a>
+          <a class="staff-chip" href="<?= h('/staff/contributors/show.php?id=' . rawurlencode((string)$row['id']) . '&return=' . rawurlencode($return)) ?>">View</a>
+        </div>
+      </div>
 
-        <?php if ($has_bio_raw || $has_bio): ?>
-          <div class="field">
-            <label class="label" for="bio_raw">Bio (rich text allowed)</label>
-            <textarea id="bio_raw" name="bio_raw" rows="10" class="input" style="width:100%;"><?php echo h($bio_value); ?></textarea>
-            <div class="muted" style="font-size:.9rem; margin-top:6px;">
-              This will be sanitized on save and displayed publicly as formatted bio.
-            </div>
+      <form method="post" action="<?= h($u('/staff/contributors/update.php')) ?>" style="margin-top:14px;display:grid;gap:14px;">
+        <?= pf__csrf_field() ?>
+        <input type="hidden" name="id" value="<?= (int)$row['id'] ?>">
+        <input type="hidden" name="return" value="<?= h($return) ?>">
+
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;">
+          <div>
+            <label style="display:block;font-weight:700;margin-bottom:6px;">Display Name</label>
+            <input type="text" name="display_name" required value="<?= h((string)$row['display_name']) ?>" style="width:100%;min-height:44px;padding:10px 12px;border:1px solid rgba(17,24,39,.14);border-radius:12px;">
           </div>
-        <?php endif; ?>
 
-        <div class="row row--gap">
-          <button class="btn btn--primary" type="submit">Save changes</button>
-          <a class="btn btn--ghost" href="<?php echo h($back_url); ?>">Cancel</a>
+          <div>
+            <label style="display:block;font-weight:700;margin-bottom:6px;">Slug</label>
+            <input type="text" name="slug" value="<?= h((string)$row['slug']) ?>" style="width:100%;min-height:44px;padding:10px 12px;border:1px solid rgba(17,24,39,.14);border-radius:12px;">
+          </div>
+
+          <div>
+            <label style="display:block;font-weight:700;margin-bottom:6px;">Email</label>
+            <input type="email" name="email" value="<?= h((string)($row['email'] ?? '')) ?>" style="width:100%;min-height:44px;padding:10px 12px;border:1px solid rgba(17,24,39,.14);border-radius:12px;">
+          </div>
+
+          <div>
+            <label style="display:block;font-weight:700;margin-bottom:6px;">Sort Order</label>
+            <input type="number" name="sort_order" step="1" value="<?= (int)$row['sort_order'] ?>" style="width:100%;min-height:44px;padding:10px 12px;border:1px solid rgba(17,24,39,.14);border-radius:12px;">
+          </div>
+
+          <div>
+            <label style="display:block;font-weight:700;margin-bottom:6px;">Status</label>
+            <select name="status" style="width:100%;min-height:44px;padding:10px 12px;border:1px solid rgba(17,24,39,.14);border-radius:12px;">
+              <option value="active" <?= ((string)$row['status'] === 'active') ? 'selected' : '' ?>>Active</option>
+              <option value="draft" <?= ((string)$row['status'] === 'draft') ? 'selected' : '' ?>>Draft</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="display:block;font-weight:700;margin-bottom:6px;">Visibility</label>
+            <select name="is_public" style="width:100%;min-height:44px;padding:10px 12px;border:1px solid rgba(17,24,39,.14);border-radius:12px;">
+              <option value="1" <?= ((int)$row['is_public'] === 1) ? 'selected' : '' ?>>Public</option>
+              <option value="0" <?= ((int)$row['is_public'] === 0) ? 'selected' : '' ?>>Private</option>
+            </select>
+          </div>
+
+          <div style="grid-column:1 / -1;">
+            <label style="display:block;font-weight:700;margin-bottom:6px;">Roles (CSV or JSON array)</label>
+            <input type="text" name="roles" value="<?= h($roles_value) ?>" style="width:100%;min-height:44px;padding:10px 12px;border:1px solid rgba(17,24,39,.14);border-radius:12px;">
+          </div>
+
+          <div style="grid-column:1 / -1;">
+            <label style="display:block;font-weight:700;margin-bottom:6px;">Bio Raw</label>
+            <textarea name="bio_raw" style="width:100%;min-height:160px;padding:10px 12px;border:1px solid rgba(17,24,39,.14);border-radius:12px;resize:vertical;"><?= h((string)($row['bio_raw'] ?? '')) ?></textarea>
+          </div>
         </div>
 
+        <div class="staff-actions">
+          <button type="submit" class="staff-chip" style="cursor:pointer;">Save changes</button>
+          <a class="staff-chip" href="<?= h($return) ?>">Cancel</a>
+        </div>
       </form>
-
-      <?php endif; ?>
-
     </div>
   </div>
-</div>
+</section>
 
-<?php require APP_ROOT . '/private/shared/staff_footer.php'; ?>
+<?php
+if ($staff_footer && is_file($staff_footer)) {
+  require $staff_footer;
+} else {
+  echo "</main></body></html>";
+}

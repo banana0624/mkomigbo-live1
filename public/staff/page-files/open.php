@@ -1,54 +1,70 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/../../_init.php';
+
 /**
  * /public/staff/page-files/open.php
  *
- * Staff OPEN attachment:
- * - Local: streams file from /public_html/lib/uploads/page_files/{page_id}/...
- *          with Content-Disposition: inline (browser open)
- * - External: re-validates URL via allowlist and 303 redirects (never fetches)
+ * Open page attachments:
+ * - External: validate via allowlist helper + redirect (never fetch)
+ * - Local: stream file inline (supports HTTP Range)
  *
- * POST-only + CSRF required.
+ * Accepts GET + POST:
+ * - POST requires CSRF (staff UI forms)
+ * - GET allowed for “open in new tab”
+ *
+ * Signed URL (GET only):
+ *   /staff/page-files/open.php?page_id=4&file_id=123&exp=TIMESTAMP&sig=HEX
+ *   sig = HMAC-SHA256("file_id|page_id|exp", MK_SIGNED_OPEN_SECRET)
+ *
+ * IMPORTANT:
+ * This file must NOT bootstrap via /staff/_init.php first, because that
+ * typically enforces login globally and prevents signed URLs from working.
  */
 
 @ini_set('display_errors', '0');
 @ini_set('display_startup_errors', '0');
 error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
 
-require_once __DIR__ . '/../_init.php';
-if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
-
-$method = strtoupper((string)($_SERVER['REQUEST_METHOD'] ?? 'GET'));
-if ($method !== 'POST') { http_response_code(405); header('Allow: POST'); exit; }
-
-/* Auth */
-if (function_exists('require_staff')) {
-  require_staff();
-} elseif (function_exists('require_staff_login')) {
-  require_staff_login();
-} elseif (function_exists('mk_require_staff_login')) {
-  mk_require_staff_login();
+/* ---------------------------------------------------------
+   BOOTSTRAP (PUBLIC FIRST)
+--------------------------------------------------------- */
+$publicInit = dirname(__DIR__, 2) . '/_init.php'; // /public/_init.php
+if (!is_file($publicInit)) {
+  http_response_code(500);
+  header('Content-Type: text/plain; charset=utf-8');
+  echo "Bootstrap missing.";
+  exit;
 }
+require_once $publicInit;
 
-/* Helpers */
-if (!function_exists('h')) {
-  function h(string $v): string { return htmlspecialchars($v, ENT_QUOTES, 'UTF-8'); }
+if (function_exists('mk_staff_session_start')) {
+  mk_staff_session_start();
+} elseif (function_exists('mk__session_start')) {
+  mk__session_start();
+} elseif (session_status() !== PHP_SESSION_ACTIVE) {
+  @session_start();
 }
+/* Default OFF only after config has had a chance to define */
+if (!defined('MK_ENABLE_SIGNED_OPEN')) { define('MK_ENABLE_SIGNED_OPEN', false); }
+
+/* ---------------------------------------------------------
+   SMALL FALLBACK HELPERS
+--------------------------------------------------------- */
 if (!function_exists('staff_csrf_verify')) {
   function staff_csrf_verify(string $token): bool {
-    if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
-    $sess = $_SESSION['csrf_token'] ?? '';
+$sess = $_SESSION['csrf_token'] ?? '';
     if (!is_string($sess) || $sess === '' || $token === '') return false;
     return hash_equals($sess, $token);
   }
 }
+
 if (!function_exists('mk_staff_audit_try')) {
   function mk_staff_audit_try(PDO $pdo, string $action, array $meta = []): void {
     try {
       $st = $pdo->prepare("
-        SELECT 1
-        FROM information_schema.TABLES
+        SELECT 1 FROM information_schema.TABLES
         WHERE TABLE_SCHEMA = DATABASE()
           AND TABLE_NAME = 'staff_audit_log'
         LIMIT 1
@@ -56,179 +72,193 @@ if (!function_exists('mk_staff_audit_try')) {
       $st->execute();
       if (!$st->fetchColumn()) return;
 
-      $user = $_SESSION['staff_email'] ?? ($_SESSION['email'] ?? ($_SESSION['user_email'] ?? ''));
-      if (!is_string($user)) $user = '';
-
-      $ip  = (string)($_SERVER['REMOTE_ADDR'] ?? '');
-      $ua  = (string)($_SERVER['HTTP_USER_AGENT'] ?? '');
-      $js  = json_encode($meta, JSON_UNESCAPED_SLASHES);
+      $user = $_SESSION['staff_email']
+        ?? $_SESSION['email']
+        ?? $_SESSION['user_email']
+        ?? '';
 
       $ins = $pdo->prepare("
-        INSERT INTO staff_audit_log (action, actor, ip, user_agent, meta_json, created_at)
-        VALUES (:action, :actor, :ip, :ua, :meta, NOW())
+        INSERT INTO staff_audit_log
+          (action, actor, ip, user_agent, meta_json, created_at)
+        VALUES
+          (:a, :u, :ip, :ua, :m, NOW())
       ");
+
       $ins->execute([
-        ':action' => $action,
-        ':actor'  => $user,
-        ':ip'     => $ip,
-        ':ua'     => $ua,
-        ':meta'   => is_string($js) ? $js : '{}',
+        ':a'  => $action,
+        ':u'  => (string)$user,
+        ':ip' => (string)($_SERVER['REMOTE_ADDR'] ?? ''),
+        ':ua' => (string)($_SERVER['HTTP_USER_AGENT'] ?? ''),
+        ':m'  => json_encode($meta, JSON_UNESCAPED_SLASHES) ?: '{}',
       ]);
     } catch (Throwable $e) {
-      // never break page open/download
+      // never break open
     }
   }
 }
 
-if (!function_exists('mk_pagefile__normalize_external_url')) {
-  /**
-   * Normalize common “human-entered” URLs into a strict absolute URL.
-   * - adds https:// when scheme missing (e.g. en.wikipedia.org/wiki/...)
-   * - supports //host/path
-   * - strips CR/LF
-   * - rejects obviously unsafe schemes
-   */
-  function mk_pagefile__normalize_external_url(string $raw): string {
-    $u = trim($raw);
-    if ($u === '') return '';
+function mk__strip_crlf(string $v): string {
+  return str_replace(["\r", "\n"], '', $v);
+}
 
-    // kill header injection vectors early
-    $u = str_replace(["\r", "\n"], '', $u);
+function mk__emit_file_security_headers(): void {
+  header('X-Content-Type-Options: nosniff');
+  header('Referrer-Policy: no-referrer');
+  header('Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()');
+  header('X-Frame-Options: SAMEORIGIN');
+  header("Content-Security-Policy: default-src 'none'; frame-ancestors 'self'; base-uri 'none'; form-action 'none'");
+}
 
-    // tolerate protocol-relative
-    if (strncmp($u, '//', 2) === 0) {
-      $u = 'https:' . $u;
+function mk__handle_conditional_cache(string $etag, int $mtime): void {
+  header('ETag: ' . $etag);
+  header('Last-Modified: ' . gmdate('D, d M Y H:i:s', $mtime) . ' GMT');
+  header('Cache-Control: private, max-age=31536000, immutable');
+
+  $ifNoneMatch = (string)($_SERVER['HTTP_IF_NONE_MATCH'] ?? '');
+  if ($ifNoneMatch !== '' && trim($ifNoneMatch) === $etag) {
+    http_response_code(304);
+    exit;
+  }
+
+  $ifModSince = (string)($_SERVER['HTTP_IF_MODIFIED_SINCE'] ?? '');
+  if ($ifModSince !== '') {
+    $t = strtotime($ifModSince);
+    if ($t !== false && $t >= $mtime) {
+      http_response_code(304);
+      exit;
     }
-
-    // if user stored host/path without scheme, add https://
-    if (!preg_match('~^[a-zA-Z][a-zA-Z0-9+\-.]*://~', $u)) {
-      // avoid turning relative paths into external URLs
-      if ($u[0] === '/' || $u[0] === '\\') return '';
-
-      $u = 'https://' . $u;
-    }
-
-    $p = @parse_url($u);
-    if (!is_array($p) || empty($p['scheme']) || empty($p['host'])) return '';
-
-    $scheme = strtolower((string)$p['scheme']);
-    if (!in_array($scheme, ['http', 'https'], true)) return '';
-
-    // remove surrounding dots/spaces, normalize host
-    $host = strtolower(trim((string)$p['host'], " \t\n\r\0\x0B."));
-
-    // rebuild a clean URL (keeps path/query/fragment as-is)
-    $path = isset($p['path']) ? (string)$p['path'] : '/';
-    if ($path === '') $path = '/';
-
-    $query = isset($p['query']) ? ('?' . (string)$p['query']) : '';
-    $frag  = isset($p['fragment']) ? ('#' . (string)$p['fragment']) : '';
-
-    // encode spaces (common culprit with Wikipedia copy/paste)
-    $path = str_replace(' ', '%20', $path);
-
-    $port = isset($p['port']) ? (int)$p['port'] : 0;
-    $portPart = ($port > 0 && !in_array($port, [80, 443], true)) ? (':' . $port) : '';
-
-    return $scheme . '://' . $host . $portPart . $path . $query . $frag;
   }
 }
 
-/* CSRF */
-$token = (string)($_POST['csrf_token'] ?? '');
-if (!staff_csrf_verify($token)) {
-  http_response_code(403);
-  header('Content-Type: text/plain; charset=utf-8');
-  echo "CSRF failed.\n";
+/* Signed URL verification (GET only) */
+function mk__signed_open_ok(int $fileId, int $pageId): bool {
+  if (!defined('MK_ENABLE_SIGNED_OPEN') || MK_ENABLE_SIGNED_OPEN !== true) return false;
+  if (!defined('MK_SIGNED_OPEN_SECRET') || !is_string(MK_SIGNED_OPEN_SECRET) || MK_SIGNED_OPEN_SECRET === '') return false;
+
+  $expRaw = (string)($_GET['exp'] ?? '');
+  $sig    = (string)($_GET['sig'] ?? '');
+
+  if ($sig === '' || $expRaw === '' || !ctype_digit($expRaw)) return false;
+
+  $exp = (int)$expRaw;
+  if ($exp < 1) return false;
+  if (time() > $exp) return false;
+
+  $msg  = $fileId . '|' . $pageId . '|' . $exp;
+  $calc = hash_hmac('sha256', $msg, MK_SIGNED_OPEN_SECRET);
+
+  return hash_equals($calc, $sig);
+}
+
+/* ---------------------------------------------------------
+   METHOD + INPUT
+--------------------------------------------------------- */
+$method = strtoupper((string)($_SERVER['REQUEST_METHOD'] ?? 'GET'));
+$isPost = $method === 'POST';
+$isGet  = $method === 'GET' || $method === 'HEAD';
+
+if (!$isPost && !$isGet) {
+  http_response_code(405);
+  header('Allow: GET, HEAD, POST');
   exit;
 }
 
-/* Inputs */
-$fileId = (int)($_POST['file_id'] ?? 0);
-$pageId = (int)($_POST['page_id'] ?? 0);
+$fileId = (int)($isPost ? ($_POST['file_id'] ?? 0) : ($_GET['file_id'] ?? 0));
+$pageId = (int)($isPost ? ($_POST['page_id'] ?? 0) : ($_GET['page_id'] ?? 0));
+
 if ($fileId < 1 || $pageId < 1) {
   http_response_code(400);
   header('Content-Type: text/plain; charset=utf-8');
-  echo "Invalid request.\n";
+  echo "Invalid request.";
   exit;
 }
 
-/* DB */
+/* Signed auth bypass: GET only */
+$signedOk = ($isGet && mk__signed_open_ok($fileId, $pageId));
+
+header('X-MK-SIGNED-ON: ' . ((defined('MK_ENABLE_SIGNED_OPEN') && MK_ENABLE_SIGNED_OPEN === true) ? '1' : '0'));
+header('X-MK-SECRET: ' . ((defined('MK_SIGNED_OPEN_SECRET') && is_string(MK_SIGNED_OPEN_SECRET) && MK_SIGNED_OPEN_SECRET !== '') ? 'set' : 'missing'));
+header('X-MK-SIGNED-OK: ' . ($signedOk ? '1' : '0'));
+
+/* ---------------------------------------------------------
+   AUTH (skip only if signed URL verifies)
+--------------------------------------------------------- */
+if (!$signedOk) {
+  if (function_exists('mk_require_staff_login')) {
+    mk_require_staff_login();
+  } elseif (function_exists('require_staff_login')) {
+mk_require_staff_login();
+  } elseif (function_exists('require_staff')) {
+mk_require_staff_login();
+  } else {
+    // absolute fallback: block
+    http_response_code(403);
+    header('Content-Type: text/plain; charset=utf-8');
+    echo "Staff login required.";
+    exit;
+  }
+}
+
+/* CSRF (POST only, even for signed mode) */
+if ($isPost) {
+  $token = (string)($_POST['csrf_token'] ?? '');
+  if (!staff_csrf_verify($token)) {
+    http_response_code(403);
+    header('Content-Type: text/plain; charset=utf-8');
+    echo "CSRF failed.";
+    exit;
+  }
+}
+
+/* ---------------------------------------------------------
+   DB
+--------------------------------------------------------- */
 $pdo = (function_exists('db') && db() instanceof PDO) ? db() : null;
 if (!$pdo instanceof PDO) {
   http_response_code(500);
   header('Content-Type: text/plain; charset=utf-8');
-  echo "DB not available.\n";
+  echo "DB not available.";
   exit;
 }
 
-/* Fetch row (must belong to this page_id) */
-$cols = ['id','page_id','original_name','stored_name','file_path','stored_path','mime_type','file_size','created_at'];
-foreach (['is_external','external_url','external_host'] as $c) {
-  try {
-    $stc = $pdo->prepare("
-      SELECT 1 FROM information_schema.COLUMNS
-      WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME='page_files' AND COLUMN_NAME=?
-      LIMIT 1
-    ");
-    $stc->execute([$c]);
-    if ($stc->fetchColumn()) $cols[] = $c;
-  } catch (Throwable $e) {}
-}
-
+/* ---------------------------------------------------------
+   FETCH ROW
+--------------------------------------------------------- */
 $st = $pdo->prepare("
-  SELECT " . implode(',', array_unique($cols)) . "
+  SELECT *
   FROM page_files
   WHERE id = :id AND page_id = :pid
   LIMIT 1
 ");
 $st->execute([':id' => $fileId, ':pid' => $pageId]);
-$row = $st->fetch(PDO::FETCH_ASSOC) ?: null;
+$row = $st->fetch(PDO::FETCH_ASSOC);
 
 if (!$row) {
   http_response_code(404);
   header('Content-Type: text/plain; charset=utf-8');
-  echo "Attachment not found.\n";
+  echo "Attachment not found.";
   exit;
 }
 
-$extUrlRaw = trim((string)($row['external_url'] ?? ''));
-$isExternalFlag = !empty($row['is_external'] ?? 0);
-
-/**
- * IMPORTANT:
- * If is_external is missing/false but external_url is present, treat as external.
- * This prevents “works for YouTube but not Wikipedia” when some rows were saved differently.
- */
-$isExternal = $isExternalFlag || ($extUrlRaw !== '');
+/* ---------------------------------------------------------
+   EXTERNAL HANDLING
+--------------------------------------------------------- */
+$extUrlRaw  = trim((string)($row['external_url'] ?? ''));
+$isExternal = !empty($row['is_external']) || $extUrlRaw !== '';
 
 if ($isExternal) {
+
   if ($extUrlRaw === '') {
     http_response_code(400);
     header('Content-Type: text/plain; charset=utf-8');
-    echo "External URL missing.\n";
+    echo "External URL missing.";
     exit;
   }
 
-  $extUrl = mk_pagefile__normalize_external_url($extUrlRaw);
-  if ($extUrl === '') {
-    mk_staff_audit_try($pdo, 'page_file.open.external_blocked', [
-      'file_id' => $fileId,
-      'page_id' => $pageId,
-      'url'     => $extUrlRaw,
-      'reason'  => 'normalize_failed',
-    ]);
-    http_response_code(400);
-    header('Content-Type: text/plain; charset=utf-8');
-    echo "External URL blocked.\n";
-    exit;
-  }
-
-  /* Same external validator as download.php */
   if (!defined('PRIVATE_PATH') || !is_string(PRIVATE_PATH) || PRIVATE_PATH === '') {
     http_response_code(500);
     header('Content-Type: text/plain; charset=utf-8');
-    echo "PRIVATE_PATH missing.\n";
+    echo "PRIVATE_PATH missing.";
     exit;
   }
 
@@ -236,7 +266,7 @@ if ($isExternal) {
   if (!is_file($fn)) {
     http_response_code(500);
     header('Content-Type: text/plain; charset=utf-8');
-    echo "External validation function missing.\n";
+    echo "External validation function missing.";
     exit;
   }
   require_once $fn;
@@ -244,85 +274,92 @@ if ($isExternal) {
   if (!function_exists('mk_pagefile__validate_external_url')) {
     http_response_code(500);
     header('Content-Type: text/plain; charset=utf-8');
-    echo "External validator missing.\n";
+    echo "External validator missing.";
     exit;
   }
 
-  $v = mk_pagefile__validate_external_url($extUrl);
+  $v = mk_pagefile__validate_external_url($extUrlRaw);
+
   if (empty($v['ok']) || empty($v['url'])) {
     mk_staff_audit_try($pdo, 'page_file.open.external_blocked', [
       'file_id' => $fileId,
       'page_id' => $pageId,
-      'url'     => $extUrl,
-      'raw'     => $extUrlRaw,
-      'reason'  => is_array($v) && isset($v['reason']) ? (string)$v['reason'] : 'validator_reject',
+      'url'     => $extUrlRaw,
+      'reason'  => $v['error'] ?? 'validator_reject',
+      'method'  => $method,
+      'signed'  => $signedOk ? 1 : 0,
     ]);
+
     http_response_code(400);
     header('Content-Type: text/plain; charset=utf-8');
-    echo "External URL blocked.\n";
+    echo "External URL blocked.";
     exit;
   }
 
-  $target = str_replace(["\r","\n"], '', (string)$v['url']);
+  $target = mk__strip_crlf((string)$v['url']);
 
   mk_staff_audit_try($pdo, 'page_file.open.external_redirect', [
     'file_id' => $fileId,
     'page_id' => $pageId,
     'url'     => $target,
+    'method'  => $method,
+    'signed'  => $signedOk ? 1 : 0,
   ]);
 
-  // POST -> redirect to GET
-  header('Location: ' . $target, true, 303);
+  header('Location: ' . $target, true, $isPost ? 303 : 302);
   exit;
 }
 
-/* Local file open (inline) */
-$storedPath = trim((string)($row['stored_path'] ?? ''));
-$filePath   = trim((string)($row['file_path'] ?? ''));
-
-$relative = $storedPath !== '' ? $storedPath : $filePath;
+/* ---------------------------------------------------------
+   LOCAL FILE STREAM (INLINE + RANGE)
+--------------------------------------------------------- */
+$relative = trim((string)($row['stored_path'] ?? $row['file_path'] ?? ''));
 if ($relative === '') {
   http_response_code(400);
   header('Content-Type: text/plain; charset=utf-8');
-  echo "Stored path missing.\n";
+  echo "Stored path missing.";
   exit;
 }
 
-/*
-  Your uploads live outside /public/:
-  /public_html/lib/uploads/page_files/{page_id}/...
-*/
-$uploadsRoot = dirname(__DIR__, 2) . '/lib/uploads/page_files'; // /public_html/lib/uploads/page_files
+$uploadsRoot = dirname(__DIR__, 3) . '/lib/uploads/page_files';
 $uploadsRootReal = realpath($uploadsRoot);
 
 if (!$uploadsRootReal || !is_dir($uploadsRootReal)) {
   http_response_code(500);
   header('Content-Type: text/plain; charset=utf-8');
-  echo "Uploads root missing.\n";
+  echo "Uploads root missing.";
   exit;
 }
 
-/* Build absolute path */
-$abs = $relative;
-if ($abs[0] !== '/' && $abs[0] !== '\\') {
-  $abs = $uploadsRootReal . '/' . ltrim($abs, '/\\');
+$relNorm = str_replace('\\', '/', $relative);
+$abs = '';
+
+/* Case 1: stored as web-root relative, e.g. /lib/uploads/page_files/... */
+if (strpos($relNorm, '/lib/uploads/page_files/') === 0) {
+  $abs = dirname(__DIR__, 3) . $relNorm;
+/* Case 2: stored as relative under uploads root */
+} elseif ($relNorm !== '' && $relNorm[0] !== '/') {
+  $abs = $uploadsRootReal . '/' . ltrim($relNorm, '/\\');
+/* Case 3: stored as absolute filesystem path already */
+} else {
+  $abs = $relNorm;
 }
 
 $real = realpath($abs);
 if (!$real || !is_file($real)) {
   http_response_code(404);
   header('Content-Type: text/plain; charset=utf-8');
-  echo "File missing on disk.\n";
+  echo "File missing on disk.";
   exit;
 }
 
-/* Boundary check: must remain under uploads root */
 $rootNorm = rtrim(str_replace('\\','/',$uploadsRootReal), '/');
 $realNorm = str_replace('\\','/',$real);
+
 if (strpos($realNorm, $rootNorm . '/') !== 0) {
   http_response_code(403);
   header('Content-Type: text/plain; charset=utf-8');
-  echo "Access denied.\n";
+  echo "Access denied.";
   exit;
 }
 
@@ -332,25 +369,93 @@ if ($openName === '') $openName = basename($real);
 $mime = trim((string)($row['mime_type'] ?? ''));
 if ($mime === '') $mime = 'application/octet-stream';
 
+$size  = (int)@filesize($real);
+$mtime = (int)@filemtime($real);
+if ($mtime < 1) $mtime = time();
+
 mk_staff_audit_try($pdo, 'page_file.open.local_inline', [
   'file_id' => $fileId,
   'page_id' => $pageId,
   'name'    => $openName,
   'mime'    => $mime,
+  'method'  => $method,
+  'signed'  => $signedOk ? 1 : 0,
 ]);
 
+mk__emit_file_security_headers();
+
+$etag = '"' . sha1($real . '|' . $size . '|' . $mtime) . '"';
+mk__handle_conditional_cache($etag, $mtime);
+
 header('Content-Type: ' . $mime);
-header('X-Content-Type-Options: nosniff');
-header('Content-Disposition: inline; filename="' . str_replace('"','', $openName) . '"');
-header('Content-Length: ' . (string)filesize($real));
+header('Accept-Ranges: bytes');
+
+$safeName = preg_replace('/[\x00-\x1F\x7F"]+/u', '', $openName) ?: basename($real);
+$utf8Name = rawurlencode($safeName);
+header('Content-Disposition: inline; filename="' . $safeName . '"; filename*=UTF-8\'\'' . $utf8Name);
+
+$range = (string)($_SERVER['HTTP_RANGE'] ?? '');
+$start = 0;
+$end   = max(0, $size - 1);
+$useRange = false;
+
+if ($size > 0 && $range !== '' && preg_match('/bytes=\s*(\d*)\s*-\s*(\d*)/i', $range, $m)) {
+  $useRange = true;
+  $rStart = ($m[1] === '') ? null : (int)$m[1];
+  $rEnd   = ($m[2] === '') ? null : (int)$m[2];
+
+  if ($rStart === null && $rEnd !== null) {
+    $len = max(0, $rEnd);
+    $start = max(0, $size - $len);
+    $end = $size - 1;
+  } else {
+    $start = max(0, (int)$rStart);
+    $end = ($rEnd === null) ? ($size - 1) : min((int)$rEnd, $size - 1);
+  }
+
+  if ($start > $end || $start >= $size) {
+    http_response_code(416);
+    header('Content-Range: bytes */' . $size);
+    exit;
+  }
+}
+
+if ($useRange) {
+  http_response_code(206);
+  header('Content-Range: bytes ' . $start . '-' . $end . '/' . $size);
+  header('Content-Length: ' . (string)(($end - $start) + 1));
+} else {
+  header('Content-Length: ' . (string)$size);
+}
+
+@set_time_limit(0);
 
 $fp = fopen($real, 'rb');
 if (!$fp) {
   http_response_code(500);
   header('Content-Type: text/plain; charset=utf-8');
-  echo "Failed to read file.\n";
+  echo "Failed to read file.";
   exit;
 }
-fpassthru($fp);
+
+if ($useRange && $start > 0) {
+  fseek($fp, $start);
+}
+
+$remaining = $useRange ? (($end - $start) + 1) : $size;
+$chunk = 1024 * 256;
+
+while (!feof($fp) && $remaining > 0) {
+  $read = ($remaining > $chunk) ? $chunk : $remaining;
+  $buf = fread($fp, $read);
+  if ($buf === false || $buf === '') break;
+
+  echo $buf;
+  $remaining -= strlen($buf);
+
+  while (ob_get_level() > 0) { @ob_end_flush(); }
+  @flush();
+}
+
 fclose($fp);
 exit;

@@ -3,8 +3,7 @@ declare(strict_types=1);
 
 /**
  * /private/registry/seo_runtime.php
- * SEO runtime helpers. Loads templates from /private/registry/seo_templates.php.
- * Safe against double-includes (CLI/web) by file guard + function_exists guards.
+ * Guarded SEO runtime helpers.
  */
 
 if (defined('MK_SEO_RUNTIME_FILE_LOADED')) {
@@ -45,7 +44,6 @@ if (!function_exists('seo_base_vars')) {
 }
 
 if (!function_exists('seo_apply_template')) {
-  /** Replace tokens like {key} or {a|b|c} using first non-empty from $vars */
   function seo_apply_template(string $tpl, array $vars): string {
     $out = preg_replace_callback('/\{([^}]+)\}/', function ($m) use ($vars) {
       $keys = explode('|', $m[1]);
@@ -63,7 +61,6 @@ if (!function_exists('seo_apply_template')) {
 
 if (!function_exists('seo_render')) {
   function seo_render(string $type, array $vars): array {
-    // Prefer newer engine if present
     if (function_exists('seo_build')) {
       return seo_build($type, $vars + seo_base_vars());
     }

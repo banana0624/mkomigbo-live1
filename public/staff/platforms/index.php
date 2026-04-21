@@ -1,285 +1,317 @@
 <?php
 declare(strict_types=1);
 
-/**
- * /public/staff/platforms/index.php
- * Staff: Platforms list (premium scaffold)
- *
- * Matches Subjects layout exactly.
- */
-
 require_once __DIR__ . '/../_init.php';
+mk_require_staff_login();
 
-/* ---------------------------------------------------------
-   Safety helpers (fallbacks)
---------------------------------------------------------- */
+@ini_set('display_errors', '0');
+@ini_set('display_startup_errors', '0');
+error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
+
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+header('Expires: 0');
+
 if (!function_exists('h')) {
-  function h(string $value): string {
-    return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+  function h(string $v): string { return htmlspecialchars($v, ENT_QUOTES, 'UTF-8'); }
+}
+if (!function_exists('url_for')) {
+  function url_for(string $path): string { return '/' . ltrim($path, '/'); }
+}
+if (!function_exists('pf__safe_return_url')) {
+  function pf__safe_return_url(string $raw, string $default): string {
+    $raw = trim($raw);
+    if ($raw === '') return $default;
+    $raw = rawurldecode($raw);
+    if ($raw === '' || $raw[0] !== '/') return $default;
+    if (preg_match('~^//~', $raw)) return $default;
+    if (preg_match('~^[a-z]+:~i', $raw)) return $default;
+    if (strpos($raw, '/staff/') !== 0) return $default;
+    return $raw;
   }
 }
-
-/* ---------------------------------------------------------
-   Schema helpers (shared pattern)
---------------------------------------------------------- */
-if (!function_exists('pf__table_exists')) {
-  function pf__table_exists(PDO $pdo, string $table): bool
-  {
-    $table = trim($table);
-    if ($table === '') return false;
-
-    try {
-      $sql = "SELECT 1
-              FROM information_schema.tables
-              WHERE table_schema = DATABASE()
-                AND table_name = :t
-              LIMIT 1";
-      $st = $pdo->prepare($sql);
-      $st->execute([':t' => $table]);
-      return (bool)$st->fetchColumn();
-    } catch (Throwable $e) {
+if (!function_exists('pf__flash_get')) {
+  function pf__flash_get(string $key): string {
+    mk_staff_session_start();
+    $v = '';
+    if (isset($_SESSION['flash'][$key]) && is_string($_SESSION['flash'][$key])) {
+      $v = $_SESSION['flash'][$key];
+    }
+    unset($_SESSION['flash'][$key]);
+    return $v;
+  }
+}
+if (!function_exists('pf__csrf_token')) {
+  function pf__csrf_token(): string {
+    mk_staff_session_start();
+    if (function_exists('csrf_token')) {
       try {
-        $st = $pdo->prepare("SHOW TABLES LIKE :t");
-        $st->execute([':t' => $table]);
-        return (bool)$st->fetchColumn();
-      } catch (Throwable $e2) {
-        return false;
-      }
-    }
-  }
-}
-
-if (!function_exists('pf__columns')) {
-  function pf__columns(PDO $pdo, string $table): array
-  {
-    try {
-      $st = $pdo->query("DESCRIBE `{$table}`");
-      $cols = [];
-      foreach (($st ? $st->fetchAll(PDO::FETCH_ASSOC) : []) as $row) {
-        if (!empty($row['Field'])) $cols[] = (string)$row['Field'];
-      }
-      return $cols;
-    } catch (Throwable $e) {
-      return [];
-    }
-  }
-}
-
-if (!function_exists('pf__pick_first')) {
-  function pf__pick_first(array $cols, array $candidates): ?string
-  {
-    $map = [];
-    foreach ($cols as $c) {
-      $map[strtolower((string)$c)] = (string)$c;
-    }
-    foreach ($candidates as $cand) {
-      $k = strtolower((string)$cand);
-      if (isset($map[$k])) return $map[$k];
-    }
-    return null;
-  }
-}
-
-/* ---------------------------------------------------------
-   DB (PDO) — canonical staff accessor
---------------------------------------------------------- */
-$pdo = function_exists('staff_pdo') ? staff_pdo() : null;
-
-/* ---------------------------------------------------------
-   Filters (match Subjects UX)
---------------------------------------------------------- */
-$q = trim((string)($_GET['q'] ?? ''));
-
-$return_params = [];
-if ($q !== '') { $return_params['q'] = $q; }
-$return_qs = $return_params ? ('?' . http_build_query($return_params, '', '&', PHP_QUERY_RFC3986)) : '';
-$return_path = '/staff/platforms/index.php' . $return_qs;
-
-/* ---------------------------------------------------------
-   Header (shared)
---------------------------------------------------------- */
-$active_nav = 'platforms';
-$page_title = 'Manage Platforms • Staff';
-$page_desc  = 'Manage platforms (modules, sections, content hubs).';
-
-$staff_subnav = [
-  ['label' => 'Dashboard', 'href' => url_for('/staff/'),           'active' => false],
-  ['label' => 'Platforms', 'href' => url_for('/staff/platforms/'), 'active' => true],
-  ['label' => 'Public',    'href' => url_for('/platforms/'),       'active' => false],
-];
-
-require_once APP_ROOT . '/private/shared/staff_header.php';
-
-/* ---------------------------------------------------------
-   Fetch list (schema-tolerant)
---------------------------------------------------------- */
-$rows = [];
-$warn = '';
-
-if (!$pdo instanceof PDO) {
-  $warn = 'Database connection is not available in this request context.';
-} else {
-  $table = 'platforms';
-
-  if (!pf__table_exists($pdo, $table)) {
-    $warn = 'Table "platforms" not found yet. This page is ready; add the platforms table when you implement Platforms CRUD.';
-  } else {
-    $cols = pf__columns($pdo, $table);
-
-    $c_id   = pf__pick_first($cols, ['id', 'platform_id']);
-    $c_name = pf__pick_first($cols, ['name', 'title', 'label']);
-    $c_slug = pf__pick_first($cols, ['slug', 'key', 'handle']);
-    $c_desc = pf__pick_first($cols, ['description', 'summary', 'body']);
-    $c_pub  = pf__pick_first($cols, ['is_public', 'published', 'is_active', 'active']);
-
-    $select = [];
-    if ($c_id)   $select[] = "`{$c_id}` AS id";
-    if ($c_name) $select[] = "`{$c_name}` AS name";
-    if ($c_slug) $select[] = "`{$c_slug}` AS slug";
-    if ($c_desc) $select[] = "`{$c_desc}` AS description";
-    if ($c_pub)  $select[] = "`{$c_pub}` AS is_public";
-
-    if (!$select) {
-      $warn = 'Platforms table exists, but no recognized columns were found (expected at least id + name/title).';
-    } else {
-      $sql = "SELECT " . implode(', ', $select) . " FROM `{$table}` WHERE 1=1";
-      $params = [];
-
-      if ($q !== '') {
-        $parts = [];
-        if ($c_name) $parts[] = "`{$c_name}` LIKE :q";
-        if ($c_slug) $parts[] = "`{$c_slug}` LIKE :q";
-        if ($c_desc) $parts[] = "`{$c_desc}` LIKE :q";
-        if (!$parts && $c_id) $parts[] = "CAST(`{$c_id}` AS CHAR) LIKE :q";
-        if ($parts) {
-          $sql .= " AND (" . implode(' OR ', $parts) . ")";
-          $params[':q'] = '%' . $q . '%';
-        }
-      }
-
-      if ($c_name) $sql .= " ORDER BY `{$c_name}` ASC";
-      elseif ($c_id) $sql .= " ORDER BY `{$c_id}` DESC";
-      $sql .= " LIMIT 200";
-
-      try {
-        $st = $pdo->prepare($sql);
-        $st->execute($params);
-        $rows = $st->fetchAll(PDO::FETCH_ASSOC) ?: [];
+        $v = (string)csrf_token();
+        if ($v !== '') return $v;
       } catch (Throwable $e) {
-        $warn = 'Failed to query platforms table safely (schema or permission issue).';
+        // continue
       }
     }
+    if (empty($_SESSION['csrf_token']) || !is_string($_SESSION['csrf_token'])) {
+      $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+    return (string)$_SESSION['csrf_token'];
+  }
+}
+if (!function_exists('pf__csrf_field')) {
+  function pf__csrf_field(): string {
+    if (function_exists('csrf_field')) {
+      try { return (string)csrf_field(); } catch (Throwable $e) {}
+    }
+    return '<input type="hidden" name="csrf_token" value="' . h(pf__csrf_token()) . '">';
   }
 }
 
-/* URLs */
 $u = static function(string $path): string {
-  return function_exists('url_for') ? url_for($path) : $path;
+  return function_exists('url_for') ? (string)url_for($path) : $path;
 };
 
+$page_title = 'Platforms • Staff';
+$page_desc  = 'Manage platforms, status, visibility, order, and sections.';
+$nav_active = 'platforms';
+$active_nav = 'platforms';
+
+if (function_exists('mk_view_set')) {
+  try {
+    mk_view_set([
+      'page_title' => $page_title,
+      'page_desc'  => $page_desc,
+      'nav_active' => $nav_active,
+      'active_nav' => $active_nav,
+    ]);
+  } catch (Throwable $e) {
+    // swallow
+  }
+}
+
+$pdo = db();
+
+$q          = trim((string)($_GET['q'] ?? ''));
+$status     = trim((string)($_GET['status'] ?? ''));
+$visibility = trim((string)($_GET['visibility'] ?? ''));
+$trash      = ((string)($_GET['trash'] ?? '0') === '1');
+
+$where = [];
+$params = [];
+
+$where[] = $trash ? 'deleted_at IS NOT NULL' : 'deleted_at IS NULL';
+
+if ($q !== '') {
+  $where[] = '(name LIKE :q OR slug LIKE :q OR description LIKE :q)';
+  $params[':q'] = '%' . $q . '%';
+}
+if ($status !== '' && in_array($status, ['draft', 'live'], true)) {
+  $where[] = 'status = :status';
+  $params[':status'] = $status;
+}
+if ($visibility !== '' && in_array($visibility, ['public', 'private'], true)) {
+  $where[] = 'is_public = :is_public';
+  $params[':is_public'] = ($visibility === 'public') ? 1 : 0;
+}
+
+$sql = "
+  SELECT id, slug, name, description, status, is_public, sort_order, sections_json, deleted_at, created_at, updated_at
+  FROM platforms
+  WHERE " . implode(' AND ', $where) . "
+  ORDER BY sort_order ASC, name ASC, id ASC
+  LIMIT 300
+";
+
+$st = $pdo->prepare($sql);
+$st->execute($params);
+$rows = $st->fetchAll(PDO::FETCH_ASSOC) ?: [];
+
+$notice  = pf__flash_get('notice');
+$success = pf__flash_get('success');
+$error   = pf__flash_get('error');
+
+$return_params = [];
+if ($q !== '') $return_params['q'] = $q;
+if ($status !== '') $return_params['status'] = $status;
+if ($visibility !== '') $return_params['visibility'] = $visibility;
+if ($trash) $return_params['trash'] = '1';
+$return_qs = $return_params ? ('?' . http_build_query($return_params, '', '&', PHP_QUERY_RFC3986)) : '';
+$return = '/staff/platforms/index.php' . $return_qs;
+
+$staff_header = (defined('PRIVATE_PATH') && is_string(PRIVATE_PATH) && PRIVATE_PATH !== '')
+  ? (rtrim(PRIVATE_PATH, "/\\") . '/shared/staff_header.php')
+  : (defined('APP_ROOT') && is_string(APP_ROOT) && APP_ROOT !== ''
+      ? (rtrim(APP_ROOT, "/\\") . '/private/shared/staff_header.php')
+      : '');
+
+$staff_footer = (defined('PRIVATE_PATH') && is_string(PRIVATE_PATH) && PRIVATE_PATH !== '')
+  ? (rtrim(PRIVATE_PATH, "/\\") . '/shared/staff_footer.php')
+  : (defined('APP_ROOT') && is_string(APP_ROOT) && APP_ROOT !== ''
+      ? (rtrim(APP_ROOT, "/\\") . '/private/shared/staff_footer.php')
+      : '');
+
+if ($staff_header && is_file($staff_header)) {
+  require $staff_header;
+}
 ?>
-<div class="container">
 
-  <div class="hero">
-    <div class="hero__row">
-      <div>
-        <h1 class="hero__title">Platforms</h1>
-        <p class="hero__sub">Manage platforms (modules, sections, and content hubs).</p>
-      </div>
-      <div class="hero__actions">
-        <span class="btn btn--primary btn--disabled" aria-disabled="true">+ New Platform (soon)</span>
-      </div>
-    </div>
-  </div>
+<section class="staff-pagehead">
+  <h1 class="staff-pagehead__title">Platforms</h1>
+  <p class="staff-pagehead__desc">Manage platform records, visibility, lifecycle status, ordering, and section definitions.</p>
+</section>
 
-  <?php if ($warn !== ''): ?>
-    <div class="alert alert--warning"><?php echo h($warn); ?></div>
-  <?php endif; ?>
+<?php if ($notice !== ''): ?>
+  <section class="staff-section"><div class="staff-note"><?= h($notice) ?></div></section>
+<?php endif; ?>
 
-  <div class="card">
-    <div class="card__body">
+<?php if ($success !== ''): ?>
+  <section class="staff-section"><div class="staff-note" style="color:#14532d;border-color:rgba(34,197,94,.24);"><?= h($success) ?></div></section>
+<?php endif; ?>
 
-      <form class="stack" method="get" action="<?php echo h($u('/staff/platforms/index.php')); ?>">
-        <div class="row row--wrap row--gap">
-          <div class="field">
-            <label class="label" for="q">Search</label>
-            <input class="input" id="q" name="q" value="<?php echo h($q); ?>" placeholder="name / slug / description / id">
-          </div>
+<?php if ($error !== ''): ?>
+  <section class="staff-section"><div class="staff-note" style="color:#7f1d1d;border-color:rgba(239,68,68,.24);"><?= h($error) ?></div></section>
+<?php endif; ?>
 
-          <div class="field" style="align-self:flex-end;">
-            <button class="btn" type="submit">Apply</button>
-            <a class="btn btn--ghost" href="<?php echo h($u('/staff/platforms/index.php')); ?>">Clear</a>
-          </div>
+<section class="staff-section">
+  <div class="staff-card">
+    <div class="staff-card__body">
+      <form method="get" class="staff-actions" style="align-items:flex-end;">
+        <div style="flex:1 1 280px;">
+          <label for="q" style="display:block;font-weight:700;margin-bottom:6px;">Search</label>
+          <input id="q" type="text" name="q" value="<?= h($q) ?>" placeholder="Search name, slug, description" style="width:100%;min-height:44px;padding:10px 12px;border:1px solid rgba(17,24,39,.14);border-radius:12px;">
+        </div>
 
-          <div class="muted" style="align-self:flex-end;">
-            <?php echo (int)count($rows); ?> platform(s)
-          </div>
+        <div style="min-width:160px;">
+          <label for="status" style="display:block;font-weight:700;margin-bottom:6px;">Status</label>
+          <select id="status" name="status" style="width:100%;min-height:44px;padding:10px 12px;border:1px solid rgba(17,24,39,.14);border-radius:12px;">
+            <option value="">All statuses</option>
+            <option value="live" <?= $status === 'live' ? 'selected' : '' ?>>Live</option>
+            <option value="draft" <?= $status === 'draft' ? 'selected' : '' ?>>Draft</option>
+          </select>
+        </div>
+
+        <div style="min-width:160px;">
+          <label for="visibility" style="display:block;font-weight:700;margin-bottom:6px;">Visibility</label>
+          <select id="visibility" name="visibility" style="width:100%;min-height:44px;padding:10px 12px;border:1px solid rgba(17,24,39,.14);border-radius:12px;">
+            <option value="">All visibility</option>
+            <option value="public" <?= $visibility === 'public' ? 'selected' : '' ?>>Public</option>
+            <option value="private" <?= $visibility === 'private' ? 'selected' : '' ?>>Private</option>
+          </select>
+        </div>
+
+        <div style="min-width:140px;">
+          <label for="trash" style="display:block;font-weight:700;margin-bottom:6px;">List</label>
+          <select id="trash" name="trash" style="width:100%;min-height:44px;padding:10px 12px;border:1px solid rgba(17,24,39,.14);border-radius:12px;">
+            <option value="0" <?= !$trash ? 'selected' : '' ?>>Active</option>
+            <option value="1" <?= $trash ? 'selected' : '' ?>>Trash</option>
+          </select>
+        </div>
+
+        <div class="staff-actions">
+          <button type="submit" class="staff-chip" style="cursor:pointer;">Filter</button>
+          <a class="staff-chip" href="<?= h($u('/staff/platforms/new.php')) ?>">New platform</a>
         </div>
       </form>
+    </div>
+  </div>
+</section>
 
-      <hr class="sep">
+<section class="staff-section">
+  <form method="post" action="<?= h($u('/staff/platforms/bulk.php')) ?>">
+    <?= pf__csrf_field() ?>
+    <input type="hidden" name="return" value="<?= h($return) ?>">
 
-      <div class="table-wrap">
-        <table class="table">
-          <thead>
-            <tr>
-              <th style="width:90px;">ID</th>
-              <th>Name</th>
-              <th style="width:220px;">Slug</th>
-              <th style="width:110px;">Status</th>
-              <th style="width:240px;">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
+    <div class="staff-card">
+      <div class="staff-card__body">
+        <div class="staff-actions" style="justify-content:space-between;align-items:flex-start;">
+          <div>
+            <h2 style="margin:0;font-size:1.15rem;">Platform registry</h2>
+            <p style="margin:6px 0 0;color:#667085;"><?= h((string)count($rows)) ?> row(s) found.</p>
+          </div>
+
+          <div class="staff-actions">
+            <select name="action" required style="min-width:220px;min-height:42px;padding:10px 12px;border:1px solid rgba(17,24,39,.14);border-radius:12px;">
+              <option value="">Bulk action</option>
+              <option value="set_live">Set Live</option>
+              <option value="set_draft">Set Draft</option>
+              <option value="set_public">Set Public</option>
+              <option value="set_private">Set Private</option>
+              <option value="soft_delete">Soft Delete</option>
+              <option value="restore">Restore</option>
+            </select>
+            <button type="submit" class="staff-chip" style="cursor:pointer;">Apply</button>
+          </div>
+        </div>
+
+        <div style="margin-top:14px;overflow:auto;border:1px solid rgba(17,24,39,.10);border-radius:14px;background:#fff;">
+          <table style="width:100%;border-collapse:collapse;min-width:980px;">
+            <thead>
+              <tr style="background:rgba(17,24,39,.04);">
+                <th style="width:36px;text-align:left;padding:12px 14px;border-bottom:1px solid rgba(17,24,39,.10);">
+                  <input type="checkbox" onclick="document.querySelectorAll('.cb').forEach(x => x.checked = this.checked)">
+                </th>
+                <th style="text-align:left;padding:12px 14px;border-bottom:1px solid rgba(17,24,39,.10);">Name</th>
+                <th style="text-align:left;padding:12px 14px;border-bottom:1px solid rgba(17,24,39,.10);">Slug</th>
+                <th style="text-align:left;padding:12px 14px;border-bottom:1px solid rgba(17,24,39,.10);">Status</th>
+                <th style="text-align:left;padding:12px 14px;border-bottom:1px solid rgba(17,24,39,.10);">Visibility</th>
+                <th style="text-align:left;padding:12px 14px;border-bottom:1px solid rgba(17,24,39,.10);">Order</th>
+                <th style="text-align:left;padding:12px 14px;border-bottom:1px solid rgba(17,24,39,.10);">Sections</th>
+                <th style="text-align:left;padding:12px 14px;border-bottom:1px solid rgba(17,24,39,.10);">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
             <?php if (!$rows): ?>
               <tr>
-                <td colspan="5" class="muted">No platforms found (or table not ready).</td>
+                <td colspan="8" style="padding:16px 14px;color:#667085;">No platforms found.</td>
               </tr>
             <?php else: ?>
               <?php foreach ($rows as $r): ?>
                 <?php
-                  $id   = (string)($r['id'] ?? '');
-                  $name = (string)($r['name'] ?? '(Unnamed)');
-                  $slug = (string)($r['slug'] ?? '—');
-                  $pub  = $r['is_public'] ?? null;
+                  $id = (int)$r['id'];
+                  $show = '/staff/platforms/show.php?id=' . rawurlencode((string)$id) . '&return=' . rawurlencode($return);
+                  $edit = '/staff/platforms/edit.php?id=' . rawurlencode((string)$id) . '&return=' . rawurlencode($return);
+                  $del  = '/staff/platforms/delete.php?id=' . rawurlencode((string)$id) . '&return=' . rawurlencode($return);
 
-                  $is_public = null;
-                  if (is_numeric($pub)) $is_public = ((int)$pub === 1);
-                  elseif (is_bool($pub)) $is_public = $pub;
+                  $sectionsCount = 0;
+                  $decoded = json_decode((string)($r['sections_json'] ?? ''), true);
+                  if (is_array($decoded)) $sectionsCount = count($decoded);
                 ?>
                 <tr>
-                  <td class="mono"><?php echo h($id); ?></td>
-                  <td>
-                    <div class="strong"><?php echo h($name); ?></div>
+                  <td style="padding:12px 14px;border-bottom:1px solid rgba(17,24,39,.08);">
+                    <input class="cb" type="checkbox" name="ids[]" value="<?= $id ?>">
+                  </td>
+                  <td style="padding:12px 14px;border-bottom:1px solid rgba(17,24,39,.08);">
+                    <strong><?= h((string)$r['name']) ?></strong>
                     <?php if (!empty($r['description'])): ?>
-                      <div class="muted"><?php echo h((string)$r['description']); ?></div>
+                      <div style="color:#667085;margin-top:4px;">
+                        <?= h(mb_strimwidth((string)$r['description'], 0, 90, '…', 'UTF-8')) ?>
+                      </div>
                     <?php endif; ?>
                   </td>
-                  <td class="mono"><?php echo h($slug); ?></td>
-                  <td>
-                    <?php if ($is_public === true): ?>
-                      <span class="pill pill--success">Public</span>
-                    <?php elseif ($is_public === false): ?>
-                      <span class="pill pill--muted">Draft</span>
-                    <?php else: ?>
-                      <span class="muted">—</span>
-                    <?php endif; ?>
-                  </td>
-                  <td class="row row--gap">
-                    <span class="btn btn--sm btn--disabled" aria-disabled="true">View</span>
-                    <span class="btn btn--sm btn--disabled" aria-disabled="true">Edit</span>
-                    <span class="btn btn--sm btn--disabled" aria-disabled="true">Delete</span>
+                  <td style="padding:12px 14px;border-bottom:1px solid rgba(17,24,39,.08);color:#667085;"><?= h((string)$r['slug']) ?></td>
+                  <td style="padding:12px 14px;border-bottom:1px solid rgba(17,24,39,.08);"><?= h((string)$r['status']) ?></td>
+                  <td style="padding:12px 14px;border-bottom:1px solid rgba(17,24,39,.08);"><?= ((int)$r['is_public'] === 1) ? 'public' : 'private' ?></td>
+                  <td style="padding:12px 14px;border-bottom:1px solid rgba(17,24,39,.08);"><?= h((string)$r['sort_order']) ?></td>
+                  <td style="padding:12px 14px;border-bottom:1px solid rgba(17,24,39,.08);"><?= $sectionsCount ?></td>
+                  <td style="padding:12px 14px;border-bottom:1px solid rgba(17,24,39,.08);white-space:nowrap;">
+                    <a class="staff-chip" href="<?= h($show) ?>">View</a>
+                    <a class="staff-chip" href="<?= h($edit) ?>">Edit</a>
+                    <a class="staff-chip" href="<?= h($del) ?>" style="color:#7f1d1d;border-color:rgba(239,68,68,.24);">Delete</a>
                   </td>
                 </tr>
               <?php endforeach; ?>
             <?php endif; ?>
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
       </div>
-
     </div>
-  </div>
-</div>
+  </form>
+</section>
 
 <?php
-require APP_ROOT . '/private/shared/staff_footer.php';
+if ($staff_footer && is_file($staff_footer)) {
+  require $staff_footer;
+} else {
+  echo "</main></body></html>";
+}

@@ -1,0 +1,153 @@
+<?php
+declare(strict_types=1);
+
+if (!ob_get_level()) { @ob_start(); }
+require_once __DIR__ . '/../_init.php';
+
+if (function_exists('mk_staff_logout')) {
+  mk_staff_logout(); // this already audits staff_logout
+}
+
+// redirect to login with a flag
+$dest = '/staff/login.php?loggedout=1&ts=' . time();
+if (function_exists('url_for')) $dest = (string)url_for($dest);
+
+header('Location: ' . $dest, true, 302);
+exit;
+
+////////////////////////////////////////////////////////////
+// Load auth helpers
+////////////////////////////////////////////////////////////
+if (!function_exists('mk_staff_logout') || !function_exists('mk_staff_audit_log') || !function_exists('mk__session_start')) {
+  $auth = null;
+  if (defined('PRIVATE_PATH') && is_string(PRIVATE_PATH) && PRIVATE_PATH !== '') {
+    $auth = rtrim(PRIVATE_PATH, "/\\") . '/functions/auth.php';
+  } elseif (defined('APP_ROOT') && is_string(APP_ROOT) && APP_ROOT !== '') {
+    $auth = rtrim(APP_ROOT, "/\\") . '/private/functions/auth.php';
+  }
+  if ($auth && is_file($auth)) {
+    require_once $auth;
+  }
+}
+
+////////////////////////////////////////////////////////////
+// Start session (RBAC policy when available)
+////////////////////////////////////////////////////////////
+if (function_exists('mk__session_start')) {
+  mk__session_start();
+} else {
+  if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
+}
+
+////////////////////////////////////////////////////////////
+// No-cache
+////////////////////////////////////////////////////////////
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+header('Expires: 0');
+
+////////////////////////////////////////////////////////////
+// Capture uid BEFORE teardown (so audit is accurate)
+////////////////////////////////////////////////////////////
+$uid = 0;
+try {
+  if (!empty($_SESSION['staff_user_id']) && is_numeric($_SESSION['staff_user_id'])) {
+    $uid = (int)$_SESSION['staff_user_id'];
+  } elseif (!empty($_SESSION['staff_id']) && is_numeric($_SESSION['staff_id'])) {
+    $uid = (int)$_SESSION['staff_id'];
+  } elseif (!empty($_SESSION['staff_user']) && is_array($_SESSION['staff_user']) && is_numeric($_SESSION['staff_user']['id'] ?? null)) {
+    $uid = (int)$_SESSION['staff_user']['id'];
+  }
+} catch (Throwable $e) {
+  $uid = 0;
+}
+if ($uid < 0) $uid = 0;
+
+////////////////////////////////////////////////////////////
+// Audit ONCE (logout event)
+////////////////////////////////////////////////////////////
+try {
+  if (function_exists('mk_staff_audit_log')) {
+    // Force uid so it never becomes NULL/blank in DB
+    mk_staff_audit_log('staff_logout', ['via' => 'logout.php'], $uid);
+  }
+} catch (Throwable $e) {
+  // never block logout
+}
+
+////////////////////////////////////////////////////////////
+// RBAC logout (should NOT re-audit; it may, but we try to avoid double logs)
+////////////////////////////////////////////////////////////
+try {
+  if (function_exists('mk_staff_logout')) {
+    mk_staff_logout(); // should clear canonical keys
+  } else {
+    unset(
+      $_SESSION['staff_user_id'],
+      $_SESSION['staff_id'],
+      $_SESSION['staff_email'],
+      $_SESSION['staff_role'],
+      $_SESSION['staff_roles'],
+      $_SESSION['staff_roles_ts'],
+      $_SESSION['staff_user'],
+      $_SESSION['staff_csrf']
+    );
+    @session_regenerate_id(true);
+  }
+} catch (Throwable $e) {
+  // never block logout
+}
+
+////////////////////////////////////////////////////////////
+// Hard teardown: clear session array + cookie + destroy
+////////////////////////////////////////////////////////////
+$_SESSION = [];
+
+if (session_status() === PHP_SESSION_ACTIVE) {
+  @session_regenerate_id(true);
+}
+
+if (ini_get('session.use_cookies')) {
+  $p = session_get_cookie_params();
+
+  $cookieName = session_name();
+  $path       = $p['path'] ?? '/';
+  $domain     = $p['domain'] ?? '';
+  $secure     = (bool)($p['secure'] ?? mk__is_https_req());
+  $httpOnly   = (bool)($p['httponly'] ?? true);
+
+  // primary: options array (PHP 7.3+)
+  $ok = false;
+  try {
+    $ok = @setcookie($cookieName, '', [
+      'expires'  => time() - 42000,
+      'path'     => $path,
+      'domain'   => $domain,
+      'secure'   => $secure,
+      'httponly' => $httpOnly,
+      'samesite' => 'Lax',
+    ]);
+  } catch (Throwable $e) {
+    $ok = false;
+  }
+
+  // legacy fallback
+  if (!$ok) {
+    @setcookie($cookieName, '', time() - 42000, $path, $domain, $secure, $httpOnly);
+  }
+
+  // cleanup variants (domain mismatch / historical cookies)
+  @setcookie($cookieName, '', time() - 42000, $path); // no domain
+  @setcookie($cookieName, '', time() - 42000, '/');   // broadest
+}
+
+@session_destroy();
+
+////////////////////////////////////////////////////////////
+// Redirect to login
+////////////////////////////////////////////////////////////
+$dest = function_exists('url_for') ? url_for('/staff/login.php') : '/staff/login.php';
+$dest = str_replace(["\r","\n"], '', (string)$dest);
+$dest .= (strpos($dest, '?') === false ? '?' : '&') . 'loggedout=1&ts=' . rawurlencode((string)time());
+
+mk__safe_redirect($dest);

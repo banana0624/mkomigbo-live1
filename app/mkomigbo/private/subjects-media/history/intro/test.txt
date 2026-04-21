@@ -1,1 +1,2 @@
-Test attachment for History/Intro
+Hello from Mkomigbo Subjects attachments.
+This file is served via /subjects/history/intro/media/test.txt

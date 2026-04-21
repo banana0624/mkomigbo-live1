@@ -1,0 +1,26 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * /public/staff/logout.php
+ * Logout endpoint (single audit source)
+ */
+
+if (!ob_get_level()) { @ob_start(); }
+require_once __DIR__ . '/../_init.php';
+
+if (function_exists('mk_staff_logout')) {
+  // mk_staff_logout() already writes staff_logout to staff_audit_log
+  mk_staff_logout();
+} else {
+  // minimal fallback
+  if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
+  unset($_SESSION['staff_user_id'], $_SESSION['staff_email'], $_SESSION['staff_roles'], $_SESSION['staff_roles_ts']);
+  @session_regenerate_id(true);
+}
+
+$dest = '/staff/login.php?loggedout=1&ts=' . time();
+if (function_exists('url_for')) $dest = (string)url_for($dest);
+
+header('Location: ' . $dest, true, 302);
+exit;

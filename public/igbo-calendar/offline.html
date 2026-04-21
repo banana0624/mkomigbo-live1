@@ -1,19 +1,96 @@
+<!-- /public/igbo-calendar/offline.html -->
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#0b0b0b">
   <title>Igbo Calendar — Offline</title>
   <style>
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; padding:24px; max-width:720px; margin:auto;}
-    .card{border:1px solid #ddd; border-radius:16px; padding:18px;}
+    :root{
+      --bg:#0b0b0b;
+      --surface:rgba(255,255,255,.06);
+      --border:rgba(255,255,255,.12);
+      --text:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.68);
+      --shadow:0 10px 30px rgba(0,0,0,.25);
+      --radius:16px;
+      --pad:18px;
+      --font:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+    }
+    @media (prefers-color-scheme: light){
+      :root{
+        --bg:#ffffff;
+        --surface:rgba(0,0,0,.04);
+        --border:rgba(0,0,0,.12);
+        --text:rgba(0,0,0,.90);
+        --muted:rgba(0,0,0,.62);
+        --shadow:0 10px 30px rgba(0,0,0,.10);
+      }
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--font);
+      background:var(--bg);
+      color:var(--text);
+      -webkit-font-smoothing:antialiased;
+      text-rendering:optimizeLegibility;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:22px 16px;
+    }
+    .card{
+      width:min(760px, 100%);
+      border:1px solid var(--border);
+      background:linear-gradient(180deg,var(--surface) 0%, transparent 140%);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:var(--pad);
+    }
+    h1{margin:0 0 8px; font-size:22px; letter-spacing:-.02em}
+    p{margin:10px 0; color:var(--muted); line-height:1.5}
+    .row{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px}
+    .btn{
+      appearance:none;
+      border:1px solid var(--border);
+      background:var(--surface);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      font-size:14px;
+      line-height:1;
+      user-select:none;
+    }
+    .btn:hover{filter:brightness(1.06)}
+    .hint{margin-top:10px; font-size:13px; color:var(--muted)}
+    code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>You are offline</h1>
-    <p>The Igbo Calendar app is installed, but this page needs a connection the first time.</p>
-    <p>Once loaded successfully, it will work better offline.</p>
-  </div>
+  <main class="card" role="main" aria-label="Offline notice">
+    <h1>You’re offline</h1>
+    <p>
+      Igbo Calendar is installed, but this view needs a connection right now.
+      Once the app shell has loaded successfully at least once, it will work far better offline.
+    </p>
+
+    <div class="row">
+      <a class="btn" href="/igbo-calendar/">↻ Try again</a>
+      <button class="btn" type="button" onclick="location.reload()">Reload</button>
+    </div>
+
+    <p class="hint">
+      Tip: connect briefly and open <code>/igbo-calendar/</code> once, then you can return offline.
+    </p>
+  </main>
 </body>
 </html>

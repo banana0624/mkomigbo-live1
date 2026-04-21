@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/../../_init.php';
+
 /**
  * /public/staff/tools/diagnostics.php
  * Diagnostics + Scan (staff-only)
@@ -10,17 +12,36 @@ declare(strict_types=1);
  * - JSON via ?format=json
  */
 
-if (!defined('APP_ROOT')) { define('APP_ROOT', dirname(__DIR__, 3)); }
-$init = APP_ROOT . '/private/assets/initialize.php';
-if (!is_file($init)) { echo "FAIL: initialize.php missing at {$init}
-"; exit(1); }
-require_once $init;
+@ini_set('display_errors', '0');
+@ini_set('display_startup_errors', '0');
+error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
+/* ---------------------------------------------------------
+   Tools chrome + RBAC gate
+--------------------------------------------------------- */
+if (function_exists('mk_require_shared')) {
+  try { mk_require_shared('tools_header.php'); } catch (Throwable $e) {}
+}
 
-/* Auth guard */
-if (function_exists('require_staff')) {
-  require_staff();
-} elseif (function_exists('require_login')) {
-  require_login();
+$tools_header = (defined('PRIVATE_PATH') && is_string(PRIVATE_PATH) && PRIVATE_PATH !== '')
+  ? rtrim(PRIVATE_PATH, "/\\") . '/shared/tools_header.php'
+  : (defined('APP_ROOT') && is_string(APP_ROOT) && APP_ROOT !== ''
+      ? rtrim(APP_ROOT, "/\\") . '/private/shared/tools_header.php'
+      : '');
+
+if ($tools_header !== '' && is_file($tools_header)) {
+  require_once $tools_header;
+} else {
+  if (function_exists('mk_require_staff_login')) {
+    mk_require_staff_login();
+  } else {
+    header('Location: /staff/login.php', true, 302);
+    exit;
+  }
+}
+
+/* Extra belt+suspenders permission gate (tools_header already does this) */
+if (defined('MK_ENFORCE_TOOLS_RBAC') && MK_ENFORCE_TOOLS_RBAC && function_exists('mk_require_staff_permission')) {
+  mk_require_staff_permission('tools.view');
 }
 
 /* Helpers */
@@ -33,46 +54,6 @@ if (!function_exists('pf__bool')) {
     $s = strtolower((string)$v);
     return in_array($s, ['1','true','yes','on'], true);
   }
-}
-
-/* URL helper (router-safe) */
-function pf__url(string $path): string {
-  $path = trim($path);
-  if ($path === '') return '';
-  if (preg_match('~^https?://~i', $path)) return $path;
-
-  if ($path[0] !== '/') $path = '/' . $path;
-
-  if (function_exists('url_for')) return (string)url_for($path);
-  if (defined('WWW_ROOT') && is_string(WWW_ROOT) && WWW_ROOT !== '') return rtrim(WWW_ROOT, '/') . $path;
-
-  return $path;
-}
-
-/* Tools nav */
-function pf__tools_nav(string $active = 'diagnostics'): string {
-  $items = [
-    'index'       => [pf__url('/staff/tools/'),              'Tools Home'],
-    'scan'        => [pf__url('/staff/tools/scan.php'),      'Scan'],
-    'diagnostics' => [pf__url('/staff/tools/diagnostics.php'),'Diagnostics'],
-    'error_log'   => [pf__url('/staff/tools/error_log.php'), 'Error Log'],
-    'audit'       => [pf__url('/staff/tools/audit.php'),     'Audit'],
-  ];
-
-  $out = '<nav class="tools-nav" style="margin:12px 0 18px; padding:10px 12px; border:1px solid rgba(0,0,0,.08); border-radius:12px; background:#fff;">';
-  $out .= '<div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between;">';
-  $out .= '<div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">';
-  foreach ($items as $key => [$href, $label]) {
-    $is = ($key === $active);
-    $style = $is
-      ? 'style="display:inline-block; padding:8px 10px; border-radius:10px; text-decoration:none; font-weight:700; border:1px solid rgba(0,0,0,.15); background:rgba(0,0,0,.04);"'
-      : 'style="display:inline-block; padding:8px 10px; border-radius:10px; text-decoration:none; border:1px solid rgba(0,0,0,.08); background:#fff;"';
-    $out .= '<a '.$style.' href="'.h($href).'">'.h($label).'</a>';
-  }
-  $out .= '</div>';
-  $out .= '<div style="font-size:12px; opacity:.8;">Staff Tools</div>';
-  $out .= '</div></nav>';
-  return $out;
 }
 
 /* Base URL */
@@ -110,7 +91,7 @@ function pf__http_check(string $url, int $timeout = 6): array {
       CURLOPT_SSL_VERIFYPEER => false,
       CURLOPT_SSL_VERIFYHOST => 0,
       CURLOPT_HEADER => true,
-      CURLOPT_USERAGENT => 'MkomigboDiagnostics/1.2',
+      CURLOPT_USERAGENT => 'MkomigboDiagnostics/2.0',
     ]);
     $hdr = curl_exec($ch);
     if ($hdr === false) {
@@ -132,7 +113,7 @@ function pf__http_check(string $url, int $timeout = 6): array {
         CURLOPT_CONNECTTIMEOUT => $timeout,
         CURLOPT_SSL_VERIFYPEER => false,
         CURLOPT_SSL_VERIFYHOST => 0,
-        CURLOPT_USERAGENT => 'MkomigboDiagnostics/1.2',
+        CURLOPT_USERAGENT => 'MkomigboDiagnostics/2.0',
         CURLOPT_RANGE => '0-1023',
       ]);
       $body = curl_exec($ch);
@@ -298,24 +279,24 @@ $doScan   = pf__bool($_POST['scan'] ?? ($_GET['scan'] ?? '0'));
 $doBrowse = pf__bool($_GET['browse'] ?? '0');
 
 $projectRoot = (defined('APP_ROOT') && is_string(APP_ROOT) && APP_ROOT !== '')
-  ? APP_ROOT
-  : (realpath(dirname(__DIR__, 4)) ?: dirname(__DIR__, 4)); // fallback only
+  ? rtrim((string)APP_ROOT, "/\\")
+  : (realpath(dirname(__DIR__, 4)) ?: dirname(__DIR__, 4));
 
 $baseUrl = pf__site_base_url();
 
 /* Default browse roots */
 $browseRoots = [
-  'Project root'      => $projectRoot,
-  'public'            => $projectRoot . DIRECTORY_SEPARATOR . 'public',
-  'private'           => $projectRoot . DIRECTORY_SEPARATOR . 'private',
-  'private/shared'    => $projectRoot . DIRECTORY_SEPARATOR . 'private' . DIRECTORY_SEPARATOR . 'shared',
-  'public/subjects'   => $projectRoot . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR . 'subjects',
-  'public/lib/css'    => $projectRoot . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'css',
-  'public/staff/tools'=> $projectRoot . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR . 'staff' . DIRECTORY_SEPARATOR . 'tools',
+  'Project root'       => $projectRoot,
+  'public'             => $projectRoot . DIRECTORY_SEPARATOR . 'public',
+  'private'            => $projectRoot . DIRECTORY_SEPARATOR . 'private',
+  'private/shared'     => $projectRoot . DIRECTORY_SEPARATOR . 'private' . DIRECTORY_SEPARATOR . 'shared',
+  'public/subjects'    => $projectRoot . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR . 'subjects',
+  'public/lib/css'     => $projectRoot . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'css',
+  'public/staff/tools' => $projectRoot . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR . 'staff' . DIRECTORY_SEPARATOR . 'tools',
 ];
 
 /* Target to scan */
-$defaultTarget = $browseRoots['private/shared'] ?? $projectRoot . DIRECTORY_SEPARATOR . 'private' . DIRECTORY_SEPARATOR . 'shared';
+$defaultTarget = $browseRoots['private/shared'] ?? ($projectRoot . DIRECTORY_SEPARATOR . 'private' . DIRECTORY_SEPARATOR . 'shared');
 $target = trim((string)($_POST['target'] ?? ($_GET['target'] ?? $defaultTarget)));
 if ($target === '') $target = $defaultTarget;
 
@@ -348,14 +329,15 @@ $report = [
   ],
 ];
 
-/* Bootstrap paths (NO $init usage) */
+/* Bootstrap checks */
 $bootstrapChecks = [
-  'private/assets/initialize.php'      => $projectRoot . '/private/assets/' . 'initialize.php',
-  'private/shared/staff_header.php'    => $projectRoot . '/private/shared/staff_header.php',
-  'private/shared/staff_footer.php'    => $projectRoot . '/private/shared/staff_footer.php',
-  'public/lib/css/ui.css'              => $projectRoot . '/public/lib/css/ui.css',
-  'public/lib/css/staff.css'           => $projectRoot . '/public/lib/css/staff.css',
-  'public/staff/tools/index.php'       => $projectRoot . '/public/staff/tools/index.php',
+  'private/shared/staff_header.php' => $projectRoot . '/private/shared/staff_header.php',
+  'private/shared/staff_footer.php' => $projectRoot . '/private/shared/staff_footer.php',
+  'private/shared/tools_header.php' => $projectRoot . '/private/shared/tools_header.php',
+  'public/lib/css/ui.css'           => $projectRoot . '/public/lib/css/ui.css',
+  'public/lib/css/staff.css'        => $projectRoot . '/public/lib/css/staff.css',
+  'public/staff/tools/index.php'    => $projectRoot . '/public/staff/tools/index.php',
+  'public/staff/tools/run.php'      => $projectRoot . '/public/staff/tools/run.php',
 ];
 
 foreach ($bootstrapChecks as $name => $path) {
@@ -405,19 +387,24 @@ if ($format === 'json') {
   exit;
 }
 
-/* HTML output */
+/* ---------------------------------------------------------
+   HTML output (tools_header already opened staff chrome)
+--------------------------------------------------------- */
 $page_title = 'Diagnostics • Staff Tools';
-$nav_active = 'tools';
-$staff_header = $projectRoot . '/private/shared/staff_header.php';
-$staff_footer = $projectRoot . '/private/shared/staff_footer.php';
+$page_desc  = 'Diagnostics, linking checks, and scan helper.';
 
-if (is_file($staff_header)) {
-  include $staff_header;
-} else {
-  echo "<!doctype html><html><head><meta charset='utf-8'><title>" . h($page_title) . "</title></head><body>";
+if (function_exists('mk_view_set')) {
+  try {
+    mk_view_set([
+      'page_title' => $page_title,
+      'page_desc'  => $page_desc,
+      'nav_active' => 'tools',
+      'active_nav' => 'tools',
+    ]);
+  } catch (Throwable $e) {}
 }
 
-echo pf__tools_nav('diagnostics');
+/* Minimal inline styles for inputs */
 ?>
 <style>
   .diag-input { pointer-events:auto !important; user-select:auto !important; opacity:1 !important; }
@@ -425,7 +412,7 @@ echo pf__tools_nav('diagnostics');
   .diag-mono  { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12px; }
 </style>
 
-<div class="card" style="padding:16px; border:1px solid rgba(0,0,0,.08); border-radius:14px; background:#fff;">
+<div class="mk-card" style="padding:16px; border:1px solid rgba(0,0,0,.08); border-radius:14px; background:#fff; margin-top:14px;">
   <h2 style="margin:0 0 6px;">Diagnostics (CSS + Linking + Scan)</h2>
   <div style="opacity:.8; font-size:13px;">
     Generated: <?= h($report['generated_utc']) ?> • PHP <?= h($report['php_version']) ?>
@@ -473,7 +460,7 @@ echo pf__tools_nav('diagnostics');
 
 <?php if ($doBrowse): ?>
   <div style="height:14px;"></div>
-  <div class="card" style="padding:16px; border:1px solid rgba(0,0,0,.08); border-radius:14px; background:#fff;">
+  <div class="mk-card" style="padding:16px; border:1px solid rgba(0,0,0,.08); border-radius:14px; background:#fff;">
     <h3 style="margin:0 0 10px;">Browse project (server-side)</h3>
 
     <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px;">
@@ -589,7 +576,7 @@ echo pf__tools_nav('diagnostics');
 
 <div style="height:14px;"></div>
 
-<div class="card" style="padding:16px; border:1px solid rgba(0,0,0,.08); border-radius:14px; background:#fff;">
+<div class="mk-card" style="padding:16px; border:1px solid rgba(0,0,0,.08); border-radius:14px; background:#fff;">
   <h3 style="margin:0 0 10px;">HTTP checks (asset serving)</h3>
   <table style="width:100%; border-collapse:collapse;">
     <thead>
@@ -617,7 +604,7 @@ echo pf__tools_nav('diagnostics');
 
 <div style="height:14px;"></div>
 
-<div class="card" style="padding:16px; border:1px solid rgba(0,0,0,.08); border-radius:14px; background:#fff;">
+<div class="mk-card" style="padding:16px; border:1px solid rgba(0,0,0,.08); border-radius:14px; background:#fff;">
   <h3 style="margin:0 0 10px;">Scan results</h3>
 
   <div style="opacity:.75; font-size:13px; margin-bottom:10px;">
@@ -674,8 +661,9 @@ echo pf__tools_nav('diagnostics');
 </div>
 
 <?php
-if (is_file($staff_footer)) {
-  include $staff_footer;
-} else {
-  echo "</body></html>";
+/* Footer */
+if (function_exists('mk_require_shared')) {
+  mk_require_shared('staff_footer.php');
+  exit;
 }
+echo "</main></body></html>";

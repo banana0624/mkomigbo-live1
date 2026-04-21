@@ -1,0 +1,2 @@
+<?php
+echo "REAL PUBLIC DIRECTORY WORKS";

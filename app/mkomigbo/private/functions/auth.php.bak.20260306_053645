@@ -1,0 +1,137 @@
+<?php
+declare(strict_types=1);
+
+if (!function_exists('mk_attempt_staff_login')) {
+  function mk_attempt_staff_login(string $email, string $password): array {
+    $email = trim($email);
+    $password = (string)$password;
+
+    if ($email === '' || $password === '') {
+      mk_staff_audit_log('staff_login_failed_missing_fields', [], 0);
+      return ['ok' => false, 'id' => 0, 'error' => 'Email and password are required.'];
+    }
+
+    $email_norm = function_exists('mb_strtolower')
+      ? mb_strtolower($email, 'UTF-8')
+      : strtolower($email);
+    $email_norm = trim($email_norm);
+
+    $fail = 'Login failed. Confirm your email and password match staff_users.';
+    $rk = function_exists('mk_rate_key') ? mk_rate_key($email_norm) : '';
+
+    if ($rk !== '' && function_exists('mk_rate_limit_check')) {
+      [$allowed, $retryAfter] = mk_rate_limit_check($rk, 8, 15 * 60);
+      if (!$allowed) {
+        mk_staff_audit_log('staff_login_rate_limited', [], 0);
+        return ['ok' => false, 'id' => 0, 'error' => "Too many login attempts. Try again in about {$retryAfter} seconds."];
+      }
+    }
+
+    if (!function_exists('db')) {
+      return ['ok' => false, 'id' => 0, 'error' => 'DB helper db() not available.'];
+    }
+
+    try {
+      $pdo = db();
+      if (!$pdo instanceof PDO) {
+        mk__auth_log('ERROR', 'Staff login: db() did not return PDO.');
+        return ['ok' => false, 'id' => 0, 'error' => 'DB not available.'];
+      }
+
+      $st = $pdo->prepare("
+        SELECT id, email, password_hash, is_active
+        FROM staff_users
+        WHERE LOWER(email) = LOWER(?)
+        LIMIT 1
+      ");
+      $st->execute([$email_norm]);
+      $u = $st->fetch(PDO::FETCH_ASSOC) ?: null;
+
+      if (!$u) {
+        if ($rk !== '' && function_exists('mk_rate_limit_hit')) {
+          mk_rate_limit_hit($rk);
+        }
+        mk__auth_log('INFO', 'Staff login failed: email not found.', ['email' => $email_norm]);
+        mk_staff_audit_log('staff_login_failed_email', ['email' => $email_norm], 0);
+        @usleep(150000);
+        return ['ok' => false, 'id' => 0, 'error' => $fail];
+      }
+
+      $uid = (int)($u['id'] ?? 0);
+
+      if ((int)($u['is_active'] ?? 0) !== 1) {
+        if ($rk !== '' && function_exists('mk_rate_limit_hit')) {
+          mk_rate_limit_hit($rk);
+        }
+        mk__auth_log('INFO', 'Staff login failed: account inactive.', ['id' => $uid]);
+        mk_staff_audit_log('staff_login_failed_inactive', ['email' => (string)($u['email'] ?? $email_norm)], $uid);
+        @usleep(150000);
+        return ['ok' => false, 'id' => 0, 'error' => 'Account is disabled.'];
+      }
+
+      $hash = trim((string)($u['password_hash'] ?? ''));
+      if ($hash === '' || strlen($hash) < 20) {
+        if ($rk !== '' && function_exists('mk_rate_limit_hit')) {
+          mk_rate_limit_hit($rk);
+        }
+        mk__auth_log('ERROR', 'Staff login failed: password_hash missing/short.', ['id' => $uid, 'hash_len' => strlen($hash)]);
+        mk_staff_audit_log('staff_login_failed_hash_invalid', ['hash_len' => strlen($hash)], $uid);
+        @usleep(150000);
+        return ['ok' => false, 'id' => 0, 'error' => $fail];
+      }
+
+      if (!password_verify($password, $hash)) {
+        if ($rk !== '' && function_exists('mk_rate_limit_hit')) {
+          mk_rate_limit_hit($rk);
+        }
+        mk__auth_log('INFO', 'Staff login failed: bad password.', ['id' => $uid]);
+        mk_staff_audit_log('staff_login_failed_password', ['email' => (string)($u['email'] ?? $email_norm)], $uid);
+        @usleep(150000);
+        return ['ok' => false, 'id' => 0, 'error' => $fail];
+      }
+
+      if (password_needs_rehash($hash, PASSWORD_DEFAULT)) {
+        try {
+          $new = password_hash($password, PASSWORD_DEFAULT);
+          if ($new) {
+            $up = $pdo->prepare("UPDATE staff_users SET password_hash = ? WHERE id = ? LIMIT 1");
+            $up->execute([$new, $uid]);
+            mk_staff_audit_log('staff_login_rehash_ok', [], $uid);
+          }
+        } catch (Throwable $e) {
+          mk__auth_log('WARN', 'Staff login: rehash update failed.', ['id' => $uid, 'err' => $e->getMessage()]);
+          mk_staff_audit_log('staff_login_rehash_failed', ['err' => $e->getMessage()], $uid);
+        }
+      }
+
+      mk__session_start();
+      @session_regenerate_id(true);
+
+      $_SESSION['staff_user_id'] = $uid;
+      $_SESSION['staff_email']   = (string)($u['email'] ?? $email_norm);
+
+      $roles = mk_staff_roles_load($uid, true);
+      $_SESSION['staff_roles'] = $roles;
+      $_SESSION['staff_roles_ts'] = time();
+
+      if ($rk !== '') {
+        try {
+          $del = $pdo->prepare("DELETE FROM staff_login_rate_limits WHERE `key` = ?");
+          $del->execute([$rk]);
+        } catch (Throwable $e) {
+          // swallow
+        }
+      }
+
+      mk__auth_log('INFO', 'Staff login OK.', ['id' => $uid, 'roles' => $roles]);
+      mk_staff_audit_log('staff_login_ok', ['email' => $_SESSION['staff_email'], 'roles' => $roles], $uid);
+
+      return ['ok' => true, 'id' => $uid, 'error' => ''];
+
+    } catch (Throwable $e) {
+      mk__auth_log('ERROR', 'Staff login exception.', ['err' => $e->getMessage()]);
+      mk_staff_audit_log('staff_login_exception', ['err' => $e->getMessage()], 0);
+      return ['ok' => false, 'id' => 0, 'error' => 'Login error.'];
+    }
+  }
+}

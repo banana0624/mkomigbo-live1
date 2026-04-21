@@ -1,17 +1,29 @@
-# /home/mkomigbo/public_html/public/.htaccess
+# Disable directory listing & content negotiation
 Options -Indexes -MultiViews
 
 <IfModule mod_rewrite.c>
 RewriteEngine On
+RewriteBase /public/
 
-# Let /public/lib/* pass through (assets live here)
-RewriteRule ^lib/ - [L]
-
-# Serve existing files/dirs
+# ----------------------------------------
+# 1. Allow real files and directories
+# ----------------------------------------
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
-# Default fallback for /public/ only
+# ----------------------------------------
+# 2. Allow static assets (lib, css, js, images)
+# ----------------------------------------
+RewriteRule ^(lib|assets|css|js|images)/ - [L]
+
+# ----------------------------------------
+# 3. Allow module folders to handle themselves
+# ----------------------------------------
+
+# ----------------------------------------
+# 4. Route everything else to front controller
+# ----------------------------------------
 RewriteRule ^ index.php [L,QSA]
+
 </IfModule>

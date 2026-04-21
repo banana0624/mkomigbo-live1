@@ -24,7 +24,9 @@ require_once APP_ROOT . '/private/functions/scripts_repository.php';
 $page_title = 'Language · Ndebe (Write Ìgbò)';
 $nav_active = 'subjects';
 
-include APP_ROOT . '/private/shared/public_header.php';
+if (function_exists('mk_require_shared')) {
+  mk_require_shared('public_header.php');
+}
 
 $concepts = mk_concepts_for_script('ndebe', [
   'sensitivity_max' => 'public',

@@ -1,36 +1,30 @@
 <?php
 declare(strict_types=1);
 
-/**
- * /public/staff/subjects/pgs/bulk.php
- * Staff: Bulk actions for pages list:
- * - publish / unpublish (schema-aware)
- * - save_order (schema-aware)
- */
+require_once __DIR__ . '/../../_init.php';
+mk_require_staff_login();
 
 @ini_set('display_errors', '0');
 @ini_set('display_startup_errors', '0');
 error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
 
-require_once __DIR__ . '/../../_init.php';
-if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
-
 if (!function_exists('redirect_to')) {
   function redirect_to(string $location): void {
-    $location = str_replace(["\r", "\n"], '', $location);
+    $location = str_replace(["\r","\n"], '', trim($location));
+    if ($location === '') $location = '/staff/subjects/pgs/index.php';
     header('Location: ' . $location, true, 302);
     exit;
   }
 }
 if (!function_exists('pf__flash_set')) {
   function pf__flash_set(string $key, string $msg): void {
-    if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
+    mk_staff_session_start();
     if (!isset($_SESSION['flash']) || !is_array($_SESSION['flash'])) $_SESSION['flash'] = [];
     $_SESSION['flash'][$key] = $msg;
   }
 }
-if (!function_exists('staff_safe_return_url')) {
-  function staff_safe_return_url(string $raw, string $default): string {
+if (!function_exists('pf__safe_return_url')) {
+  function pf__safe_return_url(string $raw, string $default): string {
     $raw = trim($raw);
     if ($raw === '') return $default;
     $raw = rawurldecode($raw);
@@ -41,17 +35,24 @@ if (!function_exists('staff_safe_return_url')) {
     return $raw;
   }
 }
-if (!function_exists('staff_csrf_verify')) {
-  function staff_csrf_verify(string $token): bool {
-    if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
+if (!function_exists('pf__csrf_verify')) {
+  function pf__csrf_verify(string $token): bool {
+    mk_staff_session_start();
     $sess = $_SESSION['csrf_token'] ?? '';
-    if (!is_string($sess) || $sess === '' || $token === '') return false;
-    return hash_equals($sess, $token);
+    return is_string($sess) && $sess !== '' && $token !== '' && hash_equals($sess, $token);
   }
 }
-if (!function_exists('staff_pdo')) {
-  function staff_pdo(): ?PDO {
-    return (function_exists('db') && db() instanceof PDO) ? db() : null;
+if (!function_exists('pf__pdo')) {
+  function pf__pdo(): ?PDO {
+    if (function_exists('staff_pdo')) {
+      $pdo = staff_pdo();
+      if ($pdo instanceof PDO) return $pdo;
+    }
+    if (function_exists('db')) {
+      $pdo = db();
+      if ($pdo instanceof PDO) return $pdo;
+    }
+    return null;
   }
 }
 if (!function_exists('pf__column_exists')) {
@@ -59,112 +60,114 @@ if (!function_exists('pf__column_exists')) {
     static $cache = [];
     $key = strtolower($table . '.' . $column);
     if (array_key_exists($key, $cache)) return (bool)$cache[$key];
-
-    $st = $pdo->prepare("
-      SELECT 1
-      FROM information_schema.COLUMNS
-      WHERE TABLE_SCHEMA = DATABASE()
-        AND TABLE_NAME = ?
-        AND COLUMN_NAME = ?
-      LIMIT 1
-    ");
-    $st->execute([$table, $column]);
-    $cache[$key] = (bool)$st->fetchColumn();
+    try {
+      $st = $pdo->prepare("
+        SELECT 1
+        FROM information_schema.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME = ?
+          AND COLUMN_NAME = ?
+        LIMIT 1
+      ");
+      $st->execute([$table, $column]);
+      $cache[$key] = (bool)$st->fetchColumn();
+    } catch (Throwable $e) {
+      $cache[$key] = false;
+    }
     return (bool)$cache[$key];
   }
-}
-
-/* Auth */
-if (function_exists('require_staff')) {
-  require_staff();
-} elseif (function_exists('require_staff_login')) {
-  require_staff_login();
-} elseif (function_exists('mk_require_staff_login')) {
-  mk_require_staff_login();
 }
 
 if (strtoupper((string)($_SERVER['REQUEST_METHOD'] ?? 'GET')) !== 'POST') {
   redirect_to('/staff/subjects/pgs/index.php');
 }
 
-/* CSRF */
-$token = (string)($_POST['csrf_token'] ?? '');
-if (!staff_csrf_verify($token)) {
+$return = pf__safe_return_url((string)($_POST['return'] ?? ''), '/staff/subjects/pgs/index.php');
+
+if (!pf__csrf_verify((string)($_POST['csrf_token'] ?? ''))) {
   pf__flash_set('error', 'Security check failed (CSRF). Please retry.');
-  $ret = staff_safe_return_url((string)($_POST['return'] ?? ''), '/staff/subjects/pgs/index.php');
-  redirect_to($ret);
+  redirect_to($return);
 }
 
-/* DB */
-$pdo = staff_pdo();
+$pdo = pf__pdo();
 if (!$pdo instanceof PDO) {
-  pf__flash_set('error', 'DB handle not available.');
-  $ret = staff_safe_return_url((string)($_POST['return'] ?? ''), '/staff/subjects/pgs/index.php');
-  redirect_to($ret);
+  pf__flash_set('error', 'Database handle not available.');
+  redirect_to($return);
 }
-
-/* Safe return */
-$return = staff_safe_return_url((string)($_POST['return'] ?? ''), '/staff/subjects/pgs/index.php');
-
-/* Schema */
-$has_nav_order = pf__column_exists($pdo, 'pages', 'nav_order');
-$has_position  = pf__column_exists($pdo, 'pages', 'position');
-$order_col     = $has_nav_order ? 'nav_order' : ($has_position ? 'position' : null);
-
-$has_is_public = pf__column_exists($pdo, 'pages', 'is_public');
-$has_visible   = pf__column_exists($pdo, 'pages', 'visible');
-$pub_col       = $has_is_public ? 'is_public' : ($has_visible ? 'visible' : null);
 
 $action = (string)($_POST['action'] ?? '');
 $ids = $_POST['ids'] ?? [];
 if (!is_array($ids)) $ids = [];
 
-$ids = array_values(array_filter(array_map(static function($v) {
+$cleanIds = [];
+foreach ($ids as $v) {
   $i = filter_var($v, FILTER_VALIDATE_INT);
-  return ($i !== false && (int)$i > 0) ? (int)$i : null;
-}, $ids), static fn($v) => $v !== null));
+  if ($i !== false && (int)$i > 0) $cleanIds[] = (int)$i;
+}
+$cleanIds = array_values(array_unique($cleanIds));
+
+$orderCol = pf__column_exists($pdo, 'pages', 'nav_order') ? 'nav_order'
+         : (pf__column_exists($pdo, 'pages', 'position') ? 'position' : null);
+
+$hasIsPublic = pf__column_exists($pdo, 'pages', 'is_public');
+$hasVisible  = pf__column_exists($pdo, 'pages', 'visible');
+$hasStatus   = pf__column_exists($pdo, 'pages', 'status');
+$hasWorkflow = pf__column_exists($pdo, 'pages', 'workflow_state');
+$hasPublishedAt = pf__column_exists($pdo, 'pages', 'published_at');
+$hasUpdatedAt = pf__column_exists($pdo, 'pages', 'updated_at');
+$hasModifiedAt = pf__column_exists($pdo, 'pages', 'modified_at');
 
 try {
   if ($action === 'publish' || $action === 'unpublish') {
-    if (!$pub_col) {
-      pf__flash_set('error', 'Publish status column not available in pages table.');
-      redirect_to($return);
-    }
-    if (count($ids) === 0) {
+    if (!$cleanIds) {
       pf__flash_set('error', 'No pages selected.');
       redirect_to($return);
     }
 
-    $val = ($action === 'publish') ? 1 : 0;
-    $placeholders = implode(',', array_fill(0, count($ids), '?'));
+    $sets = [];
+    $vals = [];
+    $isPublish = ($action === 'publish');
 
-    $sql = "UPDATE pages SET `{$pub_col}` = ? WHERE id IN ({$placeholders})";
-    $params = array_merge([$val], $ids);
+    if ($hasIsPublic) { $sets[] = 'is_public = ?'; $vals[] = $isPublish ? 1 : 0; }
+    if ($hasVisible)  { $sets[] = 'visible = ?';   $vals[] = $isPublish ? 1 : 0; }
+    if ($hasStatus)   { $sets[] = 'status = ?';    $vals[] = $isPublish ? 'published' : 'draft'; }
+    if ($hasWorkflow) { $sets[] = 'workflow_state = ?'; $vals[] = $isPublish ? 'published' : 'draft'; }
+    if ($hasPublishedAt) $sets[] = $isPublish ? 'published_at = NOW()' : 'published_at = NULL';
+    if ($hasUpdatedAt)   $sets[] = 'updated_at = NOW()';
+    if ($hasModifiedAt)  $sets[] = 'modified_at = NOW()';
+
+    if (!$sets) {
+      pf__flash_set('error', 'No publish workflow columns were found on pages.');
+      redirect_to($return);
+    }
+
+    $marks = implode(',', array_fill(0, count($cleanIds), '?'));
+    $sql = "UPDATE pages SET " . implode(', ', $sets) . " WHERE id IN ($marks)";
+    $vals = array_merge($vals, $cleanIds);
 
     $st = $pdo->prepare($sql);
-    $st->execute($params);
+    $st->execute($vals);
 
-    pf__flash_set('notice', ($action === 'publish') ? 'Selected pages published.' : 'Selected pages unpublished.');
+    pf__flash_set('notice', $isPublish ? 'Selected pages published.' : 'Selected pages unpublished.');
     redirect_to($return);
   }
 
   if ($action === 'save_order') {
-    if (!$order_col) {
+    if ($orderCol === null) {
       pf__flash_set('error', 'Ordering column not available in pages table.');
       redirect_to($return);
     }
 
     $nav = $_POST['nav_order'] ?? [];
-    if (!is_array($nav) || count($nav) === 0) {
+    if (!is_array($nav) || !$nav) {
       pf__flash_set('error', 'No ordering values submitted.');
       redirect_to($return);
     }
 
     $pdo->beginTransaction();
-
-    $st = $pdo->prepare("UPDATE pages SET `{$order_col}` = :ord WHERE id = :id LIMIT 1");
-
+    $st = $pdo->prepare("UPDATE pages SET `$orderCol` = :ord WHERE id = :id LIMIT 1");
     $updated = 0;
+
     foreach ($nav as $idStr => $ordVal) {
       $pid = filter_var($idStr, FILTER_VALIDATE_INT);
       if ($pid === false || (int)$pid <= 0) continue;
@@ -183,14 +186,12 @@ try {
     }
 
     $pdo->commit();
-
-    pf__flash_set('notice', "Order saved ({$updated} row(s)).");
+    pf__flash_set('notice', 'Order saved (' . $updated . ' row(s)).');
     redirect_to($return);
   }
 
   pf__flash_set('error', 'Unknown bulk action.');
   redirect_to($return);
-
 } catch (Throwable $e) {
   if ($pdo->inTransaction()) $pdo->rollBack();
   pf__flash_set('error', 'Bulk action failed: ' . $e->getMessage());

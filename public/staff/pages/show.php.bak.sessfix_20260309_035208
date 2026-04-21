@@ -1,0 +1,570 @@
+<?php
+declare(strict_types=1);
+
+require_once __DIR__ . '/../../_init.php';
+mk_require_staff_login();
+
+@ini_set('display_errors', '0');
+@ini_set('display_startup_errors', '0');
+error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
+
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+header('Expires: 0');
+
+if (function_exists('mk__session_start')) {
+  mk__session_start();
+} elseif (session_status() !== PHP_SESSION_ACTIVE) {
+  @session_start();
+}
+
+if (!function_exists('h')) {
+  function h(string $v): string { return htmlspecialchars($v, ENT_QUOTES, 'UTF-8'); }
+}
+if (!function_exists('u')) {
+  function u(string $path): string { return function_exists('url_for') ? (string)url_for($path) : $path; }
+}
+if (!function_exists('staff_safe_return_url')) {
+  function staff_safe_return_url(string $raw, string $default): string {
+    $raw = trim($raw);
+    if ($raw === '') return $default;
+    $raw = rawurldecode($raw);
+    if ($raw === '' || $raw[0] !== '/') return $default;
+    if (preg_match('~^//~', $raw)) return $default;
+    if (preg_match('~^[a-z]+:~i', $raw)) return $default;
+    if (strpos($raw, '/staff/') !== 0) return $default;
+    return $raw;
+  }
+}
+if (!function_exists('staff_redirect')) {
+  function staff_redirect(string $location, int $code = 302): void {
+    $location = str_replace(["\r", "\n"], '', $location);
+    header('Location: ' . $location, true, $code);
+    exit;
+  }
+}
+if (!function_exists('staff_csrf_token')) {
+  function staff_csrf_token(): string {
+    if (function_exists('mk__session_start')) {
+      mk__session_start();
+    } elseif (session_status() !== PHP_SESSION_ACTIVE) {
+      @session_start();
+    }
+
+    foreach (['csrf_token', 'mk_csrf_token'] as $fn) {
+      if (function_exists($fn)) {
+        try {
+          $v = (string)$fn();
+          if ($v !== '') {
+            $_SESSION['csrf_token'] = $v;
+            $_SESSION['csrf'] = $v;
+            $_SESSION['_token'] = $v;
+            return $v;
+          }
+        } catch (Throwable $e) {
+          // continue
+        }
+      }
+    }
+
+    foreach (['csrf_token', 'csrf', '_token'] as $k) {
+      if (!empty($_SESSION[$k]) && is_string($_SESSION[$k])) {
+        $v = (string)$_SESSION[$k];
+        $_SESSION['csrf_token'] = $v;
+        $_SESSION['csrf'] = $v;
+        $_SESSION['_token'] = $v;
+        return $v;
+      }
+    }
+
+    $v = bin2hex(random_bytes(32));
+    $_SESSION['csrf_token'] = $v;
+    $_SESSION['csrf'] = $v;
+    $_SESSION['_token'] = $v;
+    return $v;
+  }
+}
+if (!function_exists('staff_csrf_field')) {
+  function staff_csrf_field(): string {
+    $t = h(staff_csrf_token());
+    return
+      '<input type="hidden" name="csrf_token" value="' . $t . '">' .
+      '<input type="hidden" name="csrf" value="' . $t . '">' .
+      '<input type="hidden" name="_token" value="' . $t . '">';
+  }
+}
+if (!function_exists('pf__flash_get')) {
+  function pf__flash_get(string $key): string {
+    if (function_exists('mk__session_start')) {
+      mk__session_start();
+    } elseif (session_status() !== PHP_SESSION_ACTIVE) {
+      @session_start();
+    }
+    $msg = '';
+    if (isset($_SESSION['flash']) && is_array($_SESSION['flash']) && array_key_exists($key, $_SESSION['flash'])) {
+      $msg = (string)$_SESSION['flash'][$key];
+      unset($_SESSION['flash'][$key]);
+    }
+    return $msg;
+  }
+}
+if (!function_exists('pf__column_exists')) {
+  function pf__column_exists(PDO $pdo, string $table, string $column): bool {
+    static $cache = [];
+    $key = strtolower($table . '.' . $column);
+    if (array_key_exists($key, $cache)) return (bool)$cache[$key];
+
+    try {
+      $st = $pdo->prepare("
+        SELECT 1
+        FROM information_schema.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME = ?
+          AND COLUMN_NAME = ?
+        LIMIT 1
+      ");
+      $st->execute([$table, $column]);
+      $cache[$key] = (bool)$st->fetchColumn();
+    } catch (Throwable $e) {
+      $cache[$key] = false;
+    }
+
+    return (bool)$cache[$key];
+  }
+}
+if (!function_exists('pf__table_exists')) {
+  function pf__table_exists(PDO $pdo, string $table): bool {
+    static $cache = [];
+    $key = strtolower($table);
+    if (array_key_exists($key, $cache)) return (bool)$cache[$key];
+
+    try {
+      $st = $pdo->prepare("
+        SELECT 1
+        FROM information_schema.TABLES
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME = ?
+        LIMIT 1
+      ");
+      $st->execute([$table]);
+      $cache[$key] = (bool)$st->fetchColumn();
+    } catch (Throwable $e) {
+      $cache[$key] = false;
+    }
+
+    return (bool)$cache[$key];
+  }
+}
+if (!function_exists('pf__page_title_of')) {
+  function pf__page_title_of(array $row): string {
+    foreach (['title', 'nav_label', 'menu_name', 'name', 'slug'] as $k) {
+      if (isset($row[$k]) && trim((string)$row[$k]) !== '') return trim((string)$row[$k]);
+    }
+    return 'Page #' . (string)($row['id'] ?? '0');
+  }
+}
+if (!function_exists('pf__page_body_of')) {
+  function pf__page_body_of(array $row): string {
+    foreach (['content_html', 'body', 'content', 'summary', 'excerpt'] as $k) {
+      if (isset($row[$k]) && trim((string)$row[$k]) !== '') return trim((string)$row[$k]);
+    }
+    return '';
+  }
+}
+if (!function_exists('pf__badge_kind')) {
+  function pf__badge_kind(array $a): string {
+    $k = (string)($a['kind'] ?? '');
+    $m = (string)($a['mime_type'] ?? '');
+    if ($k !== '') return strtoupper($k);
+    if (str_starts_with($m, 'image/')) return 'IMAGE';
+    if (str_starts_with($m, 'video/')) return 'VIDEO';
+    if (str_starts_with($m, 'audio/')) return 'AUDIO';
+    if ($m === 'application/pdf') return 'PDF';
+    return 'FILE';
+  }
+}
+if (!function_exists('pf__human_bytes')) {
+  function pf__human_bytes(int $bytes): string {
+    if ($bytes < 1024) return $bytes . ' B';
+    $units = ['KB','MB','GB','TB'];
+    $v = $bytes / 1024;
+    foreach ($units as $u) {
+      if ($v < 1024) return rtrim(rtrim(number_format($v, 2), '0'), '.') . ' ' . $u;
+      $v /= 1024;
+    }
+    return rtrim(rtrim(number_format($v, 2), '0'), '.') . ' PB';
+  }
+}
+if (!function_exists('pf__workflow_state_label')) {
+  function pf__workflow_state_label(string $state): string {
+    $state = strtolower(trim($state));
+    return match ($state) {
+      'draft' => 'Draft',
+      'review', 'in_review' => 'In Review',
+      'published' => 'Published',
+      'archived' => 'Archived',
+      default => ($state !== '' ? ucfirst(str_replace('_', ' ', $state)) : 'Draft'),
+    };
+  }
+}
+if (!function_exists('pf__workflow_state_class')) {
+  function pf__workflow_state_class(string $state): string {
+    $state = strtolower(trim($state));
+    return match ($state) {
+      'published' => 'wf-published',
+      'review', 'in_review' => 'wf-review',
+      'archived' => 'wf-archived',
+      default => 'wf-draft',
+    };
+  }
+}
+
+$pdo = (function_exists('db') && db() instanceof PDO) ? db() : null;
+if (!$pdo instanceof PDO) {
+  http_response_code(500);
+  header('Content-Type: text/plain; charset=utf-8');
+  echo "Database handle not available.\n";
+  exit;
+}
+
+if (!pf__table_exists($pdo, 'pages')) {
+  http_response_code(500);
+  header('Content-Type: text/plain; charset=utf-8');
+  echo "pages table not found.\n";
+  exit;
+}
+
+$id = (int)($_GET['id'] ?? 0);
+$return = staff_safe_return_url((string)($_GET['return'] ?? ''), '/staff/subjects/pgs/index.php');
+
+if ($id <= 0) {
+  staff_redirect($return, 302);
+}
+
+$cols = ['id'];
+foreach ([
+  'subject_id','title','nav_label','menu_name','name','slug',
+  'content_html','body','content','summary','excerpt',
+  'is_public','visible','created_at','updated_at',
+  'workflow_state','workflow_note','published_at'
+] as $c) {
+  if (pf__column_exists($pdo, 'pages', $c)) $cols[] = $c;
+}
+
+$st = $pdo->prepare("SELECT " . implode(', ', array_unique($cols)) . " FROM pages WHERE id = :id LIMIT 1");
+$st->execute([':id' => $id]);
+$page = $st->fetch(PDO::FETCH_ASSOC) ?: null;
+
+if (!$page) {
+  $_SESSION['flash']['error'] = 'Page not found.';
+  staff_redirect($return, 302);
+}
+
+$pageTitleText = pf__page_title_of($page);
+$pageBodyText  = pf__page_body_of($page);
+$subjectId     = (int)($page['subject_id'] ?? 0);
+
+$subjectTitle = '';
+if ($subjectId > 0 && pf__table_exists($pdo, 'subjects')) {
+  $scols = ['id'];
+  foreach (['display_name','menu_name','name','title','slug'] as $c) {
+    if (pf__column_exists($pdo, 'subjects', $c)) $scols[] = $c;
+  }
+  $sst = $pdo->prepare("SELECT " . implode(', ', array_unique($scols)) . " FROM subjects WHERE id = :id LIMIT 1");
+  $sst->execute([':id' => $subjectId]);
+  $subject = $sst->fetch(PDO::FETCH_ASSOC) ?: null;
+  if ($subject) {
+    foreach (['display_name','menu_name','name','title','slug'] as $k) {
+      if (isset($subject[$k]) && trim((string)$subject[$k]) !== '') {
+        $subjectTitle = trim((string)$subject[$k]);
+        break;
+      }
+    }
+  }
+}
+
+$workflowState = strtolower(trim((string)($page['workflow_state'] ?? 'draft')));
+if ($workflowState === '') $workflowState = 'draft';
+$workflowNote = trim((string)($page['workflow_note'] ?? ''));
+$publishedAt  = trim((string)($page['published_at'] ?? ''));
+$isPublic     = array_key_exists('is_public', $page) ? ((int)$page['is_public'] === 1) : false;
+
+$attachNotice = '';
+$attachCode = trim((string)($_GET['attach'] ?? ''));
+$attachDetail = trim((string)($_GET['attach_detail'] ?? ''));
+if ($attachCode !== '') {
+  $map = [
+    'saved'      => 'Attachment saved.',
+    'sent'       => 'Attachment uploaded.',
+    'partial'    => 'Some attachments were uploaded.',
+    'deleted'    => 'Attachment deleted.',
+    'missing'    => 'Attachment file was missing on disk, but the record was handled.',
+    'badurl'     => 'External URL was rejected.',
+    'invalid'    => 'Invalid attachment request.',
+    'csrf'       => 'Security check failed. Please retry.',
+    'too_large'  => 'Upload was too large.',
+    'nofile'     => 'No file was selected.',
+    'denied'     => 'Permission denied.',
+    'error'      => 'Attachment action failed.',
+  ];
+  $attachNotice = $map[$attachCode] ?? 'Attachment action completed.';
+  if ($attachDetail !== '') {
+    $attachNotice .= ' ' . $attachDetail;
+  }
+}
+
+$att = [];
+try {
+  if (defined('APP_ROOT') && is_string(APP_ROOT) && APP_ROOT !== '') {
+    $engineFile = rtrim(APP_ROOT, '/\\') . '/private/functions/attachments_engine.php';
+    if (is_file($engineFile)) {
+      require_once $engineFile;
+      if (function_exists('mk_attachments_engine')) {
+        $e = mk_attachments_engine();
+        if (is_object($e) && method_exists($e, 'load_for_subject_page')) {
+          $att = $e->load_for_subject_page($subjectId, $id);
+          if (!is_array($att)) $att = [];
+        }
+      }
+    }
+  }
+} catch (Throwable $e) {
+  $att = [];
+}
+
+$editUrl = '/staff/subjects/pgs/edit.php?id=' . rawurlencode((string)$id) . '&return=' . rawurlencode($return);
+$selfUrl = '/staff/pages/show.php?id=' . rawurlencode((string)$id) . '&return=' . rawurlencode($return);
+$previewUrl = '/staff/pages/preview.php?id=' . rawurlencode((string)$id) . '&return=' . rawurlencode($selfUrl);
+$workflowPostUrl = u('/staff/pages/workflow_update.php');
+?>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title><?= h($pageTitleText) ?> • Staff</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#f6f7f9;color:#111827}
+    .container{max-width:1100px;margin:0 auto;padding:24px 16px}
+    .card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.05);margin-top:14px}
+    .card-body{padding:16px}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .btn{display:inline-flex;align-items:center;justify-content:center;padding:10px 12px;border-radius:10px;border:1px solid #d1d5db;background:#fff;color:#111827;text-decoration:none;cursor:pointer}
+    .btn.primary{background:#111827;color:#fff;border-color:#111827}
+    .btn.success{background:#065f46;color:#fff;border-color:#065f46}
+    .btn.warn{background:#92400e;color:#fff;border-color:#92400e}
+    .btn.danger{background:#991b1b;color:#fff;border-color:#991b1b}
+    .muted{color:#6b7280}
+    .pill{display:inline-block;padding:4px 8px;border-radius:999px;border:1px solid #ddd;font-size:12px}
+    .notice{margin-top:14px;padding:12px;border-radius:12px}
+    .notice.ok{background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46}
+    .notice.err{background:#fef2f2;border:1px solid #fecaca;color:#991b1b}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    label{display:block;font-size:13px;margin-bottom:6px;color:#374151}
+    input,textarea{width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:10px;box-sizing:border-box}
+    textarea{min-height:120px}
+    .att{border:1px solid #e5e7eb;border-radius:12px;padding:12px}
+    .att + .att{margin-top:10px}
+    .tag{display:inline-block;padding:4px 8px;border-radius:999px;background:#f3f4f6;font-size:12px;margin-right:6px}
+    .content{white-space:pre-wrap;line-height:1.65}
+    .wf{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700}
+    .wf-draft{background:#f3f4f6;color:#374151}
+    .wf-review{background:#fffbeb;color:#92400e}
+    .wf-published{background:#ecfdf5;color:#065f46}
+    .wf-archived{background:#f3f4f6;color:#6b7280}
+    .meta-list{display:grid;grid-template-columns:180px 1fr;gap:8px 12px}
+    .meta-list div:nth-child(odd){font-weight:600;color:#374151}
+    @media (max-width:900px){.grid{grid-template-columns:1fr}.meta-list{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <div class="row" style="justify-content:space-between">
+    <div>
+      <h1 style="margin:0"><?= h($pageTitleText) ?></h1>
+      <div class="muted" style="margin-top:6px">
+        <?php if ($subjectTitle !== ''): ?>
+          Subject: <?= h($subjectTitle) ?>
+        <?php else: ?>
+          Staff page view
+        <?php endif; ?>
+      </div>
+    </div>
+    <div class="row">
+      <a class="btn" href="<?= h($return) ?>">Back</a>
+      <a class="btn" href="<?= h($previewUrl) ?>" target="_blank" rel="noopener noreferrer">Preview</a>
+      <a class="btn primary" href="<?= h($editUrl) ?>">Edit Page</a>
+    </div>
+  </div>
+
+  <?php if ($attachNotice !== ''): ?>
+    <div class="notice ok"><?= h($attachNotice) ?></div>
+  <?php endif; ?>
+
+  <?php if (($n = pf__flash_get('notice')) !== ''): ?>
+    <div class="notice ok"><?= h($n) ?></div>
+  <?php endif; ?>
+  <?php if (($e = pf__flash_get('error')) !== ''): ?>
+    <div class="notice err"><?= h($e) ?></div>
+  <?php endif; ?>
+
+  <div class="grid">
+    <div class="card">
+      <div class="card-body">
+        <div class="row" style="margin-bottom:10px">
+          <span class="pill">ID <?= h((string)$id) ?></span>
+          <?php if (!empty($page['slug'])): ?><span class="pill">slug: <?= h((string)$page['slug']) ?></span><?php endif; ?>
+          <?php if (array_key_exists('is_public', $page)): ?><span class="pill">public: <?= ($isPublic ? 'yes' : 'no') ?></span><?php endif; ?>
+          <?php if (array_key_exists('visible', $page)): ?><span class="pill">visible: <?= ((int)$page['visible'] === 1 ? 'yes' : 'no') ?></span><?php endif; ?>
+          <span class="wf <?= h(pf__workflow_state_class($workflowState)) ?>"><?= h(pf__workflow_state_label($workflowState)) ?></span>
+        </div>
+
+        <?php if ($pageBodyText !== ''): ?>
+          <div class="content"><?= h($pageBodyText) ?></div>
+        <?php else: ?>
+          <div class="muted"><em>No page body available.</em></div>
+        <?php endif; ?>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        <h2 style="margin:0 0 12px">Workflow</h2>
+
+        <div class="meta-list" style="margin-bottom:14px">
+          <div>Current State</div>
+          <div><span class="wf <?= h(pf__workflow_state_class($workflowState)) ?>"><?= h(pf__workflow_state_label($workflowState)) ?></span></div>
+
+          <div>Public</div>
+          <div><?= $isPublic ? 'Yes' : 'No' ?></div>
+
+          <div>Published At</div>
+          <div><?= $publishedAt !== '' ? h($publishedAt) : '<span class="muted">Not published</span>' ?></div>
+
+          <div>Workflow Note</div>
+          <div><?= $workflowNote !== '' ? nl2br(h($workflowNote)) : '<span class="muted">No note</span>' ?></div>
+        </div>
+
+        <form method="post" action="<?= h($workflowPostUrl) ?>">
+          <?= staff_csrf_field() ?>
+          <input type="hidden" name="id" value="<?= h((string)$id) ?>">
+          <input type="hidden" name="return" value="<?= h($selfUrl) ?>">
+
+          <label for="workflow_note">Workflow Note</label>
+          <textarea id="workflow_note" name="workflow_note" placeholder="Internal note for editors/reviewers"><?= h($workflowNote) ?></textarea>
+
+          <div class="row" style="margin-top:12px">
+            <button class="btn" type="submit" name="action" value="save_draft">Save as Draft</button>
+            <button class="btn warn" type="submit" name="action" value="mark_review">Mark In Review</button>
+            <button class="btn success" type="submit" name="action" value="publish" onclick="return confirm('Publish this page now?');">Publish</button>
+            <button class="btn danger" type="submit" name="action" value="unpublish" onclick="return confirm('Unpublish this page?');">Unpublish</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <h2 style="margin:0 0 12px">Attachments (<?= count($att) ?>)</h2>
+
+      <?php if (!$att): ?>
+        <div class="muted"><em>No attachments for this page yet.</em></div>
+      <?php else: ?>
+        <?php foreach ($att as $a): ?>
+          <?php
+            $aid = (int)($a['id'] ?? 0);
+            $open = trim((string)($a['href'] ?? ''));
+            if ($open === '' && $aid > 0) {
+              $open = '/staff/page-files/open.php?page_id=' . rawurlencode((string)$id) . '&file_id=' . rawurlencode((string)$aid);
+            }
+            $label = (string)($a['label'] ?? $a['original_name'] ?? 'Attachment');
+            $srcLabel = (string)($a['source_label'] ?? ($a['source_key'] ?? ''));
+            $isExternal = !empty($a['is_external']);
+            $host = trim((string)($a['external_host'] ?? $a['host'] ?? ''));
+            $size = (int)($a['file_size'] ?? 0);
+            $created = trim((string)($a['created_at'] ?? ''));
+            $kind = pf__badge_kind($a);
+            $mime = trim((string)($a['mime_type'] ?? ''));
+          ?>
+          <div class="att">
+            <div class="row" style="justify-content:space-between">
+              <div>
+                <div style="font-weight:700"><?= h($label) ?></div>
+                <div class="muted" style="margin-top:6px">
+                  <span class="tag"><?= h($kind) ?></span>
+                  <?php if ($srcLabel !== ''): ?><span><?= h($srcLabel) ?></span><?php endif; ?>
+                  <?php if ($host !== ''): ?> · <span><?= h($host) ?></span><?php endif; ?>
+                  <?php if ($mime !== ''): ?> · <span><?= h($mime) ?></span><?php endif; ?>
+                  <?php if ($size > 0): ?> · <span><?= h(pf__human_bytes($size)) ?></span><?php endif; ?>
+                  <?php if ($created !== ''): ?> · <span><?= h($created) ?></span><?php endif; ?>
+                </div>
+              </div>
+
+              <div class="row">
+                <?php if ($open !== ''): ?>
+                  <a class="btn" href="<?= h($open) ?>" <?= $isExternal ? 'target="_blank" rel="noopener noreferrer"' : '' ?>>Open</a>
+                <?php endif; ?>
+
+                <?php if ($aid > 0): ?>
+                  <form method="post" action="<?= h(u('/staff/pages/attachments_delete.php')) ?>" onsubmit="return confirm('Delete this attachment permanently?');">
+                    <?= staff_csrf_field() ?>
+                    <input type="hidden" name="id" value="<?= h((string)$aid) ?>">
+                    <input type="hidden" name="page_id" value="<?= h((string)$id) ?>">
+                    <input type="hidden" name="return" value="<?= h($selfUrl) ?>">
+                    <button class="btn danger" type="submit">Delete</button>
+                  </form>
+                <?php endif; ?>
+              </div>
+            </div>
+          </div>
+        <?php endforeach; ?>
+      <?php endif; ?>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="card-body">
+        <h2 style="margin:0 0 12px">Upload Attachment</h2>
+        <form method="post" action="<?= h(u('/staff/pages/attachments_upload.php')) ?>" enctype="multipart/form-data">
+          <?= staff_csrf_field() ?>
+          <input type="hidden" name="page_id" value="<?= h((string)$id) ?>">
+          <input type="hidden" name="return" value="<?= h($selfUrl) ?>">
+
+          <label>Files</label>
+          <input type="file" name="attachments[]" multiple required>
+
+          <div class="row" style="margin-top:12px">
+            <button class="btn primary" type="submit">Upload</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        <h2 style="margin:0 0 12px">Add External Attachment</h2>
+        <form method="post" action="<?= h(u('/staff/pages/attachments_external_add.php')) ?>">
+          <?= staff_csrf_field() ?>
+          <input type="hidden" name="page_id" value="<?= h((string)$id) ?>">
+          <input type="hidden" name="return" value="<?= h($selfUrl) ?>">
+
+          <label>Label</label>
+          <input type="text" name="label" placeholder="Optional display label">
+
+          <label style="margin-top:12px">External URL</label>
+          <input type="url" name="external_url" placeholder="https://example.com/resource" required>
+
+          <div class="row" style="margin-top:12px">
+            <button class="btn primary" type="submit">Add External Link</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

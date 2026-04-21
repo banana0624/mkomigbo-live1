@@ -1,23 +1,25 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/../../_init.php';
+
 /**
  * /public/staff/tools/run.php
  *
  * Safe allowlisted runner for private tools.
  *
- * Security & Safety:
+ * Contract:
  * - Requires staff login
  * - Loads registry: APP_ROOT/private/functions/staff_tools_registry.php
  * - Tool must exist in registry allowlist
- * - Enforces min_role (admin/owner)
+ * - Enforces min_role (admin/owner) via mk_require_role() if present
  * - Enforces realpath boundary (APP_ROOT/private/tools)
- * - PHP-only tools (.php) only
- * - MUTATING tools require POST + CSRF (dry-run and apply)
+ * - PHP-only tools (.php)
+ * - MUTATING tools require POST + CSRF
  *
  * Output:
- * - render=pre  : escaped output
- * - render=html : sandboxed iframe using srcdoc
+ * - render=pre  : escaped pre block
+ * - render=html : iframe sandbox srcdoc (safe-ish)
  * - render=auto : html if output looks like a document, else pre
  */
 
@@ -25,8 +27,26 @@ declare(strict_types=1);
 @ini_set('display_startup_errors', '0');
 error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
 
-require_once __DIR__ . '/../_init.php';
-if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
+/* ---------------------------------------------------------
+   Session (canonical)
+--------------------------------------------------------- */
+if (function_exists('mk__session_start')) {
+  mk__session_start();
+} else {
+}
+
+/* ---------------------------------------------------------
+   Ensure auth helpers loaded (belt+suspenders)
+--------------------------------------------------------- */
+if (!function_exists('mk_require_staff_login') || !function_exists('mk_attempt_staff_login')) {
+  $auth = null;
+  if (defined('PRIVATE_PATH') && is_string(PRIVATE_PATH) && PRIVATE_PATH !== '') {
+    $auth = rtrim(PRIVATE_PATH, "/\\") . '/functions/auth.php';
+  } elseif (defined('APP_ROOT') && is_string(APP_ROOT) && APP_ROOT !== '') {
+    $auth = rtrim(APP_ROOT, "/\\") . '/private/functions/auth.php';
+  }
+  if ($auth && is_file($auth)) require_once $auth;
+}
 
 /* ---------------------------------------------------------
    Helpers
@@ -38,115 +58,114 @@ if (!function_exists('url_for')) {
   function url_for(string $path): string { return '/' . ltrim($path, '/'); }
 }
 
-function mk_is_html_document(string $s): bool {
-  return (bool)preg_match('~<!doctype\s+html|<html\b|<head\b|<body\b~i', $s);
-}
-
-function mk_force_html_headers(): void {
-  if (headers_sent()) return;
-  @header_remove('Content-Disposition');
-  @header_remove('Content-Transfer-Encoding');
-
-  header('Content-Type: text/html; charset=UTF-8');
-  header('X-Content-Type-Options: nosniff');
-  header('Referrer-Policy: same-origin');
-  header('Permissions-Policy: geolocation=(), camera=(), microphone=()');
-  header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
-  header('Pragma: no-cache');
-}
-
 function mk_method(): string {
   return strtoupper((string)($_SERVER['REQUEST_METHOD'] ?? 'GET'));
 }
 
-/* ---------------------------------------------------------
-   CSRF (self-contained; uses session)
---------------------------------------------------------- */
-function mk_csrf_token(): string {
+function mk_is_html_document(string $s): bool {
+  return (bool)preg_match('~<!doctype\s+html|<html\b|<head\b|<body\b~i', $s);
+}
+
+/* CSRF (prefer canonical staff_csrf_* if present) */
+function mk_tools_csrf_token(): string {
+  if (function_exists('staff_csrf_token')) return (string)staff_csrf_token();
+  if (function_exists('csrf_token')) return (string)csrf_token();
+
   if (empty($_SESSION['mk_csrf']) || !is_string($_SESSION['mk_csrf']) || strlen((string)$_SESSION['mk_csrf']) < 32) {
-    try {
-      $_SESSION['mk_csrf'] = bin2hex(random_bytes(32));
-    } catch (Throwable $e) {
-      $_SESSION['mk_csrf'] = bin2hex((string)microtime(true) . (string)mt_rand());
-    }
+    $_SESSION['mk_csrf'] = bin2hex(random_bytes(32));
   }
   return (string)$_SESSION['mk_csrf'];
 }
+function mk_tools_csrf_valid(?string $posted): bool {
+  $posted = is_string($posted) ? trim($posted) : '';
+  if ($posted === '') return false;
 
-function mk_csrf_validate(): bool {
-  $token = '';
-  if (isset($_POST['csrf']) && is_string($_POST['csrf'])) $token = $_POST['csrf'];
-  if ($token === '' && isset($_POST['_token']) && is_string($_POST['_token'])) $token = $_POST['_token'];
-  if ($token === '') return false;
-  return hash_equals((string)mk_csrf_token(), (string)$token);
+  if (function_exists('staff_csrf_verify')) return (bool)staff_csrf_verify($posted);
+  if (function_exists('csrf_token_is_valid')) return (bool)csrf_token_is_valid($posted);
+
+  $sess = (string)mk_tools_csrf_token();
+  return ($sess !== '' && hash_equals($sess, $posted));
 }
 
 /* ---------------------------------------------------------
-   Auth gate (before output)
+   Auth gate (FIRST, before any output)
 --------------------------------------------------------- */
+$wantReturn = '/staff/tools/';
 if (function_exists('mk_require_staff_login')) {
-  mk_require_staff_login();
+  try { mk_require_staff_login($wantReturn); } catch (Throwable $e) { mk_require_staff_login(); }
 } else {
-  header('Location: ' . url_for('/staff/login.php'), true, 302);
+  header('Location: /staff/login.php?return=' . rawurlencode($wantReturn), true, 302);
   exit;
 }
 
-mk_force_html_headers();
-
 /* ---------------------------------------------------------
-   RBAC (admin/owner)
+   Buffer + fatal capture (prevents LiteSpeed generic "internal error")
 --------------------------------------------------------- */
-function mk_staff_id(): int {
-  if (isset($_SESSION['staff_user_id']) && is_numeric($_SESSION['staff_user_id'])) return (int)$_SESSION['staff_user_id'];
-  if (isset($_SESSION['staff_user']['id']) && is_numeric($_SESSION['staff_user']['id'])) return (int)$_SESSION['staff_user']['id'];
-  if (isset($_SESSION['staff']['id']) && is_numeric($_SESSION['staff']['id'])) return (int)$_SESSION['staff']['id'];
-  if (isset($_SESSION['staff_id']) && is_numeric($_SESSION['staff_id'])) return (int)$_SESSION['staff_id'];
-  return 0;
-}
+$render = strtolower((string)($_GET['render'] ?? 'auto'));
+if (!in_array($render, ['auto','pre','html'], true)) $render = 'auto';
 
-function mk_staff_has_role(string $slug): bool {
-  $slug = strtolower(trim($slug));
-  if ($slug === '') return false;
+$toolKey = (string)($_GET['tool'] ?? '');
+$toolKey = str_replace(["\r","\n"], '', trim($toolKey));
 
-  $uid = mk_staff_id();
-  if ($uid <= 0) return false;
-  if (!function_exists('db')) return false;
+/**
+ * We buffer everything (including staff chrome) and on fatal we dump a controlled page.
+ * This avoids the generic "An internal error occurred. Reference: ...."
+ */
+$__mk_started_buffer = false;
+$__mk_sent_fatal = false;
 
-  try {
-    $pdo = db();
-    if (!$pdo instanceof PDO) return false;
+register_shutdown_function(static function () use (&$__mk_started_buffer, &$__mk_sent_fatal, $toolKey, $render): void {
+  if ($__mk_sent_fatal) return;
 
-    $st = $pdo->prepare(
-      "SELECT 1
-         FROM staff_user_roles sur
-         JOIN roles r ON r.id = sur.role_id
-        WHERE sur.staff_user_id = :uid
-          AND LOWER(r.slug) = :slug
-        LIMIT 1"
-    );
-    $st->execute([':uid' => $uid, ':slug' => $slug]);
-    return (bool)$st->fetchColumn();
-  } catch (Throwable $e) {
-    return false;
-  }
-}
+  $err = error_get_last();
+  if (!$err) return;
 
-function mk_require_role(string $minRole): void {
-  $minRole = strtolower(trim($minRole));
-  if ($minRole === 'owner') {
-    if (mk_staff_has_role('owner')) return;
-    http_response_code(403);
-    echo "<pre>Forbidden: owner required.</pre>";
-    exit;
-  }
-  if (mk_staff_has_role('admin') || mk_staff_has_role('owner')) return;
-  http_response_code(403);
-  echo "<pre>Forbidden: admin required.</pre>";
-  exit;
-}
+  $type = (int)($err['type'] ?? 0);
+  $fatalTypes = [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR];
+  if (!in_array($type, $fatalTypes, true)) return;
+
+  $msg  = (string)($err['message'] ?? 'Fatal error');
+  $file = (string)($err['file'] ?? '');
+  $line = (int)($err['line'] ?? 0);
+
+  // wipe buffers (if any)
+  while (ob_get_level() > 0) { @ob_end_clean(); }
+
+  http_response_code(500);
+  header('Content-Type: text/html; charset=UTF-8');
+  header('X-Content-Type-Options: nosniff');
+  header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+  header('Pragma: no-cache');
+
+  echo "<!doctype html><html lang='en'><head><meta charset='utf-8'>";
+  echo "<meta name='viewport' content='width=device-width, initial-scale=1'>";
+  echo "<title>Tool Fatal</title>";
+  echo "<style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#0b1220;color:#e5e7eb}
+    .wrap{max-width:980px;margin:40px auto;padding:0 16px}
+    .card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:18px}
+    h1{margin:0 0 8px;font-size:20px}
+    .muted{opacity:.85}
+    pre{white-space:pre-wrap;background:rgba(0,0,0,.35);padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,.10);overflow:auto}
+    code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+    a{color:#93c5fd}
+  </style></head><body><div class='wrap'><div class='card'>";
+  echo "<h1>Fatal error while running tool</h1>";
+  echo "<div class='muted'>tool=<code>" . htmlspecialchars($toolKey, ENT_QUOTES, 'UTF-8') . "</code> • render=<code>" . htmlspecialchars($render, ENT_QUOTES, 'UTF-8') . "</code></div>";
+  echo "<pre><strong>Message:</strong> " . htmlspecialchars($msg, ENT_QUOTES, 'UTF-8') . "\n"
+     . "<strong>File:</strong> " . htmlspecialchars($file, ENT_QUOTES, 'UTF-8') . "\n"
+     . "<strong>Line:</strong> " . (int)$line . "</pre>";
+  echo "<div class='muted'>If this repeats, run the tool via CLI include to see notices/warnings before the fatal.</div>";
+  echo "</div></div></body></html>";
+
+  $__mk_sent_fatal = true;
+});
+
+ob_start();
+$__mk_started_buffer = true;
 
 /* ---------------------------------------------------------
-   Load registry
+   Locate tools root + registry
 --------------------------------------------------------- */
 $appRoot = defined('APP_ROOT') ? rtrim((string)APP_ROOT, "/\\") : '';
 $toolsRoot = ($appRoot !== '') ? ($appRoot . '/private/tools') : '';
@@ -156,365 +175,217 @@ $registryFile = ($appRoot !== '') ? ($appRoot . '/private/functions/staff_tools_
 
 if (!$realToolsRoot) {
   http_response_code(500);
-  echo "<pre>Tools root not found.</pre>";
+  echo "<pre>Tools root not found.\n" . h($toolsRoot) . "</pre>";
+  echo ob_get_clean();
   exit;
 }
 if (!is_file($registryFile)) {
   http_response_code(500);
   echo "<pre>Tools registry missing:\n" . h($registryFile) . "\n</pre>";
+  echo ob_get_clean();
   exit;
 }
 
 require_once $registryFile;
-
-$regList = function_exists('mk_staff_tools_registry') ? mk_staff_tools_registry() : [];
-if (!is_array($regList) || !$regList) {
+if (!function_exists('mk_staff_tools_registry')) {
   http_response_code(500);
-  echo "<pre>Tools registry empty or invalid.</pre>";
+  echo "<pre>mk_staff_tools_registry() missing in registry file.</pre>";
+  echo ob_get_clean();
   exit;
 }
 
-/**
- * Normalize registry to keyed map:
- * - supports either [ [entry], [entry] ] OR [ 'key' => entry, ... ]
- */
+$toolsRaw = mk_staff_tools_registry();
+
+/* Normalize registry to map keyed by tool key */
 $tools = [];
-if (array_keys($regList) === range(0, count($regList) - 1)) {
-  foreach ($regList as $entry) {
-    if (!is_array($entry)) continue;
-    $k = isset($entry['key']) ? trim((string)$entry['key']) : '';
-    if ($k === '') continue;
-    $tools[$k] = $entry;
-  }
-} else {
-  foreach ($regList as $k => $entry) {
-    if (!is_array($entry)) continue;
-    $key = trim((string)$k);
-    if ($key === '') $key = isset($entry['key']) ? trim((string)$entry['key']) : '';
-    if ($key === '') continue;
-    $tools[$key] = $entry;
+if (is_array($toolsRaw)) {
+  $isList = (array_keys($toolsRaw) === range(0, count($toolsRaw) - 1));
+  if ($isList) {
+    foreach ($toolsRaw as $e) {
+      if (!is_array($e)) continue;
+      $k = isset($e['key']) ? trim((string)$e['key']) : '';
+      if ($k === '') continue;
+      $tools[$k] = $e;
+    }
+  } else {
+    foreach ($toolsRaw as $k => $e) {
+      if (!is_array($e)) continue;
+      $kk = trim((string)$k);
+      if ($kk === '') $kk = isset($e['key']) ? trim((string)$e['key']) : '';
+      if ($kk === '') continue;
+      $tools[$kk] = $e;
+    }
   }
 }
-
-if (!$tools) {
-  http_response_code(500);
-  echo "<pre>Tools registry normalization failed (no usable entries).</pre>";
-  exit;
-}
-
-/* ---------------------------------------------------------
-   Select tool
---------------------------------------------------------- */
-$toolKey = '';
-if (isset($_GET['tool'])) $toolKey = trim((string)$_GET['tool']);
-if ($toolKey === '' && isset($_POST['tool'])) $toolKey = trim((string)$_POST['tool']);
 
 if ($toolKey === '' || !isset($tools[$toolKey]) || !is_array($tools[$toolKey])) {
   http_response_code(404);
-  echo "<pre>Tool not found.</pre>";
+  echo "<pre>Tool not registered: " . h($toolKey) . "</pre>";
+  echo ob_get_clean();
   exit;
 }
 
 $meta = $tools[$toolKey];
-
-$title    = isset($meta['title']) ? (string)$meta['title'] : $toolKey;
 $minRole  = isset($meta['min_role']) ? strtolower(trim((string)$meta['min_role'])) : 'admin';
-$relPath  = isset($meta['rel_path']) ? trim((string)$meta['rel_path']) : '';
-$isMutate = !empty($meta['mutating']); // defaults false
+$mutating = !empty($meta['mutating']);
 
-/* remember last tool (safe chars only) */
-if (preg_match('~^[a-z0-9][a-z0-9\/\-_]{0,128}$~i', $toolKey)) {
-  $_SESSION['mk_last_tool'] = $toolKey;
+/* Role enforcement if available */
+if (function_exists('mk_require_role')) {
+  // Many deployments treat 'owner' as above admin.
+  $need = ($minRole === 'owner') ? ['owner'] : ['admin','owner'];
+  mk_require_role($need);
 }
 
-/* enforce min_role */
-mk_require_role($minRole);
+/* Resolve tool path (your registry uses abs_path / rel_path) */
+$abs = isset($meta['abs_path']) ? trim((string)$meta['abs_path']) : '';
+$rel = isset($meta['rel_path']) ? trim((string)$meta['rel_path']) : '';
 
-/* ---------------------------------------------------------
-   Boundary checks (realpath + php-only)
---------------------------------------------------------- */
-if ($relPath === '') {
+$toolPath = '';
+if ($abs !== '' && is_file($abs)) {
+  $toolPath = $abs;
+} elseif ($rel !== '') {
+  $cand = rtrim($realToolsRoot, "/\\") . '/' . ltrim(str_replace('\\','/',$rel), '/');
+  if (is_file($cand)) $toolPath = $cand;
+}
+
+/* Final validation */
+if ($toolPath === '') {
   http_response_code(500);
-  echo "<pre>Tool rel_path missing in registry.</pre>";
+  echo "<pre>Registry entry has no valid tool file for: " . h($toolKey) . "\n"
+     . "Expected abs_path or rel_path to exist.\n"
+     . "abs_path=" . h($abs) . "\n"
+     . "rel_path=" . h($rel) . "\n"
+     . "</pre>";
+  echo ob_get_clean();
   exit;
 }
 
-$relPath = ltrim($relPath, "/\\");
-$ext = strtolower(pathinfo($relPath, PATHINFO_EXTENSION));
-if ($ext !== 'php') {
+$realTool = realpath($toolPath);
+if (!$realTool) {
+  http_response_code(500);
+  echo "<pre>Tool file not resolvable:\n" . h($toolPath) . "</pre>";
+  echo ob_get_clean();
+  exit;
+}
+
+$rootPrefix = rtrim((string)$realToolsRoot, "/\\") . DIRECTORY_SEPARATOR;
+if (strpos($realTool, $rootPrefix) !== 0) {
   http_response_code(403);
-  echo "<pre>Forbidden: only PHP tools allowed.</pre>";
+  echo "<pre>Tool blocked (outside tools root).\nTool: " . h($realTool) . "\nRoot: " . h((string)$realToolsRoot) . "</pre>";
+  echo ob_get_clean();
   exit;
 }
 
-$realToolsRootNorm = rtrim((string)$realToolsRoot, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
-$target = $realToolsRootNorm . str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $relPath);
-$realPath = realpath($target);
-
-if (!$realPath || !is_file($realPath)) {
-  http_response_code(404);
-  echo "<pre>Tool file missing:\n" . h($relPath) . "\n</pre>";
-  exit;
-}
-
-$realPathNorm = rtrim((string)$realPath, DIRECTORY_SEPARATOR);
-if (strpos($realPathNorm, rtrim($realToolsRootNorm, DIRECTORY_SEPARATOR)) !== 0) {
+if (strtolower(pathinfo($realTool, PATHINFO_EXTENSION)) !== 'php') {
   http_response_code(403);
-  echo "<pre>Forbidden: tool path outside allowed directory.</pre>";
+  echo "<pre>Tool blocked (only .php allowed):\n" . h($realTool) . "</pre>";
+  echo ob_get_clean();
   exit;
 }
 
-/* ---------------------------------------------------------
-   Render selection
---------------------------------------------------------- */
-$render = 'pre';
-if (isset($_GET['render'])) $render = strtolower(trim((string)$_GET['render']));
-if (isset($_POST['render'])) $render = strtolower(trim((string)$_POST['render']));
-if (!in_array($render, ['pre','html','auto'], true)) $render = 'pre';
-
-/* ---------------------------------------------------------
-   Mutating safety gate + APPLY propagation
---------------------------------------------------------- */
-$method = mk_method();
-
-/**
- * APPLY flag propagation:
- * If URL has ?apply=1 but POST doesn't include apply, bridge it.
- * (Some UIs POST without preserving querystring; our form preserves it anyway.)
- */
-$apply_qs = (string)($_GET['apply'] ?? '');
-if ($method === 'POST' && $apply_qs === '1' && empty($_POST['apply'])) {
-  $_POST['apply'] = '1';
-}
-
-/**
- * "Run requested" if:
- * - POST run=1 (dry-run), OR
- * - POST apply=1 (apply)
- */
-$applyRequested = ($method === 'POST' && (string)($_POST['apply'] ?? '') === '1');
-$runRequested   = ($method === 'POST' && (
-  ((string)($_POST['run'] ?? '') === '1') || $applyRequested
-));
-
-if ($isMutate) {
-  // Mutating tools: require POST + CSRF whenever executing (dry-run or apply).
-  if ($runRequested) {
-    if (!mk_csrf_validate()) {
-      http_response_code(403);
-      echo "<pre>Forbidden: CSRF check failed.</pre>";
-      exit;
-    }
+/* Mutating enforcement */
+if ($mutating) {
+  if (mk_method() !== 'POST') {
+    http_response_code(405);
+    header('Allow: POST');
+    echo "<pre>This tool is mutating and requires POST.</pre>";
+    echo ob_get_clean();
+    exit;
   }
-} else {
-  // Read-only tools:
-  // - prefer POST to run
-  // - allow GET run only if explicitly requested (compat)
-  if ($method === 'GET' && (string)($_GET['run'] ?? '') === '1') {
-    $runRequested = true;
+  $tok = $_POST['csrf'] ?? ($_POST['csrf_token'] ?? '');
+  if (!mk_tools_csrf_valid(is_string($tok) ? $tok : '')) {
+    http_response_code(400);
+    echo "<pre>CSRF failed.</pre>";
+    echo ob_get_clean();
+    exit;
   }
 }
-
-/* ---------------------------------------------------------
-   Staff chrome
---------------------------------------------------------- */
-$page_title = 'Run Tool • ' . $title;
-$page_desc  = 'Execution output is captured below.';
-$nav_active = 'tools';
-$active_nav = 'tools';
-
-if (function_exists('mk_view_set')) {
-  try {
-    mk_view_set([
-      'page_title' => $page_title,
-      'page_desc'  => $page_desc,
-      'nav_active' => $nav_active,
-      'active_nav' => $active_nav,
-    ]);
-  } catch (Throwable $e) {}
-}
-
-$toolsIndexUrl = url_for('/staff/tools/');
-$dashboardUrl  = url_for('/staff/');
-$selfBase      = url_for('/staff/tools/run.php?tool=' . rawurlencode($toolKey));
-
-if (function_exists('mk_require_shared')) {
-  mk_require_shared('staff_header.php');
-} else {
-  echo "<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>";
-  echo "<title>" . h($page_title) . "</title></head><body class='staff tools'><main class='site-main' id='main'>";
-}
-
-echo '<section class="mk-hero" style="margin-top:14px;">';
-echo '  <div class="mk-hero__bar" aria-hidden="true"></div>';
-echo '  <div class="mk-hero__inner">';
-echo '    <h1 class="mk-hero__title">' . h($title) . '</h1>';
-echo '    <p class="mk-hero__subtitle">' . h($page_desc) . '</p>';
-echo '    <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;">';
-echo '      <a class="btn" href="' . h($toolsIndexUrl) . '">Tools Index</a>';
-echo '      <a class="btn" href="' . h($dashboardUrl) . '">Dashboard</a>';
-echo '    </div>';
-echo '  </div>';
-echo '</section>';
-
-echo '<section class="mk-card" style="padding:14px; margin-top:14px;">';
-echo '  <div class="mk-muted" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;">';
-echo '    <div>Tool key: <strong>' . h($toolKey) . '</strong></div>';
-echo '    <div style="display:flex; gap:8px; flex-wrap:wrap;">';
-echo '      <a class="btn btn--small" href="' . h($selfBase . '&render=pre') . '">Render PRE</a>';
-echo '      <a class="btn btn--small" href="' . h($selfBase . '&render=html') . '">Render HTML</a>';
-echo '      <a class="btn btn--small" href="' . h($selfBase . '&render=auto') . '">Render Auto</a>';
-echo '    </div>';
-echo '  </div>';
-
-echo '  <div class="mk-muted" style="margin-top:10px;">';
-echo '    <div><strong>Policy:</strong> PHP-only, allowlisted, bounded to /private/tools, role-gated.</div>';
-if ($isMutate) {
-  echo '    <div><strong>Mutating tool:</strong> dry-run with Run; Apply will modify data (POST + CSRF).</div>';
-} else {
-  echo '    <div><strong>Read-only tool:</strong> safe to run.</div>';
-}
-echo '  </div>';
-
-/* ---------------------------------------------------------
-   Run form (POST)
---------------------------------------------------------- */
-$csrf = mk_csrf_token();
-
-/**
- * Preserve querystring on POST (tool=..., render=..., apply=1, etc.)
- * This helps tools that still read $_GET['apply'].
- */
-$self = (string)($_SERVER['REQUEST_URI'] ?? '/staff/tools/run.php');
-$self = str_replace(["\r","\n"], '', $self);
-
-echo '<form method="post" action="' . h($self) . '" style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">';
-echo '  <input type="hidden" name="tool" value="' . h($toolKey) . '">';
-echo '  <input type="hidden" name="render" value="' . h($render) . '">';
-echo '  <input type="hidden" name="csrf" value="' . h($csrf) . '">';
-
-/**
- * If the current URL is already ?apply=1, keep it in POST too.
- * (belt+suspenders; also means "Run Tool" while on apply URL still applies)
- */
-if (isset($_GET['apply']) && (string)$_GET['apply'] === '1') {
-  echo '  <input type="hidden" name="apply" value="1">';
-}
-
-echo '  <button class="btn" type="submit" name="run" value="1">Run Tool</button>';
-
-if ($isMutate) {
-  echo '  <button class="btn btn--danger" type="submit" name="apply" value="1" onclick="return confirm(\'Apply changes now? This tool can modify data.\');">Apply</button>';
-}
-
-echo '  <a class="btn btn--small" href="' . h($selfBase) . '">Reset</a>';
-echo '</form>';
 
 /* ---------------------------------------------------------
    Execute tool (capture output)
 --------------------------------------------------------- */
-$out = '';
-$err = null;
-$warnings = [];
+$toolOut = '';
+$toolHadOutput = false;
 
-if ($runRequested) {
+$__oldGet = $_GET;
+$_GET['tool'] = $toolKey;
+$_GET['render'] = $render;
 
-  $prevDisplay = ini_get('display_errors');
-  @ini_set('display_errors', '0');
-
-  $prevHandler = set_error_handler(static function ($severity, $message, $file, $line) use (&$warnings) {
-    if (!(error_reporting() & $severity)) return false;
-    $warnings[] = trim((string)$message) . " in " . (string)$file . ":" . (string)$line;
-    return true;
-  });
-
-  $shutdownErr = null;
-  register_shutdown_function(static function () use (&$shutdownErr) {
-    $e = error_get_last();
-    if (!$e) return;
-    $type = $e['type'] ?? 0;
-    if (in_array($type, [1, 4, 16, 64, 256], true)) {
-      $shutdownErr = ($e['message'] ?? 'Fatal error') . " in " . ($e['file'] ?? '?') . ":" . ($e['line'] ?? 0);
-    }
-  });
-
-  try {
-    if (!isset($_SERVER['argv']) || !is_array($_SERVER['argv'])) $_SERVER['argv'] = [];
-    if (!isset($_SERVER['argc'])) $_SERVER['argc'] = 0;
-
-    ob_start();
-    require $realPath;
-    $out = (string)ob_get_clean();
-  } catch (Throwable $e) {
-    if (ob_get_level() > 0) { @ob_end_clean(); }
-    $err = $e->getMessage();
-  } finally {
-    restore_error_handler();
-    @ini_set('display_errors', (string)$prevDisplay);
-  }
-
-  if ($shutdownErr !== null && $shutdownErr !== '') {
-    $err = $shutdownErr;
-  }
+try {
+  ob_start();
+  include $realTool;
+  $toolOut = (string)ob_get_clean();
+  $toolHadOutput = ($toolOut !== '');
+} catch (Throwable $e) {
+  while (ob_get_level() > 0) { @ob_end_clean(); }
+  http_response_code(500);
+  echo "<pre>Tool exception:\n" . h($e->getMessage()) . "\n\n" . h($realTool) . "</pre>";
+  echo ob_get_clean();
+  $_GET = $__oldGet;
+  exit;
 }
 
-mk_force_html_headers();
+$_GET = $__oldGet;
+
+/* Decide render if auto */
+$finalRender = $render;
+if ($render === 'auto') {
+  $finalRender = mk_is_html_document($toolOut) ? 'html' : 'pre';
+}
 
 /* ---------------------------------------------------------
-   Output rendering
+   Staff chrome + output
 --------------------------------------------------------- */
-if (!$runRequested) {
-  echo '<div class="notice info" style="margin-top:12px;">Click <strong>Run Tool</strong> to execute. Output will appear here.</div>';
+if (function_exists('mk_require_shared')) {
+  try { mk_require_shared('tools_header.php'); } catch (Throwable $e) {}
 } else {
-
-  if ($err !== null) {
-    echo '<div class="notice error" style="margin-top:12px;"><strong>Tool error:</strong> ' . h($err) . '</div>';
-  } else {
-    $out = ($out !== '') ? $out : "(No output)\n";
-
-    $looks_doc = mk_is_html_document($out);
-    $mode = $render;
-
-    if ($mode === 'auto') {
-      $mode = $looks_doc ? 'html' : 'pre';
-    }
-
-    if (!empty($warnings)) {
-      echo '<div class="notice warn" style="margin-top:12px;">';
-      echo '<strong>Warnings captured:</strong>';
-      echo '<pre style="margin-top:8px; white-space:pre-wrap;">' . h(implode("\n", array_slice($warnings, 0, 120))) . '</pre>';
-      echo '</div>';
-    }
-
-    if ($mode === 'html') {
-      echo '<div style="margin-top:12px;">';
-      echo '<div class="mk-muted" style="margin-bottom:10px;">Rendering mode: <strong>HTML (sandboxed)</strong></div>';
-      echo '<iframe sandbox="allow-same-origin allow-forms allow-pointer-lock allow-popups-to-escape-sandbox allow-popups allow-modals allow-downloads" '
-        . 'style="width:100%; min-height:70vh; border:1px solid rgba(0,0,0,.12); border-radius:12px; background:#fff;" '
-        . 'srcdoc="' . h($out) . '"></iframe>';
-      echo '</div>';
-    } else {
-      echo '<div class="mk-muted" style="margin-top:12px;">Rendering mode: <strong>PRE (escaped)</strong></div>';
-      echo '<pre style="margin-top:10px; white-space:pre-wrap; word-break:break-word; padding:12px; border:1px solid rgba(0,0,0,.10); border-radius:12px; background:#fff;">'
-        . h($out)
-        . '</pre>';
-
-      if ($looks_doc) {
-        $selfHtml = $selfBase . '&render=html';
-        echo '<div class="mk-muted" style="margin-top:10px;">';
-        echo 'This output looks like a full HTML document. ';
-        echo '<a class="btn" style="margin-left:8px;" href="' . h($selfHtml) . '">Render as HTML</a>';
-        echo '</div>';
-      }
-    }
-  }
+  // minimal fallback header
+  header('Content-Type: text/html; charset=UTF-8');
+  echo "<!doctype html><meta charset='utf-8'><title>Tool</title><body><main style='padding:18px;font-family:system-ui'>";
 }
 
-echo '</section>';
+echo "<section class='mk-card' style='padding:14px; margin-top:14px;'>";
+echo "<div style='display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:flex-start;'>";
+echo "<div>";
+echo "<div style='font-weight:900;'>Tool</div>";
+echo "<div class='mk-muted' style='margin-top:2px;'><code>" . h($toolKey) . "</code></div>";
+echo "</div>";
+echo "<div class='mk-muted' style='font-size:.92rem;'>File: <code>" . h($realTool) . "</code></div>";
+echo "</div>";
+echo "</section>";
+
+if ($finalRender === 'pre') {
+  $safe = htmlspecialchars($toolOut, ENT_QUOTES, 'UTF-8');
+  echo "<section class='mk-card' style='padding:14px; margin-top:14px;'>";
+  echo "<pre style='margin:0;white-space:pre-wrap;overflow:auto;'>" . $safe . "</pre>";
+  echo "</section>";
+} else {
+  // html: sandboxed iframe using srcdoc
+  $srcdoc = $toolOut;
+  if (!mk_is_html_document($srcdoc)) {
+    $srcdoc = "<!doctype html><meta charset='utf-8'><title>Output</title>"
+      . "<pre style='white-space:pre-wrap;font-family:ui-monospace,Menlo,Consolas,monospace;'>"
+      . htmlspecialchars($toolOut, ENT_QUOTES, 'UTF-8')
+      . "</pre>";
+  }
+
+  // prevent </script> breakouts in srcdoc context (basic hardening)
+  $srcdoc = str_replace('</script', '<\/script', $srcdoc);
+
+  echo "<section class='mk-card' style='padding:14px; margin-top:14px;'>";
+  echo "<iframe sandbox='allow-same-origin' style='width:100%;min-height:520px;border:1px solid rgba(0,0,0,.12);border-radius:12px;background:#fff' srcdoc='"
+    . htmlspecialchars($srcdoc, ENT_QUOTES, 'UTF-8')
+    . "'></iframe>";
+  echo "</section>";
+}
 
 /* Footer */
 if (function_exists('mk_require_shared')) {
   mk_require_shared('staff_footer.php');
+  echo ob_get_clean();
   exit;
 }
-echo "</main></body></html>";
+
+echo "</main></body>";
+echo ob_get_clean();
+exit;

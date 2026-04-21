@@ -1,117 +1,16 @@
 <?php
 declare(strict_types=1);
 
-/**
- * /public/platforms/gallery/index.php
- * Platform page (standard placeholder) — must never 500.
- */
+$pf = [
+  'slug'   => 'gallery',
+  'pretty' => 'Gallery',
+  'desc'   => 'Curated images, artefacts, maps, and historical visuals aligned to Subjects and timelines.',
+  'lede'   => 'A curated visual archive: images, artefacts, maps, and timelines tied to Subjects.',
+  'cards'  => [
+    ['icon'=>'🖼', 'title'=>'Collections', 'desc'=>'Organized by Subjects, eras, and themes.', 'pills'=>['Planned'], 'accent'=>'#2F4A5A'],
+    ['icon'=>'🗺', 'title'=>'Maps', 'desc'=>'Geography and migration context for research.', 'pills'=>['Planned'], 'accent'=>'#2F3A4A'],
+    ['icon'=>'🏺', 'title'=>'Artefacts', 'desc'=>'Curated material culture with sources.', 'pills'=>['Planned'], 'accent'=>'#4A3F2F'],
+  ],
+];
 
-@ini_set('display_errors', '0');
-@ini_set('display_startup_errors', '0');
-error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
-
-require_once __DIR__ . '/../_init.php';
-
-if (!function_exists('h')) { function h(string $v): string { return htmlspecialchars($v, ENT_QUOTES, 'UTF-8'); } }
-if (!function_exists('pf__u')) { function pf__u(string $p): string { return function_exists('url_for') ? (string)url_for($p) : $p; } }
-
-$pretty     = 'Gallery';
-$page_title = $pretty . ' — Platforms — Mkomi Igbo';
-$page_desc  = 'Gallery is coming soon: curated images, artefacts, maps, and historical visuals.';
-
-$extra_css = [ pf__u('/lib/css/public.css'), pf__u('/lib/css/platforms.css') ];
-
-$GLOBALS['page_title']=$page_title; $GLOBALS['page_desc']=$page_desc;
-$GLOBALS['nav_active']='platforms'; $GLOBALS['active_nav']='platforms'; $GLOBALS['extra_css']=$extra_css;
-
-if (function_exists('mk_view_set')) {
-  try { mk_view_set([
-    'page_title'=>$page_title,'page_desc'=>$page_desc,
-    'nav_active'=>'platforms','active_nav'=>'platforms',
-    'extra_css'=>$extra_css,'meta_robots'=>'noindex, nofollow',
-  ]); } catch (Throwable $e) {}
-}
-
-$header_ok=false;
-if (function_exists('mk_require_shared')) { try { mk_require_shared('public_header.php'); $header_ok=true; } catch (Throwable $e) {} }
-if (!$header_ok) { header('Content-Type:text/html; charset=UTF-8'); echo "<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'><title>".h($page_title)."</title></head><body>"; }
-
-http_response_code(200);
-
-$platforms_url = pf__u('/platforms/');
-$home_url = pf__u('/');
-$subjects_url = pf__u('/subjects/');
-?>
-<main class="container mk-page">
-
-  <div class="mk-page-actions">
-    <a class="mk-btn mk-btn--ghost" href="<?= h($platforms_url) ?>">← Back to Platforms</a>
-    <a class="mk-btn mk-btn--ghost" href="<?= h($home_url) ?>">Home</a>
-  </div>
-
-  <header class="mk-hero mk-hero--compact">
-    <div class="mk-hero__bar" aria-hidden="true"></div>
-    <div class="mk-hero__inner">
-      <h1 class="mk-hero__title"><?= h($pretty) ?></h1>
-      <p class="mk-muted mk-lede">
-        Curated artefacts, images, maps, and visual collections aligned to Subjects and timelines.
-      </p>
-      <div class="mk-hero__actions">
-        <a class="mk-btn" href="<?= h($subjects_url) ?>">Explore Subjects</a>
-        <a class="mk-btn mk-btn--ghost" href="<?= h($platforms_url) ?>">Back to Platforms</a>
-      </div>
-    </div>
-  </header>
-
-  <section class="pf-section">
-    <div class="pf-section__title"><h2>What to expect</h2></div>
-
-    <section class="pf-grid">
-      <article class="pf-card" style="--pf-accent:#4A3F2F;">
-        <div class="pf-card__bar"></div>
-        <div class="pf-card__body">
-          <div class="pf-card__top">
-            <div class="pf-icon" aria-hidden="true">G</div>
-            <div class="pf-card__text">
-              <h3 class="pf-card__title">Curated sets</h3>
-              <p class="pf-card__desc mk-muted">Collections by theme, place, person, and era.</p>
-            </div>
-          </div>
-          <div class="pf-card__meta"><span class="pf-pill">Planned</span><span class="pf-pill">Curated</span></div>
-        </div>
-      </article>
-
-      <article class="pf-card" style="--pf-accent:#2F4A43;">
-        <div class="pf-card__bar"></div>
-        <div class="pf-card__body">
-          <div class="pf-card__top">
-            <div class="pf-icon" aria-hidden="true">MAP</div>
-            <div class="pf-card__text">
-              <h3 class="pf-card__title">Maps and context</h3>
-              <p class="pf-card__desc mk-muted">Support for maps, captions, and provenance notes.</p>
-            </div>
-          </div>
-          <div class="pf-card__meta"><span class="pf-pill">Planned</span><span class="pf-pill">Context</span></div>
-        </div>
-      </article>
-
-      <article class="pf-card" style="--pf-accent:#2F3A4A;">
-        <div class="pf-card__bar"></div>
-        <div class="pf-card__body">
-          <div class="pf-card__top">
-            <div class="pf-icon" aria-hidden="true">SRC</div>
-            <div class="pf-card__text">
-              <h3 class="pf-card__title">Source linking</h3>
-              <p class="pf-card__desc mk-muted">Each item can link back to Subjects and references.</p>
-            </div>
-          </div>
-          <div class="pf-card__meta"><span class="pf-pill">Planned</span><span class="pf-pill">References</span></div>
-        </div>
-      </article>
-    </section>
-  </section>
-
-</main>
-<?php
-if (function_exists('mk_require_shared')) { try { mk_require_shared('public_footer.php'); } catch (Throwable $e) {} }
-else { echo "</body></html>"; }
+require __DIR__ . '/../_platform_page.php';

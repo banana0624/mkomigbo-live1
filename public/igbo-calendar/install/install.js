@@ -4,11 +4,13 @@
 
   const $ = (id) => document.getElementById(id);
 
-  const btnInstall  = $("btnInstall");
-  const btnCheck    = $("btnCheck");
-  const btnCopy     = $("btnCopyDebug");
-  const statusBox   = $("installStatus");
-  const diagBox     = $("diagBox");
+  const btnInstall   = $("btnInstall");
+  const btnCheck     = $("btnCheck");
+  const btnCopyDebug = $("btnCopyDebug");
+  const btnSwRefresh = $("btnSwRefresh");
+  const statusBox    = $("installStatus");
+  const metaBox      = $("installMeta");
+  const diagBox      = $("diagBox");
 
   if (!statusBox) return;
 
@@ -23,17 +25,26 @@
     installPage: "/igbo-calendar/install/"
   };
 
-  let deferredPrompt = null;     // Only valid on THIS page/tab
+  let deferredPrompt = null;
   let lastDiag = null;
 
   function setStatus(html) {
     try { statusBox.innerHTML = html; } catch (_) {}
   }
 
+  function setMeta(text) {
+    if (!metaBox) return;
+    try { metaBox.textContent = text; } catch (_) {}
+  }
+
   function setDiag(obj) {
     lastDiag = obj;
     if (!diagBox) return;
-    try { diagBox.textContent = JSON.stringify(obj, null, 2); } catch (_) {}
+    try {
+      diagBox.textContent = JSON.stringify(obj, null, 2);
+    } catch (_) {
+      diagBox.textContent = String(obj || "");
+    }
   }
 
   function safeUA() {
@@ -44,14 +55,29 @@
     try { return new Date().toISOString(); } catch (_) { return ""; }
   }
 
+  function nowLocalLabel() {
+    try {
+      return new Date().toLocaleString();
+    } catch (_) {
+      return nowIso();
+    }
+  }
+
   function isStandaloneDisplayMode() {
-    try { return window.matchMedia("(display-mode: standalone)").matches; }
-    catch (_) { return false; }
+    try {
+      return !!(window.matchMedia && window.matchMedia("(display-mode: standalone)").matches);
+    } catch (_) {
+      return false;
+    }
   }
 
   function isIOS() {
     const ua = safeUA();
     return /iPad|iPhone|iPod/.test(ua) && !("MSStream" in window);
+  }
+
+  function isAndroid() {
+    return /Android/i.test(safeUA());
   }
 
   function isEdge() {
@@ -63,17 +89,36 @@
     return !!window.chrome || ua.includes("Chromium") || ua.includes("Chrome/");
   }
 
+  function bumpButton(btn, tempText, ms = 1800) {
+    if (!btn) return;
+    const original = btn.getAttribute("data-orig-text") || btn.textContent || "";
+    btn.setAttribute("data-orig-text", original);
+    btn.textContent = tempText;
+    window.setTimeout(() => {
+      try {
+        btn.textContent = btn.getAttribute("data-orig-text") || original;
+      } catch (_) {}
+    }, ms);
+  }
+
   async function headOk(url) {
     try {
       const res = await fetch(url, { method: "HEAD", cache: "no-store" });
-      return { ok: res.ok, status: res.status, type: "HEAD" };
+      return {
+        ok: !!res.ok,
+        status: res.status,
+        contentType: res.headers.get("content-type") || ""
+      };
     } catch (e) {
-      return { ok: false, status: 0, type: "HEAD", error: String(e && e.message ? e.message : e) };
+      return {
+        ok: false,
+        status: 0,
+        error: String(e && e.message ? e.message : e)
+      };
     }
   }
 
   async function getInstalledRelatedAppsSafe() {
-    // Chromium-only, best-effort
     try {
       if (navigator.getInstalledRelatedApps) {
         const apps = await navigator.getInstalledRelatedApps();
@@ -86,48 +131,56 @@
   function platformHints() {
     return {
       isIOS: isIOS(),
+      isAndroid: isAndroid(),
       isEdge: isEdge(),
       isChromium: isChromium(),
       standaloneDisplayMode: isStandaloneDisplayMode(),
-      isSecureContext: !!window.isSecureContext,
-      controller: !!(navigator.serviceWorker && navigator.serviceWorker.controller),
-      beforeinstallpromptFired: false
+      navigatorStandalone: !!(window.navigator && window.navigator.standalone === true),
+      online: !!navigator.onLine,
+      secureContext: !!window.isSecureContext
     };
   }
 
-  function installHelpHtml() {
-    // “Deep link” to native install UI is not supported; we give precise steps instead.
+  function helpHtml() {
+    if (isIOS()) {
+      return (
+        "<strong>Install help:</strong><br>" +
+        "Open the main app page in Safari, then use <strong>Share → Add to Home Screen</strong>.<br>" +
+        "This diagnostics page is not the primary install target."
+      );
+    }
+
     const browser = isEdge() ? "Edge" : (isChromium() ? "Chrome" : "your browser");
 
     return (
-      `<strong>Install help (${browser}):</strong><br>` +
-      `1) Open the app page: <a class="btn btn--ghost" href="${ENDPOINTS.appUrl}">Open the App</a><br>` +
-      `2) Refresh once (Ctrl+Shift+R) and click any UI element.<br>` +
-      `3) Use the address bar install icon, or menu (⋯) → <strong>Install app</strong> / <strong>Apps</strong> → <strong>Install this site as an app</strong>.<br>` +
-      `Note: browsers may not fire an install prompt on demand (that is normal).`
+      "<strong>Install help (" + browser + "):</strong><br>" +
+      '1) Open <a class="btn btn--ghost" href="' + ENDPOINTS.appUrl + '">Open the App</a><br>' +
+      "2) Refresh once and interact with the main app page.<br>" +
+      "3) Use the browser menu or address-bar install icon.<br>" +
+      "Note: this page is for diagnostics and support; the main app remains the preferred install surface."
     );
   }
 
   function setInstallButtonMode(mode) {
     if (!btnInstall) return;
 
-    // Modes:
-    // - "prompt": we have a deferredPrompt and can prompt
-    // - "help": no prompt; button opens help instructions
-    // - "installed": already installed
     if (mode === "installed") {
       btnInstall.disabled = true;
       btnInstall.textContent = "Installed";
+      btnInstall.setAttribute("data-orig-text", "Installed");
       return;
     }
+
     if (mode === "prompt") {
       btnInstall.disabled = false;
       btnInstall.textContent = "Install App";
+      btnInstall.setAttribute("data-orig-text", "Install App");
       return;
     }
-    // help mode
-    btnInstall.disabled = false;               // make it useful
-    btnInstall.textContent = "How to Install"; // truthful
+
+    btnInstall.disabled = false;
+    btnInstall.textContent = "How to Install";
+    btnInstall.setAttribute("data-orig-text", "How to Install");
   }
 
   function listenForBroadcast() {
@@ -135,8 +188,8 @@
       const bc = new BroadcastChannel(BC_NAME);
       bc.onmessage = (ev) => {
         const data = ev && ev.data ? ev.data : {};
-        if (data && (data.type === "bip" || data.type === "installed")) {
-          runDiagnostics().catch(() => {});
+        if (data.type === "bip" || data.type === "installed" || data.type === "sw-updated") {
+          runDiagnostics({ silent: true }).catch(() => {});
         }
       };
     } catch (_) {}
@@ -150,20 +203,39 @@
       readyOk: false,
       controller: !!(navigator.serviceWorker && navigator.serviceWorker.controller),
       scope: null,
-      error: null
+      error: null,
+      existing: false
     };
 
     if (!out.supported) return out;
 
     try {
+      const existing = await navigator.serviceWorker.getRegistration(ENDPOINTS.scope);
+
+      if (existing) {
+        out.existing = true;
+        out.registerOk = true;
+        out.scope = existing && existing.scope ? existing.scope : null;
+        await navigator.serviceWorker.ready;
+        out.readyOk = true;
+        out.controller = !!navigator.serviceWorker.controller;
+        return out;
+      }
+
       out.registerAttempted = true;
-      const reg = await navigator.serviceWorker.register(ENDPOINTS.swUrl, { scope: ENDPOINTS.scope });
+
+      const reg = await navigator.serviceWorker.register(ENDPOINTS.swUrl, {
+        scope: ENDPOINTS.scope,
+        updateViaCache: "none"
+      });
+
       out.registerOk = true;
       out.scope = reg && reg.scope ? reg.scope : null;
 
+      try { await reg.update(); } catch (_) {}
+
       await navigator.serviceWorker.ready;
       out.readyOk = true;
-
       out.controller = !!navigator.serviceWorker.controller;
       return out;
     } catch (e) {
@@ -200,18 +272,64 @@
     }
   }
 
-  // Capture install prompt event (only when browser decides eligible)
+  async function refreshServiceWorker() {
+    if (!("serviceWorker" in navigator)) {
+      setStatus("Service workers are not supported in this browser.");
+      bumpButton(btnSwRefresh, "Unavailable", 1800);
+      return;
+    }
+
+    setStatus("Requesting service worker refresh…");
+
+    try {
+      const reg = await navigator.serviceWorker.getRegistration(ENDPOINTS.scope);
+
+      if (!reg) {
+        setStatus("No service worker registration found for the app scope. Open the main app once, then run diagnostics again.");
+        bumpButton(btnSwRefresh, "No SW", 1800);
+        return;
+      }
+
+      try { await reg.update(); } catch (_) {}
+
+      const targets = [reg.waiting, reg.installing, reg.active].filter(Boolean);
+      targets.forEach((sw) => {
+        try { sw.postMessage({ type: "SKIP_WAITING" }); } catch (_) {}
+      });
+
+      try {
+        const bc = new BroadcastChannel(BC_NAME);
+        bc.postMessage({ type: "sw-updated", ts: Date.now() });
+        bc.close();
+      } catch (_) {}
+
+      setStatus(
+        'Service worker refresh requested. Open <a class="btn btn--ghost" href="' +
+        ENDPOINTS.appUrl +
+        '">the main app</a> and refresh once.'
+      );
+      bumpButton(btnSwRefresh, "Requested", 1800);
+
+      window.setTimeout(() => {
+        runDiagnostics({ silent: true }).catch(() => {});
+      }, 600);
+
+      window.setTimeout(() => {
+        runDiagnostics({ silent: true }).catch(() => {});
+      }, 1400);
+    } catch (_) {
+      setStatus("Could not refresh the service worker automatically. Open the main app page and refresh once.");
+      bumpButton(btnSwRefresh, "Failed", 1800);
+    }
+  }
+
   window.addEventListener("beforeinstallprompt", (e) => {
     try { e.preventDefault(); } catch (_) {}
     deferredPrompt = e;
 
-    const hints = platformHints();
-    hints.beforeinstallpromptFired = true;
-
     setInstallButtonMode("prompt");
-    setStatus("Install is available on this page. Click <strong>Install App</strong>.");
+    setStatus("Install is available. Click <strong>Install App</strong>.");
 
-    // Hint other tabs (cannot pass the prompt itself)
     try {
       const bc = new BroadcastChannel(BC_NAME);
       bc.postMessage({ type: "bip", ts: Date.now() });
@@ -231,24 +349,32 @@
     } catch (_) {}
   });
 
-  async function runDiagnostics() {
+  async function runDiagnostics(opts = {}) {
+    const silent = !!opts.silent;
+
     const hints = platformHints();
-
     const installedRelated = await getInstalledRelatedAppsSafe();
-
     const swEnsure = await ensureSWRegistered();
-    const reach = {
-      manifest: await headOk(ENDPOINTS.manifestUrl),
-      serviceWorker: await headOk(ENDPOINTS.swUrl)
-    };
     const sw = await getSWState();
 
-    let manifestLink = null;
-    try { manifestLink = document.querySelector('link[rel="manifest"]'); } catch (_) {}
+    const reach = {
+      manifest: await headOk(ENDPOINTS.manifestUrl),
+      serviceWorker: await headOk(ENDPOINTS.swUrl),
+      app: await headOk(ENDPOINTS.appUrl)
+    };
+
+    let manifestLinkHref = null;
+    try {
+      const manifestLink = document.querySelector('link[rel="manifest"]');
+      manifestLinkHref = manifestLink ? manifestLink.getAttribute("href") : null;
+    } catch (_) {}
 
     const diag = {
       ts: nowIso(),
-      location: { href: location.href, pathname: location.pathname },
+      location: {
+        href: location.href,
+        pathname: location.pathname
+      },
       ua: safeUA(),
       platformHints: hints,
       supports: {
@@ -258,145 +384,171 @@
         clipboard: !!(navigator.clipboard && navigator.clipboard.writeText),
         getInstalledRelatedApps: !!navigator.getInstalledRelatedApps
       },
-      endpoints: {
-        app: ENDPOINTS.appUrl,
-        manifest: ENDPOINTS.manifestUrl,
-        serviceWorker: ENDPOINTS.swUrl,
-        scope: ENDPOINTS.scope,
-        installPage: ENDPOINTS.installPage
-      },
-      document: {
-        manifestLinkPresent: !!manifestLink,
-        manifestHref: manifestLink ? (manifestLink.getAttribute("href") || "") : ""
-      },
+      endpoints: ENDPOINTS,
+      pageManifestHref: manifestLinkHref,
       reachability: reach,
-      serviceWorkerEnsure: swEnsure,
-      serviceWorker: sw,
+      serviceWorkerRegistration: swEnsure,
+      serviceWorkerState: sw,
       installedRelatedApps: installedRelated,
-      install: {
-        hasDeferredPrompt: !!deferredPrompt
-      },
-      errors: []
+      deferredPromptAvailable: !!deferredPrompt
     };
 
-    if (!window.isSecureContext) diag.errors.push("Not a secure context. PWA install requires HTTPS (or localhost).");
-    if (!reach.manifest.ok) diag.errors.push("Manifest is not reachable (HEAD failed).");
-    if (!reach.serviceWorker.ok) diag.errors.push("Service worker script is not reachable (HEAD failed).");
-    if (!diag.document.manifestLinkPresent) diag.errors.push("No <link rel=\"manifest\"> found on this page.");
-
     setDiag(diag);
+    setMeta("Last diagnostics update: " + nowLocalLabel());
 
-    // Truthful UI decisions
-    if (hints.isIOS) {
-      setInstallButtonMode("help");
-      setStatus("iOS: install from Safari → Share → <strong>Add to Home Screen</strong>.");
-      return diag;
-    }
-
-    // Installed detection (multiple signals)
-    const alreadyInstalled =
-      hints.standaloneDisplayMode ||
-      (window.navigator && window.navigator.standalone === true) ||
-      (Array.isArray(installedRelated) && installedRelated.length > 0);
-
-    if (alreadyInstalled) {
+    if (hints.standaloneDisplayMode || hints.navigatorStandalone) {
       setInstallButtonMode("installed");
-      setStatus("This app is already installed (standalone mode detected).");
+      if (!silent) setStatus("This page is already running in installed app mode.");
       return diag;
     }
 
-    // If prompt exists here, we can actually prompt
     if (deferredPrompt) {
       setInstallButtonMode("prompt");
-      setStatus("Install is available. Click <strong>Install App</strong>.");
+      if (!silent) setStatus("Install is available. Click <strong>Install App</strong>.");
       return diag;
     }
 
-    // Ensure SW control guidance (common first-visit behavior)
-    if ("serviceWorker" in navigator && !navigator.serviceWorker.controller) {
-      setInstallButtonMode("help");
-      setStatus("Service worker registered, but it is not controlling this page yet. Reload once, then run <strong>Install Check</strong> again.");
-      return diag;
-    }
-
-    // Browser gating: button becomes a helpful “How to Install”
     setInstallButtonMode("help");
-    setStatus(installHelpHtml());
+
+    if (isIOS()) {
+      if (!silent) setStatus(helpHtml());
+      return diag;
+    }
+
+    if (!reach.manifest.ok || !reach.serviceWorker.ok) {
+      if (!silent) {
+        setStatus("Install requirements are not fully reachable yet. Refresh the main app page, then run this check again.");
+      }
+      return diag;
+    }
+
+    if (!silent) {
+      setStatus(helpHtml());
+    }
+
     return diag;
   }
 
-  async function doInstallOrHelp() {
-    if (deferredPrompt) {
-      try {
-        setStatus("Showing install prompt…");
-        await deferredPrompt.prompt();
+  async function promptInstall() {
+    if (!btnInstall) return;
 
-        let choice = null;
-        try { choice = await deferredPrompt.userChoice; } catch (_) {}
-
-        deferredPrompt = null;
-
-        if (choice && choice.outcome) {
-          if (choice.outcome === "accepted") {
-            setStatus("Install accepted. If nothing happens, check your browser’s install UI/menu.");
-          } else {
-            setStatus("Install dismissed. You can try again later (browser may delay the prompt).");
-          }
-        } else {
-          setStatus("Install prompt requested. If nothing happens, use the browser menu → Install app.");
-        }
-      } catch (_) {
-        deferredPrompt = null;
-        setInstallButtonMode("help");
-        setStatus(installHelpHtml());
-      }
+    if (!deferredPrompt) {
+      setStatus(helpHtml());
+      bumpButton(btnInstall, "See Help", 1800);
       return;
     }
 
-    // No prompt → help mode (truthful)
-    setInstallButtonMode("help");
-    setStatus(installHelpHtml());
+    try {
+      await deferredPrompt.prompt();
 
-    // Optional: open the app page in a new tab for convenience
-    try { window.open(ENDPOINTS.appUrl, "_blank", "noopener"); } catch (_) {}
+      if (deferredPrompt.userChoice) {
+        const choice = await deferredPrompt.userChoice;
+        if (choice && choice.outcome === "accepted") {
+          setStatus("Install accepted. Finishing…");
+        } else {
+          setStatus("Install prompt was dismissed.");
+        }
+      }
+    } catch (_) {
+      setStatus("Could not open the install prompt. Use the browser install menu instead.");
+    } finally {
+      deferredPrompt = null;
+      runDiagnostics().catch(() => {});
+    }
   }
 
   async function copyDebug() {
-    const txt = lastDiag ? JSON.stringify(lastDiag, null, 2) : "No diagnostics captured yet.";
-    try {
-      await navigator.clipboard.writeText(txt);
-      setStatus("Debug info copied.");
+    const text = JSON.stringify(lastDiag || {}, null, 2);
+
+    if (!text || text === "{}") {
+      setStatus("No diagnostics available yet. Run <strong>Run Install Check</strong> first.");
+      bumpButton(btnCopyDebug, "No Data", 1800);
       return;
+    }
+
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(text);
+        setStatus("Diagnostics copied. Paste into Notepad or any text box with Ctrl+V.");
+        bumpButton(btnCopyDebug, "Copied", 2200);
+        return;
+      }
     } catch (_) {}
 
     try {
       const ta = document.createElement("textarea");
-      ta.value = txt;
+      ta.value = text;
+      ta.setAttribute("readonly", "readonly");
       ta.style.position = "fixed";
       ta.style.left = "-9999px";
+      ta.style.top = "0";
       document.body.appendChild(ta);
       ta.focus();
       ta.select();
-      document.execCommand("copy");
+      const ok = document.execCommand("copy");
       document.body.removeChild(ta);
-      setStatus("Debug info copied.");
+
+      if (ok) {
+        setStatus("Diagnostics copied. Paste into Notepad or any text box with Ctrl+V.");
+        bumpButton(btnCopyDebug, "Copied", 2200);
+        return;
+      }
+
+      throw new Error("copy failed");
     } catch (_) {
-      setStatus("Could not copy debug in this browser. Copy from the Diagnostics box manually.");
+      setStatus("Could not copy automatically. Select and copy the diagnostics block manually.");
+      bumpButton(btnCopyDebug, "Failed", 2200);
     }
   }
 
-  // Wire buttons
-  if (btnInstall) btnInstall.addEventListener("click", () => { doInstallOrHelp().catch(() => {}); });
-  if (btnCheck) btnCheck.addEventListener("click", () => { runDiagnostics().catch(() => {}); });
-  if (btnCopy) btnCopy.addEventListener("click", () => { copyDebug().catch(() => {}); });
+  if (btnInstall) {
+    btnInstall.addEventListener("click", (e) => {
+      e.preventDefault();
+      promptInstall().catch(() => {
+        setStatus("Could not open the install prompt. Use the browser install menu instead.");
+      });
+    });
+  }
 
-  // Init
+  if (btnCheck) {
+    btnCheck.addEventListener("click", (e) => {
+      e.preventDefault();
+      setStatus("Running install check…");
+      runDiagnostics().then(() => {
+        setStatus("Diagnostics updated. Review the status above and the JSON block below.");
+        bumpButton(btnCheck, "Checked", 1800);
+      }).catch(() => {
+        setStatus("Install diagnostics failed.");
+        bumpButton(btnCheck, "Failed", 1800);
+      });
+    });
+  }
+
+  if (btnCopyDebug) {
+    btnCopyDebug.addEventListener("click", (e) => {
+      e.preventDefault();
+      copyDebug().catch(() => {
+        setStatus("Could not copy diagnostics.");
+        bumpButton(btnCopyDebug, "Failed", 2200);
+      });
+    });
+  }
+
+  if (btnSwRefresh) {
+    btnSwRefresh.addEventListener("click", (e) => {
+      e.preventDefault();
+      refreshServiceWorker().catch(() => {
+        setStatus("Could not refresh the service worker.");
+        bumpButton(btnSwRefresh, "Failed", 1800);
+      });
+    });
+  }
+
   listenForBroadcast();
-
-  // Default state: be useful, not greyed out.
-  setInstallButtonMode("help");
+  setStatus("Checking install support…");
+  setMeta("Last diagnostics update: running…");
   runDiagnostics().catch(() => {
-    setStatus("Diagnostics failed to run.");
-    setDiag({ ok: false, error: "Diagnostics exception", ts: nowIso() });
+    setStatus("Install diagnostics failed.");
+    setMeta("Last diagnostics update: failed.");
   });
 })();

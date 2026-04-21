@@ -31,6 +31,8 @@ if (is_file($bootstrapInit)) {
   require_once $bootstrapInit;
 }
 
+require_once __DIR__ . '/seo_defaults.php';
+
 /**
  * Compatibility wrapper:
  * - initialize.php historically calls mk_public_bootstrap([...])

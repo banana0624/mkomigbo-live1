@@ -1,141 +1,150 @@
 <?php
 declare(strict_types=1);
-require_once __DIR__ . '/../../_init.php';
 
-
-/**
- * /public/staff/subjects/delete.php
- * Staff: Delete subject (confirm + POST)
- *
- * Locked rules:
- * - Only bootstrap is /public/staff/_init.php
-// [patched]  * - Never scans for initialize.php
- * - CSRF required on POST
- * - Safe return= (staff-only)
- * - Handles FK-blocked deletes cleanly
- */
+require_once __DIR__ . '/../_init.php';
+mk_require_staff_login();
 
 @ini_set('display_errors', '0');
 @ini_set('display_startup_errors', '0');
 error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
+if (!function_exists('h')) {
+  function h(string $v): string { return htmlspecialchars($v, ENT_QUOTES, 'UTF-8'); }
+}
+if (!function_exists('redirect_to')) {
+  function redirect_to(string $location): void {
+    $location = str_replace(["\r", "\n"], '', trim($location));
+    if ($location === '') $location = '/staff/subjects/index.php';
+    if ($location[0] === '/') {
+      header('Location: ' . $location, true, 302);
+      exit;
+    }
+    if (function_exists('url_for')) {
+      $location = (string)url_for($location);
+    }
+    header('Location: ' . $location, true, 302);
+    exit;
+  }
+}
+if (!function_exists('safe_return')) {
+  function safe_return(string $raw, string $default): string {
+    $raw = trim($raw);
+    if ($raw === '') return $default;
+    $raw = rawurldecode($raw);
+    if ($raw === '' || $raw[0] !== '/') return $default;
+    if (preg_match('~^//~', $raw)) return $default;
+    if (preg_match('~^[a-z]+:~i', $raw)) return $default;
+    if (!preg_match('~^/staff/~', $raw)) return $default;
+    return $raw;
+  }
+}
+if (!function_exists('flash_set')) {
+  function flash_set(string $key, string $msg): void {
+    if (!isset($_SESSION['flash']) || !is_array($_SESSION['flash'])) $_SESSION['flash'] = [];
+    $_SESSION['flash'][$key] = $msg;
+  }
+}
+if (!function_exists('column_exists')) {
+  function column_exists(PDO $pdo, string $table, string $column): bool {
+    static $cache = [];
+    $key = strtolower($table . '.' . $column);
+    if (array_key_exists($key, $cache)) return (bool)$cache[$key];
 
-require_once __DIR__ . '/../_init.php';
-
-if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
-
-$u = static function(string $path): string {
-  return function_exists('url_for') ? (string)url_for($path) : $path;
-};
-
-$id = (int)($_GET['id'] ?? $_POST['id'] ?? 0);
-
-$default_return = '/staff/subjects/';
-$return_raw  = (string)($_GET['return'] ?? $_POST['return'] ?? '');
-$return_path = function_exists('staff_safe_return_url')
-  ? staff_safe_return_url($return_raw, $default_return)
-  : (function_exists('pf__safe_return_url') ? pf__safe_return_url($return_raw, $default_return) : $default_return);
-
-$list_url = $u($return_path);
-
-if ($id <= 0) {
-  if (function_exists('staff_flash_set')) staff_flash_set('error', 'Invalid subject id.');
-  elseif (function_exists('pf__flash_set')) pf__flash_set('error', 'Invalid subject id.');
-  header('Location: ' . $list_url, true, 302);
-  exit;
+    $st = $pdo->prepare("
+      SELECT 1
+      FROM information_schema.COLUMNS
+      WHERE TABLE_SCHEMA = DATABASE()
+        AND TABLE_NAME = ?
+        AND COLUMN_NAME = ?
+      LIMIT 1
+    ");
+    $st->execute([$table, $column]);
+    $cache[$key] = (bool)$st->fetchColumn();
+    return (bool)$cache[$key];
+  }
+}
+if (!function_exists('csrf_verify_local')) {
+  function csrf_verify_local(string $token): bool {
+    $sess = (string)($_SESSION['csrf_token'] ?? '');
+    return ($token !== '' && $sess !== '' && hash_equals($sess, $token));
+  }
+}
+if (!function_exists('csrf_field_local')) {
+  function csrf_field_local(): string {
+    if (empty($_SESSION['csrf_token']) || !is_string($_SESSION['csrf_token'])) {
+      $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+    return '<input type="hidden" name="csrf_token" value="' . h((string)$_SESSION['csrf_token']) . '">';
+  }
 }
 
 try {
   $pdo = function_exists('staff_pdo') ? staff_pdo() : (function_exists('db') ? db() : null);
-  if (!$pdo instanceof PDO) throw new RuntimeException('Database not available.');
+  if (!$pdo instanceof PDO) throw new RuntimeException('Database handle not available.');
+} catch (Throwable $e) {
+  http_response_code(500);
+  header('Content-Type: text/plain; charset=utf-8');
+  echo "Database handle not available.\n";
+  exit;
+}
 
-  // Fetch subject for confirmation UI
-  $name = '';
-  $slug = '';
+$id = (int)($_GET['id'] ?? ($_POST['id'] ?? 0));
+$return = safe_return((string)($_GET['return'] ?? ($_POST['return'] ?? '/staff/subjects/index.php')), '/staff/subjects/index.php');
 
-  $has_display = false;
-  $has_name = false;
-  $has_title = false;
-  $has_slug = false;
+if ($id <= 0) {
+  flash_set('error', 'Invalid subject ID.');
+  redirect_to($return);
+}
 
-  // Detect columns quickly
-  $colCheck = $pdo->prepare("
-    SELECT COLUMN_NAME
-    FROM information_schema.COLUMNS
-    WHERE TABLE_SCHEMA = DATABASE()
-      AND TABLE_NAME = 'subjects'
-      AND COLUMN_NAME IN ('display_name','name','title','slug')
-  ");
-  $colCheck->execute();
-  $cols = $colCheck->fetchAll(PDO::FETCH_COLUMN) ?: [];
-  $cols = array_map('strval', $cols);
+$has_display = column_exists($pdo, 'subjects', 'display_name');
+$has_name    = column_exists($pdo, 'subjects', 'name');
+$has_title   = column_exists($pdo, 'subjects', 'title');
+$has_slug    = column_exists($pdo, 'subjects', 'slug');
 
-  $has_display = in_array('display_name', $cols, true);
-  $has_name    = in_array('name', $cols, true);
-  $has_title   = in_array('title', $cols, true);
-  $has_slug    = in_array('slug', $cols, true);
+$nameCol = $has_display ? 'display_name' : ($has_name ? 'name' : ($has_title ? 'title' : null));
 
-  $nameCol = $has_display ? 'display_name' : ($has_name ? 'name' : ($has_title ? 'title' : null));
+$sel = ["id"];
+$sel[] = $has_slug ? "slug" : "NULL AS slug";
+$sel[] = $nameCol ? "`{$nameCol}` AS display_name" : "CAST(id AS CHAR) AS display_name";
 
-  $sel = ["id"];
-  $sel[] = $has_slug ? "slug" : "NULL AS slug";
-  $sel[] = $nameCol ? "`{$nameCol}` AS display_name" : "CAST(id AS CHAR) AS display_name";
+$st = $pdo->prepare("SELECT " . implode(', ', $sel) . " FROM subjects WHERE id = ? LIMIT 1");
+$st->execute([$id]);
+$row = $st->fetch(PDO::FETCH_ASSOC);
 
-  $st = $pdo->prepare("SELECT " . implode(', ', $sel) . " FROM subjects WHERE id = ? LIMIT 1");
-  $st->execute([$id]);
-  $row = $st->fetch(PDO::FETCH_ASSOC);
+if (!$row) {
+  flash_set('error', "Subject not found (#{$id}).");
+  redirect_to($return);
+}
 
-  if (!$row) {
-    if (function_exists('staff_flash_set')) staff_flash_set('error', "Subject not found (#{$id}).");
-    elseif (function_exists('pf__flash_set')) pf__flash_set('error', "Subject not found (#{$id}).");
-    header('Location: ' . $list_url, true, 302);
-    exit;
+$name = (string)($row['display_name'] ?? ('Subject #' . $id));
+$slug = (string)($row['slug'] ?? '');
+
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
+  $token = (string)($_POST['csrf_token'] ?? '');
+  if (!csrf_verify_local($token)) {
+    flash_set('error', 'Security check failed (CSRF). Please retry.');
+    redirect_to('/staff/subjects/delete.php?id=' . rawurlencode((string)$id) . '&return=' . rawurlencode($return));
   }
 
-  $name = (string)($row['display_name'] ?? ('Subject #' . $id));
-  $slug = (string)($row['slug'] ?? '');
-
-  // POST: delete
-  if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
-    if (function_exists('staff_csrf_require')) staff_csrf_require();
-    elseif (function_exists('csrf_require')) csrf_require();
-
+  try {
     $del = $pdo->prepare("DELETE FROM subjects WHERE id = ? LIMIT 1");
     $del->execute([$id]);
 
     if ($del->rowCount() > 0) {
-      $msg = "Deleted subject #{$id} successfully.";
-      if (function_exists('staff_flash_set')) staff_flash_set('notice', $msg);
-      elseif (function_exists('pf__flash_set')) pf__flash_set('notice', $msg);
+      flash_set('notice', "Deleted subject #{$id} successfully.");
     } else {
-      $msg = "Delete did not complete (subject may already be removed).";
-      if (function_exists('staff_flash_set')) staff_flash_set('error', $msg);
-      elseif (function_exists('pf__flash_set')) pf__flash_set('error', $msg);
+      flash_set('error', 'Delete did not complete (subject may already be removed).');
     }
 
-    header('Location: ' . $list_url, true, 302);
-    exit;
+    redirect_to($return);
+  } catch (Throwable $e) {
+    flash_set('error', 'Delete failed: ' . $e->getMessage());
+    redirect_to('/staff/subjects/delete.php?id=' . rawurlencode((string)$id) . '&return=' . rawurlencode($return));
   }
-
-} catch (Throwable $e) {
-  // Render a minimal error page (still within staff layout if available)
-  $page_title = 'Staff • Delete Subject';
-  if (function_exists('mk_view_set')) mk_view_set(['page_title' => $page_title]);
-  if (function_exists('mk_require_shared')) mk_require_shared('staff_header.php');
-
-  echo '<section class="card"><div class="card__body">';
-  echo '<p class="warn" style="color:#b02a37;">' . h('Error: ' . $e->getMessage()) . '</p>';
-  echo '<p style="margin-top:10px;"><a class="btn" href="' . h($list_url) . '">Back</a></p>';
-  echo '</div></section>';
-
-  if (function_exists('mk_require_shared')) mk_require_shared('staff_footer.php');
-  exit;
 }
 
-/* ---------------------------
-   Render confirmation (GET)
----------------------------- */
 $page_title = 'Staff • Delete Subject';
 if (function_exists('mk_view_set')) mk_view_set(['page_title' => $page_title]);
+
 if (function_exists('mk_require_shared')) {
   mk_require_shared('staff_header.php');
 } else {
@@ -155,17 +164,13 @@ echo '<p class="muted" style="margin:0 0 12px;">You are about to delete <strong>
   . '.</p>';
 
 echo '<form method="post" action="">';
-if (function_exists('staff_csrf_field')) echo staff_csrf_field();
-elseif (function_exists('csrf_field')) echo csrf_field();
-
+echo csrf_field_local();
 echo '<input type="hidden" name="id" value="' . h((string)$id) . '">';
-echo '<input type="hidden" name="return" value="' . h($return_path) . '">';
-
+echo '<input type="hidden" name="return" value="' . h($return) . '">';
 echo '<div class="actions" style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">';
 echo '<button class="btn btn--danger" type="submit">Yes, delete</button>';
-echo '<a class="btn btn--ghost" href="' . h($list_url) . '">Cancel</a>';
+echo '<a class="btn btn--ghost" href="' . h($return) . '">Cancel</a>';
 echo '</div>';
-
 echo '</form>';
 echo '</div></section>';
 

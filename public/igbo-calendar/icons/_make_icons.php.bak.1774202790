@@ -1,0 +1,138 @@
+<?php
+declare(strict_types=1);
+
+@ini_set('display_errors', '1');
+error_reporting(E_ALL);
+
+if (!extension_loaded('gd')) {
+  echo "GD extension is not available. Cannot generate PNG icons.\n";
+  exit(1);
+}
+
+$dir = __DIR__;
+@mkdir($dir, 0755, true);
+
+function makeIcon(string $path, int $size): void {
+  $im = imagecreatetruecolor($size, $size);
+  if (!$im) {
+    throw new RuntimeException("Could not create image: {$path}");
+  }
+
+  imagealphablending($im, true);
+  imagesavealpha($im, true);
+
+  $bg      = imagecolorallocate($im, 245, 237, 220); // #f5eddc
+  $outline = imagecolorallocate($im, 200, 183, 140); // #c8b78c
+  $body    = imagecolorallocate($im, 239, 230, 207); // #efe6cf
+  $ridge   = imagecolorallocate($im, 220, 201, 161); // #dcc9a1
+  $slit    = imagecolorallocate($im, 122, 82, 48);   // #7a5230
+  $slit2   = imagecolorallocate($im, 247, 237, 216); // #f7edd8
+  $hi1     = imagecolorallocatealpha($im, 255, 248, 234, 32);
+  $hi2     = imagecolorallocatealpha($im, 255, 244, 222, 64);
+
+  imagefilledrectangle($im, 0, 0, $size, $size, $bg);
+
+  $margin = max(2, (int)round($size * 0.125));
+  $gap    = max(2, (int)round($size * 0.0625));
+  $cell   = (int)floor(($size - ($margin * 2) - $gap) / 2);
+
+  $positions = [
+    [$margin, $margin],
+    [$margin + $cell + $gap, $margin],
+    [$margin, $margin + $cell + $gap],
+    [$margin + $cell + $gap, $margin + $cell + $gap],
+  ];
+
+  foreach ($positions as [$x, $y]) {
+    drawCowrie($im, (int)$x, (int)$y, $cell, $outline, $body, $ridge, $slit, $slit2, $hi1, $hi2);
+  }
+
+  if (!imagepng($im, $path)) {
+    imagedestroy($im);
+    throw new RuntimeException("Could not write PNG: {$path}");
+  }
+
+  imagedestroy($im);
+}
+
+function drawCowrie($im, int $x, int $y, int $cell, int $outline, int $body, int $ridge, int $slit, int $slit2, int $hi1, int $hi2): void {
+  $cx = $x + (int)round($cell * 0.50);
+  $cy = $y + (int)round($cell * 0.50);
+
+  $wOuter = max(6, (int)round($cell * 0.70));
+  $hOuter = max(8, (int)round($cell * 0.92));
+
+  $wInner = max(4, (int)round($cell * 0.46));
+  $hInner = max(6, (int)round($cell * 0.66));
+
+  imagefilledellipse($im, $cx, $cy, $wOuter, $hOuter, $outline);
+  imagefilledellipse($im, $cx, $cy, max(2, $wOuter - 2), max(2, $hOuter - 2), $body);
+  imagefilledellipse($im, $cx, $cy + (int)round($cell * 0.01), $wInner, $hInner, $ridge);
+
+  $slitW = max(2, (int)round($cell * 0.22));
+  $slitH = max(2, (int)round($cell * 0.48));
+  imagefilledellipse($im, $cx, $cy + (int)round($cell * 0.06), $slitW, $slitH, $slit);
+  imagefilledellipse($im, $cx, $cy + (int)round($cell * 0.02), max(1, $slitW - 2), max(1, (int)round($slitH * 0.28)), $slit2);
+
+  imagefilledellipse(
+    $im,
+    $cx - (int)round($cell * 0.10),
+    $cy - (int)round($cell * 0.18),
+    max(2, (int)round($cell * 0.16)),
+    max(2, (int)round($cell * 0.24)),
+    $hi1
+  );
+
+  imagefilledellipse(
+    $im,
+    $cx + (int)round($cell * 0.10),
+    $cy - (int)round($cell * 0.22),
+    max(2, (int)round($cell * 0.10)),
+    max(2, (int)round($cell * 0.16)),
+    $hi2
+  );
+}
+
+function makeIcoFromPng(string $pngPath, string $icoPath): void {
+  $pngData = @file_get_contents($pngPath);
+  if ($pngData === false) {
+    throw new RuntimeException("Could not read PNG for ICO: {$pngPath}");
+  }
+
+  $size = getimagesize($pngPath);
+  if (!$size || empty($size[0]) || empty($size[1])) {
+    throw new RuntimeException("Could not inspect PNG for ICO: {$pngPath}");
+  }
+
+  $width  = (int)$size[0];
+  $height = (int)$size[1];
+
+  $ico  = pack('vvv', 0, 1, 1);
+  $ico .= pack(
+    'CCCCvvVV',
+    $width >= 256 ? 0 : $width,
+    $height >= 256 ? 0 : $height,
+    0,
+    0,
+    1,
+    32,
+    strlen($pngData),
+    22
+  );
+  $ico .= $pngData;
+
+  if (@file_put_contents($icoPath, $ico) === false) {
+    throw new RuntimeException("Could not write ICO: {$icoPath}");
+  }
+}
+
+$sizes = [16, 32, 48, 72, 192, 512];
+
+foreach ($sizes as $s) {
+  $p = $dir . "/icon-{$s}.png";
+  makeIcon($p, $s);
+  echo "Wrote {$p}\n";
+}
+
+makeIcoFromPng($dir . '/icon-32.png', $dir . '/favicon.ico');
+echo "Wrote {$dir}/favicon.ico\n";

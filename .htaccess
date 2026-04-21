@@ -1,92 +1,22 @@
-# =========================================================
-# /home/mkomigbo/public_html/.htaccess
-# Single public web root: route into /public
-# =========================================================
+RewriteEngine On
 
-Options -Indexes -MultiViews
-DirectoryIndex index.php
-FileETag None
+# --------------------------------------------------
+# SERVE FILES FROM /public
+# --------------------------------------------------
 
-<IfModule mod_headers.c>
-  Header unset ETag
-  Header always set X-Content-Type-Options "nosniff"
-  Header always set Referrer-Policy "strict-origin-when-cross-origin"
-  Header always set X-Frame-Options "SAMEORIGIN"
+RewriteCond %{REQUEST_URI} !^/public/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ /public/$1 [L]
 
-  # -------------------------------------------------------
-  # PWA: service worker + manifest must NEVER be immutable
-  # (avoid stale SW/manifest breaking install + buttons)
-  # -------------------------------------------------------
-  <Files "service-worker.js">
-    Header always set Cache-Control "no-cache, no-store, must-revalidate"
-    Header always set Pragma "no-cache"
-    Header always set Expires "0"
-  </Files>
+# --------------------------------------------------
+# FIX: allow login page explicitly
+# --------------------------------------------------
 
-  <Files "manifest.json">
-    Header always set Cache-Control "no-cache, must-revalidate"
-    Header always set Pragma "no-cache"
-    Header always set Expires "0"
-  </Files>
+RewriteRule ^staff/login\.php$ /public/staff/login.php [L]
 
-  # -------------------------------------------------------
-  # Long-cache static assets
-  # IMPORTANT: do NOT include .json here (manifest is json)
-  # -------------------------------------------------------
-  <FilesMatch "\.(?:css|js|mjs|map|png|jpg|jpeg|gif|webp|svg|ico|woff|woff2|ttf|otf|eot)$">
-    Header always set Cache-Control "public, max-age=31536000, immutable"
-    Header always set Vary "Accept-Encoding"
-  </FilesMatch>
-</IfModule>
+# --------------------------------------------------
+# OPTIONAL: /staff → login
+# --------------------------------------------------
 
-<IfModule mod_rewrite.c>
-  RewriteEngine On
-
-  # ---- Safety
-  RewriteCond %{REQUEST_METHOD} ^(?:TRACE|TRACK)$ [NC]
-  RewriteRule ^ - [F,L]
-
-  RewriteRule (^|/)\.(?!well-known/) - [F,L]
-  RewriteRule (^|/)(?:\.env|env\.php|config\.php|composer\.(?:json|lock)|package(?:-lock)?\.json|yarn\.lock)$ - [F,L,NC]
-  RewriteRule \.(?:bak|old|orig|save|swp|swo|tmp|temp|dist|sql|gz|zip)$ - [F,L,NC]
-  RewriteRule (?:~|\.(?:bak|old|orig|save))$ - [F,L,NC]
-
-  # ---- Serve real files/dirs
-  RewriteCond %{REQUEST_FILENAME} -f [OR]
-  RewriteCond %{REQUEST_FILENAME} -d
-  RewriteRule ^ - [L]
-
-  # ---- Canonical /index.php
-  RewriteCond %{THE_REQUEST} \s/+index\.php[\s?] [NC]
-  RewriteRule ^index\.php$ / [R=301,L]
-
-  # ---- Rewrite sanity endpoint (no PHP include, direct file)
-  RewriteRule ^__rewrite_ok$ public/__rewrite_ok.php [L]
-
-  # ---- Home
-  RewriteRule ^$ public/index.php [L,QSA]
-
-  # ---- Subjects
-  RewriteRule ^subjects/?$ public/subjects/index.php [L,QSA]
-  RewriteRule ^subjects/([a-z0-9][a-z0-9_-]{0,190})/([a-z0-9][a-z0-9_-]{0,190})/?$ public/subjects/page.php?subject=$1&slug=$2 [L,QSA]
-  RewriteRule ^subjects/([a-z0-9][a-z0-9_-]{0,190})/?$ public/subjects/subject.php?slug=$1 [L,QSA]
-
-  # ---- Contributors
-  RewriteRule ^contributors/?$ public/contributors/index.php [L,QSA]
-  RewriteRule ^contributors/id/([0-9]{1,20})/?$ public/contributors/view.php?id=$1 [L,QSA]
-  RewriteRule ^contributors/([a-z0-9][a-z0-9_-]{0,190})/?$ public/contributors/view.php?slug=$1 [L,QSA]
-
-  # ---- Platforms
-  RewriteRule ^platforms/?$ public/platforms/index.php [L,QSA]
-  RewriteRule ^platforms/([a-z0-9][a-z0-9_-]{0,190})/?$ public/platforms/view.php?slug=$1 [L,QSA,NC]
-  RewriteRule ^platforms/(.*)$ public/platforms/view.php?path=$1 [L,QSA,NC]
-
-  # ---- Other modules (igbo-calendar independent)
-  RewriteRule ^igbo-calendar(?:/(.*))?$ public/igbo-calendar/$1 [L,NC,QSA]
-  RewriteRule ^staff(?:/(.*))?$ public/staff/$1 [L,NC,QSA]
-
-  # ---- Final fallback: /x -> /public/x
-  RewriteRule ^(.+)$ public/$1 [L,QSA]
-</IfModule>
-
-ErrorDocument 404 /public/404.php
+RewriteRule ^staff/?$ /public/staff/login.php [L]

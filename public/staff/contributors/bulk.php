@@ -1,51 +1,35 @@
 <?php
 declare(strict_types=1);
 
-/**
- * /public/staff/contributors/bulk.php
- * Staff: Bulk actions for contributors
- *
- * Supports actions:
- * - set_active  (status = active)
- * - set_draft   (status = draft)
- * - delete      (delete rows)
- *
- * Also accepts legacy synonyms:
- * - publish   -> set_active
- * - unpublish -> set_draft
- *
- * - CSRF protected
- * - No arrow functions
- */
+require_once __DIR__ . '/../../_init.php';
+mk_require_staff_login();
 
-@ini_set('display_errors', '0');
-@ini_set('display_startup_errors', '0');
-error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
-
-require_once __DIR__ . '/../_init.php';
-if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
-
-if (function_exists('require_staff_login')) { require_staff_login(); }
-
-/* ---------------------------------------------------------
-   Helpers
---------------------------------------------------------- */
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+header('Expires: 0');
 if (!function_exists('redirect_to')) {
   function redirect_to(string $location): void {
-    $location = str_replace(["\r", "\n"], '', $location);
+    $location = str_replace(["\r","\n"], '', trim($location));
+    if ($location === '') $location = '/staff/contributors/index.php';
+    if ($location[0] === '/') {
+      header('Location: ' . $location, true, 302);
+      exit;
+    }
+    if (function_exists('url_for')) {
+      $location = (string)url_for($location);
+    }
     header('Location: ' . $location, true, 302);
     exit;
   }
 }
-if (!function_exists('pf__flash_set')) {
-  function pf__flash_set(string $key, string $msg): void {
-    if (session_status() !== PHP_SESSION_ACTIVE) { @session_start(); }
+if (!function_exists('flash_set')) {
+  function flash_set(string $key, string $msg): void {
     if (!isset($_SESSION['flash']) || !is_array($_SESSION['flash'])) $_SESSION['flash'] = [];
     $_SESSION['flash'][$key] = $msg;
   }
 }
-if (!function_exists('pf__safe_return_url')) {
-  function pf__safe_return_url(string $raw, string $default): string {
+if (!function_exists('safe_return')) {
+  function safe_return(string $raw, string $default): string {
     $raw = trim($raw);
     if ($raw === '') return $default;
     $raw = rawurldecode($raw);
@@ -56,29 +40,25 @@ if (!function_exists('pf__safe_return_url')) {
     return $raw;
   }
 }
-if (!function_exists('mk_table_exists')) {
-  function mk_table_exists(PDO $db, string $table): bool {
-    $st = $db->prepare("SELECT 1 FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=? LIMIT 1");
+if (!function_exists('table_exists')) {
+  function table_exists(PDO $pdo, string $table): bool {
+    $st = $pdo->prepare("SELECT 1 FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=? LIMIT 1");
     $st->execute([$table]);
     return (bool)$st->fetchColumn();
   }
 }
-if (!function_exists('mk_column_exists')) {
-  function mk_column_exists(PDO $db, string $table, string $column): bool {
-    $st = $db->prepare("SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=? AND COLUMN_NAME=? LIMIT 1");
+if (!function_exists('column_exists')) {
+  function column_exists(PDO $pdo, string $table, string $column): bool {
+    $st = $pdo->prepare("SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=? AND COLUMN_NAME=? LIMIT 1");
     $st->execute([$table, $column]);
     return ((int)$st->fetchColumn() > 0);
   }
 }
 
-/* ---------------------------------------------------------
-   Method
---------------------------------------------------------- */
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
-  redirect_to(function_exists('url_for') ? url_for('/staff/contributors/') : '/staff/contributors/');
+  redirect_to('/staff/contributors/index.php');
 }
 
-/* CSRF */
 $token = (string)($_POST['csrf_token'] ?? '');
 $sess  = (string)($_SESSION['csrf_token'] ?? '');
 if ($token === '' || $sess === '' || !hash_equals($sess, $token)) {
@@ -88,77 +68,142 @@ if ($token === '' || $sess === '' || !hash_equals($sess, $token)) {
   exit;
 }
 
-/* Return */
-$default_return = '/staff/contributors/index.php';
-$return = pf__safe_return_url((string)($_POST['return'] ?? $default_return), $default_return);
+$return = safe_return((string)($_POST['return'] ?? '/staff/contributors/index.php'), '/staff/contributors/index.php');
 
-/* Action */
 $action = trim((string)($_POST['action'] ?? ''));
-if ($action === 'publish') $action = 'set_active';
-if ($action === 'unpublish') $action = 'set_draft';
+$map = [
+  'publish'     => 'set_active',
+  'unpublish'   => 'set_draft',
+  'delete'      => 'soft_delete',
+  'set_active'  => 'set_active',
+  'set_draft'   => 'set_draft',
+  'set_public'  => 'set_public',
+  'set_private' => 'set_private',
+  'soft_delete' => 'soft_delete',
+  'restore'     => 'restore',
+];
+$action = $map[$action] ?? '';
 
-if ($action !== 'set_active' && $action !== 'set_draft' && $action !== 'delete') {
-  pf__flash_set('error', 'Invalid bulk action.');
+if ($action === '') {
+  flash_set('error', 'Invalid bulk action.');
   redirect_to($return);
 }
 
-/* IDs */
 $ids_in = $_POST['ids'] ?? [];
-if (!is_array($ids_in) || !$ids_in) {
-  pf__flash_set('error', 'No rows selected.');
-  redirect_to($return);
-}
-
 $ids = [];
-foreach ($ids_in as $v) {
-  $n = (int)$v;
-  if ($n > 0) $ids[] = $n;
+if (is_array($ids_in)) {
+  foreach ($ids_in as $v) {
+    $n = (int)$v;
+    if ($n > 0) $ids[] = $n;
+  }
 }
 $ids = array_values(array_unique($ids));
+
 if (!$ids) {
-  pf__flash_set('error', 'No valid IDs selected.');
+  flash_set('error', 'No valid contributor rows selected.');
   redirect_to($return);
 }
 
-/* DB */
-$pdo = function_exists('staff_pdo') ? staff_pdo() : (function_exists('db') ? db() : null);
+$pdo = function_exists('staff_pdo') ? staff_pdo() : db();
 if (!$pdo instanceof PDO) {
-  pf__flash_set('error', 'Database handle not available.');
+  flash_set('error', 'Database handle not available.');
   redirect_to($return);
 }
-if (!mk_table_exists($pdo, 'contributors')) {
-  pf__flash_set('error', 'contributors table not found.');
+if (!table_exists($pdo, 'contributors')) {
+  flash_set('error', 'contributors table not found.');
   redirect_to($return);
 }
 
-/* Execute */
+$has_status    = column_exists($pdo, 'contributors', 'status');
+$has_public    = column_exists($pdo, 'contributors', 'is_public');
+$has_deleted   = column_exists($pdo, 'contributors', 'deleted_at');
+$has_updated   = column_exists($pdo, 'contributors', 'updated_at');
+
+$in = implode(',', array_fill(0, count($ids), '?'));
+
 try {
-  $in = implode(',', array_fill(0, count($ids), '?'));
+  switch ($action) {
+    case 'set_active':
+      if (!$has_status) {
+        flash_set('error', 'contributors.status column is missing.');
+        redirect_to($return);
+      }
+      $sql = "UPDATE contributors SET status = 'active'";
+      if ($has_deleted) $sql .= ", deleted_at = NULL";
+      if ($has_updated) $sql .= ", updated_at = NOW()";
+      $sql .= " WHERE id IN ($in)";
+      $msg = 'Contributor(s) set active.';
+      break;
 
-  if ($action === 'delete') {
-    $sql = "DELETE FROM contributors WHERE id IN ($in)";
-    $st = $pdo->prepare($sql);
-    $st->execute($ids);
-    pf__flash_set('notice', 'Deleted ' . (int)$st->rowCount() . ' contributor(s).');
-    redirect_to($return);
+    case 'set_draft':
+      if (!$has_status) {
+        flash_set('error', 'contributors.status column is missing.');
+        redirect_to($return);
+      }
+      $sql = "UPDATE contributors SET status = 'draft'";
+      if ($has_updated) $sql .= ", updated_at = NOW()";
+      $sql .= " WHERE id IN ($in)";
+      $msg = 'Contributor(s) set draft.';
+      break;
+
+    case 'set_public':
+      if (!$has_public) {
+        flash_set('error', 'contributors.is_public column is missing.');
+        redirect_to($return);
+      }
+      $sql = "UPDATE contributors SET is_public = 1";
+      if ($has_updated) $sql .= ", updated_at = NOW()";
+      $sql .= " WHERE id IN ($in)";
+      $msg = 'Contributor(s) set public.';
+      break;
+
+    case 'set_private':
+      if (!$has_public) {
+        flash_set('error', 'contributors.is_public column is missing.');
+        redirect_to($return);
+      }
+      $sql = "UPDATE contributors SET is_public = 0";
+      if ($has_updated) $sql .= ", updated_at = NOW()";
+      $sql .= " WHERE id IN ($in)";
+      $msg = 'Contributor(s) set private.';
+      break;
+
+    case 'soft_delete':
+      if (!$has_deleted) {
+        flash_set('error', 'contributors.deleted_at column is missing.');
+        redirect_to($return);
+      }
+      $sets = ["deleted_at = NOW()"];
+      if ($has_status) $sets[] = "status = 'draft'";
+      if ($has_public) $sets[] = "is_public = 0";
+      if ($has_updated) $sets[] = "updated_at = NOW()";
+      $sql = "UPDATE contributors SET " . implode(', ', $sets) . " WHERE id IN ($in) AND deleted_at IS NULL";
+      $msg = 'Contributor(s) moved to trash.';
+      break;
+
+    case 'restore':
+      if (!$has_deleted) {
+        flash_set('error', 'contributors.deleted_at column is missing.');
+        redirect_to($return);
+      }
+      $sets = ["deleted_at = NULL"];
+      if ($has_updated) $sets[] = "updated_at = NOW()";
+      $sql = "UPDATE contributors SET " . implode(', ', $sets) . " WHERE id IN ($in)";
+      $msg = 'Contributor(s) restored.';
+      break;
+
+    default:
+      flash_set('error', 'Unsupported bulk action.');
+      redirect_to($return);
   }
-
-  if (!mk_column_exists($pdo, 'contributors', 'status')) {
-    pf__flash_set('error', 'Status column missing on contributors.');
-    redirect_to($return);
-  }
-
-  $newStatus = ($action === 'set_active') ? 'active' : 'draft';
-  $sql = "UPDATE contributors SET status = ? WHERE id IN ($in)";
-  $params = array_merge([$newStatus], $ids);
 
   $st = $pdo->prepare($sql);
-  $st->execute($params);
+  $st->execute($ids);
 
-  pf__flash_set('notice', 'Updated ' . count($ids) . ' contributor(s).');
+  flash_set('notice', $msg);
   redirect_to($return);
 
 } catch (Throwable $e) {
-  pf__flash_set('error', 'Bulk action failed: ' . $e->getMessage());
+  flash_set('error', 'Bulk action failed: ' . $e->getMessage());
   redirect_to($return);
 }

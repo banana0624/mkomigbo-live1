@@ -15,14 +15,15 @@ if (defined('MK_AUTHZ_LOADED')) {
 }
 define('MK_AUTHZ_LOADED', true);
 
-function mk_db(): PDO {
-  if (function_exists('db')) {
-    /** @var PDO $pdo */
-    $pdo = db();
-    return $pdo;
-  }
-  throw new RuntimeException('DB accessor not found. Provide db() or replace mk_db().');
-}
+/**
+ * Get PDO safely (NO redeclaration)
+ */
+// function db(): PDO {
+  // if (function_exists('db')) {
+    // return db(); // <-- use existing global db()
+  // }
+  // throw new RuntimeException('db() not available');
+// }
 
 function mk_staff_user_id(bool $startSessionIfNeeded = true): ?int {
   if ($startSessionIfNeeded && session_status() !== PHP_SESSION_ACTIVE && !headers_sent()) {
@@ -37,7 +38,7 @@ function mk_staff_user_id(bool $startSessionIfNeeded = true): ?int {
 }
 
 /**
- * Clear in-request capability cache (useful after login/logout or role changes).
+ * Clear in-request capability cache
  */
 function mk_authz_clear_cache(): void {
   $GLOBALS['mk__authz_caps_cache'] = null;
@@ -45,7 +46,7 @@ function mk_authz_clear_cache(): void {
 }
 
 /**
- * Get cached capabilities for current user as a set: ['cap.name' => true, ...]
+ * Get cached capabilities
  */
 function mk_current_caps(): array {
   $uid = mk_staff_user_id(true);
@@ -66,7 +67,7 @@ function mk_current_caps(): array {
     WHERE sur.staff_user_id = :uid
   ";
 
-  $stmt = mk_db()->prepare($sql);
+  $stmt = db()->prepare($sql);
   $stmt->execute([':uid' => $uid]);
 
   $set = [];
@@ -84,8 +85,7 @@ function mk_current_caps(): array {
 function mk_user_can(string $capability): bool {
   $capability = trim($capability);
   if ($capability === '') return false;
-  $caps = mk_current_caps();
-  return isset($caps[$capability]);
+  return isset(mk_current_caps()[$capability]);
 }
 
 function mk_user_can_any(array $capabilities): bool {
@@ -101,8 +101,7 @@ function mk_require_cap(string $capability, ?string $message = null): void {
   http_response_code(403);
   header('Content-Type: text/plain; charset=utf-8');
 
-  $msg = $message ?? "Forbidden: missing capability '{$capability}'.";
-  echo $msg;
+  echo $message ?? "Forbidden: missing capability '{$capability}'.";
   exit;
 }
 
@@ -111,6 +110,20 @@ function mk_require_any(array $capabilities, ?string $message = null): void {
 
   http_response_code(403);
   header('Content-Type: text/plain; charset=utf-8');
+
   echo $message ?? 'Forbidden: insufficient permissions.';
   exit;
+}
+
+function hasPermission(PDO $db, int $userId, string $perm): bool {
+  $stmt = $db->prepare("
+    SELECT 1
+    FROM users u
+    JOIN role_permissions rp ON u.role_id = rp.role_id
+    JOIN permissions p ON rp.permission_id = p.id
+    WHERE u.id = ? AND p.name = ?
+    LIMIT 1
+  ");
+  $stmt->execute([$userId, $perm]);
+  return (bool)$stmt->fetchColumn();
 }

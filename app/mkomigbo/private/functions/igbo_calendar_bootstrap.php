@@ -148,11 +148,11 @@ if (!function_exists('igbo_calendar_current_position')) {
     $monthDays = function_exists('igbo_resolve_month_days')
       ? igbo_resolve_month_days($gregYearOfStart, $opts, $isLeap)
       : (function() use ($isLeap) {
-          $md = array_fill(1, 13, 28);
-          $md[13] = 29;
-          if ($isLeap) $md[1] = 29;
-          return $md;
-        })();
+            $md = array_fill(1, 13, 28);
+            $md[7] = 29;
+            if ($isLeap) $md[1] = 29;
+            return $md;
+          })();
 
     $diffDays = (int)floor(($today->getTimestamp() - $yearStart->getTimestamp()) / 86400);
     if ($diffDays < 0) $diffDays = 0;
