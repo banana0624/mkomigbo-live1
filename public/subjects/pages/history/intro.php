@@ -1,73 +1,28 @@
 <?php
 declare(strict_types=1);
-
-return [
-  'title' => 'Introduction',
-  'body_html' => <<<HTML
-<div class="mk-prose">
-
-  <p class="mk-muted" style="margin-top:0;">
-    <strong>Igbo history</strong> is the study of the origins, development, institutions, movements, and historical experiences
-    of the Igbo people of southeastern Nigeria and the wider Igbo diaspora.
-  </p>
-
-  <p>
-    It is a history of communities, markets, migration, ritual life, craft traditions, political change,
-    colonial disruption, resistance, memory, and survival. It is also a history reconstructed from many forms
-    of evidence: oral tradition, archaeology, language, literature, missionary archives, colonial records,
-    and modern scholarship.
-  </p>
-
-  <h2>Why Igbo history matters</h2>
-  <ul>
-    <li><strong>Identity:</strong> it helps explain how Igbo communities understood kinship, authority, belief, and belonging.</li>
-    <li><strong>Continuity and change:</strong> it shows what endured and what changed across precolonial, colonial, and postcolonial periods.</li>
-    <li><strong>Evidence and memory:</strong> it teaches readers how the past is preserved in stories, objects, archives, and lived traditions.</li>
-    <li><strong>Global connection:</strong> it links southeastern Nigeria to trade, empire, slavery, migration, and diaspora history.</li>
-  </ul>
-
-  <h2>What makes Igbo history distinctive</h2>
-  <p>
-    Precolonial Igbo society was not organized primarily around one single centralized kingdom across all Igbo-speaking regions.
-    Instead, many communities governed themselves through lineages, elders, assemblies, and age-grade institutions,
-    though some monarchical structures emerged in certain places over time.
-  </p>
-
-  <h2>What you will find in this subject</h2>
-  <ul>
-    <li><strong>Overview:</strong> the broad historical development of Igbo society.</li>
-    <li><strong>Key Topics:</strong> migration, political institutions, religion, trade, colonialism, war, and diaspora.</li>
-    <li><strong>People:</strong> major Igbo figures, interpreters, and historians.</li>
-    <li><strong>Sources:</strong> the evidence used to study Igbo history critically and responsibly.</li>
-  </ul>
-
-  <h2>How history connects with other subjects</h2>
-  <ul>
-    <li><strong>Culture:</strong> festivals, kinship, art, music, and social practice.</li>
-    <li><strong>Religion:</strong> cosmology, ritual systems, divination, and moral order.</li>
-    <li><strong>Language:</strong> oral tradition, proverbs, and preservation of knowledge.</li>
-    <li><strong>Slavery:</strong> internal systems, Atlantic world, and historical trauma.</li>
-  </ul>
-
-  <h2>Explore this subject</h2>
-  <div style="display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 14px;">
-    <a class="mk-btn mk-btn--ghost" href="/subjects/history/overview/">Overview</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/history/topics/">Key Topics</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/history/people/">People</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/history/sources/">Sources</a>
-  </div>
-
-  <div style="margin:18px 0; padding:14px 16px; border:1px solid #d8d8d8; border-radius:12px; background:#fcfcfc;">
-    <h2 style="margin-top:0;">Contribute, comment, or challenge</h2>
-    <p>
-      This platform welcomes additions, corrections, criticism, and research materials that improve the historical record.
-    </p>
-    <div style="display:flex; gap:10px; flex-wrap:wrap;">
-      <a class="mk-btn" href="/contribute/">Submit Contribution</a>
-      <a class="mk-btn mk-btn--ghost" href="/contact/">Send Comment</a>
-    </div>
-  </div>
-
-</div>
-HTML,
+echo '<div class="mk-prose">';
+echo '<p class="mk-muted" style="margin-top:0;">Igbo history is not a marginal chapter of Nigerian history. It is one of the oldest, most complex, and most consequential histories in West Africa — a history of statecraft without kings, of trade without colonialism, of resistance without defeat.</p>';
+echo '<h2>Why Igbo History Matters</h2>';
+echo '<p>The Igbo are among the most studied and least understood peoples in Africa. They have been described — by colonial administrators, by rival Nigerian ethnic groups, and by their own romantic nationalists — in contradictory terms: as naturally democratic and as naturally anarchic; as commercially gifted and as untrustworthy traders; as educated and as parochial. These contradictions reflect not the Igbo but the frameworks through which outsiders have tried to comprehend a society that does not fit standard models of African political organisation.</p>';
+echo '<p>The standard model — centralised kingdom, hereditary chief, ritual legitimacy of the crown — describes the Yoruba Oyo Empire, the Benin Kingdom, the Sokoto Caliphate. It does not describe the Igbo. Precolonial Igbo society organised itself through lineages, village assemblies, age-grade institutions, women\'s organisations, title societies, and the ritual authority of institutions like the Nri Kingdom — none of which required a king. This was not a failure to achieve statehood. It was a different and sophisticated solution to the problem of political organisation, one that distributed power rather than concentrating it, that made authority accountable rather than hereditary, and that proved extraordinarily resilient under colonial pressure.</p>';
+echo '<p>Understanding this history matters because it explains the present. The Igbo experience of Nigeria — of the 1966 pogroms, the Biafra War, the post-war marginalisation, the contemporary self-determination movement — cannot be understood without understanding what the Igbo were before Nigeria existed: a people with a complex political tradition, deep trade networks, sophisticated religious institutions, and a strong sense of community identity that did not require external validation.</p>';
+echo '<h2>What This Subject Covers</h2>';
+echo '<p>Five domains are documented here: the origins and early society of the Igbo, including the Igbo-Ukwu archaeological evidence and the Nri Kingdom; the Atlantic slave trade and its specific consequences for Igboland; colonial transformation, missionary expansion, and anti-colonial resistance including the Women\'s War of 1929; the Nigeria-Biafra War and its aftermath; and the contemporary Igbo world — its diaspora, its political movements, and its cultural production. People and sources are documented separately with equal depth.</p>';
+echo '<h2>Navigate the Subject</h2>';
+echo '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin:16px 0;">';
+$sections = [
+  ['/subjects/history/overview/','🗺️ Overview','From Igbo-Ukwu to the present — the broad sweep of Igbo historical development'],
+  ['/subjects/history/topics/','🏛️ Key Topics','Nri Kingdom, the slave trade, the Women\'s War, Biafra, reconstruction, contemporary Igbo'],
+  ['/subjects/history/people/','👤 People','Equiano, Azikiwe, Ojukwu, Achebe, Ekpo, Okigbo, Adichie'],
+  ['/subjects/history/sources/','📚 Sources','What to read — archaeology, colonial history, the civil war, contemporary scholarship'],
 ];
+foreach($sections as [$href,$title,$desc]) {
+  echo '<a href="'.$href.'" style="display:block;padding:14px;border:1px solid #e5e7eb;border-radius:12px;text-decoration:none;color:inherit;background:#fff;transition:box-shadow .12s;" onmouseover="this.style.boxShadow=\'0 4px 16px rgba(0,0,0,.09)\'" onmouseout="this.style.boxShadow=\'\'">';
+  echo '<div style="font-weight:800;font-size:.95rem;color:#111;margin-bottom:4px;">'.$title.'</div>';
+  echo '<div style="font-size:.82rem;color:#6b7280;line-height:1.4;">'.$desc.'</div>';
+  echo '</a>';
+}
+echo '</div>';
+echo '<h2>Our Approach</h2>';
+echo '<p>This subject is written from inside the tradition it documents. It does not treat Igbo history as a problem to be explained by external frameworks. It treats it as a body of evidence — archaeological, linguistic, oral, archival, literary — that demands rigorous and honest engagement. Where the evidence is contested, we say so. Where the history involves violence, exploitation, and failure, we document it. Where it involves extraordinary achievement, we document that with equal seriousness. This subject is cross-linked with <a href="/subjects/culture/intro/">Culture</a>, <a href="/subjects/slavery/intro/">Slavery</a>, <a href="/subjects/biafra/intro/">Biafra</a>, and <a href="/subjects/struggles/intro/">Struggles</a>.</p>';
+echo '</div>';

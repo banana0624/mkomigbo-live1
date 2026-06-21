@@ -1,76 +1,25 @@
 <?php
 declare(strict_types=1);
+echo '<div class="mk-prose">';
+echo '<h2>The Broad Sweep of Igbo Historical Development</h2>';
 
-return [
-  'title' => 'Overview',
-  'body_html' => <<<HTML
-<div class="mk-prose">
+echo '<h3>I. Origins and Early Society</h3>';
+echo '<p>The deep history of the Igbo is illuminated by three overlapping bodies of evidence: archaeology, linguistics, and oral tradition. The most important archaeological evidence comes from Igbo-Ukwu, in what is now Anambra State, where excavations begun by Thurstan Shaw in 1959 uncovered bronze objects of extraordinary sophistication — intricate castings, ritual vessels, and regalia — dated to approximately the 9th century CE. The Igbo-Ukwu finds demonstrated that the population of the region had achieved high levels of metallurgical skill and ritual elaboration at least a thousand years before European contact, pushing back the known chronology of Igbo cultural achievement by centuries and definitively refuting the colonial claim that precolonial southeastern Nigeria was culturally impoverished.</p>';
+echo '<p>Linguistic evidence places the Igbo language within the Niger-Congo family and suggests a long period of settlement in the Niger-Benue confluence area, with subsequent dispersal across the forest and riverine zones of southeastern Nigeria. The question of Igbo origins — whether there was a single homeland from which Igbo-speaking communities dispersed, or multiple centres of development — remains debated among scholars. What is clear is that Igbo-speaking communities have occupied their current territories for at least two millennia and developed their distinctive political, religious, and social institutions over that period through processes of internal development rather than external imposition.</p>';
 
-  <p class="mk-muted" style="margin-top:0;">
-    This overview introduces the broad historical development of Igbo society, from early settlement and material culture
-    to colonial disruption, civil conflict, and modern continuity.
-  </p>
+echo '<h3>II. The Nri Kingdom and Ritual Authority</h3>';
+echo '<p>The Kingdom of Nri — centred in what is now Anambra State — represents one of the most distinctive political formations in precolonial West Africa. Unlike the militarised kingdoms that characterise much of African political history, Nri\'s authority rested not on military force but on ritual power. The Eze Nri — the ritual king — performed purification rites across Igboland, consecrated titles (the <em>ozo</em> and <em>nze</em> titles that structured social hierarchy across Igbo communities), arbitrated disputes, and provided the religious legitimacy that underwrote social order. Nri did not conquer; it consecrated. Its influence extended across a wide area of Igboland not through military campaigns but through the authority of its ritual specialists and the networks of obligation they created.</p>';
+echo '<p>The Nri Kingdom is significant for several reasons. It demonstrates that Igbo political organisation before colonialism was not simply the "absence of statehood" that colonial administrators described — it was a sophisticated system in which ritual authority performed functions that military authority performs elsewhere. It also provides the historical context for understanding the <em>osu</em> system: the individuals dedicated to Nri deities who occupied a permanently stigmatised social position whose consequences persist to the present day.</p>';
 
-  <h2>Early foundations</h2>
-  <p>
-    The deep history of the Igbo is illuminated by archaeology, language, and oral tradition. One of the most important
-    archaeological reference points is <strong>Igbo-Ukwu</strong>, whose finds demonstrate highly sophisticated artistry,
-    ritual culture, and early metalworking in the wider ancestral Igbo region.
-  </p>
+echo '<h3>III. Atlantic Slavery and the Bight of Biafra</h3>';
+echo '<p>The Atlantic slave trade transformed Igboland between the 17th and 19th centuries in ways that shaped every subsequent period of Igbo history. The Bight of Biafra — the Atlantic coast corresponding to modern southeastern Nigeria — exported approximately 1.6 million enslaved people, the overwhelming majority of them Igbo. The Aro trading network, centred on the Aro Chukwu oracle at Arochukwu, became the primary infrastructure of the trade: oracle judgments, wars, raids, and kidnapping all fed captives into the coastal ports at Calabar, Bonny, and Brass, where European traders collected them for the Middle Passage.</p>';
+echo '<p>The consequences for Igbo society were profound and lasting. Wars between communities became more frequent and more oriented toward capturing people for sale. The Aro trading network acquired wealth and influence that distorted existing political relationships. Agricultural and craft production was disrupted. The demographic consequences — the removal of approximately 1.6 million people over roughly two centuries — depopulated villages and distorted age-sex ratios in ways whose full effects are difficult to calculate but certainly significant.</p>';
 
-  <h2>Precolonial social and political life</h2>
-  <p>
-    Before European colonization, Igbo-speaking communities were generally organized through villages, lineages,
-    federations of communities, councils of elders, assemblies, and age grades rather than through a single centralized
-    political authority over all Igbo lands. This created a historically important tradition of local autonomy,
-    negotiated authority, and community participation.
-  </p>
+echo '<h3>IV. Colonial Transformation (1885–1960)</h3>';
+echo '<p>British colonial penetration of Igboland was neither swift nor uncontested. The Royal Niger Company\'s commercial monopoly, established in 1886, generated immediate Igbo resistance. The British Aro Expedition of 1901–1902, which destroyed the Aro Chukwu oracle, required 87 officers, 3,161 men, and naval support. The Ekumeku movement in Western Igboland (1898–1911) mounted sustained guerrilla resistance. And the Women\'s War of 1929 — <em>Ogu Umunwanyi</em> — was the largest anti-colonial uprising in Nigerian history, mobilising hundreds of thousands of women across southeastern Nigeria in coordinated protest against the threat of direct taxation and the illegitimate warrant chief system.</p>';
+echo '<p>Colonial administration fundamentally restructured Igbo political life. The warrant chief system — appointing individual "chiefs" where no such institution had existed — created new forms of authority incompatible with Igbo political traditions. Missionary Christianity transformed religious life, education, and social organisation. The introduction of a cash economy, wage labour, and commodity markets reoriented production toward colonial export needs. By 1960, when Nigeria achieved independence, the Igbo had been through seventy-five years of colonial transformation that had produced a highly educated, commercially active, and politically engaged population — but also one navigating a colonial political geography that served British interests rather than Igbo ones.</p>';
 
-  <h2>Economy, exchange, and cultural life</h2>
-  <p>
-    Igbo history includes farming, craft production, trade, market networks, ritual systems, and complex social institutions.
-    Markets connected communities economically and socially, while religious and ceremonial life shaped moral order,
-    identity, and memory.
-  </p>
-
-  <h2>Atlantic slavery and the wider world</h2>
-  <p>
-    The history of the Igbo cannot be separated from the Atlantic world. Large numbers of Igbo people were drawn into
-    the Atlantic slave trade, and their forced migration left lasting traces across the Americas and the Caribbean.
-    Igbo Landing remains one of the most powerful remembered episodes of resistance in that wider history.
-  </p>
-
-  <h2>Colonial transformation</h2>
-  <p>
-    The late nineteenth and early twentieth centuries brought British colonial intrusion, missionary expansion,
-    new administrative systems, and sharp institutional change. These developments altered governance, economy,
-    religion, education, and law, while also generating resistance, reinterpretation, and adaptation.
-  </p>
-
-  <h2>Modern and contemporary history</h2>
-  <p>
-    In the modern era, Igbo history includes nationalism, independence, the Nigeria–Biafra war, reconstruction,
-    migration, urbanization, education, commerce, and the continuing role of memory in public life.
-    Modern Igbo identity is both local and global, rooted in community but extended through diaspora networks.
-  </p>
-
-  <h2>How Igbo history is studied</h2>
-  <ul>
-    <li><strong>Oral tradition:</strong> preserves migration stories, community memory, and social knowledge.</li>
-    <li><strong>Archaeology:</strong> provides evidence for early settlement, technology, and ritual life.</li>
-    <li><strong>Archival records:</strong> missionary, trade, and colonial documents preserve external observations and institutional data.</li>
-    <li><strong>Literature and interpretation:</strong> modern writers help illuminate social worlds, especially under colonial pressure.</li>
-    <li><strong>Modern scholarship:</strong> compares evidence critically and corrects older distortions.</li>
-  </ul>
-
-  <h2>Navigate this subject</h2>
-  <div style="display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 4px;">
-    <a class="mk-btn mk-btn--ghost" href="/subjects/history/intro/">Introduction</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/history/topics/">Key Topics</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/history/people/">People</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/history/sources/">Sources</a>
-  </div>
-
-</div>
-HTML,
-];
+echo '<h3>V. The Nigeria-Biafra War and Its Aftermath</h3>';
+echo '<p>The Nigeria-Biafra War (1967–1970) is the defining event of modern Igbo history. Its immediate causes were the military coups of 1966 and the pogroms against Igbo living in northern Nigeria in which between 30,000 and 100,000 people were killed. Its deeper causes were the structural imbalances of the Nigerian federal state — the dominance of the Hausa-Fulani north in federal politics and the military, and the failure of the Aburi Accord to produce a confederal arrangement that would have protected Igbo safety. The declaration of Biafra (30 May 1967) and the subsequent federal military campaign, which included a deliberate food blockade that caused a famine killing between 500,000 and 2 million people, ended with Biafra\'s collapse in January 1970.</p>';
+echo '<p>The post-war settlement — "No Victor, No Vanquished" — was a political formula that concealed systematic Igbo marginalisation. The abandoned property policy, the twenty-pound bank limit, and the bypassing of southeastern Nigeria in federal reconstruction all compounded the war\'s human losses. The Igbo rebuilt through commerce, education, and community solidarity — the "Igbo miracle" of rapid economic recovery — but the structural conditions of marginalisation within the Nigerian federal state have never been resolved. The contemporary self-determination movement, represented most visibly by IPOB, is the direct inheritance of this unresolved history.</p>';
+echo '</div>';
