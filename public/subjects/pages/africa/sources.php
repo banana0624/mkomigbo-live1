@@ -1,39 +1,52 @@
 <?php
 declare(strict_types=1);
 echo '<div class="mk-prose">';
-echo '<p class="mk-muted" style="margin-top:0;">Essential references for African history and pan-Africanism.</p>';
-echo '<h2>African History</h2>';
+echo '<h2>What to Read, and Why</h2>';
+
+echo '<h3>General African History</h3>';
 echo '<ul>';
-echo '<li><strong>John Reader</strong> — <em>Africa: A Biography of the Continent</em> (1997). The most accessible comprehensive single-volume history of Africa.</li>';
-echo '<li><strong>Basil Davidson</strong> — <em>Africa in History</em> (1966, rev. 1991). The pioneering popular history that challenged colonial myths about African statelessness.</li>';
-echo '<li><strong>UNESCO General History of Africa</strong> (8 volumes, 1981–1993). The most comprehensive scholarly history of Africa; written by African historians.</li>';
-echo '<li><strong>Philip Curtin et al.</strong> — <em>African History: From Earliest Times to Independence</em> (1995). Standard academic introduction.</li>';
+echo '<li><strong>John Reader, <em>Africa: A Biography of the Continent</em> (1997)</strong> — The most accessible comprehensive single-volume history of Africa. Combines geology, ecology, archaeology, and human history into a unified account. Start here.</li>';
+echo '<li><strong>Basil Davidson, <em>Africa in History</em> (1966; rev. 1991)</strong> — The pioneering popular history that challenged colonial myths about African statelessness. Dated in some details; foundational in approach.</li>';
+echo '<li><strong>UNESCO General History of Africa (8 vols., 1981–1993)</strong> — The most comprehensive scholarly history of Africa, written by African historians. Not light reading but authoritative. Available in university libraries and partially online.</li>';
+echo '<li><strong>Walter Rodney, <em>How Europe Underdeveloped Africa</em> (1972)</strong> — The foundational text of African dependency theory: the argument that Africa is poor not because of any African failure but because of the structural consequences of the slave trade and colonialism. Essential.</li>';
 echo '</ul>';
-echo '<h2>Pre-Colonial Civilizations</h2>';
+
+echo '<h3>Pre-Colonial Civilisations</h3>';
 echo '<ul>';
-echo '<li><strong>D.T. Niane</strong> — <em>Sundiata: An Epic of Old Mali</em> (1965). The founding epic of the Mali Empire.</li>';
-echo '<li><strong>Ibn Battuta</strong> — <em>Travels in Asia and Africa</em> (14th century). The greatest medieval traveler\'s account of West and East African states.</li>';
-echo '<li><strong>David Conrad and Barbara Frank</strong> — <em>Status and Identity in West Africa: Nyamakalaw of Mande</em> (1995).</li>';
+echo '<li><strong>D.T. Niane, <em>Sundiata: An Epic of Old Mali</em> (1965)</strong> — The founding epic of the Mali Empire, transcribed from the griot tradition. Primary source for West African historical consciousness.</li>';
+echo '<li><strong>Cheikh Anta Diop, <em>The African Origin of Civilization: Myth or Reality</em> (1974)</strong> — The argument that ancient Egyptian civilisation was Black African in origin. Controversial and influential; essential for understanding Afrocentric historiography.</li>';
+echo '<li><strong>Ibn Battuta, <em>Travels in Asia and Africa</em> (14th century, tr. H.A.R. Gibb)</strong> — The greatest medieval traveller\'s account, including the Mali Empire and East African Swahili city-states. Primary source.</li>';
+echo '<li><strong>Nehemia Levtzion, <em>Ancient Ghana and Mali</em> (1973)</strong> — Standard academic history of the Sahelian empires.</li>';
 echo '</ul>';
-echo '<h2>The Slave Trades</h2>';
+
+echo '<h3>The Slave Trades</h3>';
 echo '<ul>';
-echo '<li><strong>Hugh Thomas</strong> — <em>The Slave Trade</em> (1997). Comprehensive history of the Atlantic slave trade.</li>';
-echo '<li><strong>Paul Lovejoy</strong> — <em>Transformations in Slavery</em> (1983). The standard academic history of African slavery.</li>';
-echo '<li><strong>Slave Voyages Database</strong> — slavevoyages.org — comprehensive free database.</li>';
+echo '<li><strong>Hugh Thomas, <em>The Slave Trade</em> (1997)</strong> — Comprehensive history of the Atlantic slave trade. Dense but invaluable.</li>';
+echo '<li><strong>Paul Lovejoy, <em>Transformations in Slavery</em> (1983; 3rd ed. 2012)</strong> — The standard academic account of African slavery systems including internal African slavery and the trans-Saharan trade.</li>';
+echo '<li><strong>Slave Voyages Database — slavevoyages.org</strong> — The most comprehensive free database of Atlantic slave trade records. Searchable by region, port, ship, and destination.</li>';
 echo '</ul>';
-echo '<h2>Colonialism</h2>';
+
+echo '<h3>Colonialism</h3>';
 echo '<ul>';
-echo '<li><strong>Adam Hochschild</strong> — <em>King Leopold\'s Ghost</em> (1998). The definitive popular account of Congo atrocities under Leopold II.</li>';
-echo '<li><strong>Walter Rodney</strong> — <em>How Europe Underdeveloped Africa</em> (1972). The foundational text of African dependency theory.</li>';
-echo '<li><strong>Frantz Fanon</strong> — <em>The Wretched of the Earth</em> (1961). The canonical text of anti-colonial theory. Free: <a href="https://archive.org/search?query=fanon+wretched+earth" target="_blank" rel="noopener">archive.org</a></li>';
+echo '<li><strong>Adam Hochschild, <em>King Leopold\'s Ghost</em> (1998)</strong> — The definitive popular account of Congo atrocities under Leopold II. Accessible and devastating.</li>';
+echo '<li><strong>Frantz Fanon, <em>The Wretched of the Earth</em> (1961)</strong> — The canonical text of anti-colonial theory. Essential.</li>';
+echo '<li><strong>Aimé Césaire, <em>Discourse on Colonialism</em> (1950)</strong> — Short, ferocious, and indispensable. The Caribbean intellectual tradition applied to Africa.</li>';
+echo '<li><strong>Achille Mbembe, <em>Critique of Black Reason</em> (2013; tr. 2017)</strong> — Contemporary Cameroonian philosopher on race as a European invention and its consequences for Africa and the world.</li>';
 echo '</ul>';
-echo '<h2>Pan-Africanism and Independence</h2>';
+
+echo '<h3>Pan-Africanism and Independence</h3>';
 echo '<ul>';
-echo '<li><strong>W.E.B. Du Bois</strong> — <em>The Souls of Black Folk</em> (1903). Foundational Pan-Africanist text. Free: <a href="https://sacred-texts.com/afr/index.htm" target="_blank" rel="noopener">sacred-texts.com</a></li>';
-echo '<li><strong>Kwame Nkrumah</strong> — <em>Africa Must Unite</em> (1963). The Pan-Africanist vision for continental unity.</li>';
-echo '<li><strong>Cheikh Anta Diop</strong> — <em>The African Origin of Civilization</em> (1974). Afrocentric historical revisionism at its most scholarly.</li>';
+echo '<li><strong>W.E.B. Du Bois, <em>The Souls of Black Folk</em> (1903)</strong> — Foundational Pan-Africanist text. Available free at Project Gutenberg.</li>';
+echo '<li><strong>Kwame Nkrumah, <em>Africa Must Unite</em> (1963)</strong> — The Pan-Africanist vision for continental unity, written at the height of the independence era.</li>';
+echo '<li><strong>Hakim Adi, <em>Pan-Africanism: A History</em> (2018)</strong> — The best recent scholarly history of the Pan-African movement from its origins to the present.</li>';
+echo '<li><strong>Thomas Sankara, <em>Thomas Sankara Speaks</em> (collected speeches)</strong> — Available in English translation. The most direct access to Sankara\'s thought.</li>';
 echo '</ul>';
-echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 4px;">';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/africa/intro/">Introduction</a>';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/africa/topics/">Topics</a>';
-echo '</div></div>';
+
+echo '<h3>Contemporary Africa</h3>';
+echo '<ul>';
+echo '<li><strong>Leonce Ndikumana & James Boyce, <em>Africa\'s Odious Debts</em> (2011)</strong> — On capital flight, odious debt, and the economic mechanisms through which African wealth is extracted by external creditors.</li>';
+echo '<li><strong>Wangari Maathai, <em>Unbowed: A Memoir</em> (2006)</strong> — The Nobel laureate\'s own account of the Green Belt Movement and Kenyan political resistance.</li>';
+echo '<li><strong>Mo Ibrahim Foundation, Africa Governance Report (annual)</strong> — Available at moibrahimfoundation.org. The most comprehensive annual measurement of African governance quality.</li>';
+echo '<li><strong>Samir Amin, <em>Imperialism and Unequal Development</em> (1977)</strong> — Egyptian-Senegalese economist on the structural position of Africa in the global economy.</li>';
+echo '</ul>';
+echo '</div>';
