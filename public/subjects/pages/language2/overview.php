@@ -1,54 +1,24 @@
 <?php
 declare(strict_types=1);
 echo '<div class="mk-prose">';
-echo '<p class="mk-muted" style="margin-top:0;">Igbo grammar — how the language is built and how sentences work.</p>';
-echo '<h2>Nouns</h2>';
-echo '<p>Igbo nouns do not change form for plural — context and number words indicate plurality. "Ụlọ" means both "house" and "houses." To specify: "ụlọ abụọ" (two houses), "ụlọ ndị a" (these houses).</p>';
-echo '<p>Nouns often have a noun prefix "a-/i-/ọ-/u-" that belongs to the word: "ọgbọ" (age-mate), "ihe" (thing), "ụlọ" (house), "aka" (hand).</p>';
-echo '<h2>Pronouns</h2>';
-echo '<ul>';
-echo '<li><strong>M / Mụ</strong> — I / me</li>';
-echo '<li><strong>Gị</strong> — you (singular)</li>';
-echo '<li><strong>Ọ</strong> — he / she / it (no gender distinction)</li>';
-echo '<li><strong>Anyị</strong> — we (exclusive — not including the person spoken to)</li>';
-echo '<li><strong>Anyị / Ànyị</strong> — we (inclusive)</li>';
-echo '<li><strong>Ụnụ</strong> — you (plural)</li>';
-echo '<li><strong>Ha</strong> — they / them</li>';
-echo '</ul>';
-echo '<h2>Verbs and Aspect</h2>';
-echo '<p>Igbo verbs mark aspect — whether an action is complete or ongoing — rather than tense. The same verb root takes different forms:</p>';
-echo '<ul>';
-echo '<li><strong>ọ rịa ihe</strong> — he eats food (habitual/ongoing)</li>';
-echo '<li><strong>ọ rị ihe</strong> — he ate food / he has eaten food (complete)</li>';
-echo '<li><strong>ọ na-arị ihe</strong> — he is eating food (progressive)</li>';
-echo '</ul>';
-echo '<h2>Questions</h2>';
-echo '<p>Yes/no questions are formed by tone change on the final syllable or by adding "ọ bụ ezie?" (is it true?). Information questions use question words:</p>';
-echo '<ul>';
-echo '<li><strong>Kedu?</strong> — How? / What? / Where? (general question)</li>';
-echo '<li><strong>Kedu ka ọ dị?</strong> — How is it? / How are things?</li>';
-echo '<li><strong>Onye?</strong> — Who?</li>';
-echo '<li><strong>Gịnị?</strong> — What?</li>';
-echo '<li><strong>Ebe?</strong> — Where?</li>';
-echo '<li><strong>Mgbe?</strong> — When?</li>';
-echo '<li><strong>Maka gịnị?</strong> — Why?</li>';
-echo '</ul>';
-echo '<h2>Negation</h2>';
-echo '<p>Negation uses "adịghị" (is not / does not) or "ọ bụghị" (it is not):</p>';
-echo '<ul>';
-echo '<li><strong>Adịghị mma</strong> — It is not well / Not good</li>';
-echo '<li><strong>Ọ bụghị ya</strong> — It is not him/her/it</li>';
-echo '<li><strong>Arịghị m ihe</strong> — I did not eat</li>';
-echo '</ul>';
-echo '<h2>Copula — "Ọ bụ"</h2>';
-echo '<p>"Ọ bụ" is the copula (to be) in Igbo — equivalent to "it is" or "he/she/it is":</p>';
-echo '<ul>';
-echo '<li><strong>Ọ bụ Emeka</strong> — It is Emeka / He is Emeka</li>';
-echo '<li><strong>Ọ bụ Igbo</strong> — He/she is Igbo</li>';
-echo '<li><strong>Ọ bụ ihe ọma</strong> — It is a good thing</li>';
-echo '</ul>';
-echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 4px;">';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/language2/intro/">Introduction</a>';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/language2/topics/">Daily Usage</a>';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/language2/sources/">Resources</a>';
-echo '</div></div>';
+echo '<h2>Igbo Grammar: How the Language is Built</h2>';
+
+echo '<h3>I. Nouns</h3>';
+echo '<p>Igbo nouns do not inflect for number or gender — there is no grammatical distinction between masculine and feminine, and plural is indicated by context, number words, or demonstratives rather than by changing the noun\'s form. "Ụlọ" means both "house" and "houses." To specify: "ụlọ abụọ" (two houses), "ụlọ ndị a" (these houses). Nouns often carry a noun prefix (a-, i-, ọ-, u-) that is part of the word itself: "ọgbọ" (age-mate), "ihe" (thing), "ụlọ" (house), "aka" (hand). These prefixes are not grammatical markers in the European sense; they are part of the word\'s phonological form.</p>';
+echo '<p>Nouns in Igbo carry tonal information that can change the word\'s meaning. "Àkà" (direction/side) differs from "aka" (hand) only in the tone of the first vowel. Tone is therefore not merely phonological — it is lexical, carrying meaning the way spelling does in English. This means that a learner who ignores Igbo tones is, in effect, learning a different language from the one being spoken.</p>';
+
+echo '<h3>II. Pronouns</h3>';
+echo '<p>Igbo has a full set of personal pronouns that also carry tonal and aspectual information. The basic forms are: <em>m / mụ</em> (I/me), <em>gị</em> (you singular), <em>ya</em> (he/she/it — Igbo does not distinguish gender in the third person singular), <em>anyị</em> (we exclusive — not including the person spoken to), <em>anyi</em> (we inclusive — including the person spoken to), <em>ụnụ</em> (you plural), <em>ha</em> (they/them). The distinction between exclusive and inclusive first person plural — "we not including you" versus "we including you" — is a feature that English does not have and that marks Igbo as more precise in certain social contexts.</p>';
+
+echo '<h3>III. Verbs and Aspect</h3>';
+echo '<p>Igbo verbs mark aspect rather than tense — they indicate whether an action is complete or ongoing, not when it occurred. This is a fundamental difference from European languages and one of the features that makes Igbo grammar initially counterintuitive for English speakers. "Ọ rịrị ihe" (he/she ate food — completed action) differs from "ọ na-eri ihe" (he/she is eating food — ongoing action). The time reference is established by context, adverbs, or discourse structure, not by the verb form itself.</p>';
+echo '<p>The verb in Igbo is the most morphologically complex element of the sentence. It can be extended by aspect markers, object pronouns incorporated into the verb, and directional particles. The verb "bia" (come) can become "bịara" (came — completed), "na-abịa" (is coming — progressive), "abịala" (has come — perfect), and "ga-abịa" (will come — prospective). These forms involve tonal changes as well as segmental changes, making the verb system one of the most challenging aspects of Igbo for learners.</p>';
+
+echo '<h3>IV. The Serial Verb Construction</h3>';
+echo '<p>One of the most distinctive features of Igbo grammar — shared with other Niger-Congo languages — is the serial verb construction: multiple verbs follow each other in sequence without conjunctions, each contributing to the overall meaning of the predicate. "O gara ụlọ zuo ihe" — she went home fetched something (she went home and fetched something). "Ya were ego tuo ya" — take money pay him (pay him with money). In English, these would require conjunctions (and, with, in order to); in Igbo, the verbs simply follow each other, with tonal and aspectual adjustments marking the relationships between them.</p>';
+echo '<p>The serial verb construction is not merely a grammatical curiosity — it reflects a different way of conceptualising events. Where English sees actions connected by logical relations (and, because, in order to), Igbo sees a single complex action decomposed into its component movements. Understanding serial verbs is key to understanding how Igbo speakers think about events and causation.</p>';
+
+echo '<h3>V. Sentence Structure and Discourse</h3>';
+echo '<p>Basic Igbo sentence structure is Subject-Verb-Object, like English: "Emeka rị ihe" (Emeka ate food). But Igbo discourse — the way sentences connect into conversations and texts — differs significantly from English. Topic-comment structure is prominent: a topic is established first, then a comment is made about it. Focus constructions — emphasising a particular element of the sentence — use tonal and syntactic devices that have no direct English equivalent. Questions are formed differently depending on whether they seek a yes/no answer, a specific piece of information, or a choice between alternatives.</p>';
+echo '<p>Igbo also has a rich system of pragmatic particles and discourse markers — words and sounds that signal the speaker\'s attitude, signal the beginning or end of a conversational turn, or request confirmation from the listener. These are among the hardest elements of Igbo to learn from written materials alone, because they are primarily features of spoken discourse rather than written grammar.</p>';
+echo '</div>';

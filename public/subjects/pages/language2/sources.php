@@ -1,38 +1,41 @@
 <?php
 declare(strict_types=1);
 echo '<div class="mk-prose">';
-echo '<p class="mk-muted" style="margin-top:0;">Learning resources, grammars, and tools for Igbo language study.</p>';
-echo '<h2>Beginner Resources</h2>';
+echo '<h2>What to Read, Use, and Listen To</h2>';
+
+echo '<h3>Grammars and Reference Works</h3>';
 echo '<ul>';
-echo '<li><strong>Igbo Wikibooks</strong> — free online beginner course at en.wikibooks.org/wiki/Igbo</li>';
-echo '<li><strong>Ụlọ Akwụkwọ Igbo</strong> — YouTube channels teaching conversational Igbo</li>';
-echo '<li><strong>Ikoikoigbo.com</strong> — online Igbo dictionary with audio pronunciation</li>';
-echo '<li><strong>Igbo123.com</strong> — structured beginner lessons with audio</li>';
+echo '<li><strong>F.C. Ogbalu, <em>Igbo-English Dictionary</em></strong> — Standard bilingual dictionary. The starting point for vocabulary.</li>';
+echo '<li><strong>Kay Williamson, <em>Igbo-English Dictionary</em> (1972)</strong> — More phonologically precise. Better for understanding tonal patterns.</li>';
+echo '<li><strong>E.N. Emenanjo, <em>Elements of Modern Igbo Grammar</em> (1978)</strong> — The standard educational grammar for Igbo. Used in Nigerian schools.</li>';
+echo '<li><strong>F.C. Ogbalu, <em>Ilu Igbo</em> (Igbo Proverbs)</strong> — Essential for proverbs, rhetoric, and the oral tradition in written form.</li>';
 echo '</ul>';
-echo '<h2>Grammar References</h2>';
+
+echo '<h3>Learning Platforms and Apps</h3>';
 echo '<ul>';
-echo '<li><strong>F.C. Ogbalu</strong> — <em>Igbo Language and Culture</em>. Standard school grammar.</li>';
-echo '<li><strong>Emenanjo E.N.</strong> — <em>Elements of Modern Igbo Grammar</em>. University-level reference.</li>';
-echo '<li><strong>Kay Williamson</strong> — <em>Igbo-English Dictionary</em> (1972). Scholarly dictionary with grammar notes.</li>';
+echo '<li><strong>Igbo Wikibooks</strong> — Free, community-built introductory course at en.wikibooks.org/wiki/Igbo. Good for absolute beginners.</li>';
+echo '<li><strong>Ikoikoigbo.com</strong> — Online Igbo dictionary with audio pronunciation. Essential for hearing correct tone patterns.</li>';
+echo '<li><strong>Igbo123.com</strong> — Structured beginner lessons with audio. Particularly useful for diaspora learners.</li>';
+echo '<li><strong>Umuigbo.com</strong> — Community platform with language resources particularly designed for diaspora learners.</li>';
 echo '</ul>';
-echo '<h2>Proverbs and Oral Literature</h2>';
+
+echo '<h3>YouTube and Audio Resources</h3>';
 echo '<ul>';
-echo '<li><strong>F.C. Ogbalu</strong> — <em>Ilu Igbo</em>. The standard collection of 1,000+ Igbo proverbs with English translations.</li>';
-echo '<li><strong>Chinua Achebe</strong> — proverbs embedded throughout <em>Things Fall Apart</em> with context.</li>';
+echo '<li><strong>Ụlọ Akwụkwọ Igbo (YouTube)</strong> — Igbo language teaching channel. Good for conversational phrases and pronunciation.</li>';
+echo '<li><strong>Nigerian Broadcasting Corporation Igbo Service</strong> — Radio broadcasts in Igbo. Listening to native speakers in natural conversation is irreplaceable for developing fluency.</li>';
+echo '<li><strong>Osita Osadebe recordings</strong> — Highlife music with rich Igbo vocabulary and proverb use. One of the most enjoyable ways to absorb Igbo as it is actually used.</li>';
 echo '</ul>';
-echo '<h2>Apps and Digital Tools</h2>';
+
+echo '<h3>Literature for Language Learning</h3>';
 echo '<ul>';
-echo '<li><strong>Igbo phrases apps</strong> — available on Android and iOS</li>';
-echo '<li><strong>Google Translate</strong> — Igbo is now supported with basic translation</li>';
-echo '<li><strong>Igbo keyboard apps</strong> — for typing characters like ị, ọ, ụ on mobile devices</li>';
+echo '<li><strong>Chinua Achebe, <em>Things Fall Apart</em> (1958)</strong> — The richest source of Igbo proverbs, greetings, and cultural vocabulary in English translation.</li>';
+echo '<li><strong>Pita Nwana, <em>Omenuko</em> (1933)</strong> — The first novel written in Igbo. Primary source for early standard written Igbo.</li>';
+echo '<li><strong>Tony Ubesie, <em>Ukwa ruo oge ya o daa</em> (1973)</strong> — A novel written in standard Igbo. Useful for intermediate readers developing Igbo literacy.</li>';
 echo '</ul>';
-echo '<h2>For Children</h2>';
+
+echo '<h3>Academic Resources</h3>';
 echo '<ul>';
-echo '<li><strong>Chinua Achebe</strong> — <em>Chike and the River</em> (1966). Igbo cultural context for young readers.</li>';
-echo '<li><strong>Igbo children\'s books</strong> — growing collection available through diaspora publishers</li>';
+echo '<li><strong>University of Nigeria Nsukka, Igbo Studies Department</strong> — The primary institutional resource for Igbo language scholarship. Publications, theses, and distance learning courses available through UNN.</li>';
+echo '<li><strong>Journal of West African Languages</strong> — Academic journal that publishes Igbo linguistics research. Available through university libraries.</li>';
 echo '</ul>';
-echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 4px;">';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/language2/intro/">Introduction</a>';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/language2/overview/">Grammar</a>';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/language2/topics/">Daily Usage</a>';
-echo '</div></div>';
+echo '</div>';
