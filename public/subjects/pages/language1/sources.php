@@ -1,40 +1,41 @@
 <?php
 declare(strict_types=1);
 echo '<div class="mk-prose">';
-echo '<p class="mk-muted" style="margin-top:0;">Key references for the study of the Igbo language.</p>';
-echo '<h2>Dictionaries and Reference Works</h2>';
+echo '<h2>What to Read, and Why</h2>';
+
+echo '<h3>Dictionaries and Reference Works</h3>';
 echo '<ul>';
-echo '<li><strong>F.C. Ogbalu</strong> — <em>Igbo-English Dictionary</em>. The standard bilingual dictionary.</li>';
-echo '<li><strong>Kay Williamson</strong> — <em>Igbo-English Dictionary</em> (1972). Scholarly linguistic dictionary.</li>';
-echo '<li><strong>F.C. Ogbalu</strong> — <em>Ilu Igbo</em> (Igbo Proverbs). The standard proverb collection.</li>';
-echo '<li><strong>Emenanjo, E. N.</strong> — <em>Auxiliaries in Igbo Syntax</em> (1985). Important grammatical study.</li>';
+echo '<li><strong>F.C. Ogbalu, <em>Igbo-English Dictionary</em></strong> — The standard bilingual dictionary. Starting point for any serious Igbo language study.</li>';
+echo '<li><strong>Kay Williamson, <em>Igbo-English Dictionary</em> (1972)</strong> — Scholarly linguistic dictionary with detailed phonological notation. More rigorous than Ogbalu for linguistic purposes.</li>';
+echo '<li><strong>F.C. Ogbalu, <em>Ilu Igbo</em> (Igbo Proverbs)</strong> — The standard proverb collection. Essential for understanding Igbo oral philosophy in its linguistic form.</li>';
 echo '</ul>';
-echo '<h2>Grammars and Linguistic Studies</h2>';
+
+echo '<h3>Grammars and Linguistic Studies</h3>';
 echo '<ul>';
-echo '<li><strong>Kay Williamson</strong> — <em>Igbo Tone Rules</em>. The foundational study of Igbo tonology.</li>';
-echo '<li><strong>Ọmọniyị Ọladẹlẹ</strong> — works on Niger-Congo language classification.</li>';
-echo '<li><strong>Larry Hyman</strong> — comparative studies of Niger-Congo tone systems.</li>';
+echo '<li><strong>E.N. Emenanjo, <em>Auxiliaries in Igbo Syntax</em> (1985)</strong> — The most rigorous formal analysis of a key aspect of Igbo grammar.</li>';
+echo '<li><strong>Kay Williamson, Igbo Tone Rules</strong> — The foundational study of Igbo tonology. Available in academic journals; essential for understanding the tonal system.</li>';
+echo '<li><strong>Romanus Egudu & Donatus Nwoga, <em>Poetic Heritage: Igbo Traditional Verse</em> (1971)</strong> — Collection and translation of Igbo oral poetry. Essential for the literary dimension of the language.</li>';
 echo '</ul>';
-echo '<h2>Orthography and Script</h2>';
+
+echo '<h3>Orthography and Script</h3>';
 echo '<ul>';
-echo '<li><strong>Society for Promoting Igbo Language and Culture (SPILC)</strong> — publications on Igbo orthography and standardization.</li>';
-echo '<li><strong>Önwu Orthography Committee Report</strong> (1961). The foundational document of standard written Igbo.</li>';
-echo '<li>Documentation on Ndebe script — available at ndebe.org</li>';
+echo '<li><strong>Önwu Orthography Committee Report (1961)</strong> — The foundational document of standard written Igbo. Available through SPILC and university libraries.</li>';
+echo '<li><strong>Society for Promoting Igbo Language and Culture (SPILC) publications</strong> — The primary source for Igbo language standardisation documents and policy discussions.</li>';
+echo '<li><strong>Ndebe script documentation</strong> — Available at ndebe.org. The most comprehensive documentation of the indigenous Igbo script and its design principles.</li>';
 echo '</ul>';
-echo '<h2>Language and Literature</h2>';
+
+echo '<h3>Language Policy and Endangerment</h3>';
 echo '<ul>';
-echo '<li><strong>Chinua Achebe</strong> — "The African Writer and the English Language" (1964). Essential essay on language and African writing.</li>';
-echo '<li><strong>Ngugi wa Thiong\'o</strong> — <em>Decolonising the Mind</em> (1986). On the politics of language in African literature.</li>';
-echo '<li><strong>Obiechina, Emmanuel</strong> — <em>Language and Theme: Essays on African Literature</em> (1990).</li>';
+echo '<li><strong>Chinua Achebe, "The African Writer and the English Language" (1964)</strong> — Essential essay on the politics of language choice for African writers. In <em>Morning Yet on Creation Day</em> (1975).</li>';
+echo '<li><strong>Ngugi wa Thiong\'o, <em>Decolonising the Mind</em> (1986)</strong> — The most influential argument for writing in African languages rather than European ones. Essential context for the Igbo language question.</li>';
+echo '<li><strong>UNESCO, <em>Language Vitality and Endangerment</em> (2003)</strong> — The framework document for assessing language endangerment. Available at unesco.org.</li>';
 echo '</ul>';
-echo '<h2>Learning Resources</h2>';
+
+echo '<h3>Learning Resources</h3>';
 echo '<ul>';
-echo '<li>Igbo Wikibooks — community-built Igbo language learning resource</li>';
-echo '<li>Ikoikoigbo.com — online Igbo dictionary and learning platform</li>';
-echo '<li>Igbo language courses — University of Nigeria Nsukka distance learning</li>';
+echo '<li><strong>Igbo Wikibooks</strong> — Community-built Igbo language learning resource. Free online.</li>';
+echo '<li><strong>Ikoikoigbo.com</strong> — Online Igbo dictionary and learning platform.</li>';
+echo '<li><strong>University of Nigeria Nsukka distance learning</strong> — Igbo language courses available through UNN\'s continuing education programme.</li>';
+echo '<li><strong>Umuigbo.com and similar diaspora platforms</strong> — Community-driven language learning resources particularly valuable for diaspora learners.</li>';
 echo '</ul>';
-echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 4px;">';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/language1/intro/">Introduction</a>';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/language1/topics/">Topics</a>';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/language1/people/">People</a>';
-echo '</div></div>';
+echo '</div>';
