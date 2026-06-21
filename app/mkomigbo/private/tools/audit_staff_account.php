@@ -29,7 +29,7 @@ if (!function_exists('mk_tool_line')) {
 --------------------------------------------------------- */
 if (!defined('APP_ROOT')) {
   // __DIR__ = .../app/mkomigbo/private/tools
-  define('APP_ROOT', dirname(__DIR__, 2));
+  // // DISABLED_APP_ROOT (DISABLED_AUTO_FIX), dirname(__DIR__, 2));
 }
 
 $init = APP_ROOT . '/private/assets/initialize.php';

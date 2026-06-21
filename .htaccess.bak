@@ -1,0 +1,22 @@
+RewriteEngine On
+
+# --------------------------------------------------
+# SERVE FILES FROM /public
+# --------------------------------------------------
+
+RewriteCond %{REQUEST_URI} !^/public/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ /public/$1 [L]
+
+# --------------------------------------------------
+# FIX: allow login page explicitly
+# --------------------------------------------------
+
+RewriteRule ^staff/login\.php$ /public/staff/login.php [L]
+
+# --------------------------------------------------
+# OPTIONAL: /staff → login
+# --------------------------------------------------
+
+RewriteRule ^staff/?$ /public/staff/login.php [L]

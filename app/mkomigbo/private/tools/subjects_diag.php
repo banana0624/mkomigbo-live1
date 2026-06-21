@@ -8,7 +8,7 @@ error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
 
 if (!defined('APP_ROOT')) {
   // __DIR__ = .../app/mkomigbo/private/tools
-  define('APP_ROOT', dirname(__DIR__, 2)); // .../app/mkomigbo
+  // // DISABLED_APP_ROOT (DISABLED_AUTO_FIX), dirname(__DIR__, 2)); // .../app/mkomigbo
 }
 
 $init = APP_ROOT . '/private/assets/initialize.php';

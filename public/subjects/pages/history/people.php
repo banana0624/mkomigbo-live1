@@ -1,94 +1,24 @@
 <?php
 declare(strict_types=1);
-
-return [
-  'title' => 'People',
-  'body_html' => <<<HTML
-<div class="mk-prose">
-
-  <p class="mk-muted" style="margin-top:0;">
-    Igbo history is shaped both by named individuals and by communities whose collective actions changed the course of events.
-    This page highlights political leaders, writers, interpreters, and historically significant groups connected to the Igbo past.
-  </p>
-
-  <div style="display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 14px;">
-    <a class="mk-btn mk-btn--ghost" href="/subjects/history/intro/">Introduction</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/history/overview/">Overview</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/history/topics/">Key Topics</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/history/sources/">Sources</a>
-  </div>
-
-  <h2>Political and national figures</h2>
-
-  <h3>Nnamdi Azikiwe</h3>
-  <p>
-    Nnamdi Azikiwe was one of the most important nationalist figures in modern Nigerian history and later became
-    the first president of independent Nigeria. He is central to Igbo history because he linked regional political identity
-    with wider anticolonial nationalism and constitutional change.
-  </p>
-
-  <h3>Chukwuemeka Odumegwu Ojukwu</h3>
-  <p>
-    Odumegwu Ojukwu was the head of the secessionist state of Biafra during the Nigerian Civil War.
-    His role is essential in any study of modern Igbo political history, memory, suffering, and postwar identity.
-  </p>
-
-  <h3>Michael Iheonukara Okpara</h3>
-  <p>
-    Michael Okpara was one of the major political leaders of Eastern Nigeria in the years before the Nigerian Civil War.
-    He belongs on this page because Igbo history is not only a story of nationalism and war, but also of regional development,
-    administration, education, and postcolonial state formation.
-  </p>
-
-  <h2>Writers and interpreters of Igbo society</h2>
-
-  <h3>Chinua Achebe</h3>
-  <p>
-    Chinua Achebe is one of the most important interpreters of Igbo society in world literature.
-    His novel <em>Things Fall Apart</em>, set in the 1890s, remains indispensable because it presents
-    the encounter between British colonial power and Igbo social life from an African-centered perspective.
-  </p>
-
-  <h3>Flora Nwapa</h3>
-  <p>
-    Flora Nwapa is a major literary figure for Igbo cultural history. Her fiction is especially important because
-    it re-creates Igbo life and customs from a woman’s viewpoint, widening the historical imagination beyond male-centered narratives.
-  </p>
-
-  <h3>Christopher Okigbo</h3>
-  <p>
-    Christopher Okigbo belongs to modern Igbo historical memory as both a poet and a Biafran-era figure.
-    His place here helps connect literature, cultural identity, and the political crisis of the late 1960s.
-  </p>
-
-  <h2>Communities as historical actors</h2>
-  <p>
-    Igbo history should not be reduced to elite individuals alone. Many decisive events were shaped by communities,
-    assemblies, age grades, market networks, women’s mobilizations, migrants, and diasporic groups.
-    In Igbo historical study, collective action is often just as important as singular leadership.
-  </p>
-
-  <h3>The captives of Igbo Landing</h3>
-  <p>
-    One of the most powerful remembered episodes in the wider Igbo diaspora is Igbo Landing in 1803,
-    where a group of enslaved Igbo people resisted captivity in coastal Georgia.
-    Their story survives not only as an event in slavery history but also as an enduring symbol of memory, dignity, and resistance.
-  </p>
-
-  <h3>Women’s collective action</h3>
-  <p>
-    Igbo history also includes major episodes of women’s protest and civic mobilization.
-    This matters because many Igbo communities historically depended on layered systems of authority in which collective action,
-    negotiation, and public response were politically meaningful.
-  </p>
-
-  <h2>How to read this page</h2>
-  <p>
-    A strong people page should mix biography with context. It should explain not only who these figures were,
-    but also why they mattered, what institutions they shaped, what historical changes they represent,
-    and what evidence supports their place in the record.
-  </p>
-
-</div>
-HTML,
-];
+echo '<div class="mk-prose">';
+echo '<p class="mk-muted" style="margin-top:0;">Key figures in Igbo history — leaders, thinkers, resisters, and chroniclers.</p>';
+echo '<h2>Olaudah Equiano (c. 1745–1797)</h2>';
+echo '<p>Born in Igboland and enslaved as a child, Equiano eventually purchased his freedom and became one of the leading abolitionists of the 18th century. His autobiography, <em>The Interesting Narrative of the Life of Olaudah Equiano</em> (1789), is one of the earliest and most important accounts of the transatlantic slave trade written by an African. It played a significant role in the British abolitionist movement.</p>';
+echo '<h2>Nnamdi Azikiwe (1904–1996)</h2>';
+echo '<p>Known as "Zik of Africa," Azikiwe was the towering figure of Nigerian nationalism. Educated in the United States, he founded the West African Pilot newspaper, the NCNC political party, and became the first President of Nigeria (1963–1966). He remains the most celebrated Igbo political figure of the 20th century.</p>';
+echo '<h2>Odumegwu Ojukwu (1933–2011)</h2>';
+echo '<p>Military governor of Eastern Nigeria and leader of the Republic of Biafra (1967–1970). Oxford-educated and charismatic, Ojukwu led the Biafran secession after the mass killing of Igbo in northern Nigeria. He remains a deeply revered and contested figure in Igbo memory — hero of Biafran independence to some, responsible for catastrophic suffering to others.</p>';
+echo '<h2>Chinua Achebe (1930–2013)</h2>';
+echo '<p>The most celebrated African novelist of the 20th century. Achebe\'s <em>Things Fall Apart</em> (1958) is the best-selling African novel ever written, translated into over 57 languages. His work documented Igbo life before and during colonization and fundamentally changed how African literature was written, read, and taught worldwide. His non-fiction, especially <em>There Was a Country</em> (2012), gave an essential Igbo perspective on the civil war.</p>';
+echo '<h2>Margaret Ekpo (1914–2006)</h2>';
+echo '<p>One of the most important women in Nigerian political history. Ekpo was a leading figure in Igbo women\'s political organization, a founding member of the NCNC Women\'s Association, and a key activist for women\'s political rights in Eastern Nigeria. She represents the tradition of Igbo women\'s political mobilization that stretches back to the Women\'s War of 1929.</p>';
+echo '<h2>Philip Effiong (1925–2003)</h2>';
+echo '<p>Biafran military commander who formally surrendered to federal forces on January 15, 1970, ending the civil war after Ojukwu\'s flight to the Ivory Coast. His surrender speech — calm, dignified, and without bitterness — is one of the most remarkable documents of the war\'s end.</p>';
+echo '<h2>Wole Soyinka and the Igbo Literary Tradition</h2>';
+echo '<p>While Soyinka is Yoruba, the broader Nigerian literary tradition he represents was shaped significantly by Igbo writers — Achebe, Christopher Okigbo (poet killed in the civil war), Flora Nwapa (first published African woman novelist), Cyprian Ekwensi, and many others. This literary tradition is one of the most important contributions Igbo people have made to world culture.</p>';
+echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 4px;">';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/history/intro/">Introduction</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/history/timeline/">Timeline</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/history/topics/">Topics</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/history/sources/">Sources</a>';
+echo '</div></div>';

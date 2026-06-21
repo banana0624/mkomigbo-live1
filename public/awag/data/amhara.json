@@ -1,0 +1,1000 @@
+{
+    "id": "amhara",
+    "name": "Amhara",
+    "full_name": "Amhara Calendar (Ge'ez)",
+    "language": "Amharic \/ English",
+    "region": "East African Highlands",
+    "area": "Ethiopia",
+    "color": "#4a1a6b",
+    "initial": "AM",
+    "calendar_type": "Ethiopian (Ge'ez) 13-month",
+    "market_cycle": 7,
+    "market_days": [
+        "Ehud",
+        "Segno",
+        "Maksegno",
+        "Rob",
+        "Hamus",
+        "Arb",
+        "Qidame"
+    ],
+    "market_symbols": {
+        "Ehud": {
+            "element": "Sun",
+            "symbol": "☀️",
+            "color": "#ffd040"
+        },
+        "Segno": {
+            "element": "Moon",
+            "symbol": "🌙",
+            "color": "#c0c0ff"
+        },
+        "Maksegno": {
+            "element": "Mars",
+            "symbol": "🔴",
+            "color": "#ff4040"
+        },
+        "Rob": {
+            "element": "Mercury",
+            "symbol": "⚡",
+            "color": "#80e0ff"
+        },
+        "Hamus": {
+            "element": "Jupiter",
+            "symbol": "🌟",
+            "color": "#ffa040"
+        },
+        "Arb": {
+            "element": "Venus",
+            "symbol": "💫",
+            "color": "#ff80c0"
+        },
+        "Qidame": {
+            "element": "Saturn",
+            "symbol": "⭐",
+            "color": "#a0a0a0"
+        }
+    },
+    "months": [
+        {
+            "n": 1,
+            "name": "Meskerem",
+            "greg": "Sep–Oct",
+            "note": "Ethiopian New Year \/ End of rains"
+        },
+        {
+            "n": 2,
+            "name": "Tikimt",
+            "greg": "Oct–Nov",
+            "note": "Harvest season"
+        },
+        {
+            "n": 3,
+            "name": "Hidar",
+            "greg": "Nov–Dec",
+            "note": "Dry season onset"
+        },
+        {
+            "n": 4,
+            "name": "Tahsas",
+            "greg": "Dec–Jan",
+            "note": "Cool dry season"
+        },
+        {
+            "n": 5,
+            "name": "Ter",
+            "greg": "Jan–Feb",
+            "note": "Dry season \/ Cold"
+        },
+        {
+            "n": 6,
+            "name": "Yekatit",
+            "greg": "Feb–Mar",
+            "note": "Dry season warming"
+        },
+        {
+            "n": 7,
+            "name": "Megabit",
+            "greg": "Mar–Apr",
+            "note": "Short rains \/ Belg"
+        },
+        {
+            "n": 8,
+            "name": "Miyazya",
+            "greg": "Apr–May",
+            "note": "Belg rains \/ Planting"
+        },
+        {
+            "n": 9,
+            "name": "Ginbot",
+            "greg": "May–Jun",
+            "note": "Belg ends \/ Kiremti begins"
+        },
+        {
+            "n": 10,
+            "name": "Sene",
+            "greg": "Jun–Jul",
+            "note": "Main rains (Kiremti) begin"
+        },
+        {
+            "n": 11,
+            "name": "Hamle",
+            "greg": "Jul–Aug",
+            "note": "Peak Kiremti rains"
+        },
+        {
+            "n": 12,
+            "name": "Nehase",
+            "greg": "Aug–Sep",
+            "note": "Rains tapering"
+        },
+        {
+            "n": 13,
+            "name": "Pagume",
+            "greg": "Sep",
+            "note": "Intercalary (5-6 days)"
+        }
+    ],
+    "farming": [
+        {
+            "month": 1,
+            "activity": "Ethiopian New Year. Meskel flowers bloom. Harvest teff begins. Main grain harvest approaching.",
+            "crops": [
+                "Teff",
+                "Sorghum",
+                "Maize"
+            ],
+            "icon": "🌼"
+        },
+        {
+            "month": 2,
+            "activity": "Main harvest season. Thresh and store teff, barley, wheat, sorghum. Major farming event.",
+            "crops": [
+                "Teff (harvest)",
+                "Barley",
+                "Wheat"
+            ],
+            "icon": "🌾"
+        },
+        {
+            "month": 3,
+            "activity": "Post-harvest. Process and sell grain. Prepare land for belg planting. Plant vegetables.",
+            "crops": [
+                "Vegetables",
+                "Processing"
+            ],
+            "icon": "🏺"
+        },
+        {
+            "month": 4,
+            "activity": "Cool dry season. Irrigated farming near rivers. Plant potatoes and vegetables.",
+            "crops": [
+                "Potato",
+                "Vegetables",
+                "Onion"
+            ],
+            "icon": "🥔"
+        },
+        {
+            "month": 5,
+            "activity": "Dry season. Cold highland nights. Plant belg-season crops where rains allow.",
+            "crops": [
+                "Belg barley",
+                "Wheat"
+            ],
+            "icon": "❄️"
+        },
+        {
+            "month": 6,
+            "activity": "Dry season warming. Prepare for belg rains. Land clearing and preparation.",
+            "crops": [
+                "Land prep",
+                "Vegetables"
+            ],
+            "icon": "🌱"
+        },
+        {
+            "month": 7,
+            "activity": "Belg (short rains) arrive. Plant belg maize, barley, and pulses. Active farming.",
+            "crops": [
+                "Maize",
+                "Barley",
+                "Pulses"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 8,
+            "activity": "Belg farming peak. Weed crops. Plant belg teff in some regions.",
+            "crops": [
+                "Teff",
+                "Maize",
+                "Barley"
+            ],
+            "icon": "🌿"
+        },
+        {
+            "month": 9,
+            "activity": "Belg harvest in some areas. Prepare for main Kiremti rains. Plant meher crops.",
+            "crops": [
+                "Belg harvest",
+                "Meher maize"
+            ],
+            "icon": "🌾"
+        },
+        {
+            "month": 10,
+            "activity": "Kiremti (main rains) begin. Plant main season teff, sorghum, maize. Heavy farming.",
+            "crops": [
+                "Teff",
+                "Sorghum",
+                "Maize"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 11,
+            "activity": "Peak Kiremti. Weed crops. High altitude areas: plant barley and wheat.",
+            "crops": [
+                "Teff",
+                "Barley",
+                "Wheat"
+            ],
+            "icon": "⛈"
+        },
+        {
+            "month": 12,
+            "activity": "Rains tapering. Crops maturing. Harvest preparation. Pre-New Year ceremonies.",
+            "crops": [
+                "Maturing crops"
+            ],
+            "icon": "🌦"
+        },
+        {
+            "month": 13,
+            "activity": "Pagume (5 days). Complete harvest preparations. Year-end rituals. Celebrate Enkutatash.",
+            "crops": [
+                "Final preparations"
+            ],
+            "icon": "🌼"
+        }
+    ],
+    "fishing": [
+        {
+            "month": 1,
+            "activity": "Lake Tana and Rift Valley lakes accessible. Post-rain excellent fishing.",
+            "fish": [
+                "Nile tilapia",
+                "Catfish",
+                "Carp"
+            ],
+            "conditions": "Very Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 2,
+            "activity": "Dry season. Lakes clear. Excellent fishing. Main tilapia season on Lake Tana.",
+            "fish": [
+                "Tilapia",
+                "Catfish"
+            ],
+            "conditions": "Excellent",
+            "icon": "🎣"
+        },
+        {
+            "month": 3,
+            "activity": "Dry season fishing excellent. Lake levels stable. Clear water visibility.",
+            "fish": [
+                "Tilapia",
+                "Nile perch"
+            ],
+            "conditions": "Very Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 4,
+            "activity": "Cool dry season. Good fishing all lakes. Lake Ziway and Awash good.",
+            "fish": [
+                "Tilapia",
+                "Catfish"
+            ],
+            "conditions": "Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 5,
+            "activity": "Cold highland season. River fishing reduced. Lake fishing continues.",
+            "fish": [
+                "Lake fish"
+            ],
+            "conditions": "Moderate",
+            "icon": "❄️"
+        },
+        {
+            "month": 6,
+            "activity": "Pre-belg. Fish feeding actively before rains. Good season.",
+            "fish": [
+                "Mixed"
+            ],
+            "conditions": "Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 7,
+            "activity": "Belg rains. Rivers murky. Lake fishing continues well.",
+            "fish": [
+                "Lake fish",
+                "Tilapia"
+            ],
+            "conditions": "Good",
+            "icon": "🌧"
+        },
+        {
+            "month": 8,
+            "activity": "Belg season. Lake levels rising. Fish spawning. Moderate fishing.",
+            "fish": [
+                "Mixed"
+            ],
+            "conditions": "Moderate",
+            "icon": "🌊"
+        },
+        {
+            "month": 9,
+            "activity": "Pre-Kiremti. Good fishing window before main rains.",
+            "fish": [
+                "Tilapia",
+                "Catfish"
+            ],
+            "conditions": "Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 10,
+            "activity": "Kiremti rains. Rivers flooding. Lake fishing only. Difficult conditions.",
+            "fish": [
+                "Lake fish"
+            ],
+            "conditions": "Difficult",
+            "icon": "⛈"
+        },
+        {
+            "month": 11,
+            "activity": "Peak rains. Flooding everywhere. Fishing very difficult. Rest period.",
+            "fish": [
+                "Limited"
+            ],
+            "conditions": "Poor",
+            "icon": "🌧"
+        },
+        {
+            "month": 12,
+            "activity": "Rains tapering. Fishing improving. Post-rain fish feeding surge.",
+            "fish": [
+                "Tilapia",
+                "Catfish",
+                "Carp"
+            ],
+            "conditions": "Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 13,
+            "activity": "Pagume. Excellent fishing. Pre-New Year community fish gathering.",
+            "fish": [
+                "Mixed"
+            ],
+            "conditions": "Very Good",
+            "icon": "🤝"
+        }
+    ],
+    "trading": [
+        {
+            "month": 1,
+            "activity": "Meskel festival trading. Addis Ababa markets surge. Spice and textile trading.",
+            "goods": [
+                "Spices",
+                "Textiles",
+                "Grain"
+            ],
+            "icon": "🛒"
+        },
+        {
+            "month": 2,
+            "activity": "Harvest trading peak. Teff and grain markets. Ethiopian coffee export season.",
+            "goods": [
+                "Teff",
+                "Coffee",
+                "Grain"
+            ],
+            "icon": "☕"
+        },
+        {
+            "month": 3,
+            "activity": "Post-harvest trading. Process and sell grain. Tej (honey wine) production.",
+            "goods": [
+                "Grain",
+                "Tej",
+                "Honey"
+            ],
+            "icon": "🍯"
+        },
+        {
+            "month": 4,
+            "activity": "Genna (Christmas) season trading. Gift and livestock markets. Injera ingredient surge.",
+            "goods": [
+                "Livestock",
+                "Teff",
+                "Gifts"
+            ],
+            "icon": "🎁"
+        },
+        {
+            "month": 5,
+            "activity": "Timkat (Epiphany) preparations. Religious goods and cloth trading.",
+            "goods": [
+                "Religious goods",
+                "White cloth",
+                "Food"
+            ],
+            "icon": "🕍"
+        },
+        {
+            "month": 6,
+            "activity": "Dry season steady trading. Coffee and spice export from Kaffa region.",
+            "goods": [
+                "Coffee",
+                "Spices",
+                "Grain"
+            ],
+            "icon": "☕"
+        },
+        {
+            "month": 7,
+            "activity": "Belg harvest trading begins in some regions. Steady market activity.",
+            "goods": [
+                "Belg crops",
+                "Vegetables"
+            ],
+            "icon": "🌿"
+        },
+        {
+            "month": 8,
+            "activity": "Moderate trading. Pre-main rains. Buy farm inputs for Kiremti season.",
+            "goods": [
+                "Farm inputs",
+                "Teff seed"
+            ],
+            "icon": "⚒️"
+        },
+        {
+            "month": 9,
+            "activity": "Pre-Kiremti. Stock up before rains reduce travel. Livestock market.",
+            "goods": [
+                "Food stocks",
+                "Livestock"
+            ],
+            "icon": "📦"
+        },
+        {
+            "month": 10,
+            "activity": "Kiremti rains. Trading reduced. Local markets only. Tej production peaks.",
+            "goods": [
+                "Local food",
+                "Tej"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 11,
+            "activity": "Peak rains. Very limited trading. Stay home. Process honey and tej.",
+            "goods": [
+                "Limited local"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 12,
+            "activity": "Rains ending. Trading resuming. Prepare for New Year markets.",
+            "goods": [
+                "Grain",
+                "Livestock",
+                "Tej"
+            ],
+            "icon": "🌾"
+        },
+        {
+            "month": 13,
+            "activity": "Pagume. Year-end celebrations. Market for New Year goods. Enkutatash preparations.",
+            "goods": [
+                "New Year goods",
+                "Flowers",
+                "Food"
+            ],
+            "icon": "🌼"
+        }
+    ],
+    "herding": [
+        {
+            "month": 1,
+            "conditions": "Good",
+            "activity": "Post-rain. Excellent highland pastures. Cattle thriving. Milk good. Calving season.",
+            "icon": "🐄"
+        },
+        {
+            "month": 2,
+            "conditions": "Very Good",
+            "activity": "Dry season. Good grazing on maturing grass. Move to lowland pastures.",
+            "icon": "🌾"
+        },
+        {
+            "month": 3,
+            "conditions": "Good",
+            "activity": "Dry season grazing. Grass drying but still good. Begin lowland movement.",
+            "icon": "🐄"
+        },
+        {
+            "month": 4,
+            "conditions": "Moderate",
+            "activity": "Cool dry season. Supplement cattle with crop residues. Water points important.",
+            "icon": "💧"
+        },
+        {
+            "month": 5,
+            "conditions": "Difficult",
+            "activity": "Cold highland nights. Shelter livestock. Supplement feeding. Watch for cold stress.",
+            "icon": "❄️"
+        },
+        {
+            "month": 6,
+            "conditions": "Improving",
+            "activity": "Warming up. Pre-belg. Cattle begin moving to highland pastures.",
+            "icon": "🌱"
+        },
+        {
+            "month": 7,
+            "conditions": "Good",
+            "activity": "Belg rains. New grass growth. Cattle improving condition. Begin upward migration.",
+            "icon": "🌿"
+        },
+        {
+            "month": 8,
+            "conditions": "Very Good",
+            "activity": "Belg farming. Excellent highland grazing. Milk peaks for second time.",
+            "icon": "🥛"
+        },
+        {
+            "month": 9,
+            "conditions": "Good",
+            "activity": "Pre-Kiremti. Prepare for main rain season. High pastures preparing.",
+            "icon": "🐄"
+        },
+        {
+            "month": 10,
+            "conditions": "Challenging",
+            "activity": "Kiremti rains start. Move cattle to higher ground. Monitor flooding.",
+            "icon": "🌧"
+        },
+        {
+            "month": 11,
+            "conditions": "Difficult",
+            "activity": "Peak rains. Difficult movement. Cattle on high ground. Disease monitoring.",
+            "icon": "⚠️"
+        },
+        {
+            "month": 12,
+            "conditions": "Improving",
+            "activity": "Rains easing. Move cattle down. Post-rain grass excellent. Recovery season.",
+            "icon": "🌾"
+        },
+        {
+            "month": 13,
+            "conditions": "Excellent",
+            "activity": "Pagume. Best grazing of year. Cattle at peak condition. Calving preparing.",
+            "icon": "🌼"
+        }
+    ],
+    "healing": [
+        {
+            "month": 1,
+            "activity": "Meskel celebrations. Demera fire healing ceremony. Collect Adey Abeba (yellow flowers).",
+            "herbs": [
+                "Adey Abeba",
+                "Kosso",
+                "Gesho"
+            ],
+            "rituals": "Meskel ceremony (Demera)",
+            "icon": "🌼"
+        },
+        {
+            "month": 2,
+            "activity": "Post-harvest healing. Rest and recovery medicines. Treat harvest injuries. Honey medicine.",
+            "herbs": [
+                "Honey",
+                "Tej herbs",
+                "Kosso"
+            ],
+            "rituals": "Harvest thanksgiving (Hidar)",
+            "icon": "🍯"
+        },
+        {
+            "month": 3,
+            "activity": "Dry season. Collect highland medicinal plants. Prepare winter remedies.",
+            "herbs": [
+                "Highland herbs",
+                "Eucalyptus",
+                "Damakesse"
+            ],
+            "rituals": "St. Mary (Maryam) feast healing",
+            "icon": "🌿"
+        },
+        {
+            "month": 4,
+            "activity": "Genna (Christmas) healing. Prepare festive medicines. Anti-cold remedies.",
+            "herbs": [
+                "Warming herbs",
+                "Ginger",
+                "Black cumin"
+            ],
+            "rituals": "Genna purification",
+            "icon": "❄️"
+        },
+        {
+            "month": 5,
+            "activity": "Timkat healing rites. Holy water (tsebel) ceremonies. Community health gathering.",
+            "herbs": [
+                "Holy herbs",
+                "Rue (tenadam)"
+            ],
+            "rituals": "Timkat holy water ceremony",
+            "icon": "💧"
+        },
+        {
+            "month": 6,
+            "activity": "Dry season. Collect bark and root medicines. Prepare for belg season ailments.",
+            "herbs": [
+                "Bark medicines",
+                "Root herbs"
+            ],
+            "rituals": "Community health review",
+            "icon": "🌱"
+        },
+        {
+            "month": 7,
+            "activity": "Belg rains. Fresh herbs sprouting. Harvest young medicinal plants. Treat fever.",
+            "herbs": [
+                "Fresh herbs",
+                "Fever medicines"
+            ],
+            "rituals": "Rain thanksgiving",
+            "icon": "🌧"
+        },
+        {
+            "month": 8,
+            "activity": "Belg peak. Abundant herbs. Mass collection. Prepare anti-malaria medicines.",
+            "herbs": [
+                "Anti-malaria",
+                "Mixed herbs"
+            ],
+            "rituals": "Belg harvest blessing",
+            "icon": "🌿"
+        },
+        {
+            "month": 9,
+            "activity": "Pre-Kiremti. Community health preparations. Prepare disease prevention.",
+            "herbs": [
+                "Preventive herbs",
+                "Garlic"
+            ],
+            "rituals": "Community health ceremony",
+            "icon": "🙏"
+        },
+        {
+            "month": 10,
+            "activity": "Kiremti rains. Treat waterborne diseases. Protect wells. Community health focus.",
+            "herbs": [
+                "Water purification",
+                "Tenadam (rue)"
+            ],
+            "rituals": "Rain protection ceremony",
+            "icon": "💧"
+        },
+        {
+            "month": 11,
+            "activity": "Peak rains. Treat humidity diseases. Anti-fungal treatments. Respiratory care.",
+            "herbs": [
+                "Anti-fungal",
+                "Chest herbs"
+            ],
+            "rituals": "Healing prayers",
+            "icon": "🌧"
+        },
+        {
+            "month": 12,
+            "activity": "Rains easing. Prepare for New Year medicines. Collect last fresh herbs.",
+            "herbs": [
+                "New Year herbs",
+                "Adey Abeba"
+            ],
+            "rituals": "Pre-New Year purification",
+            "icon": "🌼"
+        },
+        {
+            "month": 13,
+            "activity": "Pagume. Special 5-day healing period. Prepare Enkutatash medicines and flowers.",
+            "herbs": [
+                "Adey Abeba",
+                "Special herbs"
+            ],
+            "rituals": "Enkutatash New Year ceremony",
+            "icon": "🌸"
+        }
+    ],
+    "weather": [
+        {
+            "month": 1,
+            "season": "Dry Season",
+            "rains": "20-40mm",
+            "temp": "Warm 22°C, cool nights 10°C",
+            "wind": "NE dry",
+            "advisory": "Post-rain pleasant weather. Ethiopian New Year season. Good travel.",
+            "icon": "🌤"
+        },
+        {
+            "month": 2,
+            "season": "Dry Season",
+            "rains": "5-20mm",
+            "temp": "Warm 24°C",
+            "wind": "NE dry",
+            "advisory": "Dry season establishing. Clear skies. Good harvest weather.",
+            "icon": "☀️"
+        },
+        {
+            "month": 3,
+            "season": "Cool Dry",
+            "rains": "5-10mm",
+            "temp": "Warm 23°C, cool nights 8°C",
+            "wind": "NE",
+            "advisory": "Cool dry season. Excellent travel and trade conditions.",
+            "icon": "🌤"
+        },
+        {
+            "month": 4,
+            "season": "Cool Dry",
+            "rains": "5mm",
+            "temp": "Cool 20°C, cold nights 5°C",
+            "wind": "NE cold",
+            "advisory": "Cool to cold season. Cold highland nights. Clear days.",
+            "icon": "❄️"
+        },
+        {
+            "month": 5,
+            "season": "Cold Dry",
+            "rains": "5mm",
+            "temp": "Cool 18°C, very cold nights 3°C",
+            "wind": "Cold NE",
+            "advisory": "Coldest season on highlands. Frost possible. Protect crops and livestock.",
+            "icon": "❄️"
+        },
+        {
+            "month": 6,
+            "season": "Warming Dry",
+            "rains": "10-20mm",
+            "temp": "Warm 22°C",
+            "wind": "Light SW",
+            "advisory": "Warming up. Pre-belg. Some showers possible. Good preparation time.",
+            "icon": "🌦"
+        },
+        {
+            "month": 7,
+            "season": "Belg Rains",
+            "rains": "40-80mm",
+            "temp": "Warm 22°C",
+            "wind": "SW monsoon light",
+            "advisory": "Short belg rains. Light to moderate. Good for short-season crops.",
+            "icon": "🌧"
+        },
+        {
+            "month": 8,
+            "season": "Belg Peak",
+            "rains": "60-100mm",
+            "temp": "Warm 20°C",
+            "wind": "SW monsoon",
+            "advisory": "Belg rains continue. Moderate rainfall. Good farming conditions.",
+            "icon": "🌧"
+        },
+        {
+            "month": 9,
+            "season": "Pre-Kiremti",
+            "rains": "20-40mm",
+            "temp": "Warm 22°C",
+            "wind": "Transitional",
+            "advisory": "Belg ending. Brief dry spell. Prepare for main rains.",
+            "icon": "🌦"
+        },
+        {
+            "month": 10,
+            "season": "Kiremti Begins",
+            "rains": "80-140mm",
+            "temp": "Warm 20°C",
+            "wind": "SW monsoon",
+            "advisory": "Main rains begin. Heavy rainfall. Rivers rising. Good farming.",
+            "icon": "🌧"
+        },
+        {
+            "month": 11,
+            "season": "Peak Kiremti",
+            "rains": "160-240mm",
+            "temp": "Cool humid 18°C",
+            "wind": "SW monsoon strong",
+            "advisory": "Heaviest rains. Flooding in lowlands. Roads impassable. Stay safe.",
+            "icon": "⛈"
+        },
+        {
+            "month": 12,
+            "season": "Late Kiremti",
+            "rains": "80-120mm",
+            "temp": "Warm 20°C",
+            "wind": "SW easing",
+            "advisory": "Rains tapering. Pre-New Year preparations. Good harvest approaching.",
+            "icon": "🌦"
+        },
+        {
+            "month": 13,
+            "season": "Dry onset",
+            "rains": "20-40mm",
+            "temp": "Warm 22°C",
+            "wind": "NE returning",
+            "advisory": "Pagume (5 days). New Year approaching. Rains ending. Celebration time.",
+            "icon": "🌤"
+        }
+    ],
+    "rulers": [
+        {
+            "month": 1,
+            "title": "Meskel — Finding of True Cross",
+            "events": [
+                "Demera bonfire ceremony",
+                "Meskel flowers placed on cross",
+                "Community celebration",
+                "UNESCO heritage event"
+            ],
+            "rulers": "Patriarch leads Demera ceremony",
+            "icon": "✝️"
+        },
+        {
+            "month": 2,
+            "title": "Hidar Tsion",
+            "events": [
+                "Church of Hidar Zion festival",
+                "Ark of Covenant celebrations",
+                "Pilgrimage to Axum"
+            ],
+            "rulers": "Archbishop leads Axum celebrations",
+            "icon": "⛪"
+        },
+        {
+            "month": 3,
+            "title": "Genna — Ethiopian Christmas",
+            "events": [
+                "Christmas mass at midnight",
+                "Traditional Genna game",
+                "Community feasting",
+                "White clothing tradition"
+            ],
+            "rulers": "Patriarch celebrates Christmas liturgy",
+            "icon": "⛪"
+        },
+        {
+            "month": 4,
+            "title": "Timkat — Epiphany",
+            "events": [
+                "Tabots carried in procession",
+                "Blessing of water",
+                "Re-enactment of baptism of Jesus",
+                "Colorful processions"
+            ],
+            "rulers": "Patriarch leads Timkat procession",
+            "icon": "💧"
+        },
+        {
+            "month": 5,
+            "title": "Kidane Mihret",
+            "events": [
+                "Covenant of Mary celebration",
+                "Church feasts",
+                "Community prayers"
+            ],
+            "rulers": "Priests lead Maryam celebrations",
+            "icon": "🙏"
+        },
+        {
+            "month": 6,
+            "title": "Adbar Rites",
+            "events": [
+                "Adbar community spirit ceremonies",
+                "Village protective spirit honored",
+                "Community feasting"
+            ],
+            "rulers": "Village elders lead Adbar ceremony",
+            "icon": "🌳"
+        },
+        {
+            "month": 7,
+            "title": "Belg Harvest Thanksgiving",
+            "events": [
+                "Thanksgiving prayers",
+                "First fruits offered at church",
+                "Community feast"
+            ],
+            "rulers": "Priests lead harvest thanksgiving",
+            "icon": "🌾"
+        },
+        {
+            "month": 8,
+            "title": "Debre Berhan Selassie",
+            "events": [
+                "Trinity church festivals",
+                "Religious paintings honored",
+                "Community processions"
+            ],
+            "rulers": "Church leaders lead Trinity feast",
+            "icon": "⛪"
+        },
+        {
+            "month": 9,
+            "title": "St. Mary Celebrations",
+            "events": [
+                "Monthly Maryam feast days",
+                "Pilgrimages to Mary churches",
+                "Women's prayer groups active"
+            ],
+            "rulers": "Women's church groups lead Maryam feasts",
+            "icon": "👑"
+        },
+        {
+            "month": 10,
+            "title": "Kiremti Prayers",
+            "events": [
+                "Rain thanksgiving prayers",
+                "Church harvest ceremony",
+                "Community assembly"
+            ],
+            "rulers": "Lik Kahinat leads harvest prayers",
+            "icon": "🌧"
+        },
+        {
+            "month": 11,
+            "title": "Ge'ez New Year Approach",
+            "events": [
+                "Pre-New Year preparations",
+                "Church calendar review",
+                "Community plans for Enkutatash"
+            ],
+            "rulers": "Patriarch prepares New Year liturgy",
+            "icon": "🌟"
+        },
+        {
+            "month": 12,
+            "title": "Meseret — Year End",
+            "events": [
+                "Year-end church ceremonies",
+                "Community accounting",
+                "Preparation for Enkutatash"
+            ],
+            "rulers": "Community elders review the year",
+            "icon": "🔥"
+        },
+        {
+            "month": 13,
+            "title": "Enkutatash — Ethiopian New Year",
+            "events": [
+                "New Year Day celebrations",
+                "Adey Abeba flowers given to children",
+                "Songs and cultural performances",
+                "Church New Year mass"
+            ],
+            "rulers": "Patriarch and PM celebrate Enkutatash",
+            "icon": "🌸"
+        }
+    ]
+}

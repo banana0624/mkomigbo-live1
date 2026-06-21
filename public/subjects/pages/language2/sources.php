@@ -1,94 +1,38 @@
 <?php
 declare(strict_types=1);
-
-return [
-  'title' => 'Sources',
-  'body_html' => <<<HTML
-<div class="mk-prose">
-
-  <p class="mk-muted" style="margin-top:0;">
-    The study of Igbo grammar, numerals, and vocabulary relies on grammar books,
-    dictionaries, teaching materials, linguistic research, and real-world usage data.
-  </p>
-
-  <div style="display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 14px;">
-    <a class="mk-btn mk-btn--ghost" href="/subjects/language2/intro/">Introduction</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/language2/overview/">Overview</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/language2/topics/">Key Topics</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/language2/people/">People</a>
-  </div>
-
-  <h2>1. Grammar books</h2>
-  <p>
-    Formal grammar texts describe sentence structure, tone usage, verb behavior,
-    and word classes. They are essential for systematic understanding of the language.
-  </p>
-
-  <h2>2. Dictionaries and lexicons</h2>
-  <p>
-    Dictionaries are core sources for vocabulary, spelling, and meaning.
-    They support both learners and advanced users and help stabilize usage.
-  </p>
-
-  <h2>3. Educational materials</h2>
-  <p>
-    School textbooks, examination guides, and teaching manuals show how Igbo grammar
-    is actually taught and applied in practice.
-  </p>
-
-  <h2>4. Linguistic research</h2>
-  <p>
-    Academic studies provide detailed analysis of tone, syntax, verb systems,
-    and other grammatical features. These are essential for deeper understanding.
-  </p>
-
-  <h2>5. Spoken language data</h2>
-  <p>
-    Real speech—conversation, recordings, and oral communication—is a critical source.
-    It shows how grammar functions in actual usage rather than only in formal description.
-  </p>
-
-  <h2>6. Literary texts</h2>
-  <p>
-    Novels, plays, and essays provide examples of extended language use.
-    They help illustrate sentence structure, vocabulary range, and stylistic variation.
-  </p>
-
-  <h2>7. Numeracy and counting records</h2>
-  <p>
-    Documentation of number systems and counting practices—especially in trade and traditional contexts—
-    helps preserve and explain how numerical expression works in Igbo.
-  </p>
-
-  <h2>8. Digital resources</h2>
-  <p>
-    Modern tools such as corpora, language apps, keyboards, and online dictionaries
-    provide new ways to study and use Igbo in contemporary settings.
-  </p>
-
-  <h2>Recommended source categories for this site</h2>
-  <ul>
-    <li><strong>Reference works:</strong> grammar books and dictionaries.</li>
-    <li><strong>Educational materials:</strong> textbooks and teaching guides.</li>
-    <li><strong>Linguistic research:</strong> academic studies of grammar and tone.</li>
-    <li><strong>Usage data:</strong> spoken and written real-world language.</li>
-    <li><strong>Numerical records:</strong> counting systems and practical usage.</li>
-  </ul>
-
-  <h2>How to use sources well</h2>
-  <ul>
-    <li>Compare formal grammar with actual usage.</li>
-    <li>Pay attention to tone and context.</li>
-    <li>Use dictionaries carefully for meaning and spelling.</li>
-    <li>Recognize variation across dialects and speakers.</li>
-    <li>Update knowledge with modern usage and tools.</li>
-  </ul>
-
-  <p>
-    A strong language page explains not only rules,
-    but how those rules operate in real communication.
-  </p>
-
-</div>
-HTML,
-];
+echo '<div class="mk-prose">';
+echo '<p class="mk-muted" style="margin-top:0;">Learning resources, grammars, and tools for Igbo language study.</p>';
+echo '<h2>Beginner Resources</h2>';
+echo '<ul>';
+echo '<li><strong>Igbo Wikibooks</strong> — free online beginner course at en.wikibooks.org/wiki/Igbo</li>';
+echo '<li><strong>Ụlọ Akwụkwọ Igbo</strong> — YouTube channels teaching conversational Igbo</li>';
+echo '<li><strong>Ikoikoigbo.com</strong> — online Igbo dictionary with audio pronunciation</li>';
+echo '<li><strong>Igbo123.com</strong> — structured beginner lessons with audio</li>';
+echo '</ul>';
+echo '<h2>Grammar References</h2>';
+echo '<ul>';
+echo '<li><strong>F.C. Ogbalu</strong> — <em>Igbo Language and Culture</em>. Standard school grammar.</li>';
+echo '<li><strong>Emenanjo E.N.</strong> — <em>Elements of Modern Igbo Grammar</em>. University-level reference.</li>';
+echo '<li><strong>Kay Williamson</strong> — <em>Igbo-English Dictionary</em> (1972). Scholarly dictionary with grammar notes.</li>';
+echo '</ul>';
+echo '<h2>Proverbs and Oral Literature</h2>';
+echo '<ul>';
+echo '<li><strong>F.C. Ogbalu</strong> — <em>Ilu Igbo</em>. The standard collection of 1,000+ Igbo proverbs with English translations.</li>';
+echo '<li><strong>Chinua Achebe</strong> — proverbs embedded throughout <em>Things Fall Apart</em> with context.</li>';
+echo '</ul>';
+echo '<h2>Apps and Digital Tools</h2>';
+echo '<ul>';
+echo '<li><strong>Igbo phrases apps</strong> — available on Android and iOS</li>';
+echo '<li><strong>Google Translate</strong> — Igbo is now supported with basic translation</li>';
+echo '<li><strong>Igbo keyboard apps</strong> — for typing characters like ị, ọ, ụ on mobile devices</li>';
+echo '</ul>';
+echo '<h2>For Children</h2>';
+echo '<ul>';
+echo '<li><strong>Chinua Achebe</strong> — <em>Chike and the River</em> (1966). Igbo cultural context for young readers.</li>';
+echo '<li><strong>Igbo children\'s books</strong> — growing collection available through diaspora publishers</li>';
+echo '</ul>';
+echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 4px;">';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/language2/intro/">Introduction</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/language2/overview/">Grammar</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/language2/topics/">Daily Usage</a>';
+echo '</div></div>';

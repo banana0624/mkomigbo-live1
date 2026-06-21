@@ -6,8 +6,7 @@ declare(strict_types=1);
  * Subjects index: /subjects/
  */
 
-define('APP_ROOT', __DIR__ . '/app/mkomigbo');
-require_once APP_ROOT . '/private/assets/initialize.php';
+require_once __DIR__ . '/../_init.php';
 
 $active_nav = 'subjects';
 

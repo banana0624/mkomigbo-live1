@@ -1,0 +1,1545 @@
+/* /public/igbo-calendar/igbo-calendar.css */
+
+/* =========================================================
+   Core theme
+   ========================================================= */
+:root{
+  --igcal-bg:#f6efe3;
+  --igcal-surface:rgba(255,250,242,.96);
+  --igcal-surface-2:rgba(243,234,220,.96);
+  --igcal-border:rgba(184,156,115,.45);
+  --igcal-text:#2b2218;
+  --igcal-muted:#6b5a45;
+  --igcal-muted-2:#8a775f;
+
+  --igcal-accent:#8b5e34;
+  --igcal-accent-2:#6f4724;
+  --igcal-accent-soft:rgba(139,94,52,.12);
+  --igcal-accent-ring:rgba(199,154,59,.28);
+
+  --igcal-radius:18px;
+  --igcal-radius-sm:12px;
+  --igcal-shadow:0 10px 28px rgba(43,34,24,.08);
+  --igcal-shadow-sm:0 4px 14px rgba(43,34,24,.06);
+
+  --igcal-pad:18px;
+  --igcal-pad-sm:12px;
+
+  --igcal-font:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+  --igcal-mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+
+  --moon-tile:24px;
+  --moon-frames:28;
+}
+
+@media (prefers-color-scheme: dark){
+  :root{
+    --igcal-bg:#0f0c08;
+    --igcal-surface:rgba(255,248,240,.06);
+    --igcal-surface-2:rgba(255,248,240,.09);
+    --igcal-border:rgba(224,194,145,.16);
+    --igcal-text:rgba(255,248,240,.92);
+    --igcal-muted:rgba(255,248,240,.68);
+    --igcal-muted-2:rgba(255,248,240,.54);
+
+    --igcal-accent:#d0a15e;
+    --igcal-accent-2:#ebc587;
+    --igcal-accent-soft:rgba(208,161,94,.12);
+    --igcal-accent-ring:rgba(208,161,94,.24);
+
+    --igcal-shadow:0 10px 30px rgba(0,0,0,.28);
+    --igcal-shadow-sm:0 6px 18px rgba(0,0,0,.22);
+  }
+}
+
+/* =========================================================
+   Base
+   ========================================================= */
+*{ box-sizing:border-box; }
+
+html,
+body{
+  height:100%;
+}
+
+body.igcal-body{
+  margin:0;
+  font-family:var(--igcal-font);
+  background:
+    radial-gradient(circle at top left, rgba(199,154,59,.08), transparent 26%),
+    radial-gradient(circle at top right, rgba(139,94,52,.06), transparent 22%),
+    var(--igcal-bg);
+  color:var(--igcal-text);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+a{
+  color:inherit;
+}
+
+a:hover{
+  text-decoration:none;
+}
+
+button,
+select,
+input,
+textarea{
+  font:inherit;
+}
+
+img,
+svg{
+  max-width:100%;
+  height:auto;
+}
+
+.muted{
+  color:var(--igcal-muted);
+}
+
+.is-hidden{
+  display:none !important;
+}
+
+.igcal-sr-only{
+  position:absolute !important;
+  width:1px;
+  height:1px;
+  padding:0;
+  margin:-1px;
+  overflow:hidden;
+  clip:rect(0,0,0,0);
+  white-space:nowrap;
+  border:0;
+}
+
+.igcal-sr-only:focus{
+  position:static !important;
+  width:auto;
+  height:auto;
+  margin:0;
+  padding:10px 12px;
+  display:inline-block;
+  background:var(--igcal-surface);
+  border:1px solid var(--igcal-border);
+  border-radius:10px;
+}
+
+/* =========================================================
+   App shell
+   ========================================================= */
+.igbo-calendar-app,
+.igcal-shell,
+.igcal-layout,
+.igcal-app{
+  width:100%;
+  max-width:none;
+}
+
+.igcal-app{
+  margin:0;
+  padding:16px 10px 36px;
+}
+
+.igcal-layout{
+  display:block;
+}
+
+@media (min-width:980px){
+  body.igcal-body{
+    overflow:hidden;
+  }
+
+  .igcal-layout{
+    display:flex;
+    align-items:stretch;
+    gap:10px;
+    min-height:100vh;
+  }
+
+  .igcal-sidebar{
+    flex:0 0 318px;
+    max-width:318px;
+    min-width:318px;
+  }
+
+  .igcal-sidebar__inner{
+    position:sticky;
+    top:0;
+    height:100vh;
+    overflow:auto;
+    padding-bottom:18px;
+  }
+
+  .igcal-main{
+    flex:1 1 auto;
+    min-width:0;
+    height:100vh;
+    overflow:auto;
+    -webkit-overflow-scrolling:touch;
+    padding-right:6px;
+  }
+
+  .igcal-main .igcal-card{
+    margin-top:0;
+  }
+}
+
+@media (max-width:979px){
+  body.igcal-body{
+    overflow:auto;
+  }
+
+  .igcal-sidebar__inner{
+    position:static;
+    height:auto;
+    overflow:visible;
+  }
+
+  .igcal-main{
+    height:auto;
+    overflow:visible;
+  }
+}
+
+/* =========================================================
+   Hero
+   ========================================================= */
+.igcal-hero{
+  border:1px solid var(--igcal-border);
+  background:linear-gradient(180deg,var(--igcal-surface) 0%, transparent 120%);
+  border-radius:var(--igcal-radius);
+  box-shadow:var(--igcal-shadow);
+  padding:var(--igcal-pad);
+  margin:16px 0 14px;
+}
+
+.igcal-hero__top{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+.igcal-hero__title{
+  margin:0;
+  font-size:28px;
+  letter-spacing:-0.02em;
+  line-height:1.12;
+  color:var(--igcal-accent-2);
+}
+
+.igcal-hero__brand{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.igcal-hero__subtitle-stack{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.igcal-hero__subtitle-line{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+  line-height:1.25;
+}
+
+.igcal-hero__subtitle-line strong{
+  font-size:15px;
+}
+
+.igcal-hero__links{
+  font-size:14px;
+  color:var(--igcal-muted);
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.igcal-link{
+  color:var(--igcal-muted);
+  text-decoration:none;
+  border-bottom:1px dotted transparent;
+}
+
+.igcal-link:hover{
+  color:var(--igcal-text);
+  border-bottom-color:var(--igcal-border);
+}
+
+/* =========================================================
+   Cards / panels
+   ========================================================= */
+.igcal-panel-group{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  margin-bottom:12px;
+}
+
+.igcal-card{
+  border:1px solid var(--igcal-border);
+  background:linear-gradient(180deg,var(--igcal-surface),var(--igcal-surface-2));
+  border-radius:var(--igcal-radius);
+  box-shadow:var(--igcal-shadow-sm);
+  overflow:hidden;
+}
+
+.igcal-card__body{
+  padding:var(--igcal-pad);
+}
+
+.igcal-card--feature{
+  border-color:rgba(167,139,250,.22);
+  background:linear-gradient(180deg, rgba(167,139,250,.07), var(--igcal-surface));
+}
+
+.igcal-panel-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:10px;
+}
+
+.igcal-panel-title{
+  margin:0;
+  font-size:17px;
+  line-height:1.2;
+  color:var(--igcal-accent-2);
+}
+
+.igcal-panel-kicker{
+  display:inline-flex;
+  align-items:center;
+  padding:5px 9px;
+  border-radius:999px;
+  border:1px solid var(--igcal-border);
+  background:var(--igcal-surface-2);
+  color:var(--igcal-muted);
+  font-size:11px;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
+
+.igcal-summary-box{
+  min-height:110px;
+  padding:14px;
+  border-radius:12px;
+  border:1px solid var(--igcal-border);
+  background:rgba(0,0,0,.04);
+  line-height:1.5;
+  overflow-wrap:anywhere;
+}
+
+.igcal-card--feature .igcal-summary-box{
+  min-height:150px;
+}
+
+.igcal-summary-line + .igcal-summary-line{
+  margin-top:6px;
+}
+
+/* =========================================================
+   Controls
+   ========================================================= */
+.igcal-controls__row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  align-items:center;
+}
+
+.igcal-controls__row--nav{
+  margin-top:14px;
+}
+
+.igcal-day-nav,
+.igcal-month-nav{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  padding:10px;
+  border:1px solid var(--igcal-border);
+  background:rgba(255,250,242,.72);
+  border-radius:14px;
+  box-shadow:var(--igcal-shadow-sm);
+}
+
+@media (prefers-color-scheme: dark){
+  .igcal-day-nav,
+  .igcal-month-nav{
+    background:rgba(255,248,240,.04);
+  }
+}
+
+.igcal-field{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  min-width:0;
+}
+
+.igcal-field__label{
+  font-size:12px;
+  color:var(--igcal-muted);
+}
+
+.igcal-field--wide{
+  width:100%;
+}
+
+.igcal-btn{
+  appearance:none;
+  border:1px solid var(--igcal-border);
+  background:linear-gradient(180deg, #fff5e6 0%, #f2e0bf 100%);
+  color:var(--igcal-text);
+  padding:10px 12px;
+  border-radius:12px;
+  cursor:pointer;
+  box-shadow:var(--igcal-shadow-sm);
+  font-size:14px;
+  line-height:1;
+  font-weight:700;
+  user-select:none;
+  transition:transform .14s ease, box-shadow .14s ease, border-color .14s ease, background .14s ease;
+}
+
+.igcal-btn:hover{
+  transform:translateY(-1px);
+  border-color:var(--igcal-accent);
+  box-shadow:0 8px 18px rgba(43,34,24,.10);
+}
+
+.igcal-btn:active{
+  transform:translateY(0);
+}
+
+.igcal-btn:focus-visible{
+  outline:2px solid transparent;
+  box-shadow:0 0 0 3px var(--igcal-accent-ring), var(--igcal-shadow-sm);
+}
+
+.igcal-btn--primary,
+.is-primary{
+  border-color:var(--igcal-accent-2);
+  background:linear-gradient(180deg, #a76d3d 0%, #7a4a25 100%);
+  color:#fff;
+}
+
+.igcal-select{
+  -webkit-appearance:none;
+  -moz-appearance:none;
+  appearance:none;
+  border:1px solid var(--igcal-border);
+  background-color:var(--igcal-surface);
+  color:var(--igcal-text);
+  padding:10px 42px 10px 12px;
+  border-radius:12px;
+  width:100%;
+  min-width:0;
+  max-width:100%;
+  box-shadow:var(--igcal-shadow-sm);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 14px center;
+  background-size:18px 18px;
+}
+
+.igcal-select::-ms-expand{
+  display:none;
+}
+
+.igcal-select:hover{
+  background-color:var(--igcal-surface-2);
+}
+
+.igcal-select:focus-visible{
+  outline:2px solid transparent;
+  box-shadow:0 0 0 3px var(--igcal-accent-ring), var(--igcal-shadow-sm);
+}
+
+.igcal-year-control{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:10px;
+  align-items:end;
+  margin-top:14px;
+}
+
+/* =========================================================
+   Main calendar mount
+   ========================================================= */
+.igcal-loading{
+  margin:0 0 12px;
+  padding:12px 14px;
+  border-radius:12px;
+  border:1px dashed var(--igcal-border);
+  background:rgba(0,0,0,.04);
+  color:var(--igcal-muted);
+}
+
+#igcal-mount{
+  min-height:120px;
+}
+
+.igcal-month,
+.mk-cal-month{
+  margin-top:10px;
+  padding:12px;
+  border-radius:var(--igcal-radius);
+  border:1px solid var(--igcal-border);
+  background:linear-gradient(180deg, rgba(255,250,242,.96), rgba(244,235,219,.96));
+  box-shadow:var(--igcal-shadow-sm);
+}
+
+.mk-cal-month__head{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  margin-bottom:10px;
+}
+
+.mk-cal-month__title{
+  margin:0;
+  font-size:18px;
+  letter-spacing:-0.01em;
+  color:var(--igcal-accent-2);
+}
+
+.mk-cal-month__meta{
+  font-size:12px;
+  color:var(--igcal-muted);
+  line-height:1.45;
+}
+
+.mk-cal-table-wrap{
+  width:100%;
+  overflow-x:visible;
+  -webkit-overflow-scrolling:touch;
+  border-radius:12px;
+  border:1px solid var(--igcal-border);
+  background:rgba(0,0,0,.02);
+}
+
+.mk-cal__table,
+.mk-cal-grid{
+  width:100%;
+  min-width:0;
+  table-layout:fixed;
+  border-collapse:separate;
+  border-spacing:0;
+}
+
+.mk-cal__table thead th,
+.mk-cal-grid thead th{
+  position:sticky;
+  top:0;
+  z-index:1;
+  text-align:left;
+  font-size:12px;
+  color:var(--igcal-muted);
+  padding:10px 12px;
+  background:rgba(243,234,220,.95);
+  border-bottom:1px solid var(--igcal-border);
+}
+
+@media (prefers-color-scheme: dark){
+  .mk-cal__table thead th,
+  .mk-cal-grid thead th{
+    background:rgba(255,248,240,.10);
+  }
+}
+
+.mk-cal__table tbody td,
+.mk-cal-grid tbody td{
+  vertical-align:top;
+  padding:0;
+  border-bottom:1px solid rgba(184,156,115,.24);
+  border-right:1px solid rgba(184,156,115,.24);
+}
+
+.mk-cal__table tbody tr td:first-child,
+.mk-cal-grid tbody tr td:first-child{
+  border-left:1px solid rgba(184,156,115,.24);
+}
+
+.mk-cal-empty{
+  background:rgba(0,0,0,.03);
+  min-height:160px;
+}
+
+/* =========================================================
+   Calendar cells
+   ========================================================= */
+.mk-cal-cell{
+  min-height:170px;
+  position:relative;
+}
+
+.mk-cal-cell__button{
+  display:block;
+  width:100%;
+  min-height:170px;
+  margin:0;
+  padding:0;
+  border:0;
+  background:transparent;
+  color:inherit;
+  text-align:left;
+  cursor:pointer;
+}
+
+.mk-cal-cell__button:focus{
+  outline:none;
+}
+
+.mk-cal-cell__inner{
+  padding:12px;
+  min-height:170px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  background:rgba(255,255,255,.18);
+  transition:background .18s ease, box-shadow .18s ease, outline-color .18s ease;
+}
+
+@media (prefers-color-scheme: dark){
+  .mk-cal-cell__inner{
+    background:rgba(255,248,240,.03);
+  }
+}
+
+.mk-cal-cell__button:hover .mk-cal-cell__inner{
+  background:rgba(255,246,231,.98);
+}
+
+@media (prefers-color-scheme: dark){
+  .mk-cal-cell__button:hover .mk-cal-cell__inner{
+    background:rgba(255,248,240,.06);
+  }
+}
+
+.mk-cal-cell__button:focus-visible .mk-cal-cell__inner{
+  outline:2px solid var(--igcal-accent-ring);
+  box-shadow:0 0 0 3px rgba(199,154,59,.12);
+}
+
+.mk-cal-cell.is-selected .mk-cal-cell__inner,
+.mk-cal-cell.igcal-is-selected-only .mk-cal-cell__inner{
+  outline:2px solid rgba(139,94,52,.42);
+  box-shadow:0 0 0 4px rgba(139,94,52,.12);
+  background:rgba(241,219,175,.22);
+}
+
+.mk-cal-cell--today .mk-cal-cell__inner,
+.mk-cal-cell.igcal-is-today-only .mk-cal-cell__inner{
+  outline:2px solid rgba(167,139,250,.30);
+  box-shadow:0 0 0 4px rgba(167,139,250,.10);
+  background:rgba(167,139,250,.08);
+}
+
+.mk-cal-cell.igcal-is-today-and-selected .mk-cal-cell__inner{
+  outline:2px solid rgba(139,94,52,.52);
+  box-shadow:
+    0 0 0 3px rgba(139,94,52,.14),
+    0 0 0 6px rgba(167,139,250,.12);
+  background:linear-gradient(180deg, rgba(255,244,225,.98), rgba(241,219,175,.88));
+}
+
+.mk-cal-cell__top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.mk-cal-daystack{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+
+.mk-cal-market{
+  font-size:15px;
+  font-weight:800;
+  line-height:1.2;
+}
+
+.mk-cal-day{
+  font-weight:700;
+  font-size:14px;
+  line-height:1.25;
+}
+
+.mk-cal-iso{
+  font-family:var(--igcal-mono);
+  font-size:11px;
+  color:var(--igcal-muted-2);
+  white-space:nowrap;
+}
+
+.mk-cal-kv{
+  font-size:12px;
+  color:var(--igcal-muted);
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+  line-height:1.45;
+}
+
+.mk-cal-line{
+  display:block;
+}
+
+.mk-cal-today-badge{
+  width:fit-content;
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:11px;
+  letter-spacing:.06em;
+  font-weight:800;
+  border:1px solid rgba(167,139,250,.35);
+  background:rgba(167,139,250,.12);
+  color:var(--igcal-text);
+}
+
+/* =========================================================
+   Moon visuals
+   ========================================================= */
+.mk-moonbar{
+  margin-top:auto;
+  height:6px;
+  border-radius:999px;
+  background:rgba(255,255,255,.10);
+  overflow:hidden;
+}
+
+.mk-moonbar > span{
+  display:block;
+  height:100%;
+  background:rgba(255,255,255,.40);
+  width:0%;
+}
+
+.mk-moon-sprite{
+  display:inline-block;
+  width:var(--moon-tile);
+  height:var(--moon-tile);
+  vertical-align:-5px;
+  border-radius:999px;
+  opacity:.92;
+  background-image:url("/igbo-calendar/moon-sprite-28.png");
+  background-repeat:no-repeat;
+  background-size:calc(var(--moon-tile) * var(--moon-frames)) var(--moon-tile);
+  background-position:calc(var(--f,0) * var(--moon-tile) * -1) 0;
+  filter:drop-shadow(0 2px 3px rgba(43,34,24,.10));
+  flex:0 0 auto;
+}
+
+.mk-moon-f1{--f:0}.mk-moon-f2{--f:1}.mk-moon-f3{--f:2}.mk-moon-f4{--f:3}.mk-moon-f5{--f:4}.mk-moon-f6{--f:5}.mk-moon-f7{--f:6}
+.mk-moon-f8{--f:7}.mk-moon-f9{--f:8}.mk-moon-f10{--f:9}.mk-moon-f11{--f:10}.mk-moon-f12{--f:11}.mk-moon-f13{--f:12}.mk-moon-f14{--f:13}
+.mk-moon-f15{--f:14}.mk-moon-f16{--f:15}.mk-moon-f17{--f:16}.mk-moon-f18{--f:17}.mk-moon-f19{--f:18}.mk-moon-f20{--f:19}.mk-moon-f21{--f:20}
+.mk-moon-f22{--f:21}
+.mk-moon-f23{--f:22}
+.mk-moon-f24{--f:23}
+.mk-moon-f25{--f:24}
+.mk-moon-f26{--f:25}
+.mk-moon-f27{--f:26}
+.mk-moon-f28{--f:27}
+
+
+/* =========================================================
+   Summary badges / facts
+   ========================================================= */
+.igcal-badge-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:12px;
+}
+
+.igcal-mini-badge{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:flex-start;
+  gap:4px;
+  width:100%;
+  min-width:0;
+  min-height:68px;
+  padding:9px 12px;
+  border-radius:16px;
+  border:1px solid var(--igcal-border);
+  background:rgba(255,248,236,.88);
+  color:var(--igcal-text);
+  font-size:12px;
+  line-height:1.25;
+  font-weight:700;
+  white-space:normal;
+  word-break:break-word;
+  overflow-wrap:anywhere;
+}
+
+.igcal-mini-badge__label,
+.igcal-mini-badge__value,
+.igcal-mini-badge__detail{
+  display:block;
+  width:100%;
+  min-width:0;
+  white-space:normal;
+  word-break:break-word;
+  overflow-wrap:anywhere;
+}
+
+.igcal-mini-badge__label{
+  color:var(--igcal-muted);
+  font-weight:700;
+}
+
+.igcal-mini-badge__value{
+  color:var(--igcal-accent-2);
+  font-weight:800;
+  line-height:1.2;
+}
+
+.igcal-mini-badge__detail{
+  margin-top:2px;
+  font-size:.92rem;
+  font-weight:500;
+  line-height:1.35;
+  opacity:.92;
+  color:var(--igcal-text);
+}
+
+.igcal-mini-badge--month{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:flex-start;
+  gap:4px;
+  width:100%;
+  max-width:none;
+  min-width:0;
+  min-height:74px;
+  border-radius:18px;
+}
+
+.igcal-mini-badge--month .igcal-mini-badge__label{
+  display:none;
+}
+
+@media (prefers-color-scheme: dark){
+  .igcal-mini-badge{
+    background:rgba(255,248,240,.06);
+  }
+}
+
+.igcal-facts{
+  display:grid;
+  gap:8px;
+  margin-top:12px;
+}
+
+.igcal-fact{
+  padding:8px 10px;
+  border:1px solid var(--igcal-border);
+  border-radius:10px;
+  background:rgba(255,250,242,.55);
+  color:var(--igcal-text);
+  line-height:1.35;
+  overflow-wrap:anywhere;
+}
+
+@media (prefers-color-scheme: dark){
+  .igcal-fact{
+    background:rgba(255,248,240,.04);
+  }
+}
+
+/* =========================================================
+   Viewed Month final contract
+   ========================================================= */
+#igcal-viewed-month-summary{
+  width:100%;
+  min-width:0;
+}
+
+#igcal-viewed-month-summary .igcal-badge-row{
+  width:100%;
+}
+
+#igcal-viewed-month-summary .igcal-mini-badge--month{
+  width:100%;
+  max-width:none;
+}
+
+#igcal-viewed-month-summary .igcal-mini-badge__value,
+#igcal-viewed-month-summary .igcal-mini-badge__detail{
+  display:block;
+  width:100%;
+  white-space:normal;
+  overflow-wrap:anywhere;
+}
+
+/* =========================================================
+   Year range detail
+   ========================================================= */
+.igcal-range-select-wrap{
+  position:relative;
+}
+
+#igcal-gregorian-range{
+  min-height:46px;
+  padding-top:12px;
+  padding-bottom:12px;
+  font-size:13px;
+}
+
+.igcal-range-detail{
+  margin-top:10px;
+  padding:12px;
+  border:1px solid var(--igcal-border);
+  border-radius:12px;
+  background:rgba(255,250,242,.58);
+  color:var(--igcal-text);
+  line-height:1.45;
+  overflow-wrap:anywhere;
+}
+
+.igcal-range-detail__row + .igcal-range-detail__row{
+  margin-top:6px;
+}
+
+.igcal-range-detail strong{
+  color:var(--igcal-accent-2);
+}
+
+@media (prefers-color-scheme: dark){
+  .igcal-range-detail{
+    background:rgba(255,248,240,.04);
+  }
+}
+
+/* =========================================================
+   Export / share features
+   ========================================================= */
+.igcal-sharebar{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  align-items:center;
+  margin-top:12px;
+}
+
+.igcal-sharebar__btn{
+  appearance:none;
+  border:1px solid var(--igcal-border);
+  background:linear-gradient(180deg, #fff5e6 0%, #f2e0bf 100%);
+  color:var(--igcal-text);
+  padding:9px 12px;
+  border-radius:12px;
+  cursor:pointer;
+  font-size:13px;
+  font-weight:700;
+  line-height:1.2;
+  box-shadow:var(--igcal-shadow-sm);
+  transition:transform .14s ease, box-shadow .14s ease, border-color .14s ease;
+}
+
+.igcal-sharebar__btn:hover{
+  transform:translateY(-1px);
+  border-color:var(--igcal-accent);
+  box-shadow:0 8px 18px rgba(43,34,24,.10);
+}
+
+.igcal-sharebar__btn:active{
+  transform:translateY(0);
+}
+
+.igcal-sharebar__btn:focus-visible{
+  outline:2px solid transparent;
+  box-shadow:0 0 0 3px var(--igcal-accent-ring), var(--igcal-shadow-sm);
+}
+
+.igcal-sharebar__status{
+  min-height:1.2em;
+  color:var(--igcal-muted);
+  font-size:13px;
+  flex:1 1 220px;
+}
+
+@media (prefers-color-scheme: dark){
+  .igcal-sharebar__btn{
+    background:linear-gradient(180deg, rgba(255,248,240,.09), rgba(255,248,240,.05));
+  }
+}
+
+/* =========================================================
+   Year controls polish
+   ========================================================= */
+.igcal-card[data-ig-viewed-year="1"] .mk-view-actions,
+.igcal-card[data-ig-viewed-year="1"] .mk-view-nav,
+.igcal-card[data-ig-year-range="1"] .mk-view-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin:12px 0 14px;
+  align-items:center;
+}
+
+.igcal-card[data-ig-viewed-year="1"] .mk-view-nav{
+  padding-bottom:2px;
+  border-bottom:1px solid var(--igcal-border);
+}
+
+.igcal-card[data-ig-viewed-year="1"] .mk-mini-btn,
+.igcal-card[data-ig-year-range="1"] .mk-mini-btn{
+  appearance:none;
+  border:1px solid var(--igcal-border);
+  background:var(--igcal-surface);
+  color:var(--igcal-text);
+  border-radius:12px;
+  padding:10px 14px;
+  min-height:40px;
+  line-height:1.2;
+  font:inherit;
+  font-weight:600;
+  letter-spacing:.01em;
+  cursor:pointer;
+  transition:
+    transform .16s ease,
+    background-color .16s ease,
+    border-color .16s ease,
+    box-shadow .16s ease;
+  box-shadow:var(--igcal-shadow-sm);
+}
+
+.igcal-card[data-ig-viewed-year="1"] .mk-mini-btn:hover,
+.igcal-card[data-ig-year-range="1"] .mk-mini-btn:hover{
+  transform:translateY(-1px);
+  background:var(--igcal-surface-2);
+  border-color:var(--igcal-accent);
+}
+
+.igcal-card[data-ig-viewed-year="1"] .mk-mini-btn:active,
+.igcal-card[data-ig-year-range="1"] .mk-mini-btn:active{
+  transform:translateY(0);
+}
+
+.igcal-card[data-ig-viewed-year="1"] .mk-mini-btn:focus-visible,
+.igcal-card[data-ig-year-range="1"] .mk-mini-btn:focus-visible{
+  outline:2px solid transparent;
+  box-shadow:0 0 0 3px var(--igcal-accent-ring), var(--igcal-shadow-sm);
+}
+
+.igcal-card[data-ig-viewed-year="1"] .igcal-year-control{
+  margin-top:14px;
+}
+
+.igcal-card[data-ig-viewed-year="1"] #igcal-year-select,
+.igcal-card[data-ig-year-range="1"] #igcal-gregorian-range{
+  width:100%;
+}
+
+.igcal-card[data-ig-viewed-year="1"] #igcal-apply-year{
+  margin-top:10px;
+}
+
+/* =========================================================
+   Cowrie emblem
+   ========================================================= */
+.mk-cowrie-emblem{
+  display:grid;
+  place-items:center;
+  margin:14px 0 4px;
+  padding:10px 0 2px;
+}
+
+.mk-cowrie-grid{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(34px, 54px));
+  gap:10px 12px;
+  justify-content:start;
+  align-content:center;
+  width:max-content;
+}
+
+.mk-cowrie{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:52px;
+  height:52px;
+  border-radius:14px;
+  background:
+    radial-gradient(circle at 30% 28%, rgba(255,255,255,.34), rgba(255,255,255,0) 42%),
+    linear-gradient(180deg, rgba(255,255,255,.08), rgba(0,0,0,.04));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.2),
+    0 4px 14px rgba(0,0,0,.08);
+}
+
+.mk-cowrie-svg{
+  display:block;
+  width:44px;
+  height:44px;
+  overflow:visible;
+}
+
+.shell-body{
+  fill:#efe6cf;
+  stroke:#c8b78c;
+  stroke-width:1.2;
+}
+
+.shell-ridge{
+  fill:#dcc9a1;
+  opacity:.98;
+}
+
+.shell-slit{
+  fill:#7a5230;
+  opacity:.96;
+}
+
+.shell-slit-edge{
+  fill:#f7edd8;
+  opacity:.95;
+}
+
+.shell-highlight{
+  fill:#fff8ea;
+  opacity:.82;
+}
+
+.shell-highlight-2{
+  fill:#fff4de;
+  opacity:.58;
+}
+
+@media (prefers-color-scheme: dark){
+  .mk-cowrie{
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.10),
+      0 4px 14px rgba(0,0,0,.22);
+  }
+}
+
+/* =========================================================
+   Footer
+   ========================================================= */
+.igcal-footer{
+  margin-top:14px;
+  padding:10px 2px;
+  color:var(--igcal-muted);
+  font-size:13px;
+}
+
+.igcal-footer__meta{
+  margin:0;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+
+/* =========================================================
+   PWA / standalone
+   ========================================================= */
+html.igcal-standalone body.igcal-body{
+  overscroll-behavior:none;
+}
+
+html.igcal-standalone .igcal-app{
+  padding-top:max(10px, env(safe-area-inset-top, 0px));
+  padding-bottom:calc(20px + env(safe-area-inset-bottom, 0px));
+}
+
+html.igcal-standalone .igcal-hero{
+  margin-top:8px;
+}
+
+html.igcal-standalone .igcal-hero__links a[href="/igbo-calendar/install/"],
+html.igcal-standalone .igcal-hero__links a[href="/igbo-calendar/install"]{
+  display:none !important;
+}
+
+html.igcal-offline .igcal-hero,
+html.igcal-offline .igcal-card{
+  box-shadow:none;
+}
+
+html.igcal-offline .igcal-panel-kicker{
+  border-color:rgba(255,159,67,.35);
+  color:rgba(255,159,67,.92);
+}
+
+html.igcal-offline .igcal-loading{
+  opacity:.92;
+}
+
+/* =========================================================
+   Responsive
+   ========================================================= */
+@media (max-width:979px){
+  .mk-cal-table-wrap{
+    overflow-x:auto;
+  }
+
+  .mk-cal__table,
+  .mk-cal-grid{
+    min-width:700px;
+    table-layout:auto;
+  }
+
+  html.igcal-standalone .igcal-app{
+    padding-left:10px;
+    padding-right:10px;
+  }
+
+  html.igcal-standalone .igcal-card__body{
+    padding:14px;
+  }
+
+  html.igcal-standalone .igcal-summary-box{
+    min-height:96px;
+  }
+
+  html.igcal-standalone .igcal-card--feature .igcal-summary-box{
+    min-height:128px;
+  }
+}
+
+@media (max-width:860px){
+  .igcal-app{
+    padding:14px 10px 30px;
+  }
+
+  .igcal-hero{
+    padding:14px;
+  }
+
+  .igcal-card__body{
+    padding:14px;
+  }
+
+  .igcal-year-control{
+    grid-template-columns:1fr;
+  }
+}
+
+@media (max-width:680px){
+  .igcal-day-nav,
+  .igcal-month-nav{
+    gap:8px;
+    padding:8px;
+  }
+
+  .igcal-badge-row{
+    gap:6px;
+  }
+
+  .igcal-mini-badge{
+    width:100%;
+    max-width:none;
+  }
+
+  .igcal-sharebar{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  .igcal-sharebar__btn{
+    width:100%;
+    justify-content:center;
+  }
+
+  .igcal-sharebar__status{
+    flex:auto;
+  }
+
+  .mk-cal-cell{
+    min-height:158px;
+  }
+
+  .mk-cal-cell__button{
+    min-height:158px;
+  }
+
+  .mk-cal-cell__inner{
+    min-height:158px;
+    padding:10px;
+    gap:8px;
+  }
+
+  .mk-cal-kv{
+    font-size:11.5px;
+    gap:5px;
+  }
+
+  .mk-moonbar{
+    height:5px;
+  }
+}
+
+@media (max-width:640px){
+  .igcal-card[data-ig-viewed-year="1"] .mk-view-actions,
+  .igcal-card[data-ig-viewed-year="1"] .mk-view-nav,
+  .igcal-card[data-ig-year-range="1"] .mk-view-actions{
+    gap:8px;
+  }
+
+  .igcal-card[data-ig-viewed-year="1"] .mk-mini-btn,
+  .igcal-card[data-ig-year-range="1"] .mk-mini-btn{
+    flex:1 1 calc(50% - 8px);
+    justify-content:center;
+    text-align:center;
+    padding:10px 12px;
+  }
+}
+
+@media (max-width:520px){
+  .igcal-app{
+    padding:10px 8px 22px;
+  }
+
+  .igcal-hero{
+    padding:12px;
+    margin:10px 0;
+  }
+
+  .igcal-hero__title{
+    font-size:22px;
+  }
+
+  .igcal-card__body{
+    padding:12px;
+  }
+
+  .igcal-controls__row{
+    gap:8px;
+  }
+
+  .igcal-btn{
+    width:100%;
+    justify-content:center;
+    padding:10px 12px;
+    font-size:14px;
+    border-radius:10px;
+  }
+
+  .igcal-select{
+    font-size:13px;
+    border-radius:10px;
+    padding:9px 42px 9px 10px;
+  }
+
+  .mk-cal-month{
+    padding:10px;
+  }
+
+  .mk-cal-month__title{
+    font-size:16px;
+  }
+
+  .mk-cal-month__meta{
+    font-size:11px;
+  }
+
+  .mk-cal__table,
+  .mk-cal-grid{
+    min-width:620px;
+  }
+}
+
+@media print{
+  .igcal-card[data-ig-viewed-year="1"] .mk-view-actions,
+  .igcal-card[data-ig-viewed-year="1"] .mk-view-nav,
+  .igcal-card[data-ig-year-range="1"] .mk-view-actions{
+    display:none !important;
+  }
+}
+
+/* =========================================================
+   Reduced motion
+   ========================================================= */
+@media (prefers-reduced-motion: reduce){
+  *,
+  *::before,
+  *::after{
+    animation:none !important;
+    transition:none !important;
+    scroll-behavior:auto !important;
+  }
+}
+
+/* =========================================================
+   FINAL GLOBAL BUTTON NORMALIZATION
+   ========================================================= */
+
+.igbo-calendar-app button,
+.igbo-calendar-app input[type="button"],
+.igbo-calendar-app input[type="submit"],
+.igbo-calendar-app input[type="reset"],
+.igbo-calendar-app .igcal-btn,
+.igbo-calendar-app .mk-mini-btn,
+.igbo-calendar-app .igcal-sharebar__btn,
+.igbo-calendar-app .igcal-hero__links a,
+.igbo-calendar-app .igcal-controls__row > button,
+.igbo-calendar-app .mk-view-actions > button,
+.igbo-calendar-app .mk-view-nav > button,
+.igbo-calendar-app #igcal-mount button,
+.igbo-calendar-app #igcal-mount [role="button"]{
+  appearance:none !important;
+  -webkit-appearance:none !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:8px !important;
+  min-height:42px !important;
+  padding:10px 14px !important;
+  border:1px solid var(--igcal-border) !important;
+  border-radius:12px !important;
+  background:var(--igcal-surface) !important;
+  color:var(--igcal-text) !important;
+  font:inherit !important;
+  font-size:14px !important;
+  font-weight:600 !important;
+  line-height:1.2 !important;
+  letter-spacing:.01em !important;
+  text-decoration:none !important;
+  cursor:pointer !important;
+  box-shadow:var(--igcal-shadow-sm) !important;
+  transition:
+    transform .16s ease,
+    background-color .16s ease,
+    border-color .16s ease,
+    box-shadow .16s ease,
+    color .16s ease !important;
+}
+
+.igbo-calendar-app button:hover,
+.igbo-calendar-app input[type="button"]:hover,
+.igbo-calendar-app input[type="submit"]:hover,
+.igbo-calendar-app input[type="reset"]:hover,
+.igbo-calendar-app .igcal-btn:hover,
+.igbo-calendar-app .mk-mini-btn:hover,
+.igbo-calendar-app .igcal-sharebar__btn:hover,
+.igbo-calendar-app .igcal-hero__links a:hover,
+.igbo-calendar-app .igcal-controls__row > button:hover,
+.igbo-calendar-app .mk-view-actions > button:hover,
+.igbo-calendar-app .mk-view-nav > button:hover,
+.igbo-calendar-app #igcal-mount button:hover,
+.igbo-calendar-app #igcal-mount [role="button"]:hover{
+  transform:translateY(-1px) !important;
+  background:var(--igcal-surface-2) !important;
+  border-color:var(--igcal-accent) !important;
+}
+
+.igbo-calendar-app button:active,
+.igbo-calendar-app input[type="button"]:active,
+.igbo-calendar-app input[type="submit"]:active,
+.igbo-calendar-app input[type="reset"]:active,
+.igbo-calendar-app .igcal-btn:active,
+.igbo-calendar-app .mk-mini-btn:active,
+.igbo-calendar-app .igcal-sharebar__btn:active,
+.igbo-calendar-app .igcal-hero__links a:active,
+.igbo-calendar-app .igcal-controls__row > button:active,
+.igbo-calendar-app .mk-view-actions > button:active,
+.igbo-calendar-app .mk-view-nav > button:active,
+.igbo-calendar-app #igcal-mount button:active,
+.igbo-calendar-app #igcal-mount [role="button"]:active{
+  transform:translateY(0) !important;
+}
+
+.igbo-calendar-app button:focus-visible,
+.igbo-calendar-app input[type="button"]:focus-visible,
+.igbo-calendar-app input[type="submit"]:focus-visible,
+.igbo-calendar-app input[type="reset"]:focus-visible,
+.igbo-calendar-app .igcal-btn:focus-visible,
+.igbo-calendar-app .mk-mini-btn:focus-visible,
+.igbo-calendar-app .igcal-sharebar__btn:focus-visible,
+.igbo-calendar-app .igcal-hero__links a:focus-visible,
+.igbo-calendar-app .igcal-controls__row > button:focus-visible,
+.igbo-calendar-app .mk-view-actions > button:focus-visible,
+.igbo-calendar-app .mk-view-nav > button:focus-visible,
+.igbo-calendar-app #igcal-mount button:focus-visible,
+.igbo-calendar-app #igcal-mount [role="button"]:focus-visible{
+  outline:2px solid transparent !important;
+  box-shadow:0 0 0 3px var(--igcal-accent-ring), var(--igcal-shadow-sm) !important;
+}
+
+.igbo-calendar-app .igcal-btn--primary,
+.igbo-calendar-app .is-primary,
+.igbo-calendar-app #igcal-today-day,
+.igbo-calendar-app #igcal-this-month,
+.igbo-calendar-app #igcal-apply-year,
+.igbo-calendar-app #igcal-year-current{
+  background:linear-gradient(180deg, #fff5e6 0%, #f2e0bf 100%) !important;
+  border-color:rgba(187,138,72,.45) !important;
+  color:var(--igcal-text) !important;
+  font-weight:700 !important;
+}
+
+.igbo-calendar-app .igcal-controls__row,
+.igbo-calendar-app .mk-view-actions,
+.igbo-calendar-app .mk-view-nav,
+.igbo-calendar-app .igcal-sharebar,
+.igbo-calendar-app .igcal-hero__links{
+  display:flex !important;
+  flex-wrap:wrap !important;
+  gap:10px !important;
+  align-items:center !important;
+}
+
+@media (max-width:680px){
+  .igbo-calendar-app button,
+  .igbo-calendar-app input[type="button"],
+  .igbo-calendar-app input[type="submit"],
+  .igbo-calendar-app input[type="reset"],
+  .igbo-calendar-app .igcal-btn,
+  .igbo-calendar-app .mk-mini-btn,
+  .igbo-calendar-app .igcal-sharebar__btn,
+  .igbo-calendar-app .igcal-hero__links a,
+  .igbo-calendar-app .igcal-controls__row > button,
+  .igbo-calendar-app .mk-view-actions > button,
+  .igbo-calendar-app .mk-view-nav > button,
+  .igbo-calendar-app #igcal-mount button,
+  .igbo-calendar-app #igcal-mount [role="button"]{
+    width:100% !important;
+  }
+}
+
+@media (prefers-color-scheme: dark){
+  .igbo-calendar-app button,
+  .igbo-calendar-app input[type="button"],
+  .igbo-calendar-app input[type="submit"],
+  .igbo-calendar-app input[type="reset"],
+  .igbo-calendar-app .igcal-btn,
+  .igbo-calendar-app .mk-mini-btn,
+  .igbo-calendar-app .igcal-sharebar__btn,
+  .igbo-calendar-app .igcal-hero__links a,
+  .igbo-calendar-app .igcal-controls__row > button,
+  .igbo-calendar-app .mk-view-actions > button,
+  .igbo-calendar-app .mk-view-nav > button,
+  .igbo-calendar-app #igcal-mount button,
+  .igbo-calendar-app #igcal-mount [role="button"]{
+    background:linear-gradient(180deg, rgba(255,248,240,.09), rgba(255,248,240,.05)) !important;
+  }
+
+  .igbo-calendar-app .igcal-btn--primary,
+  .igbo-calendar-app .is-primary,
+  .igbo-calendar-app #igcal-today-day,
+  .igbo-calendar-app #igcal-this-month,
+  .igbo-calendar-app #igcal-apply-year,
+  .igbo-calendar-app #igcal-year-current{
+    background:linear-gradient(180deg, rgba(255,245,230,.16), rgba(242,224,191,.08)) !important;
+  }
+}

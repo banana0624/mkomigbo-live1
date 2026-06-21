@@ -1,82 +1,19 @@
 <?php
 declare(strict_types=1);
-
-return [
-  'title' => 'People',
-  'body_html' => <<<HTML
-<div class="mk-prose">
-
-  <p class="mk-muted" style="margin-top:0;">
-    The practical structure of the Igbo language—grammar, usage, numerals, and vocabulary—
-    has been shaped by teachers, grammarians, lexicographers, writers, and language scholars.
-    These individuals define how the language is taught, analyzed, and used in everyday life.
-  </p>
-
-  <div style="display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 14px;">
-    <a class="mk-btn mk-btn--ghost" href="/subjects/language2/intro/">Introduction</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/language2/overview/">Overview</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/language2/topics/">Key Topics</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/language2/sources/">Sources</a>
-  </div>
-
-  <h2>Grammarians and language analysts</h2>
-  <p>
-    Grammarians study how Igbo works: tone, sentence structure, verbs, and word classes.
-    Their analyses help define how the language is described, taught, and understood formally.
-  </p>
-
-  <h2>Lexicographers and dictionary makers</h2>
-  <p>
-    Lexicographers compile dictionaries and lexical databases.
-    Their work determines spelling conventions, meaning distinctions, synonyms,
-    and the expansion of vocabulary for modern use.
-  </p>
-
-  <h2>Teachers and curriculum developers</h2>
-  <p>
-    Educators play a central role in how Igbo grammar is learned.
-    School curricula, textbooks, and examination systems determine which forms of the language
-    become standard in practice.
-  </p>
-
-  <h2>Authors and everyday language users</h2>
-  <p>
-    Writers, journalists, and speakers contribute to the living grammar of Igbo.
-    Through use in literature, media, and conversation, they shape how structures are normalized
-    and understood in real contexts.
-  </p>
-
-  <h2>Translators and interpreters</h2>
-  <p>
-    Translators help connect Igbo with other languages.
-    Their work reveals how grammar, tone, and meaning shift across languages,
-    and helps refine usage and vocabulary.
-  </p>
-
-  <h2>Numeracy and counting traditions</h2>
-  <p>
-    Knowledge of number systems is often preserved and transmitted through teaching,
-    trade, and everyday practice. Market users, traders, and educators play a role
-    in maintaining and adapting counting systems.
-  </p>
-
-  <h2>Why people matter in this subject</h2>
-  <ul>
-    <li><strong>Grammarians</strong> define structure.</li>
-    <li><strong>Lexicographers</strong> define vocabulary.</li>
-    <li><strong>Teachers</strong> spread correct usage.</li>
-    <li><strong>Writers</strong> normalize real-world language.</li>
-    <li><strong>Translators</strong> test meaning across systems.</li>
-  </ul>
-
-  <h2>How this page should grow</h2>
-  <p>
-    This page should expand into named profiles of grammar scholars,
-    dictionary authors, educators, and language reformers.
-    Each entry should explain their contribution to grammar description,
-    teaching practice, or lexical development.
-  </p>
-
-</div>
-HTML,
-];
+echo '<div class="mk-prose">';
+echo '<p class="mk-muted" style="margin-top:0;">Teachers, linguists, and advocates of Igbo language learning.</p>';
+echo '<h2>F.C. Ogbalu — The Standardizer</h2>';
+echo '<p>The man most responsible for the standard written form of Igbo. His dictionaries, grammar books, and proverb collections created the foundation on which Igbo language education is built. His work at the Society for Promoting Igbo Language and Culture (SPILC) drove the Önwu orthography process.</p>';
+echo '<h2>Kay Williamson (1935–2005)</h2>';
+echo '<p>British linguist who spent decades at the University of Port Harcourt studying Niger-Delta and Igbo languages. Her Igbo dictionary and tonal studies remain essential reference works. She contributed more to the scientific understanding of Igbo than almost any other scholar.</p>';
+echo '<h2>Emenanjo E.N.</h2>';
+echo '<p>Major Igbo linguist and educator. His work on Igbo syntax, auxiliaries, and language teaching has been foundational in Nigerian schools. Author of key educational grammars used in Igbo language teaching.</p>';
+echo '<h2>Contemporary Language Teachers</h2>';
+echo '<p>A new generation of Igbo language teachers operates primarily online — through YouTube channels, Instagram, TikTok, and dedicated apps. These educators reach diaspora learners who have no access to formal Igbo instruction. Their work represents the front line of Igbo language revitalization.</p>';
+echo '<h2>University of Nigeria Nsukka — Igbo Department</h2>';
+echo '<p>The institutional home of Igbo language scholarship in Nigeria. The department produces grammars, dictionaries, readers, and learning materials. Its graduates staff Igbo language programs across Nigerian secondary schools and universities.</p>';
+echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 4px;">';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/language2/intro/">Introduction</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/language2/overview/">Grammar</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/language2/topics/">Daily Usage</a>';
+echo '</div></div>';

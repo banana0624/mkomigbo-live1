@@ -1,0 +1,934 @@
+{
+    "id": "ijaw",
+    "name": "Ijaw",
+    "full_name": "Ijaw Calendar",
+    "language": "Izon \/ English",
+    "region": "Niger Delta",
+    "area": "Rivers \/ Bayelsa \/ Delta States",
+    "color": "#0a3a4a",
+    "initial": "IJ",
+    "calendar_type": "4-day traditional",
+    "market_cycle": 4,
+    "market_days": [
+        "Ari",
+        "Beni",
+        "Tibi",
+        "Oki"
+    ],
+    "market_symbols": {
+        "Ari": {
+            "element": "Water",
+            "symbol": "💧",
+            "color": "#2060d0",
+            "meaning": "Water day. Creek fishing. Owu spirit ceremonies."
+        },
+        "Beni": {
+            "element": "Earth",
+            "symbol": "🌍",
+            "color": "#406020",
+            "meaning": "Land day. Farm work. Community assembly."
+        },
+        "Tibi": {
+            "element": "Fire",
+            "symbol": "🔥",
+            "color": "#c04020",
+            "meaning": "Fire day. Smoking fish. Trading and craft day."
+        },
+        "Oki": {
+            "element": "Spirit",
+            "symbol": "⭐",
+            "color": "#c0a020",
+            "meaning": "Spirit day. Ekine masquerade. Sacred water rites."
+        }
+    },
+    "months": [
+        {
+            "n": 1,
+            "name": "Tori-ari",
+            "greg": "Jan",
+            "note": "Dry season \/ Atlantic fishing peak"
+        },
+        {
+            "n": 2,
+            "name": "Tori-beni",
+            "greg": "Feb",
+            "note": "Late dry \/ Owu festival season"
+        },
+        {
+            "n": 3,
+            "name": "Tori-tibi",
+            "greg": "Mar",
+            "note": "Pre-rains \/ Farm preparation"
+        },
+        {
+            "n": 4,
+            "name": "Tori-oki",
+            "greg": "Apr",
+            "note": "First rains \/ Planting"
+        },
+        {
+            "n": 5,
+            "name": "Piri-ari",
+            "greg": "May",
+            "note": "Peak rains \/ Farming"
+        },
+        {
+            "n": 6,
+            "name": "Piri-beni",
+            "greg": "Jun",
+            "note": "Heavy rains \/ Flood season"
+        },
+        {
+            "n": 7,
+            "name": "Piri-tibi",
+            "greg": "Jul",
+            "note": "Peak flood \/ Creek fishing"
+        },
+        {
+            "n": 8,
+            "name": "Piri-oki",
+            "greg": "Aug",
+            "note": "August break \/ Festival season"
+        },
+        {
+            "n": 9,
+            "name": "Kuro-ari",
+            "greg": "Sep",
+            "note": "Second rains \/ Harvest begins"
+        },
+        {
+            "n": 10,
+            "name": "Kuro-beni",
+            "greg": "Oct",
+            "note": "Harvest \/ Creek fishing"
+        },
+        {
+            "n": 11,
+            "name": "Kuro-tibi",
+            "greg": "Nov",
+            "note": "Dry season onset \/ Trading"
+        },
+        {
+            "n": 12,
+            "name": "Kuro-oki",
+            "greg": "Dec",
+            "note": "Harmattan \/ Year-end \/ Owu season"
+        }
+    ],
+    "farming": [
+        {
+            "month": 1,
+            "activity": "Dry season. Clear upland farm plots. Plant cassava and cocoyam near creeks. Tend plantain.",
+            "crops": [
+                "Cassava",
+                "Cocoyam",
+                "Plantain"
+            ],
+            "icon": "🌱"
+        },
+        {
+            "month": 2,
+            "activity": "Late dry. Plant yam mounds where available. Tend palm plantations. Buy seedlings.",
+            "crops": [
+                "Yam",
+                "Palm",
+                "Cassava"
+            ],
+            "icon": "🌿"
+        },
+        {
+            "month": 3,
+            "activity": "Pre-rain land clearing. Burn residues. Prepare creek-bank farms. Buy cassava cuttings.",
+            "crops": [
+                "Cassava",
+                "Cocoyam"
+            ],
+            "icon": "⚒️"
+        },
+        {
+            "month": 4,
+            "activity": "First rains. Plant cassava, plantain, yam on upland. Monitor creek flooding.",
+            "crops": [
+                "Cassava",
+                "Plantain",
+                "Yam"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 5,
+            "activity": "Peak rains. Weed farms. Tend cassava. Plant cocoyam. Watch creek flood levels.",
+            "crops": [
+                "Cassava",
+                "Cocoyam"
+            ],
+            "icon": "🌿"
+        },
+        {
+            "month": 6,
+            "activity": "Heavy rains. Farm maintenance. Creek-bank farms flood. Focus on upland crops.",
+            "crops": [
+                "Cassava (upland)",
+                "Plantain"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 7,
+            "activity": "Peak flood. Most farms inaccessible. Harvest what is reachable. Focus on fishing.",
+            "crops": [
+                "Plantain (harvest)",
+                "Cocoyam"
+            ],
+            "icon": "🌊"
+        },
+        {
+            "month": 8,
+            "activity": "August break. Good farming window. Harvest early cassava. Plant second-season crops.",
+            "crops": [
+                "Cassava (harvest)",
+                "Vegetables"
+            ],
+            "icon": "☀️"
+        },
+        {
+            "month": 9,
+            "activity": "Second rains. Late cassava tending. Harvest plantain. Palm fruit harvesting begins.",
+            "crops": [
+                "Plantain",
+                "Palm fruit"
+            ],
+            "icon": "🌦"
+        },
+        {
+            "month": 10,
+            "activity": "Harvest season. Main cassava harvest. Palm oil pressing begins. Sell surplus.",
+            "crops": [
+                "Cassava",
+                "Palm oil"
+            ],
+            "icon": "🏺"
+        },
+        {
+            "month": 11,
+            "activity": "Dry season returns. Palm harvest continues. Tap palm wine. Clear next season plots.",
+            "crops": [
+                "Palm oil",
+                "Palm wine"
+            ],
+            "icon": "🌴"
+        },
+        {
+            "month": 12,
+            "activity": "Harmattan. Dry farming. Harvest perennials. Palm oil processing and trading peak.",
+            "crops": [
+                "Palm",
+                "Vegetables"
+            ],
+            "icon": "🌬"
+        }
+    ],
+    "fishing": [
+        {
+            "month": 1,
+            "activity": "Peak fishing season. Atlantic coast, creeks and rivers excellent. Perch, bonga and catfish.",
+            "fish": [
+                "Perch",
+                "Bonga",
+                "Catfish",
+                "Barracuda"
+            ],
+            "conditions": "Excellent",
+            "icon": "🎣"
+        },
+        {
+            "month": 2,
+            "activity": "Excellent fishing. Low water concentrates fish. Community net fishing in creeks.",
+            "fish": [
+                "Catfish",
+                "Tilapia",
+                "Perch"
+            ],
+            "conditions": "Excellent",
+            "icon": "🎣"
+        },
+        {
+            "month": 3,
+            "activity": "Pre-rain. Fish feeding heavily. Bonga season on Atlantic coast. Crayfish season.",
+            "fish": [
+                "Bonga",
+                "Crayfish",
+                "Perch"
+            ],
+            "conditions": "Very Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 4,
+            "activity": "First rains. Fish spawning in creeks. Reduce fishing near spawning areas.",
+            "fish": [
+                "Mixed",
+                "Bonga"
+            ],
+            "conditions": "Good",
+            "icon": "🌊"
+        },
+        {
+            "month": 5,
+            "activity": "Rains. Fish in mangroves and creeks. Crab and shrimp season begins.",
+            "fish": [
+                "Crab",
+                "Shrimp",
+                "Mangrove fish"
+            ],
+            "conditions": "Good",
+            "icon": "🦀"
+        },
+        {
+            "month": 6,
+            "activity": "Heavy rains. Fishing continues. Oyster and periwinkle season peak.",
+            "fish": [
+                "Oyster",
+                "Periwinkle",
+                "Shrimp"
+            ],
+            "conditions": "Moderate",
+            "icon": "🦪"
+        },
+        {
+            "month": 7,
+            "activity": "Peak flood. Canoe fishing in flooded areas. Fish trap fishing in creek channels.",
+            "fish": [
+                "Catfish",
+                "Mixed creek fish"
+            ],
+            "conditions": "Good",
+            "icon": "🚣"
+        },
+        {
+            "month": 8,
+            "activity": "August break. Best Atlantic coast fishing. Barracuda and perch season. Crayfish peak.",
+            "fish": [
+                "Barracuda",
+                "Perch",
+                "Crayfish"
+            ],
+            "conditions": "Excellent",
+            "icon": "🎣"
+        },
+        {
+            "month": 9,
+            "activity": "Second rains. Good creek and Atlantic fishing. Smoke and preserve large catches.",
+            "fish": [
+                "Mixed",
+                "Catfish"
+            ],
+            "conditions": "Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 10,
+            "activity": "Rivers falling. Fish concentrated in channels. Excellent trap and net fishing.",
+            "fish": [
+                "Catfish",
+                "Tilapia",
+                "Perch"
+            ],
+            "conditions": "Very Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 11,
+            "activity": "Dry season. Excellent creek and coastal fishing. Crayfish and periwinkle market peak.",
+            "fish": [
+                "Crayfish",
+                "Periwinkle",
+                "Mixed"
+            ],
+            "conditions": "Very Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 12,
+            "activity": "Harmattan. Rivers low. Concentrated fish in pools. Year-end communal fishing.",
+            "fish": [
+                "Catfish",
+                "Perch",
+                "Bonga"
+            ],
+            "conditions": "Excellent",
+            "icon": "🎣"
+        }
+    ],
+    "trading": [
+        {
+            "month": 1,
+            "activity": "Dry season peak trading. Fish, crayfish and periwinkle markets very active. Warri and Port Harcourt markets.",
+            "goods": [
+                "Smoked fish",
+                "Crayfish",
+                "Periwinkle",
+                "Palm oil"
+            ],
+            "icon": "🛒"
+        },
+        {
+            "month": 2,
+            "activity": "Active trading. Export dried fish and crayfish. Owu festival market surge.",
+            "goods": [
+                "Dried fish",
+                "Crayfish",
+                "Crafts"
+            ],
+            "icon": "🐟"
+        },
+        {
+            "month": 3,
+            "activity": "Farm input trading. Buy cassava cuttings, fishing gear, nets. Pre-season markets.",
+            "goods": [
+                "Farm inputs",
+                "Nets",
+                "Fishing gear"
+            ],
+            "icon": "⚒️"
+        },
+        {
+            "month": 4,
+            "activity": "Reduced trading. Planting season. Local creek markets for essentials.",
+            "goods": [
+                "Food",
+                "Fishing supplies"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 5,
+            "activity": "Quiet trading. Farming focus. Mangrove crab and shrimp traded locally.",
+            "goods": [
+                "Crab",
+                "Shrimp",
+                "Local food"
+            ],
+            "icon": "🦀"
+        },
+        {
+            "month": 6,
+            "activity": "Moderate trading. Rain limits movement. Periwinkle and oyster trading active.",
+            "goods": [
+                "Periwinkle",
+                "Oyster",
+                "Local food"
+            ],
+            "icon": "🦪"
+        },
+        {
+            "month": 7,
+            "activity": "Flood season. Canoe trading only. Creek markets active. Fish and food trading.",
+            "goods": [
+                "Fish",
+                "Food",
+                "Canoe goods"
+            ],
+            "icon": "🚣"
+        },
+        {
+            "month": 8,
+            "activity": "August break. Good transport. Crayfish and Atlantic fish trading surge.",
+            "goods": [
+                "Crayfish",
+                "Fish",
+                "Crafts"
+            ],
+            "icon": "📦"
+        },
+        {
+            "month": 9,
+            "activity": "Harvest trading begins. Cassava and palm oil markets opening. Fish trading.",
+            "goods": [
+                "Cassava",
+                "Palm oil",
+                "Fish"
+            ],
+            "icon": "🛒"
+        },
+        {
+            "month": 10,
+            "activity": "Peak harvest trading. Palm oil export. Periwinkle and crayfish market active.",
+            "goods": [
+                "Palm oil",
+                "Cassava",
+                "Crayfish"
+            ],
+            "icon": "📦"
+        },
+        {
+            "month": 11,
+            "activity": "Post-harvest. Craft production. Canoe building season. Long-distance trading.",
+            "goods": [
+                "Canoes",
+                "Crafts",
+                "Palm oil"
+            ],
+            "icon": "🚣"
+        },
+        {
+            "month": 12,
+            "activity": "Year-end markets. Christmas surge. Smoked fish and crayfish gift trading.",
+            "goods": [
+                "Smoked fish",
+                "Crayfish",
+                "Gifts"
+            ],
+            "icon": "🎁"
+        }
+    ],
+    "herding": [
+        {
+            "month": 1,
+            "conditions": "Dry",
+            "activity": "Few cattle in Niger Delta. Goats and pigs near homestead. Poultry farming important.",
+            "icon": "🐐"
+        },
+        {
+            "month": 2,
+            "conditions": "Dry",
+            "activity": "Livestock trading season. Sell surplus animals before rains.",
+            "icon": "🐐"
+        },
+        {
+            "month": 3,
+            "conditions": "Transitional",
+            "activity": "Buy young animals for fattening. Prepare pens for wet season.",
+            "icon": "🐷"
+        },
+        {
+            "month": 4,
+            "conditions": "Wet",
+            "activity": "Rains begin. Livestock to elevated ground. Prevent flooding losses.",
+            "icon": "🌧"
+        },
+        {
+            "month": 5,
+            "conditions": "Wet",
+            "activity": "Peak rains. House livestock. Feed dry fodder. Goats prone to foot rot.",
+            "icon": "🌿"
+        },
+        {
+            "month": 6,
+            "conditions": "Wet",
+            "activity": "Heavy rains. Keep livestock elevated. Monitor health in humid conditions.",
+            "icon": "🐐"
+        },
+        {
+            "month": 7,
+            "conditions": "Flood",
+            "activity": "Flood season. Move all livestock to highest ground. Emergency fodder.",
+            "icon": "🌊"
+        },
+        {
+            "month": 8,
+            "conditions": "Good",
+            "activity": "August break. Move livestock to graze fresh grass. Recovery period.",
+            "icon": "🌿"
+        },
+        {
+            "month": 9,
+            "conditions": "Wet",
+            "activity": "Second rains. Tick and parasite control. Monitor livestock health.",
+            "icon": "💧"
+        },
+        {
+            "month": 10,
+            "conditions": "Good",
+            "activity": "Harvest season. Livestock on crop residues. Good fattening period.",
+            "icon": "🌾"
+        },
+        {
+            "month": 11,
+            "conditions": "Good",
+            "activity": "Dry season returning. Good grazing. Livestock condition recovery.",
+            "icon": "🐐"
+        },
+        {
+            "month": 12,
+            "conditions": "Dry",
+            "activity": "Harmattan. Year-end livestock sales. Fatten for Christmas market.",
+            "icon": "🎉"
+        }
+    ],
+    "healing": [
+        {
+            "month": 1,
+            "activity": "Collect Niger Delta mangrove medicines. Water spirit healing herbs. Anti-rheumatic plants.",
+            "herbs": [
+                "Mangrove bark",
+                "Water herbs",
+                "Anti-rheumatic"
+            ],
+            "rituals": "Owu water spirit ceremony",
+            "icon": "🌿"
+        },
+        {
+            "month": 2,
+            "activity": "Ekine healing rites. Sacred creek plant medicines. Community health assembly.",
+            "herbs": [
+                "Creek herbs",
+                "Ekine medicines"
+            ],
+            "rituals": "Ekine society healing ceremony",
+            "icon": "🌙"
+        },
+        {
+            "month": 3,
+            "activity": "Pre-rain cleansing. Collect dry-season bark medicines. Mangrove plant harvest.",
+            "herbs": [
+                "Bark medicines",
+                "Mangrove plants"
+            ],
+            "rituals": "Creek and land purification",
+            "icon": "🌱"
+        },
+        {
+            "month": 4,
+            "activity": "Fresh herbs sprouting. Treat seasonal malaria. Anti-mosquito plant medicines.",
+            "herbs": [
+                "Anti-malaria",
+                "Fever herbs",
+                "Neem"
+            ],
+            "rituals": "Rain thanksgiving ceremony",
+            "icon": "🌧"
+        },
+        {
+            "month": 5,
+            "activity": "Peak herbs. Anti-malarial treatment. Mangrove medicines at peak potency.",
+            "herbs": [
+                "Mangrove herbs",
+                "Anti-malaria",
+                "Lemongrass"
+            ],
+            "rituals": "Fishing blessing ceremony",
+            "icon": "🌿"
+        },
+        {
+            "month": 6,
+            "activity": "Heavy rains. Treat waterborne diseases. Protect drinking water sources.",
+            "herbs": [
+                "Water purification",
+                "Anti-fungal",
+                "Bitter leaf"
+            ],
+            "rituals": "Water source protection",
+            "icon": "💧"
+        },
+        {
+            "month": 7,
+            "activity": "Flood medicines. Treat flood-related ailments. Skin and waterborne disease treatments.",
+            "herbs": [
+                "Skin herbs",
+                "Flood medicines"
+            ],
+            "rituals": "Flood protection ceremony",
+            "icon": "🌊"
+        },
+        {
+            "month": 8,
+            "activity": "August break. Dry herbs. Prepare medicine stores. Treat farming injuries.",
+            "herbs": [
+                "Stored medicines",
+                "Wound herbs"
+            ],
+            "rituals": "Pre-harvest community health rite",
+            "icon": "☀️"
+        },
+        {
+            "month": 9,
+            "activity": "Second rains. Treat waterborne diseases. Collect second-season medicines.",
+            "herbs": [
+                "Fresh herbs",
+                "Water purification"
+            ],
+            "rituals": "Harvest blessing",
+            "icon": "💧"
+        },
+        {
+            "month": 10,
+            "activity": "Harvest medicines. Recovery herbs. Treat end-of-season fatigue.",
+            "herbs": [
+                "Recovery herbs",
+                "Tonic plants"
+            ],
+            "rituals": "Harvest thanksgiving",
+            "icon": "🙏"
+        },
+        {
+            "month": 11,
+            "activity": "Dry season. Collect mangrove bark. Prepare respiratory and skin remedies.",
+            "herbs": [
+                "Mangrove bark",
+                "Chest herbs",
+                "Skin medicines"
+            ],
+            "rituals": "Ancestral health ceremony",
+            "icon": "🏺"
+        },
+        {
+            "month": 12,
+            "activity": "Year-end purification. Cleanse homestead and canoes. Owu spirit medicines.",
+            "herbs": [
+                "Purification herbs",
+                "Owu medicines"
+            ],
+            "rituals": "Year-end canoe and homestead blessing",
+            "icon": "🔥"
+        }
+    ],
+    "weather": [
+        {
+            "month": 1,
+            "season": "Dry Season",
+            "rains": "10-30mm",
+            "temp": "Hot 32°C",
+            "wind": "Harmattan NE",
+            "advisory": "Dry season. Atlantic sea breeze moderates harmattan on Niger Delta coast. Best fishing season.",
+            "icon": "☀️"
+        },
+        {
+            "month": 2,
+            "season": "Late Dry",
+            "rains": "20-50mm",
+            "temp": "Hot 33°C",
+            "wind": "NE easing",
+            "advisory": "Hottest period. High humidity. Pre-rain conditions building fast on Delta coast.",
+            "icon": "🌤"
+        },
+        {
+            "month": 3,
+            "season": "Pre-rains",
+            "rains": "60-110mm",
+            "temp": "Hot 31°C",
+            "wind": "SW monsoon begins",
+            "advisory": "First rains arrive. Thunderstorms. Humidity rising fast. Creeks beginning to swell.",
+            "icon": "🌦"
+        },
+        {
+            "month": 4,
+            "season": "Early Rains",
+            "rains": "140-200mm",
+            "temp": "Warm 29°C",
+            "wind": "SW monsoon",
+            "advisory": "Reliable rains. Good planting. Creeks rising. Monitor flood-prone areas.",
+            "icon": "🌧"
+        },
+        {
+            "month": 5,
+            "season": "Peak Rains",
+            "rains": "230-310mm",
+            "temp": "Warm humid 27°C",
+            "wind": "SW monsoon strong",
+            "advisory": "Very heavy rains. Niger Delta flooding begins. Canoe essential for transport.",
+            "icon": "⛈"
+        },
+        {
+            "month": 6,
+            "season": "Peak Rains",
+            "rains": "260-340mm",
+            "temp": "Warm humid 26°C",
+            "wind": "SW monsoon",
+            "advisory": "Heaviest rains. Major flooding of Niger Delta. Canoe only in many areas.",
+            "icon": "⛈"
+        },
+        {
+            "month": 7,
+            "season": "Peak Flood",
+            "rains": "220-290mm",
+            "temp": "Warm 27°C",
+            "wind": "SW monsoon",
+            "advisory": "Peak flooding. Many communities accessible by canoe only. Stay safe near water.",
+            "icon": "🌊"
+        },
+        {
+            "month": 8,
+            "season": "August Break",
+            "rains": "70-110mm",
+            "temp": "Warm 28°C",
+            "wind": "Mixed",
+            "advisory": "Brief dry spell. Excellent Atlantic and creek fishing. Good travel and trading window.",
+            "icon": "🌥"
+        },
+        {
+            "month": 9,
+            "season": "Second Rains",
+            "rains": "170-230mm",
+            "temp": "Warm 27°C",
+            "wind": "SW monsoon returns",
+            "advisory": "Second rainy season. Flood waters still high in Delta. Monitor creek levels.",
+            "icon": "🌦"
+        },
+        {
+            "month": 10,
+            "season": "Late Rains",
+            "rains": "110-170mm",
+            "temp": "Warm 28°C",
+            "wind": "Transitional",
+            "advisory": "Rains tapering. Flooding receding. Excellent creek fishing as waters fall.",
+            "icon": "🌤"
+        },
+        {
+            "month": 11,
+            "season": "Dry onset",
+            "rains": "30-60mm",
+            "temp": "Hot 30°C",
+            "wind": "NE beginning",
+            "advisory": "Dry season returning. Good travel. Niger Delta waterways very active with trading.",
+            "icon": "🌤"
+        },
+        {
+            "month": 12,
+            "season": "Harmattan",
+            "rains": "10-25mm",
+            "temp": "Hot 31°C",
+            "wind": "NE Harmattan",
+            "advisory": "Harmattan mild on Delta coast. Excellent fishing season. Good festive weather.",
+            "icon": "💨"
+        }
+    ],
+    "rulers": [
+        {
+            "month": 1,
+            "title": "Owu Water Festival",
+            "events": [
+                "Owu masquerade procession on water",
+                "Ekine society water rites",
+                "Community canoe festival",
+                "Water spirit thanksgiving"
+            ],
+            "rulers": "Amanyanabo (king) leads Owu ceremony",
+            "icon": "🌊"
+        },
+        {
+            "month": 2,
+            "title": "Ekine Society Rites",
+            "events": [
+                "Ekine masquerade ceremonies",
+                "Water spirit propitiation",
+                "Community assembly at waterfront",
+                "Canoe blessing"
+            ],
+            "rulers": "Ekine society head presides",
+            "icon": "🎭"
+        },
+        {
+            "month": 3,
+            "title": "Pre-Rain Blessing",
+            "events": [
+                "Creek and river blessing",
+                "Community farm and fishing blessing",
+                "Ancestral libations at waterfront"
+            ],
+            "rulers": "Amanyanabo blesses fishing and farming season",
+            "icon": "🌱"
+        },
+        {
+            "month": 4,
+            "title": "Fishing Season Opening",
+            "events": [
+                "Grand canoe launch ceremony",
+                "Fishing community assembly",
+                "Water spirit thanksgiving"
+            ],
+            "rulers": "Community elders bless all canoes",
+            "icon": "⛵"
+        },
+        {
+            "month": 5,
+            "title": "Rain Thanksgiving",
+            "events": [
+                "Rain ceremony",
+                "Community farming blessing",
+                "Water offering to Woyingi (God)"
+            ],
+            "rulers": "Amanyanabo leads rain thanksgiving",
+            "icon": "🌧"
+        },
+        {
+            "month": 6,
+            "title": "Flood Season Rites",
+            "events": [
+                "Flood protection ceremony",
+                "Canoe community assembly",
+                "Water safety prayers"
+            ],
+            "rulers": "Elders lead flood protection rites",
+            "icon": "🌊"
+        },
+        {
+            "month": 7,
+            "title": "Peak Flood Ceremony",
+            "events": [
+                "Water spirit appeasement",
+                "Community safety gathering",
+                "Canoe racing festival"
+            ],
+            "rulers": "Amanyanabo leads flood safety ceremony",
+            "icon": "🚣"
+        },
+        {
+            "month": 8,
+            "title": "Fishing Thanksgiving",
+            "events": [
+                "August break fishing festival",
+                "Community thanksgiving",
+                "Traditional canoe racing",
+                "Cultural display"
+            ],
+            "rulers": "Amanyanabo opens August fishing festival",
+            "icon": "🎊"
+        },
+        {
+            "month": 9,
+            "title": "Harvest Rites",
+            "events": [
+                "First fruits ceremony",
+                "Harvest thanksgiving at waterfront",
+                "Community assembly"
+            ],
+            "rulers": "Council of elders leads harvest rites",
+            "icon": "🌾"
+        },
+        {
+            "month": 10,
+            "title": "Ogele Festival",
+            "events": [
+                "Ogele ancestral festival",
+                "Community cultural display",
+                "Masquerade performances"
+            ],
+            "rulers": "Traditional council hosts Ogele",
+            "icon": "👑"
+        },
+        {
+            "month": 11,
+            "title": "Council Assembly",
+            "events": [
+                "Annual Amanyanabo court",
+                "Chiefs and elders convene",
+                "Community review and planning"
+            ],
+            "rulers": "Amanyanabo holds annual court",
+            "icon": "👑"
+        },
+        {
+            "month": 12,
+            "title": "Year-End Owu Season",
+            "events": [
+                "Owu masquerade season opens",
+                "Year-end water thanksgiving",
+                "Canoe and homestead blessing",
+                "New year preparation"
+            ],
+            "rulers": "Amanyanabo opens Owu masquerade season",
+            "icon": "🎊"
+        }
+    ]
+}

@@ -176,7 +176,7 @@ if (!function_exists('mk_subjects_not_found')) {
     if (!$header_ok) {
       header('Content-Type: text/html; charset=utf-8');
       echo "<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'>";
-      echo "<title>" . h($page_title) . "</title></head><body>";
+      echo "<title>" . h($page_title) . "</title><link rel='stylesheet' href='/assets/css/ui.css'><link rel='stylesheet' href='/assets/css/public.css'><link rel='stylesheet' href='/assets/css/subjects.css'><link rel='stylesheet' href='/assets/css/subjects-public.css'></head><body>"; echo '<header style="background:#fff;border-bottom:1px solid #e5e7eb;position:sticky;top:0;z-index:20;"><div style="max-width:1200px;margin:0 auto;padding:0 16px;display:flex;align-items:center;justify-content:space-between;min-height:60px;gap:14px;flex-wrap:wrap;"><a href="/" style="display:inline-flex;align-items:center;gap:9px;text-decoration:none;color:inherit;"><img src="/assets/images/logos/mk-logo.png" width="30" height="30" style="border-radius:8px;" alt="Mkomigbo"><strong style="font-size:1rem;">Mkomigbo</strong></a><nav style="display:flex;gap:4px;flex-wrap:wrap;"><a href="/subjects/" style="padding:7px 14px;border-radius:9px;text-decoration:none;font-weight:800;font-size:.9rem;color:#0d6efd;border:1px solid rgba(13,110,253,.30);background:rgba(13,110,253,.08);">Subjects</a><a href="/platforms/" style="padding:7px 14px;border-radius:9px;text-decoration:none;font-weight:700;font-size:.9rem;color:#374151;border:1px solid #e5e7eb;background:#fff;">Platforms</a><a href="/contributors/" style="padding:7px 14px;border-radius:9px;text-decoration:none;font-weight:700;font-size:.9rem;color:#374151;border:1px solid #e5e7eb;background:#fff;">Contributors</a><a href="/awag/" style="padding:7px 14px;border-radius:9px;text-decoration:none;font-weight:700;font-size:.9rem;color:#374151;border:1px solid #e5e7eb;background:#fff;">AWAG</a><a href="/igbo-calendar/" style="padding:7px 14px;border-radius:9px;text-decoration:none;font-weight:700;font-size:.9rem;color:#374151;border:1px solid #e5e7eb;background:#fff;">Calendar</a></nav></div></header>';
     }
 
     $back = mk_u('/subjects/');
@@ -568,7 +568,7 @@ if (function_exists('mk_require_shared')) {
 if (!$header_ok) {
   header('Content-Type: text/html; charset=utf-8');
   echo "<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'>";
-  echo "<title>" . h($GLOBALS['page_title']) . "</title></head><body>";
+  echo "<title>" . h($GLOBALS['page_title']) . "</title><link rel='stylesheet' href='/assets/css/ui.css'><link rel='stylesheet' href='/assets/css/public.css'><link rel='stylesheet' href='/assets/css/subjects.css'><link rel='stylesheet' href='/assets/css/subjects-public.css'></head><body>"; echo '<header style="background:#fff;border-bottom:1px solid #e5e7eb;position:sticky;top:0;z-index:20;"><div style="max-width:1200px;margin:0 auto;padding:0 16px;display:flex;align-items:center;justify-content:space-between;min-height:60px;gap:14px;flex-wrap:wrap;"><a href="/" style="display:inline-flex;align-items:center;gap:9px;text-decoration:none;color:inherit;"><img src="/assets/images/logos/mk-logo.png" width="30" height="30" style="border-radius:8px;" alt="Mkomigbo"><strong style="font-size:1rem;">Mkomigbo</strong></a><nav style="display:flex;gap:4px;flex-wrap:wrap;"><a href="/subjects/" style="padding:7px 14px;border-radius:9px;text-decoration:none;font-weight:800;font-size:.9rem;color:#0d6efd;border:1px solid rgba(13,110,253,.30);background:rgba(13,110,253,.08);">Subjects</a><a href="/platforms/" style="padding:7px 14px;border-radius:9px;text-decoration:none;font-weight:700;font-size:.9rem;color:#374151;border:1px solid #e5e7eb;background:#fff;">Platforms</a><a href="/contributors/" style="padding:7px 14px;border-radius:9px;text-decoration:none;font-weight:700;font-size:.9rem;color:#374151;border:1px solid #e5e7eb;background:#fff;">Contributors</a><a href="/awag/" style="padding:7px 14px;border-radius:9px;text-decoration:none;font-weight:700;font-size:.9rem;color:#374151;border:1px solid #e5e7eb;background:#fff;">AWAG</a><a href="/igbo-calendar/" style="padding:7px 14px;border-radius:9px;text-decoration:none;font-weight:700;font-size:.9rem;color:#374151;border:1px solid #e5e7eb;background:#fff;">Calendar</a></nav></div></header>';
 }
 
 /* URLs */
@@ -578,13 +578,13 @@ $subject_url  = mk_u('/subjects/' . rawurlencode($subject_slug) . '/');
 
 /* Subject icon (best-effort) */
 $icon = trim((string)($subject['icon_path'] ?? ''));
-if ($icon === '') $icon = '/lib/images/subjects/' . $subject_slug . '.svg';
+if ($icon === '') $icon = '/assets/images/subjects/' . $subject_slug . '.svg';
 $icon_url = mk_u($icon);
 
 $doc_root = rtrim((string)($_SERVER['DOCUMENT_ROOT'] ?? ''), '/');
 if ($doc_root !== '' && strpos($icon, '/') === 0) {
   $abs = $doc_root . $icon;
-  if (!is_file($abs)) $icon_url = mk_u('/lib/images/subjects/_subject.svg');
+  if (!is_file($abs)) $icon_url = mk_u('/assets/images/subjects/_subject.svg');
 }
 
 /* UI code switch */

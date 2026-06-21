@@ -1,88 +1,21 @@
 <?php
 declare(strict_types=1);
-
-return [
-  'title' => 'People',
-  'body_html' => <<<HTML
-<div class="mk-prose">
-
-  <p class="mk-muted" style="margin-top:0;">
-    The development of written Igbo has been shaped by linguists, educators,
-    translators, orthography committees, and modern script designers.
-    This page highlights the kinds of people and roles that have influenced
-    how Igbo is written, studied, and standardized.
-  </p>
-
-  <div style="display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 14px;">
-    <a class="mk-btn mk-btn--ghost" href="/subjects/language1/intro/">Introduction</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/language1/overview/">Overview</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/language1/topics/">Key Topics</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/language1/sources/">Sources</a>
-  </div>
-
-  <h2>Early translators and missionaries</h2>
-  <p>
-    Early written Igbo was strongly shaped by translators and missionaries,
-    especially through Bible translation and early educational materials.
-    Their work introduced the first systematic attempts to represent Igbo sounds
-    using the Latin alphabet.
-  </p>
-
-  <h2>Linguists and language scholars</h2>
-  <p>
-    Linguists have played a central role in analyzing Igbo phonology, tone,
-    grammar, and dialect variation. Their work supports dictionary building,
-    orthography design, and language teaching.
-  </p>
-
-  <h2>Orthography committees</h2>
-  <p>
-    Committees such as those associated with the development of the Ọnwụ orthography
-    helped standardize written Igbo. These groups made decisions about spelling,
-    alphabet structure, and sound representation that still influence modern usage.
-  </p>
-
-  <h2>Educators and curriculum developers</h2>
-  <p>
-    Teachers, curriculum designers, and examination bodies have shaped how Igbo is taught.
-    Their choices affect which forms of the language become widely accepted and learned.
-  </p>
-
-  <h2>Dictionary makers and lexicographers</h2>
-  <p>
-    Lexicographers compile dictionaries, standardize vocabulary, and document usage.
-    Their work is essential for literacy, translation, and language preservation.
-  </p>
-
-  <h2>Script designers and innovators</h2>
-  <p>
-    Modern contributors include designers of alternative writing systems such as Ńdébé.
-    These individuals attempt to address perceived limitations of the Latin-based orthography
-    by creating scripts more closely aligned with Igbo phonology and identity.
-  </p>
-
-  <h2>Writers and publishers</h2>
-  <p>
-    Authors, journalists, and publishers contribute to the living standard of the language.
-    Their writing practices influence spelling norms, tone marking habits, and public acceptance.
-  </p>
-
-  <h2>Why people matter in this subject</h2>
-  <ul>
-    <li><strong>Scholars</strong> define structure and analysis.</li>
-    <li><strong>Committees</strong> define standards.</li>
-    <li><strong>Teachers</strong> spread usage.</li>
-    <li><strong>Writers</strong> normalize practice.</li>
-    <li><strong>Innovators</strong> challenge and improve systems.</li>
-  </ul>
-
-  <h2>How this page should grow</h2>
-  <p>
-    This page should expand into named profiles of linguists, orthography reformers,
-    dictionary makers, and script designers. Each entry should explain their contribution,
-    influence, and the evidence supporting their role in the development of written Igbo.
-  </p>
-
-</div>
-HTML,
-];
+echo '<div class="mk-prose">';
+echo '<p class="mk-muted" style="margin-top:0;">Linguists, writers, and activists who shaped the Igbo language.</p>';
+echo '<h2>Onuora Nzekwu (1928–2020)</h2>';
+echo '<p>Novelist and early documenter of Igbo cultural and linguistic life. His novel <em>Wand of Noble Wood</em> (1961) is one of the first fictional works to document Igbo customs and language in detail for an international audience.</p>';
+echo '<h2>F.C. Ogbalu (1927–1980)</h2>';
+echo '<p>The most important figure in the standardization of written Igbo. Ogbalu chaired the committee that produced the Önwu orthography (1961) and wrote extensively on Igbo language, proverbs, and oral literature. His collection <em>Ilu Igbo</em> (Igbo Proverbs) remains the standard reference.</p>';
+echo '<h2>Chinua Achebe (1930–2013)</h2>';
+echo '<p>Though writing in English, Achebe\'s novels are saturated with Igbo linguistic structures, proverbs, and oral literature techniques. He demonstrated that English could carry Igbo thought, rhythm, and worldview — a linguistic achievement as much as a literary one. His essay "The African Writer and the English Language" (1964) is the essential text on this question.</p>';
+echo '<h2>Nkem Nwankwo (1936–2001)</h2>';
+echo '<p>Novelist and linguist who documented Igbo language and culture. Author of <em>Danda</em> (1964) — one of the earliest novels to capture the oral rhythm of Igbo speech in written form.</p>';
+echo '<h2>Kamalu Uchenna (contemporary)</h2>';
+echo '<p>Creator of Ndebe — the indigenous Igbo script developed in 2009. Ndebe represents the most ambitious modern attempt to give the Igbo language a writing system that does not derive from the Roman alphabet. Its adoption remains a work in progress but it has generated significant interest among language revitalization communities.</p>';
+echo '<h2>University of Nigeria Nsukka — Igbo Studies Department</h2>';
+echo '<p>The institutional centre of Igbo linguistic scholarship. The UNN Igbo department has produced generations of linguists, literature scholars, and language educators. Its dictionary projects, oral literature archives, and language teaching programmes are the most important institutional resources for Igbo language study.</p>';
+echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 4px;">';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/language1/intro/">Introduction</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/language1/topics/">Topics</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/language1/sources/">Sources</a>';
+echo '</div></div>';

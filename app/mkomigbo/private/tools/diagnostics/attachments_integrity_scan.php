@@ -22,7 +22,7 @@ if (!defined('APP_ROOT') || !is_string(APP_ROOT) || APP_ROOT === '') {
   // If runner didn't define APP_ROOT, try to locate it relative to this file.
   $guess = realpath(__DIR__ . '/../../'); // .../private/tools -> .../private
   $guess = $guess ? realpath($guess . '/..') : false; // .../app/mkomigbo
-  if ($guess) define('APP_ROOT', $guess);
+  if ($guess) // // DISABLED_APP_ROOT (DISABLED_AUTO_FIX), $guess);
 }
 
 $appRoot = rtrim((string)APP_ROOT, "/\\");

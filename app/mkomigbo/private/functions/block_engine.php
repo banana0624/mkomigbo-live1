@@ -79,3 +79,18 @@ function mk_block_featured_subjects(array $data): void
   echo "</div>";
   echo "</section>";
 }
+/* COMPAT LAYER */
+function mk_render(string $view, array $data = []): void {
+    switch ($view) {
+        case 'header':
+            mk_render_block('header', $data);
+            break;
+
+        case 'footer':
+            mk_render_block('footer', $data);
+            break;
+
+        default:
+            mk_render_block($view, $data);
+    }
+}

@@ -1,0 +1,941 @@
+{
+    "id": "ibibio",
+    "name": "Ibibio",
+    "full_name": "Ibibio Calendar",
+    "language": "Ibibio \/ English",
+    "region": "Guinea Coast",
+    "area": "South Nigeria \/ Akwa Ibom",
+    "color": "#1a5a6b",
+    "initial": "IB",
+    "calendar_type": "8-day traditional",
+    "market_cycle": 8,
+    "market_days": [
+        "Etaha",
+        "Edeme Taha",
+        "Fiongeto",
+        "Ederi",
+        "Atim",
+        "Fiongaran",
+        "Edet",
+        "Etaha Nta"
+    ],
+    "market_symbols": {
+        "Etaha": {
+            "element": "Rest Day",
+            "symbol": "⭐",
+            "color": "#c0c0ff",
+            "meaning": "Sacred rest day. No farm work. Community gathering."
+        },
+        "Edeme Taha": {
+            "element": "After Rest",
+            "symbol": "🌅",
+            "color": "#ffd080",
+            "meaning": "Day after rest. Return to work. Community activities."
+        },
+        "Fiongeto": {
+            "element": "Work Day",
+            "symbol": "⚒️",
+            "color": "#c08040",
+            "meaning": "Full work day. Farming and fishing activities."
+        },
+        "Ederi": {
+            "element": "Market Day",
+            "symbol": "🛒",
+            "color": "#ffd040",
+            "meaning": "Market day. Trading and community exchange."
+        },
+        "Atim": {
+            "element": "Spirit Day",
+            "symbol": "🙏",
+            "color": "#50c850",
+            "meaning": "Spirit propitiation day. Ekpo society ceremonies."
+        },
+        "Fiongaran": {
+            "element": "Work Day",
+            "symbol": "🌿",
+            "color": "#308030",
+            "meaning": "Farm work day. Healing herb collection."
+        },
+        "Edet": {
+            "element": "Rest Day",
+            "symbol": "💤",
+            "color": "#8080c0",
+            "meaning": "Second rest day. Family and household duties."
+        },
+        "Etaha Nta": {
+            "element": "Small Rest",
+            "symbol": "🌙",
+            "color": "#a0a0e0",
+            "meaning": "Minor rest day. Preparation for new cycle."
+        }
+    },
+    "months": [
+        {
+            "n": 1,
+            "name": "Udua Abia",
+            "greg": "Jan",
+            "note": "Dry season"
+        },
+        {
+            "n": 2,
+            "name": "Udua Ekpe",
+            "greg": "Feb",
+            "note": "Late dry season"
+        },
+        {
+            "n": 3,
+            "name": "Udua Oran",
+            "greg": "Mar",
+            "note": "First rains approaching"
+        },
+        {
+            "n": 4,
+            "name": "Udua Ikpa",
+            "greg": "Apr",
+            "note": "First rains \/ Planting"
+        },
+        {
+            "n": 5,
+            "name": "Udua Itiaba",
+            "greg": "May",
+            "note": "Peak rains \/ Farming"
+        },
+        {
+            "n": 6,
+            "name": "Udua Etinan",
+            "greg": "Jun",
+            "note": "Heavy rains"
+        },
+        {
+            "n": 7,
+            "name": "Udua Inen",
+            "greg": "Jul",
+            "note": "Peak rains"
+        },
+        {
+            "n": 8,
+            "name": "Udua Ikpa Iso",
+            "greg": "Aug",
+            "note": "August break"
+        },
+        {
+            "n": 9,
+            "name": "Udua Ekpuk",
+            "greg": "Sep",
+            "note": "Second rains"
+        },
+        {
+            "n": 10,
+            "name": "Udua Oro",
+            "greg": "Oct",
+            "note": "Harvest season"
+        },
+        {
+            "n": 11,
+            "name": "Udua Ibom",
+            "greg": "Nov",
+            "note": "Dry season onset"
+        },
+        {
+            "n": 12,
+            "name": "Udua Obong",
+            "greg": "Dec",
+            "note": "Harmattan \/ Year end"
+        }
+    ],
+    "farming": [
+        {
+            "month": 1,
+            "activity": "Dry season. Clear farm plots. Burn residues. Plant dry-season vegetables near streams.",
+            "crops": [
+                "Vegetables",
+                "Tomato"
+            ],
+            "icon": "🌱"
+        },
+        {
+            "month": 2,
+            "activity": "Late dry season. Plant cassava cuttings in prepared mounds. Tend vegetable plots.",
+            "crops": [
+                "Cassava",
+                "Vegetables"
+            ],
+            "icon": "🌿"
+        },
+        {
+            "month": 3,
+            "activity": "Pre-rain preparation. Final land clearing. Prepare yam mounds. Buy seedlings.",
+            "crops": [
+                "Yam",
+                "Cassava"
+            ],
+            "icon": "⚒️"
+        },
+        {
+            "month": 4,
+            "activity": "First rains. Plant yam, cocoyam, and plantain. Intercrop with vegetables.",
+            "crops": [
+                "Yam",
+                "Cocoyam",
+                "Plantain"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 5,
+            "activity": "Peak rains. Heavy farming. Weed yam mounds. Plant cassava. Tend cocoyam.",
+            "crops": [
+                "Yam",
+                "Cassava",
+                "Cocoyam"
+            ],
+            "icon": "🌿"
+        },
+        {
+            "month": 6,
+            "activity": "Heavy rains. Farm maintenance. Plant second-season crops. Monitor drainage.",
+            "crops": [
+                "Plantain",
+                "Vegetables"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 7,
+            "activity": "Peak rains. Weed and stake yams. Plant late cassava. Harvest early cocoyam.",
+            "crops": [
+                "Cocoyam (harvest)",
+                "Yam"
+            ],
+            "icon": "🎋"
+        },
+        {
+            "month": 8,
+            "activity": "August break. Harvest early yam. Dry and store. Plant second-season maize.",
+            "crops": [
+                "Yam (early harvest)",
+                "Maize"
+            ],
+            "icon": "☀️"
+        },
+        {
+            "month": 9,
+            "activity": "Second rains. Late yam tending. Harvest plantain. Plant late-season vegetables.",
+            "crops": [
+                "Plantain (harvest)",
+                "Yam"
+            ],
+            "icon": "🌦"
+        },
+        {
+            "month": 10,
+            "activity": "Main harvest season. Yam and cassava harvest. Store surplus. Palm harvest begins.",
+            "crops": [
+                "Yam",
+                "Cassava",
+                "Palm"
+            ],
+            "icon": "🏺"
+        },
+        {
+            "month": 11,
+            "activity": "Dry season begins. Harvest remaining cassava. Palm oil processing. Clear new land.",
+            "crops": [
+                "Cassava",
+                "Palm oil"
+            ],
+            "icon": "🌴"
+        },
+        {
+            "month": 12,
+            "activity": "Harmattan. Dry season farming. Harvest perennial crops. Process palm produce.",
+            "crops": [
+                "Palm",
+                "Vegetables"
+            ],
+            "icon": "🌬"
+        }
+    ],
+    "fishing": [
+        {
+            "month": 1,
+            "activity": "Rivers and creeks low. Excellent trap fishing in Cross River and coastal creeks.",
+            "fish": [
+                "Catfish",
+                "Tilapia",
+                "Perch"
+            ],
+            "conditions": "Excellent",
+            "icon": "🎣"
+        },
+        {
+            "month": 2,
+            "activity": "Dry season peak. Best artisanal fishing season. Atlantic coast canoe fishing active.",
+            "fish": [
+                "Sea fish",
+                "Catfish"
+            ],
+            "conditions": "Very Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 3,
+            "activity": "Pre-rain. Fish feeding actively. Atlantic bonga season. Coastal net fishing peaks.",
+            "fish": [
+                "Bonga",
+                "Catfish"
+            ],
+            "conditions": "Very Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 4,
+            "activity": "First rains. Fish spawning. Reduce near spawning grounds. Coastal fishing excellent.",
+            "fish": [
+                "Mixed",
+                "Bonga"
+            ],
+            "conditions": "Good",
+            "icon": "🌊"
+        },
+        {
+            "month": 5,
+            "activity": "Flood season. Fish in creeks and mangroves. Community net fishing in estuaries.",
+            "fish": [
+                "Mangrove fish",
+                "Tilapia"
+            ],
+            "conditions": "Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 6,
+            "activity": "Heavy rains. Coastal Atlantic fishing excellent despite rains. Inland creeks flooding.",
+            "fish": [
+                "Sea fish",
+                "Mixed"
+            ],
+            "conditions": "Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 7,
+            "activity": "Peak rains. Creeks very high. Estuary and coastal fishing. Oyster and crab season.",
+            "fish": [
+                "Crab",
+                "Oyster",
+                "Sea fish"
+            ],
+            "conditions": "Moderate",
+            "icon": "🦀"
+        },
+        {
+            "month": 8,
+            "activity": "August break. Calm seas. Excellent deep-sea and coastal fishing. Best perch season.",
+            "fish": [
+                "Sea perch",
+                "Catfish",
+                "Bonga"
+            ],
+            "conditions": "Excellent",
+            "icon": "🎣"
+        },
+        {
+            "month": 9,
+            "activity": "Second rains. Good coastal fishing continues. Rivers productive with cast nets.",
+            "fish": [
+                "Tilapia",
+                "Catfish"
+            ],
+            "conditions": "Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 10,
+            "activity": "Harvest season. Rivers falling. Concentrated fishing in channels. Smoke and store.",
+            "fish": [
+                "Catfish",
+                "Tilapia"
+            ],
+            "conditions": "Very Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 11,
+            "activity": "Dry season returning. Rivers clear. Excellent visibility. Trap and line fishing.",
+            "fish": [
+                "Mixed"
+            ],
+            "conditions": "Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 12,
+            "activity": "Harmattan. Rivers low. Concentrated fish in pools. Year-end communal fishing.",
+            "fish": [
+                "Catfish",
+                "Tilapia"
+            ],
+            "conditions": "Very Good",
+            "icon": "🤝"
+        }
+    ],
+    "trading": [
+        {
+            "month": 1,
+            "activity": "Dry season markets. 8-day Ibibio market cycle active. Palm oil and seafood trading.",
+            "goods": [
+                "Palm oil",
+                "Seafood",
+                "Crafts"
+            ],
+            "icon": "🛒"
+        },
+        {
+            "month": 2,
+            "activity": "Active trading. Dry-season produce markets. Pottery and basket weaving sales.",
+            "goods": [
+                "Pottery",
+                "Baskets",
+                "Produce"
+            ],
+            "icon": "🏺"
+        },
+        {
+            "month": 3,
+            "activity": "Farm input trading. Seeds, cassava cuttings, tools. Busy pre-planting markets.",
+            "goods": [
+                "Farm inputs",
+                "Tools"
+            ],
+            "icon": "⚒️"
+        },
+        {
+            "month": 4,
+            "activity": "Reduced trading during planting. Local food markets steady. Fish and palm oil.",
+            "goods": [
+                "Fish",
+                "Palm oil",
+                "Food"
+            ],
+            "icon": "🥬"
+        },
+        {
+            "month": 5,
+            "activity": "Quiet period. Farming focus. Local markets for daily essentials only.",
+            "goods": [
+                "Daily food",
+                "Fish"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 6,
+            "activity": "Moderate trading. Rain disrupts travel. Local Ibibio markets steady.",
+            "goods": [
+                "Local food",
+                "Cloth"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 7,
+            "activity": "Traditional Ibibio markets. Ekpe society trading period. Cultural goods peak.",
+            "goods": [
+                "Cultural goods",
+                "Crafts"
+            ],
+            "icon": "🎋"
+        },
+        {
+            "month": 8,
+            "activity": "August break. Good transport weather. Long-distance trading resumes. Fish markets.",
+            "goods": [
+                "Fish",
+                "Farm produce",
+                "Crafts"
+            ],
+            "icon": "📦"
+        },
+        {
+            "month": 9,
+            "activity": "Harvest trading begins. Yam and plantain markets opening. Regional trading.",
+            "goods": [
+                "Yam",
+                "Plantain",
+                "Seafood"
+            ],
+            "icon": "🛒"
+        },
+        {
+            "month": 10,
+            "activity": "Peak harvest trading. Major surpluses. Palm oil processing and trading peaks.",
+            "goods": [
+                "Yam",
+                "Cassava",
+                "Palm oil"
+            ],
+            "icon": "📦"
+        },
+        {
+            "month": 11,
+            "activity": "Post-harvest. Craft and textile production. Long-distance trade active again.",
+            "goods": [
+                "Crafts",
+                "Cloth",
+                "Palm oil"
+            ],
+            "icon": "🚛"
+        },
+        {
+            "month": 12,
+            "activity": "Year-end markets. Christmas and New Year trading surge. Livestock and gifts.",
+            "goods": [
+                "Livestock",
+                "Food",
+                "Gifts"
+            ],
+            "icon": "🎁"
+        }
+    ],
+    "herding": [
+        {
+            "month": 1,
+            "conditions": "Dry",
+            "activity": "Dry season. Small ruminants near homestead. Goats and sheep on crop residues.",
+            "icon": "🐐"
+        },
+        {
+            "month": 2,
+            "conditions": "Dry",
+            "activity": "Late dry season. Goat and sheep trading season. Sell surplus animals.",
+            "icon": "🐐"
+        },
+        {
+            "month": 3,
+            "conditions": "Transitional",
+            "activity": "Pre-rain. Prepare livestock pens. Buy young animals for fattening.",
+            "icon": "🌱"
+        },
+        {
+            "month": 4,
+            "conditions": "Wet",
+            "activity": "Rains begin. Livestock on elevated ground. Monitor health during wet season.",
+            "icon": "🌧"
+        },
+        {
+            "month": 5,
+            "conditions": "Wet",
+            "activity": "Peak rains. Keep livestock near homestead. Prevent disease from wet conditions.",
+            "icon": "🌿"
+        },
+        {
+            "month": 6,
+            "conditions": "Wet",
+            "activity": "Heavy rains. House livestock during floods. Treat foot rot and skin diseases.",
+            "icon": "🐐"
+        },
+        {
+            "month": 7,
+            "conditions": "Wet",
+            "activity": "Peak rains. Ibibio goats hardy but need shelter. Feed dry fodder stored from harvest.",
+            "icon": "🏠"
+        },
+        {
+            "month": 8,
+            "conditions": "Good",
+            "activity": "August break. Move livestock to graze on new grass. Good condition recovery.",
+            "icon": "🌿"
+        },
+        {
+            "month": 9,
+            "conditions": "Wet",
+            "activity": "Second rains. Monitor livestock health. Tick control important.",
+            "icon": "💧"
+        },
+        {
+            "month": 10,
+            "conditions": "Good",
+            "activity": "Harvest season. Keep livestock off farms. Feed on crop residues after harvest.",
+            "icon": "🌾"
+        },
+        {
+            "month": 11,
+            "conditions": "Good",
+            "activity": "Dry season returning. Livestock on open range. Good condition.",
+            "icon": "🐐"
+        },
+        {
+            "month": 12,
+            "conditions": "Dry",
+            "activity": "Harmattan. Year-end livestock sales. Fatten animals for Christmas market.",
+            "icon": "🎁"
+        }
+    ],
+    "healing": [
+        {
+            "month": 1,
+            "activity": "Dry season. Collect Ibibio forest medicines. Prepare Ekpe society healing herbs.",
+            "herbs": [
+                "Forest herbs",
+                "Bark medicines"
+            ],
+            "rituals": "New Year Ekpe ceremony",
+            "icon": "🌿"
+        },
+        {
+            "month": 2,
+            "activity": "Dry season collection continues. Prepare fertility medicines. Treat dry skin conditions.",
+            "herbs": [
+                "Fertility herbs",
+                "Skin medicines"
+            ],
+            "rituals": "Community health gathering",
+            "icon": "🌙"
+        },
+        {
+            "month": 3,
+            "activity": "Pre-rain cleansing. Prepare land and body. Collect last dry-season medicines.",
+            "herbs": [
+                "Cleansing herbs"
+            ],
+            "rituals": "Land purification (Ufok Ibibio)",
+            "icon": "🌱"
+        },
+        {
+            "month": 4,
+            "activity": "First rains. Fresh herbs sprouting. Harvest young leaves. Treat seasonal fever.",
+            "herbs": [
+                "Bitter leaf",
+                "Fever bark"
+            ],
+            "rituals": "Rain thanksgiving",
+            "icon": "🌧"
+        },
+        {
+            "month": 5,
+            "activity": "Peak herbs. Mass collection. Anti-malaria herbs. Treat humidity-related ailments.",
+            "herbs": [
+                "Anti-malaria",
+                "Neem"
+            ],
+            "rituals": "Farming blessing",
+            "icon": "🌿"
+        },
+        {
+            "month": 6,
+            "activity": "Heavy rains. Anti-fungal and waterborne disease treatments. Protect water sources.",
+            "herbs": [
+                "Anti-fungal",
+                "Garlic"
+            ],
+            "rituals": "Water ceremony",
+            "icon": "💧"
+        },
+        {
+            "month": 7,
+            "activity": "Ekpe society healing rites. Sacred Ibibio medicines. Community protection rituals.",
+            "herbs": [
+                "Sacred herbs",
+                "Protective plants"
+            ],
+            "rituals": "Ekpe healing ceremony",
+            "icon": "🎋"
+        },
+        {
+            "month": 8,
+            "activity": "August break. Dry collected herbs. Prepare medicine stores. Treat farm injuries.",
+            "herbs": [
+                "Wound herbs",
+                "Stored medicines"
+            ],
+            "rituals": "Pre-harvest blessing",
+            "icon": "☀️"
+        },
+        {
+            "month": 9,
+            "activity": "Second rains. Treat waterborne diseases. Fresh herbs still available.",
+            "herbs": [
+                "Water purification",
+                "Fresh herbs"
+            ],
+            "rituals": "Water blessing",
+            "icon": "💧"
+        },
+        {
+            "month": 10,
+            "activity": "Harvest. Thanksgiving medicines. Rest and recovery herbs after farming season.",
+            "herbs": [
+                "Energy herbs",
+                "Recovery plants"
+            ],
+            "rituals": "Harvest thanksgiving (Ibibio Odung)",
+            "icon": "🙏"
+        },
+        {
+            "month": 11,
+            "activity": "Dry season. Collect bark medicines. Prepare dry-season respiratory remedies.",
+            "herbs": [
+                "Bark medicines",
+                "Chest herbs"
+            ],
+            "rituals": "Ancestral remembrance",
+            "icon": "🏺"
+        },
+        {
+            "month": 12,
+            "activity": "Year-end Ibibio purification. Cleanse family compound. Prepare new year medicines.",
+            "herbs": [
+                "Purification herbs",
+                "Osun equivalent"
+            ],
+            "rituals": "Year-end cleansing (Ufok Itong)",
+            "icon": "🔥"
+        }
+    ],
+    "weather": [
+        {
+            "month": 1,
+            "season": "Dry Season",
+            "rains": "10-30mm",
+            "temp": "Hot 32°C",
+            "wind": "Harmattan NE",
+            "advisory": "Dry season. Harmattan winds. Atlantic sea breeze moderates heat on coast.",
+            "icon": "☀️"
+        },
+        {
+            "month": 2,
+            "season": "Late Dry",
+            "rains": "20-40mm",
+            "temp": "Hot 33°C",
+            "wind": "NE easing",
+            "advisory": "Hottest period. High humidity on coast. Pre-rain conditions building.",
+            "icon": "🌤"
+        },
+        {
+            "month": 3,
+            "season": "Pre-rains",
+            "rains": "60-100mm",
+            "temp": "Hot 31°C",
+            "wind": "SW monsoon begins",
+            "advisory": "First rains arrive. Thunderstorms common. Humidity rising fast.",
+            "icon": "🌦"
+        },
+        {
+            "month": 4,
+            "season": "Early Rains",
+            "rains": "140-200mm",
+            "temp": "Warm 29°C",
+            "wind": "SW monsoon",
+            "advisory": "Reliable rains. Good planting conditions. Flash floods in low areas.",
+            "icon": "🌧"
+        },
+        {
+            "month": 5,
+            "season": "Peak Rains",
+            "rains": "220-300mm",
+            "temp": "Warm humid 27°C",
+            "wind": "SW monsoon strong",
+            "advisory": "Very heavy rains. Flooding of coastal areas. High humidity.",
+            "icon": "⛈"
+        },
+        {
+            "month": 6,
+            "season": "Peak Rains",
+            "rains": "240-320mm",
+            "temp": "Warm humid 26°C",
+            "wind": "SW monsoon",
+            "advisory": "Heaviest rains in Nigeria. Coastal flooding. Very high humidity.",
+            "icon": "⛈"
+        },
+        {
+            "month": 7,
+            "season": "Peak Rains",
+            "rains": "200-280mm",
+            "temp": "Warm 27°C",
+            "wind": "SW monsoon",
+            "advisory": "Still very rainy. Mangrove areas flooded. Atlantic storms possible.",
+            "icon": "🌧"
+        },
+        {
+            "month": 8,
+            "season": "August Break",
+            "rains": "60-100mm",
+            "temp": "Warm 28°C",
+            "wind": "Mixed",
+            "advisory": "Brief dry spell. Good harvesting weather. Sea conditions calm.",
+            "icon": "🌥"
+        },
+        {
+            "month": 9,
+            "season": "Second Rains",
+            "rains": "160-220mm",
+            "temp": "Warm 27°C",
+            "wind": "SW monsoon returns",
+            "advisory": "Second rainy season. Heavy rains return. Coastal conditions moderate.",
+            "icon": "🌦"
+        },
+        {
+            "month": 10,
+            "season": "Late Rains",
+            "rains": "100-160mm",
+            "temp": "Warm 28°C",
+            "wind": "Transitional",
+            "advisory": "Rains tapering. Good harvest conditions. Coastal fishing excellent.",
+            "icon": "🌤"
+        },
+        {
+            "month": 11,
+            "season": "Dry onset",
+            "rains": "30-60mm",
+            "temp": "Hot 30°C",
+            "wind": "NE beginning",
+            "advisory": "Dry season returning. Good travel. Atlantic sea breeze pleasant on coast.",
+            "icon": "🌤"
+        },
+        {
+            "month": 12,
+            "season": "Harmattan",
+            "rains": "10-20mm",
+            "temp": "Hot 31°C",
+            "wind": "NE Harmattan",
+            "advisory": "Harmattan. Milder than north Nigeria. Coastal humidity moderates conditions.",
+            "icon": "💨"
+        }
+    ],
+    "rulers": [
+        {
+            "month": 1,
+            "title": "Ekpe New Year",
+            "events": [
+                "Ekpe society new year rites",
+                "Ancestral libations",
+                "Community cleansing"
+            ],
+            "rulers": "Ekpe lodges perform new year rites",
+            "icon": "👑"
+        },
+        {
+            "month": 2,
+            "title": "Ndem Water Spirits",
+            "events": [
+                "Ndem shrine ceremonies",
+                "Water spirit propitiation",
+                "Fishermen blessings"
+            ],
+            "rulers": "Ndem priests lead water rites",
+            "icon": "💧"
+        },
+        {
+            "month": 3,
+            "title": "Ibuot Festival",
+            "events": [
+                "Land fertility ceremony",
+                "First farm blessing",
+                "Ani equivalent propitiation"
+            ],
+            "rulers": "Clan heads bless new farms",
+            "icon": "🌱"
+        },
+        {
+            "month": 4,
+            "title": "Ekpe Initiation Season",
+            "events": [
+                "New Ekpe initiations",
+                "Secret society ceremonies",
+                "Community law declaration"
+            ],
+            "rulers": "Ekpe Obong presides over initiations",
+            "icon": "🎭"
+        },
+        {
+            "month": 5,
+            "title": "Fattening Room Season",
+            "events": [
+                "Coming-of-age ceremonies",
+                "Young women honored",
+                "Community celebration of maturity"
+            ],
+            "rulers": "Women elders lead fattening rites",
+            "icon": "✨"
+        },
+        {
+            "month": 6,
+            "title": "Iwa Festival",
+            "events": [
+                "Mid-year community assembly",
+                "Ekpe displays",
+                "Cultural performances"
+            ],
+            "rulers": "Obong Ibibio holds community court",
+            "icon": "🏺"
+        },
+        {
+            "month": 7,
+            "title": "Ekpe Grand Display",
+            "events": [
+                "Full Ekpe masquerade display",
+                "Society law enforcement",
+                "Sacred forest ceremonies"
+            ],
+            "rulers": "Highest Ekpe grade presides",
+            "icon": "👁"
+        },
+        {
+            "month": 8,
+            "title": "Harvest First Fruits",
+            "events": [
+                "First fruits ceremony",
+                "Thanksgiving to ancestors",
+                "Community feast"
+            ],
+            "rulers": "Village heads lead thanksgiving",
+            "icon": "🌾"
+        },
+        {
+            "month": 9,
+            "title": "Odong Festival",
+            "events": [
+                "Odong ancestral festival",
+                "Family reunion ceremonies",
+                "Remembrance feasts"
+            ],
+            "rulers": "Family heads lead Odong rites",
+            "icon": "🙏"
+        },
+        {
+            "month": 10,
+            "title": "Harvest Celebration",
+            "events": [
+                "Grand harvest festival",
+                "Yam and cassava thanksgiving",
+                "Cultural display and dance"
+            ],
+            "rulers": "Obong presides over harvest feast",
+            "icon": "👑"
+        },
+        {
+            "month": 11,
+            "title": "Ekpe Law Season",
+            "events": [
+                "Community laws reviewed",
+                "Dispute resolution by Ekpe",
+                "New laws proclaimed"
+            ],
+            "rulers": "Ekpe society enforces community law",
+            "icon": "⚖️"
+        },
+        {
+            "month": 12,
+            "title": "Year-End Cleansing",
+            "events": [
+                "Household spiritual cleansing",
+                "Debt settlement",
+                "New year preparation rites"
+            ],
+            "rulers": "Elders oversee community cleansing",
+            "icon": "🔥"
+        }
+    ],
+    "calendar_note": "Ibibio 8-day week: distinct from Efik Urua system. Verify names with local elders."
+}

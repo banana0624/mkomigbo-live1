@@ -1,0 +1,20 @@
+<?php
+
+require_once __DIR__ . '/../../../../03-runtime-kernel/auth/SessionManager.php';
+
+class LogoutController
+{
+    public function logout()
+    {
+        SessionManager::start();
+
+        SessionManager::destroy();
+
+        header('Content-Type: application/json');
+
+        echo json_encode([
+            'success' => true,
+            'message' => 'Logged out successfully'
+        ]);
+    }
+}

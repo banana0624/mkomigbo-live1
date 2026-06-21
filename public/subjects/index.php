@@ -14,6 +14,8 @@ declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
 
 require_once __DIR__ . '/../_init.php';
+require_once "/home/mkomigbo/repos/releases/2026-04-25-120559/app/mkomigbo/private/functions/public_subjects_list.php";
+
 
 /* Optional short cache (HTML only) */
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'GET' && function_exists('mk_public_cache_headers')) {
@@ -368,10 +370,11 @@ if (function_exists('mk_require_shared')) {
 if (!$header_ok) {
   header('Content-Type: text/html; charset=UTF-8');
   echo "<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'>";
-  echo "<title>" . h($page_title) . "</title></head><body>";
+  echo "<title>" . h($page_title) . "</title><link rel='stylesheet' href='/assets/css/ui.css'><link rel='stylesheet' href='/assets/css/public.css'><link rel='stylesheet' href='/assets/css/subjects.css'><link rel='stylesheet' href='/assets/css/subjects-public.css'></head><body>"; echo '<header style="background:#fff;border-bottom:1px solid #e5e7eb;position:sticky;top:0;z-index:20;"><div style="max-width:1200px;margin:0 auto;padding:0 16px;display:flex;align-items:center;justify-content:space-between;min-height:60px;gap:14px;"><a href="/" style="display:inline-flex;align-items:center;gap:9px;text-decoration:none;color:inherit;"><img src="/assets/images/logos/mk-logo.png" width="30" height="30" style="border-radius:8px;" alt="Mkomigbo"><strong style="font-size:1rem;">Mkomigbo</strong></a><nav style="display:flex;gap:4px;flex-wrap:wrap;"><a href="/subjects/" style="padding:7px 14px;border-radius:9px;font-weight:800;font-size:.9rem;color:#0d6efd;border:1px solid rgba(13,110,253,.3);background:rgba(13,110,253,.08);">Subjects</a><a href="/platforms/" style="padding:7px 14px;border-radius:9px;font-weight:700;font-size:.9rem;color:#374151;border:1px solid #e5e7eb;background:#fff;">Platforms</a><a href="/contributors/" style="padding:7px 14px;border-radius:9px;font-weight:700;font-size:.9rem;color:#374151;border:1px solid #e5e7eb;background:#fff;">Contributors</a><a href="/awag/" style="padding:7px 14px;border-radius:9px;text-decoration:none;font-weight:700;font-size:.9rem;color:#374151;border:1px solid #e5e7eb;background:#fff;">AWAG</a><a href="/igbo-calendar/" style="padding:7px 14px;border-radius:9px;font-weight:700;font-size:.9rem;color:#374151;border:1px solid #e5e7eb;background:#fff;">Calendar</a></nav></div></header>';
 }
 
 /* Optional theme hooks */
+require_once '/home/mkomigbo/repos/releases/2026-04-25-120559/private/functions/theme_functions.php';
 $has_accent = function_exists('pf__accent_for');
 
 ?>
@@ -439,7 +442,7 @@ $has_accent = function_exists('pf__accent_for');
       $ini_js = json_encode($ini, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
     ?>
     <article class="mk-card mk-subject-card" style="--accent: <?= h($accent) ?>;">
-      <div class="mk-card__bar" aria-hidden="true"></div>
+      <div class="mk-card__bar" aria-hidden="true" style="background:<?= htmlspecialchars($accent,ENT_QUOTES) ?>;height:10px;width:100%;display:block;"></div>
 
       <a class="mk-card__link" href="<?= h($href) ?>">
         <div class="mk-card__body">

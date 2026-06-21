@@ -1,0 +1,932 @@
+{
+    "id": "tiv",
+    "name": "Tiv",
+    "full_name": "Tiv Calendar",
+    "language": "Tiv \/ English",
+    "region": "Guinea Coast Savanna",
+    "area": "Benue State \/ Middle Belt",
+    "color": "#4a2a0a",
+    "initial": "TV",
+    "calendar_type": "4-day traditional",
+    "market_cycle": 4,
+    "market_days": [
+        "Aôndo",
+        "Gbaa",
+        "Shighe",
+        "Ikyaa"
+    ],
+    "market_symbols": {
+        "Aôndo": {
+            "element": "God\/Sky",
+            "symbol": "☀️",
+            "color": "#ffd040",
+            "meaning": "Sacred sky day. Aôndo (God) honored. No heavy work."
+        },
+        "Gbaa": {
+            "element": "Earth",
+            "symbol": "🌍",
+            "color": "#406020",
+            "meaning": "Earth day. Farm work. Land ceremonies."
+        },
+        "Shighe": {
+            "element": "Market",
+            "symbol": "🛒",
+            "color": "#c08020",
+            "meaning": "Major market day. Trading and community exchange."
+        },
+        "Ikyaa": {
+            "element": "Rest",
+            "symbol": "⭐",
+            "color": "#a0a0e0",
+            "meaning": "Rest and family day. Minor ceremonies."
+        }
+    },
+    "months": [
+        {
+            "n": 1,
+            "name": "Iharev",
+            "greg": "Jan",
+            "note": "Dry season \/ Harmattan"
+        },
+        {
+            "n": 2,
+            "name": "Ivagher",
+            "greg": "Feb",
+            "note": "Late dry \/ Kwagh-hir season"
+        },
+        {
+            "n": 3,
+            "name": "Iorov",
+            "greg": "Mar",
+            "note": "Pre-rains \/ Land preparation"
+        },
+        {
+            "n": 4,
+            "name": "Ibiembur",
+            "greg": "Apr",
+            "note": "First rains \/ Planting"
+        },
+        {
+            "n": 5,
+            "name": "Ichiondo",
+            "greg": "May",
+            "note": "Peak rains \/ Farming"
+        },
+        {
+            "n": 6,
+            "name": "Igyewe",
+            "greg": "Jun",
+            "note": "Heavy rains"
+        },
+        {
+            "n": 7,
+            "name": "Igberen",
+            "greg": "Jul",
+            "note": "Peak rains \/ Benue River high"
+        },
+        {
+            "n": 8,
+            "name": "Iember",
+            "greg": "Aug",
+            "note": "August break \/ Harvest begins"
+        },
+        {
+            "n": 9,
+            "name": "Ichiave",
+            "greg": "Sep",
+            "note": "Second rains"
+        },
+        {
+            "n": 10,
+            "name": "Ikyenge",
+            "greg": "Oct",
+            "note": "Harvest season"
+        },
+        {
+            "n": 11,
+            "name": "Ikpehemen",
+            "greg": "Nov",
+            "note": "Dry season onset"
+        },
+        {
+            "n": 12,
+            "name": "Igenye",
+            "greg": "Dec",
+            "note": "Harmattan \/ Kwagh-hir season"
+        }
+    ],
+    "farming": [
+        {
+            "month": 1,
+            "activity": "Dry season. Clear old farm plots. Burn residues. Prepare Benue River valley farms.",
+            "crops": [
+                "Sorghum residues",
+                "Yam mounds preparation"
+            ],
+            "icon": "⚒️"
+        },
+        {
+            "month": 2,
+            "activity": "Late dry. Plant early yam seedlings. Clear land. Buy sorghum and sesame seeds.",
+            "crops": [
+                "Yam",
+                "Sesame",
+                "Sorghum"
+            ],
+            "icon": "🌱"
+        },
+        {
+            "month": 3,
+            "activity": "Pre-rain. Major land preparation. Tiv women plant compound gardens. Men clear fields.",
+            "crops": [
+                "Yam",
+                "Cassava",
+                "Groundnuts"
+            ],
+            "icon": "⚒️"
+        },
+        {
+            "month": 4,
+            "activity": "First rains. Plant sorghum, millet, yam. Intercrop with cowpea and groundnuts.",
+            "crops": [
+                "Sorghum",
+                "Millet",
+                "Yam",
+                "Cowpea"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 5,
+            "activity": "Peak rains. Weed sorghum and yam. Plant sesame and benniseed. Major farm season.",
+            "crops": [
+                "Sorghum",
+                "Yam",
+                "Benniseed",
+                "Sesame"
+            ],
+            "icon": "🌿"
+        },
+        {
+            "month": 6,
+            "activity": "Heavy rains. Farm maintenance. Weed twice. Benue River valley farms productive.",
+            "crops": [
+                "Sorghum",
+                "Yam",
+                "Cassava"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 7,
+            "activity": "Peak rains. Benue River floods valley farms. Focus on highland farming.",
+            "crops": [
+                "Upland sorghum",
+                "Yam (highland)"
+            ],
+            "icon": "🌊"
+        },
+        {
+            "month": 8,
+            "activity": "August break. Harvest early sorghum and millet. Plant second-season cowpea.",
+            "crops": [
+                "Sorghum (early)",
+                "Millet",
+                "Cowpea"
+            ],
+            "icon": "☀️"
+        },
+        {
+            "month": 9,
+            "activity": "Second rains. Late yam tending. Harvest benniseed. Plant dry-season vegetables.",
+            "crops": [
+                "Yam",
+                "Benniseed (harvest)",
+                "Vegetables"
+            ],
+            "icon": "🌦"
+        },
+        {
+            "month": 10,
+            "activity": "Main harvest. Sorghum, yam, cassava, groundnuts. Tiv harvest festival season.",
+            "crops": [
+                "Sorghum",
+                "Yam",
+                "Groundnuts",
+                "Cassava"
+            ],
+            "icon": "🏺"
+        },
+        {
+            "month": 11,
+            "activity": "Post-harvest. Process sorghum. Sell surplus. Palm produce. Clear land.",
+            "crops": [
+                "Sorghum",
+                "Palm",
+                "Cassava"
+            ],
+            "icon": "🌴"
+        },
+        {
+            "month": 12,
+            "activity": "Harmattan. Dry farming. Process and store sorghum and benniseed. Year-end trading.",
+            "crops": [
+                "Stored sorghum",
+                "Benniseed"
+            ],
+            "icon": "🌬"
+        }
+    ],
+    "fishing": [
+        {
+            "month": 1,
+            "activity": "Benue River dry season. Excellent fishing. Fish concentrated in deep pools.",
+            "fish": [
+                "Catfish",
+                "Tilapia",
+                "Nile perch"
+            ],
+            "conditions": "Excellent",
+            "icon": "🎣"
+        },
+        {
+            "month": 2,
+            "activity": "Best Benue River fishing. Low clear water. Community trap and net fishing.",
+            "fish": [
+                "Catfish",
+                "Tilapia",
+                "Mixed"
+            ],
+            "conditions": "Excellent",
+            "icon": "🎣"
+        },
+        {
+            "month": 3,
+            "activity": "Pre-rain. Fish feeding actively. Last excellent dry season fishing.",
+            "fish": [
+                "Catfish",
+                "Perch",
+                "Tilapia"
+            ],
+            "conditions": "Very Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 4,
+            "activity": "First rains. River rising. Fish spawning. Good fishing still continues.",
+            "fish": [
+                "Mixed",
+                "Tilapia"
+            ],
+            "conditions": "Good",
+            "icon": "🌊"
+        },
+        {
+            "month": 5,
+            "activity": "Rains. Fish spreading into flooded areas. Use cast nets in flooded margins.",
+            "fish": [
+                "Mixed",
+                "Catfish"
+            ],
+            "conditions": "Moderate",
+            "icon": "🎣"
+        },
+        {
+            "month": 6,
+            "activity": "Heavy rains. Benue River rising fast. Fast-water fishing skills needed.",
+            "fish": [
+                "Catfish",
+                "Mixed"
+            ],
+            "conditions": "Moderate",
+            "icon": "🌧"
+        },
+        {
+            "month": 7,
+            "activity": "Benue River flooding. Canoe fishing in flooded areas. Tilapia and catfish.",
+            "fish": [
+                "Catfish",
+                "Tilapia"
+            ],
+            "conditions": "Moderate",
+            "icon": "🚣"
+        },
+        {
+            "month": 8,
+            "activity": "August break. Excellent Benue River fishing. Best catch of second half of year.",
+            "fish": [
+                "Nile perch",
+                "Catfish",
+                "Tilapia"
+            ],
+            "conditions": "Very Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 9,
+            "activity": "Second rains. Good river fishing. Smoke and preserve large catches.",
+            "fish": [
+                "Mixed",
+                "Catfish"
+            ],
+            "conditions": "Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 10,
+            "activity": "Rivers falling. Concentrated fish. Excellent trap and net fishing season.",
+            "fish": [
+                "Catfish",
+                "Tilapia",
+                "Perch"
+            ],
+            "conditions": "Very Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 11,
+            "activity": "Dry season. Good river fishing. Smoke fish for dry season food supply.",
+            "fish": [
+                "Mixed",
+                "Catfish"
+            ],
+            "conditions": "Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 12,
+            "activity": "Harmattan. Rivers very low. Concentrated fishing. Community dam fishing.",
+            "fish": [
+                "Catfish",
+                "Tilapia"
+            ],
+            "conditions": "Very Good",
+            "icon": "🤝"
+        }
+    ],
+    "trading": [
+        {
+            "month": 1,
+            "activity": "Dry season. Makurdi and Gboko markets active. Sorghum and benniseed export. Cattle trading.",
+            "goods": [
+                "Sorghum",
+                "Benniseed",
+                "Cattle",
+                "Fish"
+            ],
+            "icon": "🛒"
+        },
+        {
+            "month": 2,
+            "activity": "Kwagh-hir season goods. Cultural crafts, weaving, baskets. Livestock trading peak.",
+            "goods": [
+                "Crafts",
+                "Weaving",
+                "Livestock"
+            ],
+            "icon": "🎭"
+        },
+        {
+            "month": 3,
+            "activity": "Farm input trading. Seeds, hoes, cutlasses, cassava cuttings. Pre-season markets.",
+            "goods": [
+                "Farm inputs",
+                "Tools",
+                "Seeds"
+            ],
+            "icon": "⚒️"
+        },
+        {
+            "month": 4,
+            "activity": "Reduced trading. Planting season. Local Tiv markets for essentials.",
+            "goods": [
+                "Food",
+                "Local goods"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 5,
+            "activity": "Quiet period. Farming focus. Sesame and benniseed seedling exchange.",
+            "goods": [
+                "Seeds",
+                "Daily food"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 6,
+            "activity": "Moderate trading. Rain limits travel. Makurdi market weekly cycle.",
+            "goods": [
+                "Local food",
+                "Fish"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 7,
+            "activity": "Benue floods. River transport active. Canoe trading between communities.",
+            "goods": [
+                "Food",
+                "Canoe goods"
+            ],
+            "icon": "🚣"
+        },
+        {
+            "month": 8,
+            "activity": "August break. Good transport. Early sorghum and millet trading begins.",
+            "goods": [
+                "Early grain",
+                "Fish",
+                "Crafts"
+            ],
+            "icon": "📦"
+        },
+        {
+            "month": 9,
+            "activity": "Harvest trading begins. Benniseed export. Groundnut markets opening.",
+            "goods": [
+                "Benniseed",
+                "Groundnuts",
+                "Yam"
+            ],
+            "icon": "🛒"
+        },
+        {
+            "month": 10,
+            "activity": "Peak harvest trading. Sorghum, yam, groundnut export. Makurdi market peak.",
+            "goods": [
+                "Sorghum",
+                "Yam",
+                "Groundnuts"
+            ],
+            "icon": "📦"
+        },
+        {
+            "month": 11,
+            "activity": "Post-harvest. Long-distance trading. Tiv crafts and weaving export.",
+            "goods": [
+                "Crafts",
+                "Grain",
+                "Livestock"
+            ],
+            "icon": "🚛"
+        },
+        {
+            "month": 12,
+            "activity": "Year-end markets. Kwagh-hir goods. Christmas food trading. Livestock sales.",
+            "goods": [
+                "Food",
+                "Livestock",
+                "Crafts"
+            ],
+            "icon": "🎁"
+        }
+    ],
+    "herding": [
+        {
+            "month": 1,
+            "conditions": "Dry",
+            "activity": "Dry season. Fulani herders on Tiv land. Cattle graze dry season fields. Goats near homestead.",
+            "icon": "🐄"
+        },
+        {
+            "month": 2,
+            "conditions": "Dry",
+            "activity": "Livestock trading season. Sell surplus before rains. Fulani cattle movement.",
+            "icon": "🐄"
+        },
+        {
+            "month": 3,
+            "conditions": "Transitional",
+            "activity": "Pre-rain. Fulani herders moving cattle north. Buy goats for fattening.",
+            "icon": "🌱"
+        },
+        {
+            "month": 4,
+            "conditions": "Wet",
+            "activity": "Rains begin. Livestock on elevated ground. Farmer-herder tension season — fence farms.",
+            "icon": "⚠️"
+        },
+        {
+            "month": 5,
+            "conditions": "Wet",
+            "activity": "Peak rains. Keep livestock off farms. Prevent crop damage. Community watch active.",
+            "icon": "🌿"
+        },
+        {
+            "month": 6,
+            "conditions": "Wet",
+            "activity": "Heavy rains. Livestock on upland. Feed dry fodder. Monitor health.",
+            "icon": "🐐"
+        },
+        {
+            "month": 7,
+            "conditions": "Wet",
+            "activity": "Benue flooding. Move livestock to highland. Foot disease prevention.",
+            "icon": "🌊"
+        },
+        {
+            "month": 8,
+            "conditions": "Good",
+            "activity": "August break. Excellent grazing on new grass. Livestock condition recovery.",
+            "icon": "🌿"
+        },
+        {
+            "month": 9,
+            "conditions": "Wet",
+            "activity": "Second rains. Tick control. Keep livestock off farms during second planting.",
+            "icon": "💧"
+        },
+        {
+            "month": 10,
+            "conditions": "Good",
+            "activity": "Harvest. Livestock on crop residues after harvest. Good fattening.",
+            "icon": "🌾"
+        },
+        {
+            "month": 11,
+            "conditions": "Good",
+            "activity": "Dry season returning. Open grazing. Fulani herders returning from north.",
+            "icon": "🐄"
+        },
+        {
+            "month": 12,
+            "conditions": "Dry",
+            "activity": "Harmattan. Year-end livestock sales. Fatten cattle for Christmas market.",
+            "icon": "🎉"
+        }
+    ],
+    "healing": [
+        {
+            "month": 1,
+            "activity": "Collect Tiv savanna medicines. Swem sacred object herbs. Dry-season root medicines.",
+            "herbs": [
+                "Savanna roots",
+                "Swem herbs",
+                "Bark medicines"
+            ],
+            "rituals": "Tiv new year ancestral ceremony",
+            "icon": "🌿"
+        },
+        {
+            "month": 2,
+            "activity": "Kwagh-hir healing rites. Community health assembly. Anti-rheumatic plant collection.",
+            "herbs": [
+                "Anti-rheumatic",
+                "Kwagh-hir herbs"
+            ],
+            "rituals": "Kwagh-hir healing ceremony",
+            "icon": "🌙"
+        },
+        {
+            "month": 3,
+            "activity": "Pre-rain cleansing. Collect dry-season medicines. Land blessing herbs.",
+            "herbs": [
+                "Cleansing herbs",
+                "Land medicines"
+            ],
+            "rituals": "Land purification before planting",
+            "icon": "🌱"
+        },
+        {
+            "month": 4,
+            "activity": "Fresh herbs sprouting. Treat seasonal malaria. Collect young leaf medicines.",
+            "herbs": [
+                "Fever herbs",
+                "Bitter leaf",
+                "Young leaves"
+            ],
+            "rituals": "Rain thanksgiving",
+            "icon": "🌧"
+        },
+        {
+            "month": 5,
+            "activity": "Peak herb collection. Anti-malarial medicines. Treat humidity diseases.",
+            "herbs": [
+                "Anti-malaria",
+                "Neem",
+                "Lemongrass"
+            ],
+            "rituals": "Farm blessing ceremony",
+            "icon": "🌿"
+        },
+        {
+            "month": 6,
+            "activity": "Heavy rains. Protect water sources. Anti-fungal and waterborne treatments.",
+            "herbs": [
+                "Anti-fungal",
+                "Water purification"
+            ],
+            "rituals": "Water protection",
+            "icon": "💧"
+        },
+        {
+            "month": 7,
+            "activity": "Flood season. Treat flood-related ailments. Keep medicines dry and stored.",
+            "herbs": [
+                "Stored medicines",
+                "Flood herbs"
+            ],
+            "rituals": "Flood protection rites",
+            "icon": "🌊"
+        },
+        {
+            "month": 8,
+            "activity": "August break. Dry and store herbs. Treat farming injuries. Community health check.",
+            "herbs": [
+                "Stored medicines",
+                "Wound herbs"
+            ],
+            "rituals": "Pre-harvest blessing",
+            "icon": "☀️"
+        },
+        {
+            "month": 9,
+            "activity": "Second rains. Fresh medicines still available. Treat waterborne diseases.",
+            "herbs": [
+                "Fresh herbs",
+                "Water purification"
+            ],
+            "rituals": "Harvest blessing",
+            "icon": "💧"
+        },
+        {
+            "month": 10,
+            "activity": "Harvest medicines. Rest and recovery herbs. Thanksgiving healing rites.",
+            "herbs": [
+                "Recovery herbs",
+                "Thanksgiving plants"
+            ],
+            "rituals": "Harvest thanksgiving (Tiv tradition)",
+            "icon": "🙏"
+        },
+        {
+            "month": 11,
+            "activity": "Dry season. Collect savanna bark medicines. Prepare respiratory herbs for harmattan.",
+            "herbs": [
+                "Bark medicines",
+                "Chest herbs"
+            ],
+            "rituals": "Ancestral remembrance",
+            "icon": "🏺"
+        },
+        {
+            "month": 12,
+            "activity": "Year-end purification. Kwagh-hir healing. Cleanse compound for new year.",
+            "herbs": [
+                "Purification herbs",
+                "Kwagh-hir medicines"
+            ],
+            "rituals": "Year-end Tiv purification ceremony",
+            "icon": "🔥"
+        }
+    ],
+    "weather": [
+        {
+            "month": 1,
+            "season": "Dry Season",
+            "rains": "0-10mm",
+            "temp": "Hot 34°C",
+            "wind": "Harmattan NE",
+            "advisory": "Peak harmattan. Very dry and dusty. Cold nights in Benue State. Protect from dust.",
+            "icon": "🌬"
+        },
+        {
+            "month": 2,
+            "season": "Late Dry",
+            "rains": "5-20mm",
+            "temp": "Very hot 36°C",
+            "wind": "NE easing",
+            "advisory": "Hottest period of year. Pre-rain conditions. Heatwaves possible in Benue valley.",
+            "icon": "🔥"
+        },
+        {
+            "month": 3,
+            "season": "Pre-rains",
+            "rains": "30-70mm",
+            "temp": "Hot 33°C",
+            "wind": "SW begins",
+            "advisory": "First rains arrive. Violent thunderstorms. Humidity rising fast.",
+            "icon": "⛈"
+        },
+        {
+            "month": 4,
+            "season": "Early Rains",
+            "rains": "100-160mm",
+            "temp": "Warm 30°C",
+            "wind": "SW monsoon",
+            "advisory": "Reliable rains. Good planting. Flash floods in Benue River valley.",
+            "icon": "🌧"
+        },
+        {
+            "month": 5,
+            "season": "Peak Rains",
+            "rains": "180-250mm",
+            "temp": "Warm humid 28°C",
+            "wind": "SW monsoon strong",
+            "advisory": "Very heavy rains. Benue River rising. Flash floods in valleys. Excellent for crops.",
+            "icon": "⛈"
+        },
+        {
+            "month": 6,
+            "season": "Peak Rains",
+            "rains": "200-270mm",
+            "temp": "Warm humid 27°C",
+            "wind": "SW monsoon",
+            "advisory": "Heaviest rains. Benue River flooding. Road closures common. Good upland farming.",
+            "icon": "⛈"
+        },
+        {
+            "month": 7,
+            "season": "Peak Flood",
+            "rains": "180-240mm",
+            "temp": "Warm 27°C",
+            "wind": "SW monsoon",
+            "advisory": "Peak Benue River flooding. Many riverside communities flood. Canoe transport.",
+            "icon": "🌊"
+        },
+        {
+            "month": 8,
+            "season": "August Break",
+            "rains": "80-120mm",
+            "temp": "Warm 29°C",
+            "wind": "Mixed",
+            "advisory": "Brief dry spell. Good travel and harvest window. Benue River still high.",
+            "icon": "🌥"
+        },
+        {
+            "month": 9,
+            "season": "Second Rains",
+            "rains": "140-200mm",
+            "temp": "Warm 28°C",
+            "wind": "SW returns",
+            "advisory": "Second rains. Heavy but briefer than main season. Rivers still elevated.",
+            "icon": "🌦"
+        },
+        {
+            "month": 10,
+            "season": "Late Rains",
+            "rains": "80-130mm",
+            "temp": "Warm 29°C",
+            "wind": "Transitional",
+            "advisory": "Rains tapering. Good harvest weather. Benue River falling.",
+            "icon": "🌤"
+        },
+        {
+            "month": 11,
+            "season": "Dry onset",
+            "rains": "15-40mm",
+            "temp": "Hot 31°C",
+            "wind": "NE beginning",
+            "advisory": "Dry season returning. Good travel. Long-distance trading resumes across Benue.",
+            "icon": "🌤"
+        },
+        {
+            "month": 12,
+            "season": "Harmattan",
+            "rains": "0-10mm",
+            "temp": "Hot 33°C",
+            "wind": "NE Harmattan",
+            "advisory": "Harmattan. Cold nights, hot days. Very dry. Protect health from dust.",
+            "icon": "🌬"
+        }
+    ],
+    "rulers": [
+        {
+            "month": 1,
+            "title": "Tiv New Year Assembly",
+            "events": [
+                "Tor Tiv receives homage",
+                "Clan heads pay homage",
+                "Community new year assembly",
+                "Ancestral thanksgiving"
+            ],
+            "rulers": "Tor Tiv leads new year assembly",
+            "icon": "👑"
+        },
+        {
+            "month": 2,
+            "title": "Kwagh-hir Festival Season",
+            "events": [
+                "Kwagh-hir puppet masquerade performances",
+                "Cultural storytelling and dance",
+                "Community entertainment and history recounting"
+            ],
+            "rulers": "Kwagh-hir masters lead performances",
+            "icon": "🎭"
+        },
+        {
+            "month": 3,
+            "title": "Swem Sacred Ceremonies",
+            "events": [
+                "Swem sacred object ceremonies",
+                "Land blessing before planting",
+                "Community covenant renewal"
+            ],
+            "rulers": "Tiv elders lead Swem ceremonies",
+            "icon": "🙏"
+        },
+        {
+            "month": 4,
+            "title": "Farm Opening Rites",
+            "events": [
+                "Aôndo (God) farm blessing",
+                "Community cooperative farming begins",
+                "Seed blessing ceremony"
+            ],
+            "rulers": "Clan heads bless farming season",
+            "icon": "🌱"
+        },
+        {
+            "month": 5,
+            "title": "Community Farming Assembly",
+            "events": [
+                "Community cooperative farming",
+                "Youth age-grade farming organized",
+                "Dispute resolution by elders"
+            ],
+            "rulers": "Elders organize community farm labor",
+            "icon": "🌾"
+        },
+        {
+            "month": 6,
+            "title": "Rain Thanksgiving",
+            "events": [
+                "Aôndo rain thanksgiving",
+                "Community prayer for crops",
+                "Ancestral libations"
+            ],
+            "rulers": "Tor Tiv leads rain thanksgiving",
+            "icon": "🌧"
+        },
+        {
+            "month": 7,
+            "title": "Flood Season Rites",
+            "events": [
+                "Benue River offering",
+                "Community flood protection prayer",
+                "Ancestral water ceremonies"
+            ],
+            "rulers": "Elders lead flood protection rites",
+            "icon": "🌊"
+        },
+        {
+            "month": 8,
+            "title": "Early Harvest Festival",
+            "events": [
+                "First grain thanksgiving",
+                "Community early harvest feast",
+                "Age-grade competitions"
+            ],
+            "rulers": "Tor Tiv opens harvest season",
+            "icon": "🌾"
+        },
+        {
+            "month": 9,
+            "title": "Community Council",
+            "events": [
+                "Mid-year community review",
+                "Dispute resolution assembly",
+                "Clan heads report to Tor Tiv"
+            ],
+            "rulers": "Tor Tiv holds mid-year council",
+            "icon": "👑"
+        },
+        {
+            "month": 10,
+            "title": "Grand Harvest Festival",
+            "events": [
+                "Main Tiv harvest festival",
+                "Thanksgiving to Aôndo",
+                "Community feasting and dance",
+                "Age-grade celebrations"
+            ],
+            "rulers": "Tor Tiv presides over harvest festival",
+            "icon": "🏆"
+        },
+        {
+            "month": 11,
+            "title": "Year-End Assembly",
+            "events": [
+                "Annual clan heads assembly",
+                "Community accounts reviewed",
+                "Plans for new farming year"
+            ],
+            "rulers": "Tor Tiv holds year-end assembly",
+            "icon": "👑"
+        },
+        {
+            "month": 12,
+            "title": "Kwagh-hir Grand Season",
+            "events": [
+                "Grand Kwagh-hir performances",
+                "Year-end cultural celebrations",
+                "Community entertainment",
+                "Historical recounting"
+            ],
+            "rulers": "Kwagh-hir masters lead grand season",
+            "icon": "🎊"
+        }
+    ]
+}

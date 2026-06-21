@@ -30,6 +30,13 @@ if (!function_exists('pf__safe_return_url')) {
     return $raw;
   }
 }
+if (!function_exists('mk_staff_session_start')) {
+  function mk_staff_session_start(): void {
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+      @session_start();
+    }
+  }
+}
 if (!function_exists('pf__flash_get')) {
   function pf__flash_get(string $key): string {
     mk_staff_session_start();

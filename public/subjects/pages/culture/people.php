@@ -1,92 +1,24 @@
 <?php
 declare(strict_types=1);
-
-return [
-  'title' => 'People',
-  'body_html' => <<<HTML
-<div class="mk-prose">
-
-  <p class="mk-muted" style="margin-top:0;">
-    Igbo culture is carried, shaped, and preserved by people: artists, storytellers, musicians,
-    title holders, market leaders, ritual specialists, writers, and everyday community members.
-    This page highlights individuals and groups who express and transmit Igbo cultural life.
-  </p>
-
-  <div style="display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 14px;">
-    <a class="mk-btn mk-btn--ghost" href="/subjects/culture/intro/">Introduction</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/culture/overview/">Overview</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/culture/topics/">Key Topics</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/culture/sources/">Sources</a>
-  </div>
-
-  <h2>Writers and cultural interpreters</h2>
-
-  <h3>Chinua Achebe</h3>
-  <p>
-    Chinua Achebe is one of the most important interpreters of Igbo culture in modern literature.
-    His works, especially <em>Things Fall Apart</em>, present Igbo social life, proverbs, values,
-    and institutions from an internal perspective, correcting earlier external misrepresentations.
-  </p>
-
-  <h3>Flora Nwapa</h3>
-  <p>
-    Flora Nwapa’s writing is central to understanding Igbo culture from women’s perspectives.
-    Her work highlights family life, market systems, gender roles, and everyday experience.
-  </p>
-
-  <h2>Artists and cultural creators</h2>
-
-  <p>
-    Igbo culture includes rich artistic traditions: uli designers, sculptors, mask-makers,
-    mbari builders, musicians, dancers, and performers. Many of these artists are not individually named
-    in written history, but their work is central to cultural identity.
-  </p>
-
-  <h2>Custodians of tradition</h2>
-
-  <p>
-    Cultural knowledge is often preserved by:
-  </p>
-
-  <ul>
-    <li><strong>Elders</strong> who transmit history, proverbs, and moral knowledge.</li>
-    <li><strong>Title holders</strong> who maintain status systems and public authority.</li>
-    <li><strong>Ritual specialists</strong> who oversee ceremonies and sacred practices.</li>
-    <li><strong>Community leaders</strong> who organize festivals and collective life.</li>
-  </ul>
-
-  <h2>Market leaders and women’s roles</h2>
-
-  <p>
-    Women have long played central roles in Igbo market systems and social organization.
-    Market leadership, trade networks, and collective action—such as women’s protests—
-    are key parts of Igbo cultural history.
-  </p>
-
-  <h2>Performers and oral artists</h2>
-
-  <p>
-    Storytellers, praise singers, drummers, and dancers preserve culture through performance.
-    Proverbs, folktales, songs, and dramatic expression are major carriers of Igbo values and memory.
-  </p>
-
-  <h2>Communities as cultural actors</h2>
-
-  <p>
-    Igbo culture is not only created by individuals. Villages, kindreds, age grades,
-    and associations act collectively to maintain festivals, markets, artistic traditions,
-    and social norms.
-  </p>
-
-  <h2>How this page should grow</h2>
-
-  <p>
-    Over time, this page should expand into a curated set of profiles:
-    writers, artists, performers, cultural leaders, and communities.
-    Each entry should explain what the person or group contributed,
-    how they shaped cultural practice, and what evidence supports their importance.
-  </p>
-
-</div>
-HTML,
-];
+echo '<div class="mk-prose">';
+echo '<p class="mk-muted" style="margin-top:0;">Artists, writers, musicians, and cultural custodians who shaped and expressed Igbo culture.</p>';
+echo '<h2>Chinua Achebe (1930–2013)</h2>';
+echo '<p>The novelist whose work did more than any other single person to document and transmit Igbo cultural life to the world. <em>Things Fall Apart</em>, <em>Arrow of God</em>, and <em>No Longer at Ease</em> together constitute the richest literary record of Igbo culture in the colonial and post-colonial period. Achebe also wrote extensively on the politics of African literature and on the civil war.</p>';
+echo '<h2>Flora Nwapa (1931–1993)</h2>';
+echo '<p>The first African woman to be published by a major international publisher. Nwapa\'s novels <em>Efuru</em> (1966) and <em>Idu</em> (1970) centred Igbo women\'s lives — their relationships, their spirituality, and their agency — at a time when African literature was dominated by male perspectives. She also founded her own publishing house in Nigeria, Tana Press, making her a pioneer in African publishing as well as literature.</p>';
+echo '<h2>Chimamanda Ngozi Adichie (b. 1977)</h2>';
+echo '<p>The most celebrated Nigerian writer of her generation. <em>Purple Hibiscus</em>, <em>Half of a Yellow Sun</em>, and <em>Americanah</em> brought Igbo experience to global audiences. Her TED talks — "The Danger of a Single Story" and "We Should All Be Feminists" — have been among the most watched literary talks in the world. Adichie represents the continuity of the Igbo literary tradition into the 21st century.</p>';
+echo '<h2>Christopher Okigbo (1932–1967)</h2>';
+echo '<p>The most celebrated Igbo poet of the 20th century. Okigbo\'s poetry — dense, allusive, drawing on Igbo cosmology, classical literature, and jazz — represented a new direction in African writing. He was killed fighting for Biafra in 1967, aged 35. His death is one of the great losses of the civil war for African literature.</p>';
+echo '<h2>Chief Stephen Osita Osadebe (1936–2007)</h2>';
+echo '<p>The "Sweet Maestro" — one of the greatest Igbo highlife musicians of the 20th century. Osadebe\'s music combined traditional Igbo rhythms and proverbs with the highlife sound, creating recordings that remain beloved across generations. His music is a major archive of Igbo oral culture set to sound.</p>';
+echo '<h2>Uche Okeke (1933–2016)</h2>';
+echo '<p>The founder of the Zaria Art Society and one of the pioneers of modern Nigerian art. Okeke developed the "Natural Synthesis" — a theory of African modernism that drew on indigenous traditions, particularly Uli, to create a distinctively African visual language. His work transformed Nigerian art education and laid the foundation for contemporary Nigerian visual art.</p>';
+echo '<h2>Ada Uzoamaka Azikiwe</h2>';
+echo '<p>Cultural activist and scholar working on the preservation of Igbo oral traditions, women\'s history, and the revival of cultural practices at risk of being lost. Represents the growing movement of Igbo scholars documenting culture from the inside.</p>';
+echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 4px;">';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/culture/intro/">Introduction</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/culture/overview/">Overview</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/culture/topics/">Topics</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/culture/sources/">Sources</a>';
+echo '</div></div>';

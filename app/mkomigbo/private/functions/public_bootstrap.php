@@ -23,7 +23,7 @@ define('MK_PUBLIC_BOOTSTRAP_LOADED', true);
 
 if (!defined('APP_ROOT')) {
   // Best-effort: initialize.php should define APP_ROOT first.
-  define('APP_ROOT', dirname(__DIR__, 2));
+  // // DISABLED_APP_ROOT (DISABLED_AUTO_FIX), dirname(__DIR__, 2));
 }
 
 $bootstrapInit = APP_ROOT . '/private/functions/bootstrap_init.php';

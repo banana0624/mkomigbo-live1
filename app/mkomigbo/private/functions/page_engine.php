@@ -15,12 +15,13 @@ function mk_render_page(array $page): void
     }
   }
 
-  if ($blocks) {
+  if (!empty($blocks)) {
 
     foreach ($blocks as $block) {
-      echo "<pre>";
-      print_r($block); // TEMP (we upgrade later)
-      echo "</pre>";
+      mk_render_block(
+        $block['type'] ?? '',
+        $block['data'] ?? []
+      );
     }
 
   } else {

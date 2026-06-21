@@ -1,0 +1,950 @@
+{
+    "id": "efik",
+    "name": "Efik",
+    "full_name": "Efik Calendar",
+    "language": "Efik \/ English",
+    "region": "Guinea Coast",
+    "area": "Calabar \/ Cross River",
+    "color": "#1a3a5a",
+    "initial": "EF",
+    "calendar_type": "8-day traditional",
+    "market_cycle": 8,
+    "market_days": [
+        "Akwa Ikwọ",
+        "Akwa Ederi",
+        "Akwa Eyibio",
+        "Akwa Ọfiọñ",
+        "Ekpri Ikwọ",
+        "Ekpri Ederi",
+        "Ekpri Eyibio",
+        "Ekpri Ọfiọñ"
+    ],
+    "market_symbols": {
+        "Akwa Ikwọ": {
+            "element": "Ekpe Day",
+            "symbol": "🎭",
+            "color": "#8b1a1a",
+            "meaning": "Ekpe masquerade display. Major ceremonial day."
+        },
+        "Akwa Ederi": {
+            "element": "Rest Day",
+            "symbol": "⭐",
+            "color": "#c0c0ff",
+            "meaning": "Day of rest and feasting. No work. Calabar Sunday."
+        },
+        "Akwa Eyibio": {
+            "element": "Deity Day",
+            "symbol": "🙏",
+            "color": "#50c850",
+            "meaning": "Communal deity worship. Ndem spirit ceremonies."
+        },
+        "Akwa Ọfiọñ": {
+            "element": "Market Day",
+            "symbol": "🛒",
+            "color": "#ffd040",
+            "meaning": "Major market day. National deity Ekpenyong honored."
+        },
+        "Ekpri Ikwọ": {
+            "element": "Small Ekpe",
+            "symbol": "🎭",
+            "color": "#6b1a1a",
+            "meaning": "Minor Ekpe ceremony day."
+        },
+        "Ekpri Ederi": {
+            "element": "Small Rest",
+            "symbol": "💤",
+            "color": "#8080c0",
+            "meaning": "Minor rest day. Family activities."
+        },
+        "Ekpri Eyibio": {
+            "element": "Small Deity",
+            "symbol": "🌿",
+            "color": "#308030",
+            "meaning": "Minor deity offerings. Household ceremonies."
+        },
+        "Ekpri Ọfiọñ": {
+            "element": "Small Market",
+            "symbol": "🏪",
+            "color": "#c0a020",
+            "meaning": "Minor market day. Local trading."
+        }
+    },
+    "months": [
+        {
+            "n": 1,
+            "name": "Efik Ama",
+            "greg": "Jan",
+            "note": "Dry season \/ Ekpe season"
+        },
+        {
+            "n": 2,
+            "name": "Efik Ete",
+            "greg": "Feb",
+            "note": "Late dry season"
+        },
+        {
+            "n": 3,
+            "name": "Efik Ubi",
+            "greg": "Mar",
+            "note": "First rains approaching"
+        },
+        {
+            "n": 4,
+            "name": "Efik Ebre",
+            "greg": "Apr",
+            "note": "First rains \/ Planting"
+        },
+        {
+            "n": 5,
+            "name": "Efik Ita",
+            "greg": "May",
+            "note": "Peak rains \/ Farming"
+        },
+        {
+            "n": 6,
+            "name": "Efik Idem",
+            "greg": "Jun",
+            "note": "Heavy rains"
+        },
+        {
+            "n": 7,
+            "name": "Efik Ekpe",
+            "greg": "Jul",
+            "note": "Ekpe festival season"
+        },
+        {
+            "n": 8,
+            "name": "Efik Abang",
+            "greg": "Aug",
+            "note": "August break \/ Abang festival"
+        },
+        {
+            "n": 9,
+            "name": "Efik Nkanda",
+            "greg": "Sep",
+            "note": "Second rains"
+        },
+        {
+            "n": 10,
+            "name": "Efik Idiok",
+            "greg": "Oct",
+            "note": "Harvest season"
+        },
+        {
+            "n": 11,
+            "name": "Efik Ndidem",
+            "greg": "Nov",
+            "note": "Dry season onset"
+        },
+        {
+            "n": 12,
+            "name": "Efik Ubio",
+            "greg": "Dec",
+            "note": "Harmattan \/ Year end"
+        }
+    ],
+    "farming": [
+        {
+            "month": 1,
+            "activity": "Dry season. Clear farm plots. Plant dry-season vegetables. Tend palm plantations.",
+            "crops": [
+                "Vegetables",
+                "Palm",
+                "Cassava"
+            ],
+            "icon": "🌱"
+        },
+        {
+            "month": 2,
+            "activity": "Late dry season. Prepare yam mounds. Plant cassava cuttings. Tend cocoyam.",
+            "crops": [
+                "Cassava",
+                "Cocoyam"
+            ],
+            "icon": "🌿"
+        },
+        {
+            "month": 3,
+            "activity": "Pre-rain land clearing. Burn old stalks. Buy seedlings for yam and plantain.",
+            "crops": [
+                "Yam",
+                "Plantain"
+            ],
+            "icon": "⚒️"
+        },
+        {
+            "month": 4,
+            "activity": "First rains. Plant yam, cocoyam, plantain. Intercrop with vegetables.",
+            "crops": [
+                "Yam",
+                "Cocoyam",
+                "Plantain"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 5,
+            "activity": "Peak rains. Heavy farming. Weed yam mounds. Plant cassava widely. Monitor drainage.",
+            "crops": [
+                "Yam",
+                "Cassava",
+                "Cocoyam"
+            ],
+            "icon": "🌿"
+        },
+        {
+            "month": 6,
+            "activity": "Heavy rains. Farm maintenance. Plant late cassava. Harvest early cocoyam.",
+            "crops": [
+                "Cassava",
+                "Cocoyam (harvest)"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 7,
+            "activity": "Ekpe season. Some farming rest. Harvest early yam. Plant second-season vegetables.",
+            "crops": [
+                "Yam (early)",
+                "Vegetables"
+            ],
+            "icon": "🎋"
+        },
+        {
+            "month": 8,
+            "activity": "August break. Harvest early yam. Good drying weather. Plant second-season maize.",
+            "crops": [
+                "Yam (harvest)",
+                "Maize"
+            ],
+            "icon": "☀️"
+        },
+        {
+            "month": 9,
+            "activity": "Second rains. Tend late yam. Harvest plantain. Plant late vegetables.",
+            "crops": [
+                "Plantain (harvest)",
+                "Yam"
+            ],
+            "icon": "🌦"
+        },
+        {
+            "month": 10,
+            "activity": "Main harvest. Yam and cassava. Palm harvest begins. Store and sell surplus.",
+            "crops": [
+                "Yam",
+                "Cassava",
+                "Palm"
+            ],
+            "icon": "🏺"
+        },
+        {
+            "month": 11,
+            "activity": "Dry season begins. Harvest remaining cassava. Palm oil processing. Clear new land.",
+            "crops": [
+                "Cassava",
+                "Palm oil"
+            ],
+            "icon": "🌴"
+        },
+        {
+            "month": 12,
+            "activity": "Harmattan. Dry season farming. Process palm. Harvest perennial crops. Year-end sales.",
+            "crops": [
+                "Palm",
+                "Vegetables"
+            ],
+            "icon": "🌬"
+        }
+    ],
+    "fishing": [
+        {
+            "month": 1,
+            "activity": "Dry season. Cross River and Calabar estuary excellent. Atlantic coast canoe fishing peaks.",
+            "fish": [
+                "Barracuda",
+                "Catfish",
+                "Bonga"
+            ],
+            "conditions": "Excellent",
+            "icon": "🎣"
+        },
+        {
+            "month": 2,
+            "activity": "Best Atlantic fishing season. Calm seas. Deep-sea and artisanal fishing both excellent.",
+            "fish": [
+                "Sea fish",
+                "Catfish"
+            ],
+            "conditions": "Excellent",
+            "icon": "🎣"
+        },
+        {
+            "month": 3,
+            "activity": "Pre-rain. Fish feeding heavily. Estuary fishing excellent. Bonga season peaks.",
+            "fish": [
+                "Bonga",
+                "Catfish",
+                "Perch"
+            ],
+            "conditions": "Very Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 4,
+            "activity": "First rains. Fish spawning. Reduce near spawning. Estuary and coastal fishing.",
+            "fish": [
+                "Mixed",
+                "Bonga"
+            ],
+            "conditions": "Good",
+            "icon": "🌊"
+        },
+        {
+            "month": 5,
+            "activity": "Flood season. Fish in creeks and mangroves. Community net fishing in estuaries.",
+            "fish": [
+                "Mangrove fish",
+                "Tilapia"
+            ],
+            "conditions": "Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 6,
+            "activity": "Heavy rains. Atlantic coast fishing continues. Inland creeks flooding. Oyster season.",
+            "fish": [
+                "Sea fish",
+                "Oyster"
+            ],
+            "conditions": "Moderate",
+            "icon": "🦪"
+        },
+        {
+            "month": 7,
+            "activity": "Ekpe season. Some fishing taboos observed. Crab and perch season on coast.",
+            "fish": [
+                "Crab",
+                "Perch",
+                "Sea fish"
+            ],
+            "conditions": "Good",
+            "icon": "🦀"
+        },
+        {
+            "month": 8,
+            "activity": "August break. Calm seas. Best deep-sea fishing. Atlantic perch and barracuda.",
+            "fish": [
+                "Barracuda",
+                "Perch",
+                "Bonga"
+            ],
+            "conditions": "Excellent",
+            "icon": "🎣"
+        },
+        {
+            "month": 9,
+            "activity": "Second rains. Good coastal fishing. Rivers productive. Smoke and store fish.",
+            "fish": [
+                "Tilapia",
+                "Catfish"
+            ],
+            "conditions": "Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 10,
+            "activity": "Harvest season. Rivers falling. Concentrated fishing. Major smoking season.",
+            "fish": [
+                "Catfish",
+                "Tilapia"
+            ],
+            "conditions": "Very Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 11,
+            "activity": "Dry season returning. Rivers clear. Excellent trap and line fishing.",
+            "fish": [
+                "Mixed"
+            ],
+            "conditions": "Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 12,
+            "activity": "Harmattan. Rivers low. Concentrated fish in pools. Year-end communal fishing.",
+            "fish": [
+                "Catfish",
+                "Tilapia"
+            ],
+            "conditions": "Very Good",
+            "icon": "🤝"
+        }
+    ],
+    "trading": [
+        {
+            "month": 1,
+            "activity": "Dry season Calabar markets busy. Creek Town and Duke Town markets peak. Seafood and palm oil.",
+            "goods": [
+                "Palm oil",
+                "Seafood",
+                "Crafts"
+            ],
+            "icon": "🛒"
+        },
+        {
+            "month": 2,
+            "activity": "Active Efik trading. Export palm oil. Pottery and raffia crafts. Calabar port active.",
+            "goods": [
+                "Palm oil",
+                "Crafts",
+                "Port goods"
+            ],
+            "icon": "🏺"
+        },
+        {
+            "month": 3,
+            "activity": "Farm input trading. Seeds, cassava cuttings, tools. Pre-planting market surge.",
+            "goods": [
+                "Farm inputs",
+                "Tools"
+            ],
+            "icon": "⚒️"
+        },
+        {
+            "month": 4,
+            "activity": "Reduced trading during planting. Local food markets steady. Fish and palm oil.",
+            "goods": [
+                "Fish",
+                "Palm oil",
+                "Food"
+            ],
+            "icon": "🥬"
+        },
+        {
+            "month": 5,
+            "activity": "Quiet period. Farming focus. Local Efik markets for daily essentials.",
+            "goods": [
+                "Daily food",
+                "Fish"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 6,
+            "activity": "Moderate trading. Rain disrupts travel. Local markets steady. Raffia goods.",
+            "goods": [
+                "Raffia",
+                "Local food"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 7,
+            "activity": "Ekpe society trading period. Cultural goods, raffia, and beads peak.",
+            "goods": [
+                "Ekpe goods",
+                "Beads",
+                "Raffia"
+            ],
+            "icon": "🎋"
+        },
+        {
+            "month": 8,
+            "activity": "August break. Good transport. Calabar market and port active. Fish markets surge.",
+            "goods": [
+                "Fish",
+                "Farm produce",
+                "Crafts"
+            ],
+            "icon": "📦"
+        },
+        {
+            "month": 9,
+            "activity": "Harvest trading begins. Yam and plantain markets opening. Estuary fish trading.",
+            "goods": [
+                "Yam",
+                "Plantain",
+                "Seafood"
+            ],
+            "icon": "🛒"
+        },
+        {
+            "month": 10,
+            "activity": "Peak harvest. Palm oil processing and trading peaks. Calabar export market.",
+            "goods": [
+                "Yam",
+                "Cassava",
+                "Palm oil"
+            ],
+            "icon": "📦"
+        },
+        {
+            "month": 11,
+            "activity": "Post-harvest. Craft production. Ekpe ceremonial goods. Long-distance trade.",
+            "goods": [
+                "Crafts",
+                "Palm oil",
+                "Cloth"
+            ],
+            "icon": "🚛"
+        },
+        {
+            "month": 12,
+            "activity": "Year-end markets. Christmas surge. Calabar Carnival preparations. Gifts and food.",
+            "goods": [
+                "Gifts",
+                "Food",
+                "Livestock"
+            ],
+            "icon": "🎁"
+        }
+    ],
+    "herding": [
+        {
+            "month": 1,
+            "conditions": "Dry",
+            "activity": "Dry season. Goats and sheep on crop residues. Tend livestock near homestead.",
+            "icon": "🐐"
+        },
+        {
+            "month": 2,
+            "conditions": "Dry",
+            "activity": "Late dry. Livestock trading season. Sell surplus animals before rains.",
+            "icon": "🐐"
+        },
+        {
+            "month": 3,
+            "conditions": "Transitional",
+            "activity": "Pre-rain. Buy young animals for fattening. Prepare livestock pens.",
+            "icon": "🌱"
+        },
+        {
+            "month": 4,
+            "conditions": "Wet",
+            "activity": "Rains begin. Livestock on elevated ground. Monitor health in wet conditions.",
+            "icon": "🌧"
+        },
+        {
+            "month": 5,
+            "conditions": "Wet",
+            "activity": "Peak rains. Keep livestock near homestead. Prevent foot rot and skin disease.",
+            "icon": "🌿"
+        },
+        {
+            "month": 6,
+            "conditions": "Wet",
+            "activity": "Heavy rains. House livestock during floods. Feed stored dry fodder.",
+            "icon": "🐐"
+        },
+        {
+            "month": 7,
+            "conditions": "Wet",
+            "activity": "Ekpe season. Livestock kept from ceremonies. Health checks and treatment.",
+            "icon": "🏠"
+        },
+        {
+            "month": 8,
+            "conditions": "Good",
+            "activity": "August break. Move livestock to graze on new grass. Condition recovery.",
+            "icon": "🌿"
+        },
+        {
+            "month": 9,
+            "conditions": "Wet",
+            "activity": "Second rains. Monitor livestock health. Tick and parasite control.",
+            "icon": "💧"
+        },
+        {
+            "month": 10,
+            "conditions": "Good",
+            "activity": "Harvest season. Keep livestock off farms. Feed on crop residues after harvest.",
+            "icon": "🌾"
+        },
+        {
+            "month": 11,
+            "conditions": "Good",
+            "activity": "Dry season returning. Livestock on open range. Good condition.",
+            "icon": "🐐"
+        },
+        {
+            "month": 12,
+            "conditions": "Dry",
+            "activity": "Harmattan. Year-end livestock sales. Fatten for Christmas and Carnival.",
+            "icon": "🎉"
+        }
+    ],
+    "healing": [
+        {
+            "month": 1,
+            "activity": "Dry season. Collect Efik forest medicines. Ekpe society healing herbs. Ndem water spirit rites.",
+            "herbs": [
+                "Forest herbs",
+                "Ndem herbs",
+                "Bark medicines"
+            ],
+            "rituals": "Ekpe New Year ceremony",
+            "icon": "🌿"
+        },
+        {
+            "month": 2,
+            "activity": "Collect fertility and strength medicines. Prepare for farming season.",
+            "herbs": [
+                "Fertility herbs",
+                "Strength plants"
+            ],
+            "rituals": "Community health assembly",
+            "icon": "🌙"
+        },
+        {
+            "month": 3,
+            "activity": "Pre-rain cleansing. Collect last dry-season medicines. Prepare rain herbs.",
+            "herbs": [
+                "Cleansing herbs",
+                "Rain plants"
+            ],
+            "rituals": "Land and water purification",
+            "icon": "🌱"
+        },
+        {
+            "month": 4,
+            "activity": "First rains. Fresh herbs sprouting. Harvest young leaves. Treat seasonal fever.",
+            "herbs": [
+                "Bitter leaf",
+                "Fever bark",
+                "Neem"
+            ],
+            "rituals": "Rain thanksgiving ceremony",
+            "icon": "🌧"
+        },
+        {
+            "month": 5,
+            "activity": "Peak herbs. Mass collection. Anti-malaria treatment. Treat humidity ailments.",
+            "herbs": [
+                "Anti-malaria",
+                "Neem",
+                "Lemongrass"
+            ],
+            "rituals": "Farming blessing",
+            "icon": "🌿"
+        },
+        {
+            "month": 6,
+            "activity": "Heavy rains. Anti-fungal and waterborne treatments. Protect Calabar water sources.",
+            "herbs": [
+                "Anti-fungal",
+                "Garlic",
+                "Purification herbs"
+            ],
+            "rituals": "Water source protection",
+            "icon": "💧"
+        },
+        {
+            "month": 7,
+            "activity": "Ekpe healing rites. Sacred Efik medicines. Community protection ceremony.",
+            "herbs": [
+                "Ekpe sacred herbs",
+                "Protective plants"
+            ],
+            "rituals": "Ekpe healing ceremony",
+            "icon": "🎋"
+        },
+        {
+            "month": 8,
+            "activity": "August break. Dry herbs. Prepare medicine stores. Treat farm injuries.",
+            "herbs": [
+                "Wound herbs",
+                "Stored medicines"
+            ],
+            "rituals": "Pre-harvest blessing",
+            "icon": "☀️"
+        },
+        {
+            "month": 9,
+            "activity": "Second rains. Treat waterborne diseases. Fresh herbs still available.",
+            "herbs": [
+                "Water purification",
+                "Fresh herbs"
+            ],
+            "rituals": "Water blessing",
+            "icon": "💧"
+        },
+        {
+            "month": 10,
+            "activity": "Harvest. Thanksgiving medicines. Rest and recovery after farming season.",
+            "herbs": [
+                "Recovery herbs",
+                "Thanksgiving plants"
+            ],
+            "rituals": "Harvest thanksgiving",
+            "icon": "🙏"
+        },
+        {
+            "month": 11,
+            "activity": "Dry season. Collect bark medicines. Prepare dry-season respiratory remedies.",
+            "herbs": [
+                "Bark medicines",
+                "Chest herbs"
+            ],
+            "rituals": "Ancestral remembrance",
+            "icon": "🏺"
+        },
+        {
+            "month": 12,
+            "activity": "Year-end Efik purification. Cleanse compound. Calabar Carnival preparations.",
+            "herbs": [
+                "Purification herbs",
+                "Carnival herbs"
+            ],
+            "rituals": "Year-end cleansing (Efik Ndidem)",
+            "icon": "🔥"
+        }
+    ],
+    "weather": [
+        {
+            "month": 1,
+            "season": "Dry Season",
+            "rains": "10-30mm",
+            "temp": "Hot 32°C",
+            "wind": "Harmattan NE",
+            "advisory": "Dry season. Harmattan winds. Atlantic sea breeze moderates heat on Calabar coast.",
+            "icon": "☀️"
+        },
+        {
+            "month": 2,
+            "season": "Late Dry",
+            "rains": "20-40mm",
+            "temp": "Hot 33°C",
+            "wind": "NE easing",
+            "advisory": "Hottest period. High humidity on coast. Pre-rain conditions building.",
+            "icon": "🌤"
+        },
+        {
+            "month": 3,
+            "season": "Pre-rains",
+            "rains": "60-100mm",
+            "temp": "Hot 31°C",
+            "wind": "SW monsoon begins",
+            "advisory": "First rains arrive. Thunderstorms common. Humidity rising fast.",
+            "icon": "🌦"
+        },
+        {
+            "month": 4,
+            "season": "Early Rains",
+            "rains": "140-200mm",
+            "temp": "Warm 29°C",
+            "wind": "SW monsoon",
+            "advisory": "Reliable rains. Good planting. Flash floods in low Cross River areas.",
+            "icon": "🌧"
+        },
+        {
+            "month": 5,
+            "season": "Peak Rains",
+            "rains": "220-300mm",
+            "temp": "Warm humid 27°C",
+            "wind": "SW monsoon strong",
+            "advisory": "Very heavy rains. Coastal flooding. Cross River high. High humidity.",
+            "icon": "⛈"
+        },
+        {
+            "month": 6,
+            "season": "Peak Rains",
+            "rains": "240-320mm",
+            "temp": "Warm humid 26°C",
+            "wind": "SW monsoon",
+            "advisory": "Heaviest rains. Coastal flooding. Estuary very active. Stay safe.",
+            "icon": "⛈"
+        },
+        {
+            "month": 7,
+            "season": "Peak Rains",
+            "rains": "200-280mm",
+            "temp": "Warm 27°C",
+            "wind": "SW monsoon",
+            "advisory": "Still very rainy. Ekpe season. Some ceremonial weather reading.",
+            "icon": "🌧"
+        },
+        {
+            "month": 8,
+            "season": "August Break",
+            "rains": "60-100mm",
+            "temp": "Warm 28°C",
+            "wind": "Mixed",
+            "advisory": "Brief dry spell. Excellent for Calabar Carnival preparations and travel.",
+            "icon": "🌥"
+        },
+        {
+            "month": 9,
+            "season": "Second Rains",
+            "rains": "160-220mm",
+            "temp": "Warm 27°C",
+            "wind": "SW monsoon returns",
+            "advisory": "Second rainy season. Heavy rains return. Coastal conditions moderate.",
+            "icon": "🌦"
+        },
+        {
+            "month": 10,
+            "season": "Late Rains",
+            "rains": "100-160mm",
+            "temp": "Warm 28°C",
+            "wind": "Transitional",
+            "advisory": "Rains tapering. Good harvest. Coastal fishing excellent.",
+            "icon": "🌤"
+        },
+        {
+            "month": 11,
+            "season": "Dry onset",
+            "rains": "30-60mm",
+            "temp": "Hot 30°C",
+            "wind": "NE beginning",
+            "advisory": "Dry season returning. Good travel. Atlantic sea breeze pleasant on coast.",
+            "icon": "🌤"
+        },
+        {
+            "month": 12,
+            "season": "Harmattan",
+            "rains": "10-20mm",
+            "temp": "Hot 31°C",
+            "wind": "NE Harmattan",
+            "advisory": "Harmattan mild on Calabar coast. Carnival season. Good festive weather.",
+            "icon": "💨"
+        }
+    ],
+    "rulers": [
+        {
+            "month": 1,
+            "title": "Ekpe New Year Rites",
+            "events": [
+                "Ekpe society new year ceremony",
+                "Obong of Calabar receives homage",
+                "Creek Town and Duke Town assembly"
+            ],
+            "rulers": "Obong of Calabar presides",
+            "icon": "👑"
+        },
+        {
+            "month": 2,
+            "title": "Ndem Water Spirit Season",
+            "events": [
+                "Ndem shrine ceremonies",
+                "Calabar River offerings",
+                "Fishermen blessing rites"
+            ],
+            "rulers": "Ndem priests lead water rites",
+            "icon": "💧"
+        },
+        {
+            "month": 3,
+            "title": "Farm Blessing Rites",
+            "events": [
+                "Land fertility ceremonies",
+                "Ekpe farm blessing",
+                "Community land purification"
+            ],
+            "rulers": "Obong blesses farming season",
+            "icon": "🌱"
+        },
+        {
+            "month": 4,
+            "title": "Ekpe Initiation Season",
+            "events": [
+                "New Ekpe initiations in Calabar",
+                "Secret society law declarations",
+                "Community assembly at Ekpe lodge"
+            ],
+            "rulers": "Ekpe Obong presides over initiations",
+            "icon": "🎭"
+        },
+        {
+            "month": 5,
+            "title": "Mgbe Society Rites",
+            "events": [
+                "Mgbe masquerade displays",
+                "Community law enforcement",
+                "Cultural performances"
+            ],
+            "rulers": "Mgbe society leaders perform",
+            "icon": "👁"
+        },
+        {
+            "month": 6,
+            "title": "Ndem Mid-Year Ceremony",
+            "events": [
+                "Mid-year Ndem water offerings",
+                "Calabar estuary rites",
+                "Fishermen community assembly"
+            ],
+            "rulers": "Ndem and Ekpe leaders convene",
+            "icon": "🌊"
+        },
+        {
+            "month": 7,
+            "title": "Grand Ekpe Display",
+            "events": [
+                "Full Ekpe masquerade display",
+                "Ekpe law proclamation",
+                "Sacred Ekpe bush ceremonies"
+            ],
+            "rulers": "Highest Ekpe grade presides",
+            "icon": "🎋"
+        },
+        {
+            "month": 8,
+            "title": "Abang Festival",
+            "events": [
+                "Abang women festival",
+                "Calabar women cultural display",
+                "Community thanksgiving"
+            ],
+            "rulers": "Women elders lead Abang ceremony",
+            "icon": "👑"
+        },
+        {
+            "month": 9,
+            "title": "Harvest Thanksgiving",
+            "events": [
+                "First fruits ceremony",
+                "Obong thanksgiving feast",
+                "Community cultural display"
+            ],
+            "rulers": "Obong of Calabar leads thanksgiving",
+            "icon": "🌾"
+        },
+        {
+            "month": 10,
+            "title": "Ekpe Harvest Law",
+            "events": [
+                "Harvest laws proclaimed by Ekpe",
+                "Community accounts reviewed",
+                "Dispute resolution"
+            ],
+            "rulers": "Ekpe society enforces harvest laws",
+            "icon": "⚖️"
+        },
+        {
+            "month": 11,
+            "title": "Obong Royal Court",
+            "events": [
+                "Obong annual court sitting",
+                "District heads pay homage",
+                "Community review and planning"
+            ],
+            "rulers": "Obong of Calabar holds royal court",
+            "icon": "👑"
+        },
+        {
+            "month": 12,
+            "title": "Calabar Carnival Season",
+            "events": [
+                "Calabar Christmas Carnival",
+                "Obong opens carnival",
+                "Cultural troupes parade",
+                "International festival of arts"
+            ],
+            "rulers": "Obong of Calabar opens the Carnival",
+            "icon": "🎉"
+        }
+    ],
+    "calendar_note": "Efik 8-day week (Urua): 4 major days (Akwa) + 4 minor days (Ekpri)"
+}

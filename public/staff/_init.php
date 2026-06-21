@@ -18,9 +18,22 @@ if (defined('MK_STAFF_INIT_LOADED')) {
 define('MK_STAFF_INIT_LOADED', true);
 
 /* ---------------------------------------------------------
+| Define APP_ROOT and PRIVATE_PATH (required by tools, etc.)
+| public/staff/_init.php is 2 levels below the release root:
+|   /home/mkomigbo/releases/2026-04-25-120559/public/staff/_init.php
+|   dirname(__DIR__, 2) = /home/mkomigbo/releases/2026-04-25-120559
+--------------------------------------------------------- */
+if (!defined('APP_ROOT')) {
+    define('APP_ROOT', dirname(__DIR__, 2));
+}
+
+if (!defined('PRIVATE_PATH')) {
+    define('PRIVATE_PATH', APP_ROOT . '/app/mkomigbo/private');
+}
+
+/* ---------------------------------------------------------
 | Session SAFE START
 --------------------------------------------------------- */
-
 if (session_status() !== PHP_SESSION_ACTIVE) {
     @session_start();
 }
@@ -28,7 +41,6 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 /* ---------------------------------------------------------
 | SAFE AUTH GUARD (NO external function dependency)
 --------------------------------------------------------- */
-
 if (!function_exists('auth_require_role')) {
 
     function auth_require_role(string $role): void
@@ -43,7 +55,6 @@ if (!function_exists('auth_require_role')) {
             !empty($_SESSION['staff_id']);
 
         if (!$loggedIn) {
-
             header('Location: /staff/login.php', true, 302);
             exit;
         }
@@ -54,8 +65,14 @@ if (!function_exists('auth_require_role')) {
 | Minimal helpers
 --------------------------------------------------------- */
 
-if (!function_exists('h')) {
+// Load DB functions (required for db() and staff_pdo())
+$_db_path = APP_ROOT . '/app/mkomigbo/private/functions/db.php';
+if (is_file($_db_path)) {
+    require_once $_db_path;
+}
+unset($_db_path);
 
+if (!function_exists('h')) {
     function h(string $v): string
     {
         return htmlspecialchars($v, ENT_QUOTES, 'UTF-8');

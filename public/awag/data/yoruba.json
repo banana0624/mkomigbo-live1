@@ -1,0 +1,907 @@
+{
+    "id": "yoruba",
+    "name": "Yoruba",
+    "full_name": "Yoruba Calendar",
+    "language": "Yoruba \/ English",
+    "region": "Guinea Coast",
+    "area": "Southwest Nigeria",
+    "color": "#1a3a6b",
+    "initial": "YO",
+    "calendar_type": "Gregorian + Traditional",
+    "market_cycle": 4,
+    "market_days": [
+        "Ọjọ Ẹjẹ",
+        "Ọjọ Ẹta",
+        "Ọjọ Ajé",
+        "Ọjọ Abámẹta"
+    ],
+    "market_symbols": {
+        "Ọjọ Ẹjẹ": {
+            "element": "Thunder",
+            "symbol": "⚡",
+            "color": "#ffd040"
+        },
+        "Ọjọ Ẹta": {
+            "element": "Water",
+            "symbol": "💧",
+            "color": "#40a0ff"
+        },
+        "Ọjọ Ajé": {
+            "element": "Wealth",
+            "symbol": "💰",
+            "color": "#50c850"
+        },
+        "Ọjọ Abámẹta": {
+            "element": "Earth",
+            "symbol": "🌍",
+            "color": "#c87040"
+        }
+    },
+    "months": [
+        {
+            "n": 1,
+            "name": "Ṣẹ̀rẹ̀",
+            "greg": "Jan",
+            "note": "New Year \/ Dry season"
+        },
+        {
+            "n": 2,
+            "name": "Èrèlè",
+            "greg": "Feb",
+            "note": "Late harmattan"
+        },
+        {
+            "n": 3,
+            "name": "Ẹrẹ̀nà",
+            "greg": "Mar",
+            "note": "Pre-rains preparation"
+        },
+        {
+            "n": 4,
+            "name": "Ìgbé",
+            "greg": "Apr",
+            "note": "First rains \/ Planting"
+        },
+        {
+            "n": 5,
+            "name": "Ẹ̀bibi",
+            "greg": "May",
+            "note": "Peak rains \/ Farming"
+        },
+        {
+            "n": 6,
+            "name": "Òkúdu",
+            "greg": "Jun",
+            "note": "Heavy rains"
+        },
+        {
+            "n": 7,
+            "name": "Agẹmọ",
+            "greg": "Jul",
+            "note": "Agemo Festival"
+        },
+        {
+            "n": 8,
+            "name": "Ògún",
+            "greg": "Aug",
+            "note": "Ogun Festival \/ August break"
+        },
+        {
+            "n": 9,
+            "name": "Owewe",
+            "greg": "Sep",
+            "note": "Second rains"
+        },
+        {
+            "n": 10,
+            "name": "Ọ̀wàrà",
+            "greg": "Oct",
+            "note": "Late rains \/ Harvest"
+        },
+        {
+            "n": 11,
+            "name": "Bélú",
+            "greg": "Nov",
+            "note": "Dry season onset"
+        },
+        {
+            "n": 12,
+            "name": "Ọ̀pẹ̀",
+            "greg": "Dec",
+            "note": "Harmattan \/ Year end"
+        }
+    ],
+    "farming": [
+        {
+            "month": 1,
+            "activity": "Dry season. Land clearing. Prepare beds. Plant tomatoes and peppers in irrigated plots.",
+            "crops": [
+                "Tomato",
+                "Pepper",
+                "Onion"
+            ],
+            "icon": "🌱"
+        },
+        {
+            "month": 2,
+            "activity": "Late harmattan farming. Plant early cassava. Harvest dry-season vegetables.",
+            "crops": [
+                "Cassava",
+                "Vegetables"
+            ],
+            "icon": "🌿"
+        },
+        {
+            "month": 3,
+            "activity": "Pre-rain preparation. Final land clearing. Burn old stalks. Plant maize seedlings.",
+            "crops": [
+                "Maize",
+                "Cassava"
+            ],
+            "icon": "🌽"
+        },
+        {
+            "month": 4,
+            "activity": "First rains arrive. Plant maize and yam. Intercrop with beans and vegetables.",
+            "crops": [
+                "Maize",
+                "Yam",
+                "Beans"
+            ],
+            "icon": "🫘"
+        },
+        {
+            "month": 5,
+            "activity": "Peak rains. Heavy farming. Plant cassava widely. Weed maize. Monitor yam mounds.",
+            "crops": [
+                "Cassava",
+                "Maize",
+                "Yam"
+            ],
+            "icon": "🌾"
+        },
+        {
+            "month": 6,
+            "activity": "Heavy rains continue. Second weeding. Plant cowpeas. Tend yam staking.",
+            "crops": [
+                "Cowpea",
+                "Yam"
+            ],
+            "icon": "🌿"
+        },
+        {
+            "month": 7,
+            "activity": "Agemo season. Some farming rest for festivals. Harvest early maize.",
+            "crops": [
+                "Maize (harvest)",
+                "Vegetables"
+            ],
+            "icon": "🎋"
+        },
+        {
+            "month": 8,
+            "activity": "August break. Good drying weather. Harvest and store first crops. Plant second maize.",
+            "crops": [
+                "Maize",
+                "Cassava"
+            ],
+            "icon": "☀️"
+        },
+        {
+            "month": 9,
+            "activity": "Second rains. Late-season yam harvest begins. Plant groundnuts.",
+            "crops": [
+                "Yam (harvest)",
+                "Groundnut"
+            ],
+            "icon": "🏺"
+        },
+        {
+            "month": 10,
+            "activity": "Main harvest season. Yam, cassava, groundnut harvest. Store and sell surplus.",
+            "crops": [
+                "Yam",
+                "Cassava",
+                "Groundnut"
+            ],
+            "icon": "🌾"
+        },
+        {
+            "month": 11,
+            "activity": "Dry season begins. Clear land. Harvest remaining crops. Plant dry-season produce.",
+            "crops": [
+                "Vegetables",
+                "Tomato"
+            ],
+            "icon": "🌱"
+        },
+        {
+            "month": 12,
+            "activity": "Harmattan. Rest period. Repair tools. Plant early dry-season crops. Year-end sales.",
+            "crops": [
+                "Tomato",
+                "Onion"
+            ],
+            "icon": "🔧"
+        }
+    ],
+    "fishing": [
+        {
+            "month": 1,
+            "activity": "Rivers low and clear. Excellent trap fishing. Lagoon fishing active on coast.",
+            "fish": [
+                "Catfish",
+                "Tilapia",
+                "Bream"
+            ],
+            "conditions": "Excellent",
+            "icon": "🎣"
+        },
+        {
+            "month": 2,
+            "activity": "Dry season peak. Concentrated fish in deep pools. Best line and trap fishing.",
+            "fish": [
+                "Catfish",
+                "Tilapia"
+            ],
+            "conditions": "Very Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 3,
+            "activity": "Pre-rain. Fish feeding actively. Good for line fishing. Atlantic coast: bonga season.",
+            "fish": [
+                "Catfish",
+                "Bonga"
+            ],
+            "conditions": "Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 4,
+            "activity": "First rains. Fish spawning begins. Reduce near spawning grounds. Cast nets in rivers.",
+            "fish": [
+                "Mixed"
+            ],
+            "conditions": "Moderate",
+            "icon": "🌊"
+        },
+        {
+            "month": 5,
+            "activity": "Flood season. Fish disperse widely. Lagoon fishing excellent. Atlantic Coast: peak.",
+            "fish": [
+                "Tilapia",
+                "Carp",
+                "Sea fish"
+            ],
+            "conditions": "Excellent",
+            "icon": "🎣"
+        },
+        {
+            "month": 6,
+            "activity": "Heavy rains. Rivers high. Fish in floodplains. Community net fishing.",
+            "fish": [
+                "Mixed"
+            ],
+            "conditions": "Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 7,
+            "activity": "Agemo season. Some coastal fishing taboos observed. River fishing continues.",
+            "fish": [
+                "River fish"
+            ],
+            "conditions": "Moderate",
+            "icon": "🎣"
+        },
+        {
+            "month": 8,
+            "activity": "August break. Calm seas. Excellent Atlantic coast fishing. Canoe fishing peak.",
+            "fish": [
+                "Sea fish",
+                "Catfish"
+            ],
+            "conditions": "Excellent",
+            "icon": "🎣"
+        },
+        {
+            "month": 9,
+            "activity": "Second rains. Rivers still high. Good cast net fishing in floodwaters.",
+            "fish": [
+                "Tilapia",
+                "Catfish"
+            ],
+            "conditions": "Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 10,
+            "activity": "Rains easing. Fish concentrated in channels. Excellent trap and line fishing.",
+            "fish": [
+                "Catfish",
+                "Mudfish"
+            ],
+            "conditions": "Very Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 11,
+            "activity": "Dry season returns. Rivers falling. Fish concentrated. Community fishing events.",
+            "fish": [
+                "Mixed"
+            ],
+            "conditions": "Good",
+            "icon": "🤝"
+        },
+        {
+            "month": 12,
+            "activity": "Harmattan. Rivers low. Fish in deep pools. Year-end communal fishing.",
+            "fish": [
+                "Catfish",
+                "Tilapia"
+            ],
+            "conditions": "Good",
+            "icon": "🎣"
+        }
+    ],
+    "trading": [
+        {
+            "month": 1,
+            "activity": "New Year trading. Ọjọ Ajé (wealth day) markets surge. Textile and craft trading peaks.",
+            "goods": [
+                "Textiles",
+                "Crafts",
+                "Yam"
+            ],
+            "icon": "🛒"
+        },
+        {
+            "month": 2,
+            "activity": "Steady trading. Farm produce markets active. Livestock trading picks up.",
+            "goods": [
+                "Farm produce",
+                "Livestock"
+            ],
+            "icon": "🐄"
+        },
+        {
+            "month": 3,
+            "activity": "Pre-planting inputs trading. Buy seeds, tools, fertiliser. Busy market season.",
+            "goods": [
+                "Seeds",
+                "Tools",
+                "Inputs"
+            ],
+            "icon": "⚒️"
+        },
+        {
+            "month": 4,
+            "activity": "Rain disrupts long-distance trade. Local markets active. Imported goods trading.",
+            "goods": [
+                "Local food",
+                "Cloth"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 5,
+            "activity": "Quiet trading period. Farmers busy. Local food markets steady. Palm oil trading.",
+            "goods": [
+                "Palm oil",
+                "Vegetables"
+            ],
+            "icon": "🥬"
+        },
+        {
+            "month": 6,
+            "activity": "Moderate trading. Maize harvest brings activity. Textile markets open again.",
+            "goods": [
+                "Maize",
+                "Textiles"
+            ],
+            "icon": "🌽"
+        },
+        {
+            "month": 7,
+            "activity": "Agemo festival trading. Major cultural markets. Tourism goods and souvenirs peak.",
+            "goods": [
+                "Crafts",
+                "Food",
+                "Cultural goods"
+            ],
+            "icon": "🎊"
+        },
+        {
+            "month": 8,
+            "activity": "August break. Good transport weather. Long-distance trading resumes. Cattle market.",
+            "goods": [
+                "Cattle",
+                "Grains",
+                "Produce"
+            ],
+            "icon": "📦"
+        },
+        {
+            "month": 9,
+            "activity": "Harvest trading begins. Yam and cassava markets opening. Regional fairs active.",
+            "goods": [
+                "Yam",
+                "Cassava",
+                "Groundnut"
+            ],
+            "icon": "🛒"
+        },
+        {
+            "month": 10,
+            "activity": "Peak harvest trading. Major surplus selling. Export produce. Ẹgbẹ trading societies active.",
+            "goods": [
+                "Yam",
+                "Cassava",
+                "Palm oil"
+            ],
+            "icon": "📦"
+        },
+        {
+            "month": 11,
+            "activity": "Post-harvest trading. Craft and textile production for year-end. Livestock fattening.",
+            "goods": [
+                "Crafts",
+                "Livestock",
+                "Textiles"
+            ],
+            "icon": "🏺"
+        },
+        {
+            "month": 12,
+            "activity": "Year-end trading surge. Christmas\/Odun markets. Gifts, livestock, food all peak.",
+            "goods": [
+                "Livestock",
+                "Food",
+                "Gifts",
+                "Cloth"
+            ],
+            "icon": "🎁"
+        }
+    ],
+    "herding": [
+        {
+            "month": 1,
+            "conditions": "Dry",
+            "activity": "Dry season. Fulani herders move cattle south. Supplement with crop residues. Water critical.",
+            "icon": "🐄"
+        },
+        {
+            "month": 2,
+            "conditions": "Dry",
+            "activity": "Harmattan peak. Cattle graze on crop residues. Cold nights. Shelter young calves.",
+            "icon": "🌬"
+        },
+        {
+            "month": 3,
+            "conditions": "Transitional",
+            "activity": "Pre-rain. Cattle restless. Prepare for northward migration. New grass appearing.",
+            "icon": "🌱"
+        },
+        {
+            "month": 4,
+            "conditions": "Improving",
+            "activity": "First rains. New grass growth. Excellent grazing begins. Move to upland pastures.",
+            "icon": "🌿"
+        },
+        {
+            "month": 5,
+            "conditions": "Excellent",
+            "activity": "Lush grazing. Cattle thrive and gain weight. Milk production peaks. Calving season.",
+            "icon": "🥛"
+        },
+        {
+            "month": 6,
+            "conditions": "Good",
+            "activity": "Peak rains. Excellent grazing. Monitor low-lying pastures for flooding. Tick control.",
+            "icon": "🌿"
+        },
+        {
+            "month": 7,
+            "conditions": "Good",
+            "activity": "Agemo season. Keep cattle from festival grounds. Good grazing continues.",
+            "icon": "⚠️"
+        },
+        {
+            "month": 8,
+            "conditions": "Transitional",
+            "activity": "August break. Begin gradual southward movement. Prepare for harvest season — keep off farms.",
+            "icon": "🚶"
+        },
+        {
+            "month": 9,
+            "conditions": "Good",
+            "activity": "Second rains. Still good grazing. Sell surplus cattle before dry season.",
+            "icon": "🐄"
+        },
+        {
+            "month": 10,
+            "conditions": "Moderate",
+            "activity": "Harvest season. Keep cattle off farms strictly. Begin dry-season preparations.",
+            "icon": "🌾"
+        },
+        {
+            "month": 11,
+            "conditions": "Challenging",
+            "activity": "Dry season. Rivers falling. Move to riverside grazing. Supplement feeding begins.",
+            "icon": "💧"
+        },
+        {
+            "month": 12,
+            "conditions": "Difficult",
+            "activity": "Harmattan. Cold dusty winds stress cattle. House young animals. Year-end livestock sales.",
+            "icon": "📊"
+        }
+    ],
+    "healing": [
+        {
+            "month": 1,
+            "activity": "New Year Yoruba healing rituals. Egungun preparations. Harvest Ajo herb in dry season.",
+            "herbs": [
+                "Ajo",
+                "Efirin",
+                "Igi ose"
+            ],
+            "rituals": "New Year purification (Ẹbọ Odun)",
+            "icon": "🌿"
+        },
+        {
+            "month": 2,
+            "activity": "Dry season medicine collection. Bark and root harvest. Prepare Ogun medicines.",
+            "herbs": [
+                "Ogun herbs",
+                "Bitter bark"
+            ],
+            "rituals": "Ogun appeasement",
+            "icon": "🌙"
+        },
+        {
+            "month": 3,
+            "activity": "Pre-rain cleansing. Prepare rain medicines. Plant medicine gardens. Collect seeds.",
+            "herbs": [
+                "Rain herbs",
+                "Fertility plants"
+            ],
+            "rituals": "Land blessing (Ipade Ile)",
+            "icon": "🌱"
+        },
+        {
+            "month": 4,
+            "activity": "First rains activate herbs. Treat seasonal fever and malaria. Harvest fresh leaves.",
+            "herbs": [
+                "Bitter leaf",
+                "Fever bark",
+                "Lemongrass"
+            ],
+            "rituals": "Anti-fever ceremony",
+            "icon": "🌧"
+        },
+        {
+            "month": 5,
+            "activity": "Peak herb growth. Mass collection and drying. Prepare fertility and farming medicines.",
+            "herbs": [
+                "Mixed forest herbs"
+            ],
+            "rituals": "Fertility ceremony (Ẹbọ Omo)",
+            "icon": "✨"
+        },
+        {
+            "month": 6,
+            "activity": "Heavy rain herbs abundant. Treat skin conditions from humidity. Anti-fungal plants.",
+            "herbs": [
+                "Anti-fungal herbs",
+                "Neem"
+            ],
+            "rituals": "Rain thanksgiving",
+            "icon": "🌿"
+        },
+        {
+            "month": 7,
+            "activity": "Agemo festival healing. Sacred Agemo medicines. Community health rituals.",
+            "herbs": [
+                "Agemo sacred herbs"
+            ],
+            "rituals": "Agemo ceremony",
+            "icon": "🎋"
+        },
+        {
+            "month": 8,
+            "activity": "Dry spell — good for drying medicines. Harvest anti-rheumatic and joint medicines.",
+            "herbs": [
+                "Anti-rheumatic herbs",
+                "Ẹ̀gbẹ̀"
+            ],
+            "rituals": "Harvest health blessing",
+            "icon": "☀️"
+        },
+        {
+            "month": 9,
+            "activity": "Second rains. Treat water-borne diseases. Protect wells and water sources.",
+            "herbs": [
+                "Water purification herbs"
+            ],
+            "rituals": "Water blessing (Omi Mimọ)",
+            "icon": "💧"
+        },
+        {
+            "month": 10,
+            "activity": "Harvest season medicines. Treat farm injuries. Thanksgiving healing ceremonies.",
+            "herbs": [
+                "Wound herbs",
+                "Ogiri"
+            ],
+            "rituals": "Harvest thanksgiving (Ẹbọ Irẹbọ)",
+            "icon": "🙏"
+        },
+        {
+            "month": 11,
+            "activity": "Dry season. Collect bark medicines. Prepare harmattan skin and respiratory remedies.",
+            "herbs": [
+                "Shea butter",
+                "Eucalyptus"
+            ],
+            "rituals": "Ancestral remembrance",
+            "icon": "🏺"
+        },
+        {
+            "month": 12,
+            "activity": "Year-end purification. Cleanse compound. Prepare new year medicines. Egungun season.",
+            "herbs": [
+                "Purification herbs",
+                "Osun"
+            ],
+            "rituals": "Year-end cleansing (Ẹbọ Odun Tuntun)",
+            "icon": "🔥"
+        }
+    ],
+    "weather": [
+        {
+            "month": 1,
+            "season": "Dry Season",
+            "rains": "None",
+            "temp": "Hot days 32°C, warm nights",
+            "wind": "Harmattan NE",
+            "advisory": "Hot and dry. Harmattan winds. Protect from dust. Rivers at lowest.",
+            "icon": "☀️"
+        },
+        {
+            "month": 2,
+            "season": "Late Dry",
+            "rains": "0-10mm",
+            "temp": "Very hot 34°C",
+            "wind": "Light SW beginning",
+            "advisory": "Hottest period. First sea breeze returns. Pre-rain humidity rising.",
+            "icon": "🌤"
+        },
+        {
+            "month": 3,
+            "season": "Pre-rains",
+            "rains": "20-60mm",
+            "temp": "Hot 32°C",
+            "wind": "SW monsoon begins",
+            "advisory": "First rains possible. Thunderstorms. Prepare farms.",
+            "icon": "🌦"
+        },
+        {
+            "month": 4,
+            "season": "Early Rains",
+            "rains": "80-140mm",
+            "temp": "Warm 30°C",
+            "wind": "SW monsoon",
+            "advisory": "Reliable rains arrive. Good planting window. Flash floods possible.",
+            "icon": "🌧"
+        },
+        {
+            "month": 5,
+            "season": "Peak Rains",
+            "rains": "160-220mm",
+            "temp": "Warm 28°C",
+            "wind": "SW monsoon strong",
+            "advisory": "Heavy rains. Flooding risk. Excellent for crops.",
+            "icon": "⛈"
+        },
+        {
+            "month": 6,
+            "season": "Peak Rains",
+            "rains": "180-240mm",
+            "temp": "Warm humid 27°C",
+            "wind": "SW monsoon",
+            "advisory": "Heaviest rains of year. Waterlogging. Keep to high ground.",
+            "icon": "⛈"
+        },
+        {
+            "month": 7,
+            "season": "Peak \/ Agemo",
+            "rains": "150-200mm",
+            "temp": "Warm 28°C",
+            "wind": "SW monsoon",
+            "advisory": "Continued heavy rains. Agemo festival season. Road conditions poor.",
+            "icon": "🌧"
+        },
+        {
+            "month": 8,
+            "season": "August Break",
+            "rains": "40-80mm",
+            "temp": "Warm 29°C",
+            "wind": "Mixed",
+            "advisory": "Brief dry spell. Good harvest and travel weather. Do not plant thinking rains ended.",
+            "icon": "🌥"
+        },
+        {
+            "month": 9,
+            "season": "Second Rains",
+            "rains": "120-160mm",
+            "temp": "Warm 28°C",
+            "wind": "SW monsoon returns",
+            "advisory": "Second rainy season. Moderate rainfall. Good for late crops.",
+            "icon": "🌦"
+        },
+        {
+            "month": 10,
+            "season": "Late Rains",
+            "rains": "60-100mm",
+            "temp": "Warm 29°C",
+            "wind": "Transitional",
+            "advisory": "Rains tapering. Good harvesting weather. Prepare storage.",
+            "icon": "🌤"
+        },
+        {
+            "month": 11,
+            "season": "Dry onset",
+            "rains": "10-30mm",
+            "temp": "Warm 31°C",
+            "wind": "NE beginning",
+            "advisory": "Dry season returning. Good travel and trade weather.",
+            "icon": "🌤"
+        },
+        {
+            "month": 12,
+            "season": "Harmattan",
+            "rains": "0-5mm",
+            "temp": "Hot day 32°C, cold night 18°C",
+            "wind": "Harmattan NE strong",
+            "advisory": "Harmattan arrives. Very dry and dusty. Protect health and livestock.",
+            "icon": "🌬"
+        }
+    ],
+    "rulers": [
+        {
+            "month": 1,
+            "title": "Odun Tuntun — New Year",
+            "events": [
+                "Egungun masquerade appearances",
+                "New Year prayers at shrines",
+                "Oba receives homage"
+            ],
+            "rulers": "Oba holds New Year durbar",
+            "icon": "👑"
+        },
+        {
+            "month": 2,
+            "title": "Egungun Festival Season",
+            "events": [
+                "Ancestral Egungun masquerades",
+                "Family lineage ceremonies",
+                "Remembrance of the dead"
+            ],
+            "rulers": "Egungun society leaders preside",
+            "icon": "👁"
+        },
+        {
+            "month": 3,
+            "title": "Ògún Festival",
+            "events": [
+                "Ogun iron god festival",
+                "Blacksmiths and warriors honored",
+                "Dog sacrifice to Ogun"
+            ],
+            "rulers": "Warriors and hunters lead rites",
+            "icon": "⚔️"
+        },
+        {
+            "month": 4,
+            "title": "Sango Festival",
+            "events": [
+                "Sango thunder god festival",
+                "Drumming and possession dances",
+                "Offerings at Sango shrines"
+            ],
+            "rulers": "Sango priests perform ceremonies",
+            "icon": "⚡"
+        },
+        {
+            "month": 5,
+            "title": "Ọya Festival",
+            "events": [
+                "Ọya wind goddess rites",
+                "River Niger ceremonies",
+                "Market women honored"
+            ],
+            "rulers": "Ọya priestesses lead rituals",
+            "icon": "🌊"
+        },
+        {
+            "month": 6,
+            "title": "Ọṣun Festival Approach",
+            "events": [
+                "Pre-festival preparations",
+                "River offerings begin",
+                "Pilgrimage preparations"
+            ],
+            "rulers": "Ataoja of Ọṣogbo coordinates",
+            "icon": "💧"
+        },
+        {
+            "month": 7,
+            "title": "Agemo Festival",
+            "events": [
+                "Agemo masquerade procession",
+                "Ijebu kingdom rites",
+                "Sacred forest ceremonies"
+            ],
+            "rulers": "Awujale of Ijebuland presides",
+            "icon": "🎭"
+        },
+        {
+            "month": 8,
+            "title": "Ọṣun-Ọṣogbo Festival",
+            "events": [
+                "Grand Ọṣun festival",
+                "UNESCO heritage ceremony",
+                "River goddess veneration",
+                "Pilgrimage to sacred grove"
+            ],
+            "rulers": "Ataoja and Arugba lead procession",
+            "icon": "🏆"
+        },
+        {
+            "month": 9,
+            "title": "Ọranmiyan Heritage",
+            "events": [
+                "Ile-Ife ancestral rites",
+                "Oduduwa commemoration",
+                "Yoruba unity ceremonies"
+            ],
+            "rulers": "Ooni of Ife leads ceremonies",
+            "icon": "👑"
+        },
+        {
+            "month": 10,
+            "title": "Harvest Thanksgiving",
+            "events": [
+                "New yam festival",
+                "Thanksgiving to Orisa",
+                "Community feast days"
+            ],
+            "rulers": "Oba presides over thanksgiving",
+            "icon": "🌾"
+        },
+        {
+            "month": 11,
+            "title": "Ifá Divination Season",
+            "events": [
+                "Annual Ifá consultation",
+                "Priests recite Odu corpus",
+                "Community direction set"
+            ],
+            "rulers": "Araba chief priest leads Ifá rites",
+            "icon": "📿"
+        },
+        {
+            "month": 12,
+            "title": "Odun Oba — Royal Festival",
+            "events": [
+                "Oba coronation anniversary",
+                "Royal procession",
+                "Gift-giving to the Oba"
+            ],
+            "rulers": "Oba holds grand royal durbar",
+            "icon": "🎊"
+        }
+    ]
+}

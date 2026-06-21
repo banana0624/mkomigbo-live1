@@ -1,47 +1,31 @@
 <?php
 declare(strict_types=1);
-
-return [
-  'title' => 'Sources',
-  'body_html' => <<<MKHTML_3bd3263d
-<div class="mk-prose">
-
-  <p class="mk-muted" style="margin-top:0;">
-    <strong>Subject</strong> — Sources.
-    Starter scaffold: readable now, expandable later.
-  </p>
-
-  <div style="display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 14px;">
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/intro/">
-        Introduction      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/overview/">
-        Overview      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/topics/">
-        Key Topics      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/people/">
-        People      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/sources/">
-        Sources      </a>
-      </div>
-
-  <h2>What belongs here</h2>
-  <ul>
-    <li><strong>Scope:</strong> what this page covers and excludes.</li>
-    <li><strong>Key points:</strong> the essentials readers should remember.</li>
-    <li><strong>Structure:</strong> sections you’ll expand later.</li>
-  </ul>
-
-  <hr>
-
-  <p class="mk-muted">
-    Tip: add citations and attach source links/files below.
-  </p>
-
-</div>
-MKHTML_3bd3263d,
-];
+echo '<div class="mk-prose">';
+echo '<p class="mk-muted" style="margin-top:0;">Key references for understanding Nigeria\'s politics and society.</p>';
+echo '<h2>History</h2>';
+echo '<ul>';
+echo '<li><strong>Toyin Falola</strong> — <em>The History of Nigeria</em> (1999). Standard academic overview.</li>';
+echo '<li><strong>Richard Sklar</strong> — <em>Nigerian Political Parties</em> (1963). Classic study of the First Republic.</li>';
+echo '<li><strong>Billy Dudley</strong> — <em>Instability and Political Order: Politics and Crisis in Nigeria</em> (1973).</li>';
+echo '</ul>';
+echo '<h2>Oil and Economy</h2>';
+echo '<ul>';
+echo '<li><strong>Tom Burgis</strong> — <em>The Looting Machine</em> (2015). On African resource extraction including Nigeria.</li>';
+echo '<li><strong>Ken Saro-Wiwa</strong> — <em>A Month and a Day</em> (1995). Prison diary and Ogoni account.</li>';
+echo '</ul>';
+echo '<h2>Contemporary Politics</h2>';
+echo '<ul>';
+echo '<li><strong>Wole Soyinka</strong> — <em>You Must Set Forth at Dawn</em> (2006). Memoir of Nigerian political life.</li>';
+echo '<li><strong>Chinua Achebe</strong> — <em>The Trouble with Nigeria</em> (1983). Essential short essay on Nigerian political failure.</li>';
+echo '</ul>';
+echo '<h2>Media and Current Affairs</h2>';
+echo '<ul>';
+echo '<li><strong>Premium Times</strong> — premiumtimesng.com — leading investigative journalism</li>';
+echo '<li><strong>The Cable</strong> — thecable.ng — political analysis and news</li>';
+echo '<li><strong>Sahara Reporters</strong> — saharareporters.com — diaspora and accountability journalism</li>';
+echo '</ul>';
+echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 4px;">';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/nigeria/intro/">Introduction</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/nigeria/overview/">Overview</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/nigeria/topics/">Topics</a>';
+echo '</div></div>';

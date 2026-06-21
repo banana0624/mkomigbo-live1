@@ -7,7 +7,7 @@ declare(strict_types=1);
  * Single source of truth for public Subjects list:
  * - Registry order is canonical (ID order wins)
  * - Optional DB overlay (name/desc/icon/visibility) if `db()` exists
- * - Never-empty fallback to canonical 19 subjects
+ * - Never-empty fallback to canonical 20 subjects
  *
  * Returns rows:
  *   [
@@ -38,7 +38,7 @@ if (!function_exists('mk_public_subjects_list')) {
         ['id'=>4,  'slug'=>'persons',      'name'=>'Persons'],
         ['id'=>5,  'slug'=>'culture',      'name'=>'Culture'],
         ['id'=>6,  'slug'=>'religion',     'name'=>'Religion'],
-        ['id'=>7,  'slug'=>'spirituality', 'name'=>'Spirituality'],
+        ['id'=>7,  'slug'=>'esoterism', 'name'=>'Esoterism'],
         ['id'=>8,  'slug'=>'tradition',    'name'=>'Tradition'],
         ['id'=>9,  'slug'=>'language1',    'name'=>'Language1'],
         ['id'=>10, 'slug'=>'language2',    'name'=>'Language2'],
@@ -51,6 +51,7 @@ if (!function_exists('mk_public_subjects_list')) {
         ['id'=>17, 'slug'=>'europe',       'name'=>'Europe'],
         ['id'=>18, 'slug'=>'arabs',        'name'=>'Arabs'],
         ['id'=>19, 'slug'=>'about',        'name'=>'About'],
+        ['id'=>20, 'slug'=>'pogrom',       'name'=>'Pogrom'],
       ];
     };
 

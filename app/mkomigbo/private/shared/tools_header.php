@@ -114,7 +114,7 @@ $norm_css = static function($p): ?string {
 
 $must = [
   '/lib/css/ui.css',
-  '/lib/css/staff.css',
+  '/lib/css/staff.css?v='.filemtime('/home/mkomigbo/lib/css/staff.css'),
 ];
 
 $seen = [];

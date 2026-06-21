@@ -309,3 +309,31 @@ if (!function_exists('mk_sanitize_bio_html')) {
     return trim($html);
   }
 }
+
+/* COMPAT: shared loader fallback */
+function mk_require_shared(string $file): void
+{
+    if (!defined('APP_ROOT')) {
+        throw new RuntimeException('APP_ROOT not defined');
+    }
+
+    $candidates = [
+
+        APP_ROOT . '/app/mkomigbo/private/shared/' . ltrim($file, '/\\'),
+
+        APP_ROOT . '/app/mkomigbo/private/functions/' . ltrim($file, '/\\'),
+
+    ];
+
+    foreach ($candidates as $path) {
+
+        if (is_file($path)) {
+            require_once $path;
+            return;
+        }
+    }
+
+    throw new RuntimeException(
+        'Missing shared file: ' . $file
+    );
+}

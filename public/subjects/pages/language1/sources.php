@@ -1,96 +1,40 @@
 <?php
 declare(strict_types=1);
-
-return [
-  'title' => 'Sources',
-  'body_html' => <<<HTML
-<div class="mk-prose">
-
-  <p class="mk-muted" style="margin-top:0;">
-    The study of the Igbo language—especially its writing systems and orthography—
-    relies on linguistic research, dictionaries, orthography guides, historical texts,
-    and modern digital resources.
-  </p>
-
-  <div style="display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 14px;">
-    <a class="mk-btn mk-btn--ghost" href="/subjects/language1/intro/">Introduction</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/language1/overview/">Overview</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/language1/topics/">Key Topics</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/language1/people/">People</a>
-  </div>
-
-  <h2>1. Linguistic studies</h2>
-  <p>
-    Academic research on Igbo phonology, tone, dialects, and classification
-    provides the most systematic understanding of the language structure.
-  </p>
-
-  <h2>2. Dictionaries and lexicons</h2>
-  <p>
-    Dictionaries are essential sources for vocabulary, spelling conventions,
-    and usage. They help stabilize written forms and support both learners and scholars.
-  </p>
-
-  <h2>3. Orthography guides and language policy documents</h2>
-  <p>
-    Official orthography recommendations, including those associated with the Ọnwụ system,
-    are key sources for understanding how written Igbo has been standardized.
-  </p>
-
-  <h2>4. Bible translations and early texts</h2>
-  <p>
-    Early translations, especially religious texts, played a major role in shaping written Igbo.
-    They provide historical evidence of how spelling and sound representation developed over time.
-  </p>
-
-  <h2>5. Dialect surveys and fieldwork</h2>
-  <p>
-    Field studies and dialect surveys document variation across regions.
-    These are important for understanding the limits of any single standard form.
-  </p>
-
-  <h2>6. Script documentation</h2>
-  <p>
-    Sources on Nsibidi and modern scripts such as Ńdébé provide insight into alternative
-    ways of representing language visually. These sources are important for comparative analysis.
-  </p>
-
-  <h2>7. Educational materials</h2>
-  <p>
-    School textbooks, grammar books, and examination materials show how Igbo is actually taught
-    and used in practice. They are important for understanding real-world orthographic usage.
-  </p>
-
-  <h2>8. Digital and technological resources</h2>
-  <p>
-    Modern tools such as keyboards, fonts, spell-check systems, and online corpora
-    are increasingly important sources for studying how Igbo is written and used today.
-  </p>
-
-  <h2>Recommended source categories for this site</h2>
-  <ul>
-    <li><strong>Primary sources:</strong> early texts, translations, recorded speech.</li>
-    <li><strong>Linguistic research:</strong> phonology, dialect, and classification studies.</li>
-    <li><strong>Reference works:</strong> dictionaries and grammar books.</li>
-    <li><strong>Policy documents:</strong> orthography standards and guidelines.</li>
-    <li><strong>Script materials:</strong> Nsibidi and Ńdébé documentation.</li>
-  </ul>
-
-  <h2>How to use sources well</h2>
-  <ul>
-    <li>Distinguish between descriptive and prescriptive sources.</li>
-    <li>Compare dialect evidence before generalizing.</li>
-    <li>Be clear about which orthography is being used.</li>
-    <li>Document tone and sound representation carefully.</li>
-    <li>Recognize that language standards evolve over time.</li>
-  </ul>
-
-  <p>
-    A strong language page explains not only how Igbo is written,
-    but how that writing system developed, how it is used,
-    and how it may continue to change.
-  </p>
-
-</div>
-HTML,
-];
+echo '<div class="mk-prose">';
+echo '<p class="mk-muted" style="margin-top:0;">Key references for the study of the Igbo language.</p>';
+echo '<h2>Dictionaries and Reference Works</h2>';
+echo '<ul>';
+echo '<li><strong>F.C. Ogbalu</strong> — <em>Igbo-English Dictionary</em>. The standard bilingual dictionary.</li>';
+echo '<li><strong>Kay Williamson</strong> — <em>Igbo-English Dictionary</em> (1972). Scholarly linguistic dictionary.</li>';
+echo '<li><strong>F.C. Ogbalu</strong> — <em>Ilu Igbo</em> (Igbo Proverbs). The standard proverb collection.</li>';
+echo '<li><strong>Emenanjo, E. N.</strong> — <em>Auxiliaries in Igbo Syntax</em> (1985). Important grammatical study.</li>';
+echo '</ul>';
+echo '<h2>Grammars and Linguistic Studies</h2>';
+echo '<ul>';
+echo '<li><strong>Kay Williamson</strong> — <em>Igbo Tone Rules</em>. The foundational study of Igbo tonology.</li>';
+echo '<li><strong>Ọmọniyị Ọladẹlẹ</strong> — works on Niger-Congo language classification.</li>';
+echo '<li><strong>Larry Hyman</strong> — comparative studies of Niger-Congo tone systems.</li>';
+echo '</ul>';
+echo '<h2>Orthography and Script</h2>';
+echo '<ul>';
+echo '<li><strong>Society for Promoting Igbo Language and Culture (SPILC)</strong> — publications on Igbo orthography and standardization.</li>';
+echo '<li><strong>Önwu Orthography Committee Report</strong> (1961). The foundational document of standard written Igbo.</li>';
+echo '<li>Documentation on Ndebe script — available at ndebe.org</li>';
+echo '</ul>';
+echo '<h2>Language and Literature</h2>';
+echo '<ul>';
+echo '<li><strong>Chinua Achebe</strong> — "The African Writer and the English Language" (1964). Essential essay on language and African writing.</li>';
+echo '<li><strong>Ngugi wa Thiong\'o</strong> — <em>Decolonising the Mind</em> (1986). On the politics of language in African literature.</li>';
+echo '<li><strong>Obiechina, Emmanuel</strong> — <em>Language and Theme: Essays on African Literature</em> (1990).</li>';
+echo '</ul>';
+echo '<h2>Learning Resources</h2>';
+echo '<ul>';
+echo '<li>Igbo Wikibooks — community-built Igbo language learning resource</li>';
+echo '<li>Ikoikoigbo.com — online Igbo dictionary and learning platform</li>';
+echo '<li>Igbo language courses — University of Nigeria Nsukka distance learning</li>';
+echo '</ul>';
+echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 4px;">';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/language1/intro/">Introduction</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/language1/topics/">Topics</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/language1/people/">People</a>';
+echo '</div></div>';

@@ -1,96 +1,24 @@
 <?php
 declare(strict_types=1);
-
-return [
-  'title' => 'Topics',
-  'body_html' => <<<HTML
-<div class="mk-prose">
-
-  <p class="mk-muted" style="margin-top:0;">
-    Igbo culture can be studied through major recurring themes: language, family life, agriculture,
-    festivals, markets, art, performance, oral tradition, dress, food, and modern adaptation.
-  </p>
-
-  <div style="display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 14px;">
-    <a class="mk-btn mk-btn--ghost" href="/subjects/culture/intro/">Introduction</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/culture/overview/">Overview</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/culture/people/">People</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/culture/sources/">Sources</a>
-  </div>
-
-  <h2>1. Language and naming</h2>
-  <p>
-    Language is one of the strongest carriers of Igbo culture. Naming practices, greetings, titles,
-    praise forms, and proverb-rich speech all transmit values and social identity.
-  </p>
-
-  <h2>2. Kinship and family structure</h2>
-  <p>
-    Family and lineage relationships shape obligation, inheritance, child socialization, marriage ties,
-    and communal belonging. Cultural life is often anchored in compound, kindred, and village relationships.
-  </p>
-
-  <h2>3. Farming culture and the prestige of yam</h2>
-  <p>
-    Yam cultivation has long held special prestige in Igbo life, and yam-centered agriculture is tied to status,
-    labor, seasonal rhythm, and ritual significance. Other staple crops also form part of the broader food culture.
-  </p>
-
-  <h2>4. Markets and social organization</h2>
-  <p>
-    Markets are not only economic institutions. They are social spaces where exchange, movement,
-    communication, and community contact take place. Market life is therefore a core cultural topic.
-  </p>
-
-  <h2>5. Festivals and celebration</h2>
-  <p>
-    Festivals express collective identity, gratitude, continuity, and renewal. The New Yam Festival is one of the clearest
-    examples, but title ceremonies, seasonal celebrations, and community observances also belong here.
-  </p>
-
-  <h2>6. Art, design, and symbols</h2>
-  <p>
-    Igbo culture includes important visual traditions such as uli designs, sculptural forms, shrine arts,
-    performance objects, and ceremonial display. These reveal how beauty, spirituality, and social prestige intersect.
-  </p>
-
-  <h2>7. Music, dance, and masquerade</h2>
-  <p>
-    Performance traditions are major carriers of cultural meaning. Dance, drumming, song, praise, and masquerade
-    express memory, status, recreation, discipline, and ritual power.
-  </p>
-
-  <h2>8. Proverbs, storytelling, and oral knowledge</h2>
-  <p>
-    Oral tradition is central to cultural transmission. Proverbs, folktales, warnings, praise speech, and narrative forms
-    preserve moral teaching, historical memory, humor, and practical wisdom.
-  </p>
-
-  <h2>9. Dress, textiles, and adornment</h2>
-  <p>
-    Clothing, wrappers, beadwork, hairstyles, scarification traditions in some contexts, and other forms of adornment
-    communicate identity, age, gender, status, and occasion.
-  </p>
-
-  <h2>10. Food and hospitality</h2>
-  <p>
-    Food culture includes staple crops, preparation methods, eating customs, hospitality, and the symbolic role of shared meals.
-    It reveals how everyday life and ceremonial life overlap.
-  </p>
-
-  <h2>11. Continuity and change</h2>
-  <p>
-    Modern education, Christianity, migration, urbanization, media, and diaspora life have changed Igbo cultural expression,
-    but many core forms remain visible through adaptation rather than disappearance.
-  </p>
-
-  <h2>Suggested next reading</h2>
-  <ul>
-    <li><strong>Overview:</strong> the broad structure of Igbo cultural life.</li>
-    <li><strong>People:</strong> writers, artists, performers, and cultural custodians.</li>
-    <li><strong>Sources:</strong> collections, archives, scholarship, and oral evidence.</li>
-  </ul>
-
-</div>
-HTML,
-];
+echo '<div class="mk-prose">';
+echo '<p class="mk-muted" style="margin-top:0;">Deep dives into specific dimensions of Igbo cultural life.</p>';
+echo '<h2>Kola Nut — Oji</h2>';
+echo '<p>The kola nut is the most important ritual object in Igbo culture. No significant gathering — a visit, a meeting, a ceremony, a negotiation — begins without the presentation and breaking of kola. The act of presenting kola is a blessing; the prayer over kola (igo oji) invokes the ancestors, the chi, and the forces of life. To refuse kola is a serious social offence. To be given the right to break kola is a mark of seniority and respect.</p>';
+echo '<h2>Ozo and Ichi — Title Systems</h2>';
+echo '<p>The Igbo title system is one of the most developed in West Africa. Titles such as Ozo, Nze, Eze, and Ichie carry specific rights, obligations, and symbols. Title-taking is a major life event — requiring significant wealth, community support, and ritual preparation. The ichi facial scarification, once associated with Nri and Onitsha aristocracy, marked the titled man as one who had crossed a threshold into a different social category.</p>';
+echo '<h2>Marriage Customs — Igba Nkwu</h2>';
+echo '<p>Traditional Igbo marriage (Igba Nkwu — wine-carrying) is a community event, not merely a personal one. The bride carries palm wine to her husband in a public ceremony attended by both families and the wider community. Bride price (ime ego) is negotiated between families. Marriage connects lineages, not just individuals. The wedding feast, the dances, and the rituals of departure are among the most culturally rich events in Igbo social life.</p>';
+echo '<h2>Funerary Culture</h2>';
+echo '<p>Death in Igbo culture is not an ending but a transition. A good death — at old age, after a life well-lived — is celebrated with elaborate funeral ceremonies that can last several days. Music, masquerades, feasting, and the firing of guns (in communities with this tradition) mark the passage. Second burials (ikwa ozu) may be held weeks or months later for prominent figures. Dying young or without children is considered a bad death and treated differently.</p>';
+echo '<h2>The Chi — Personal Spiritual Force</h2>';
+echo '<p>Every Igbo person has a chi — a personal god or spiritual double that determines their destiny and accompanies them through life. The relationship between a person and their chi is one of the most philosophically rich concepts in Igbo thought. "Onye kwe, chi ya ekwe" — if a person agrees, their chi agrees — suggests that human will and spiritual destiny are in dialogue, not contradiction. The chi concept shaped how Igbo people understood success, failure, talent, and fate.</p>';
+echo '<h2>Igbo Language and Its Dialects</h2>';
+echo '<p>Igbo is spoken by over 45 million people and exists in hundreds of dialects — Onitsha, Owerri, Ngwa, Afikpo, Ika, Ekpeye, and many more. The establishment of a standard Igbo orthography in the 20th century was contentious, as each community had strong attachment to its own dialect. The language is tonal, with two primary tones (high and low) and a downstep that creates subtle but significant meaning differences.</p>';
+echo '<h2>Contemporary Culture</h2>';
+echo '<p>Igbo culture continues to evolve. Nollywood — the Nigerian film industry largely based in Igbo-speaking southeastern Nigeria — is the second largest film industry in the world by volume. Afrobeats music has deep Igbo roots. Fashion designers are reviving and reinventing Igbo textiles. Young Igbo people across the diaspora are reclaiming language, ritual, and identity in ways their grandparents could not have imagined.</p>';
+echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 4px;">';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/culture/intro/">Introduction</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/culture/overview/">Overview</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/culture/people/">People</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/culture/sources/">Sources</a>';
+echo '</div></div>';

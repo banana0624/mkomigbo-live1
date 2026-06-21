@@ -1,71 +1,54 @@
 <?php
 declare(strict_types=1);
-
-return [
-  'title' => 'Overview',
-  'body_html' => <<<HTML
-<div class="mk-prose">
-
-  <p class="mk-muted" style="margin-top:0;">
-    This overview introduces the broad grammatical and practical structure of the Igbo language:
-    tone, word formation, sentence building, verbs, numerals, and lexical resources such as dictionaries.
-  </p>
-
-  <h2>Igbo as a tonal language</h2>
-  <p>
-    Tone is one of the most important features of Igbo. The meaning of a word can change when the tone changes,
-    which means pronunciation is not only a matter of accent but of meaning itself. This makes grammar and usage
-    inseparable from phonology.
-  </p>
-
-  <h2>Word structure</h2>
-  <p>
-    Igbo is often described as relatively low in inflection when compared with heavily inflected languages.
-    At the same time, it has important derivational and extensional patterns, especially around verbs.
-    This means the language often builds meaning through combinations, suffixes, and usage patterns rather than large inflectional paradigms.
-  </p>
-
-  <h2>Sentence structure</h2>
-  <p>
-    Igbo sentence structure is shaped by word order, tone, and verbal constructions.
-    A good overview of grammar must therefore look at how subjects, verbs, objects, complements,
-    and modifiers are arranged in natural usage.
-  </p>
-
-  <h2>Verb behavior and serialization</h2>
-  <p>
-    One widely discussed feature of Igbo grammar is verb serialization.
-    This allows multiple verbs or verb-like sequences to work together in ways that express action,
-    direction, completion, manner, and related meanings without relying heavily on prepositions.
-  </p>
-
-  <h2>Relative clauses and grammatical expression</h2>
-  <p>
-    Modern descriptions of Igbo also note features such as its treatment of relative clauses
-    and the importance of context in interpretation. This means grammar is not only about memorizing rules,
-    but also about understanding how meaning is built across whole expressions.
-  </p>
-
-  <h2>Numerals and counting systems</h2>
-  <p>
-    Numbers are an essential part of practical language use. In Igbo, counting is not only a vocabulary matter
-    but also a cultural and structural one, because traditional and modern counting patterns may differ in form and use.
-  </p>
-
-  <h2>Dictionaries and vocabulary development</h2>
-  <p>
-    Lexical work is a major part of language growth. Dictionaries help standardize spelling, document meanings,
-    preserve older vocabulary, and expand the language for education, literature, and modern life.
-  </p>
-
-  <h2>Navigate this subject</h2>
-  <div style="display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 4px;">
-    <a class="mk-btn mk-btn--ghost" href="/subjects/language2/intro/">Introduction</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/language2/topics/">Key Topics</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/language2/people/">People</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/language2/sources/">Sources</a>
-  </div>
-
-</div>
-HTML,
-];
+echo '<div class="mk-prose">';
+echo '<p class="mk-muted" style="margin-top:0;">Igbo grammar — how the language is built and how sentences work.</p>';
+echo '<h2>Nouns</h2>';
+echo '<p>Igbo nouns do not change form for plural — context and number words indicate plurality. "Ụlọ" means both "house" and "houses." To specify: "ụlọ abụọ" (two houses), "ụlọ ndị a" (these houses).</p>';
+echo '<p>Nouns often have a noun prefix "a-/i-/ọ-/u-" that belongs to the word: "ọgbọ" (age-mate), "ihe" (thing), "ụlọ" (house), "aka" (hand).</p>';
+echo '<h2>Pronouns</h2>';
+echo '<ul>';
+echo '<li><strong>M / Mụ</strong> — I / me</li>';
+echo '<li><strong>Gị</strong> — you (singular)</li>';
+echo '<li><strong>Ọ</strong> — he / she / it (no gender distinction)</li>';
+echo '<li><strong>Anyị</strong> — we (exclusive — not including the person spoken to)</li>';
+echo '<li><strong>Anyị / Ànyị</strong> — we (inclusive)</li>';
+echo '<li><strong>Ụnụ</strong> — you (plural)</li>';
+echo '<li><strong>Ha</strong> — they / them</li>';
+echo '</ul>';
+echo '<h2>Verbs and Aspect</h2>';
+echo '<p>Igbo verbs mark aspect — whether an action is complete or ongoing — rather than tense. The same verb root takes different forms:</p>';
+echo '<ul>';
+echo '<li><strong>ọ rịa ihe</strong> — he eats food (habitual/ongoing)</li>';
+echo '<li><strong>ọ rị ihe</strong> — he ate food / he has eaten food (complete)</li>';
+echo '<li><strong>ọ na-arị ihe</strong> — he is eating food (progressive)</li>';
+echo '</ul>';
+echo '<h2>Questions</h2>';
+echo '<p>Yes/no questions are formed by tone change on the final syllable or by adding "ọ bụ ezie?" (is it true?). Information questions use question words:</p>';
+echo '<ul>';
+echo '<li><strong>Kedu?</strong> — How? / What? / Where? (general question)</li>';
+echo '<li><strong>Kedu ka ọ dị?</strong> — How is it? / How are things?</li>';
+echo '<li><strong>Onye?</strong> — Who?</li>';
+echo '<li><strong>Gịnị?</strong> — What?</li>';
+echo '<li><strong>Ebe?</strong> — Where?</li>';
+echo '<li><strong>Mgbe?</strong> — When?</li>';
+echo '<li><strong>Maka gịnị?</strong> — Why?</li>';
+echo '</ul>';
+echo '<h2>Negation</h2>';
+echo '<p>Negation uses "adịghị" (is not / does not) or "ọ bụghị" (it is not):</p>';
+echo '<ul>';
+echo '<li><strong>Adịghị mma</strong> — It is not well / Not good</li>';
+echo '<li><strong>Ọ bụghị ya</strong> — It is not him/her/it</li>';
+echo '<li><strong>Arịghị m ihe</strong> — I did not eat</li>';
+echo '</ul>';
+echo '<h2>Copula — "Ọ bụ"</h2>';
+echo '<p>"Ọ bụ" is the copula (to be) in Igbo — equivalent to "it is" or "he/she/it is":</p>';
+echo '<ul>';
+echo '<li><strong>Ọ bụ Emeka</strong> — It is Emeka / He is Emeka</li>';
+echo '<li><strong>Ọ bụ Igbo</strong> — He/she is Igbo</li>';
+echo '<li><strong>Ọ bụ ihe ọma</strong> — It is a good thing</li>';
+echo '</ul>';
+echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 4px;">';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/language2/intro/">Introduction</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/language2/topics/">Daily Usage</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/language2/sources/">Resources</a>';
+echo '</div></div>';

@@ -25,7 +25,7 @@ if (!defined('PRIVATE_PATH')) {
   define('PRIVATE_PATH', $__private !== false ? $__private : dirname(__DIR__));
 }
 if (!defined('APP_ROOT')) {
-  define('APP_ROOT', dirname((string)PRIVATE_PATH)); // .../app/mkomigbo
+  // // DISABLED_APP_ROOT (DISABLED_AUTO_FIX), dirname((string)PRIVATE_PATH)); // .../app/mkomigbo
 }
 if (!defined('FUNCTIONS_PATH')) define('FUNCTIONS_PATH', rtrim((string)PRIVATE_PATH, "/\\") . '/functions');
 if (!defined('ASSETS_PATH'))    define('ASSETS_PATH',    rtrim((string)PRIVATE_PATH, "/\\") . '/assets');

@@ -1,22 +1,28 @@
+Options -Indexes
+DirectoryIndex index.php
+
 RewriteEngine On
 
-# --------------------------------------------------
-# SERVE FILES FROM /public
-# --------------------------------------------------
+# ----------------------------------------
+# ✅ Allow real files (CSS, JS, images, etc.)
+# ----------------------------------------
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
 
-RewriteCond %{REQUEST_URI} !^/public/
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ /public/$1 [L]
+# ----------------------------------------
+# ✅ Allow directories
+# ----------------------------------------
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
 
-# --------------------------------------------------
-# FIX: allow login page explicitly
-# --------------------------------------------------
+# ----------------------------------------
+# ❌ Block direct PHP access (except index.php)
+# ----------------------------------------
+RewriteCond %{THE_REQUEST} \s/+(.+\.php) [NC]
+RewriteCond %1 !^index\.php$
+RewriteRule ^ - [R=404,L]
 
-RewriteRule ^staff/login\.php$ /public/staff/login.php [L]
-
-# --------------------------------------------------
-# OPTIONAL: /staff → login
-# --------------------------------------------------
-
-RewriteRule ^staff/?$ /public/staff/login.php [L]
+# ----------------------------------------
+# 🔁 Route everything else through index.php
+# ----------------------------------------
+RewriteRule ^ index.php [L]

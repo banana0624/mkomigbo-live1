@@ -59,8 +59,8 @@ $asset = static function (string $path) use ($to_url): string {
 --------------------------- */
 
 $css_urls = [
-  $asset('/lib/css/ui.css'),
-  $asset('/lib/css/staff.css'),
+  $asset('/assets/css/ui.css'),
+  $asset('/assets/css/staff.css'),
 ];
 
 /* ---------------------------
@@ -78,7 +78,7 @@ $u_dashboard = $to_url('/staff/');
 $u_logout    = $to_url('/staff/logout.php');
 $u_login     = $to_url('/staff/login.php');
 $u_account   = $to_url('/staff/account/');
-$logo_url    = $asset('/lib/images/mk-logo.svg');
+$logo_url    = $asset('/assets/images/logos/mk-logo.png');
 
 ?><!doctype html>
 <html lang="en">

@@ -1,99 +1,22 @@
 <?php
 declare(strict_types=1);
-
-return [
-  'title' => 'Topics',
-  'body_html' => <<<HTML
-<div class="mk-prose">
-
-  <p class="mk-muted" style="margin-top:0;">
-    Language1 can be studied through a set of connected themes:
-    origin and classification, dialect diversity, orthography, alphabet design, script alternatives,
-    tone marking, sound representation, and proposals for improvement in written Igbo.
-  </p>
-
-  <div style="display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 14px;">
-    <a class="mk-btn mk-btn--ghost" href="/subjects/language1/intro/">Introduction</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/language1/overview/">Overview</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/language1/people/">People</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/language1/sources/">Sources</a>
-  </div>
-
-  <h2>1. Origin and classification of Igbo</h2>
-  <p>
-    One major topic is the linguistic position of Igbo within the Igboid and Benue-Congo language groupings.
-    This helps explain both historical relatedness and the distinct identity of the language.
-  </p>
-
-  <h2>2. Dialects and the problem of standardization</h2>
-  <p>
-    Igbo has many dialects, and this creates a continuing question: how can one written standard serve a linguistically diverse speech community?
-    Standardization improves literacy and publishing, but it can also leave some dialect speakers feeling underrepresented.
-  </p>
-
-  <h2>3. Union Igbo and early literary compromise</h2>
-  <p>
-    A major historical topic is the rise and limits of Union Igbo, an early effort to create a common literary standard.
-    Its story is important because it shows how difficult language planning can be in a diverse speech community.
-  </p>
-
-  <h2>4. The Ọnwụ alphabet and official orthography</h2>
-  <p>
-    Another core topic is the development and influence of the Ọnwụ orthography, which helped stabilize modern written Igbo.
-    It remains central to education and publishing, even where debate continues.
-  </p>
-
-  <h2>5. Diacritics and tone marking</h2>
-  <p>
-    Igbo is tonal, but tone is not always fully marked in everyday writing. This creates ambiguity in reading and learning,
-    especially for learners, children, and digital users. The question here is not only linguistic accuracy, but practical usability.
-  </p>
-
-  <h2>6. Digraphs and trigraphs</h2>
-  <p>
-    Written Igbo uses combinations of letters to represent certain sounds. This makes digraphs and, in some discussions,
-    trigraph-like combinations important topics in orthography design and teaching.
-  </p>
-
-  <h2>7. Phonemes not fully captured</h2>
-  <p>
-    One reform issue is whether the current writing system fully represents all sounds used in actual speech,
-    especially across dialects. This includes debate over nasalization, aspiration, tone, and region-specific pronunciations.
-  </p>
-
-  <h2>8. Nsibidi</h2>
-  <p>
-    Nsibidi is a historically important graphic communication system associated with southeastern Nigeria.
-    It has cultural prestige and historical significance, but it is generally not treated as a full phonographic writing system for Igbo.
-    Its strength lies more in symbolic and ideographic communication than in complete language transcription.
-  </p>
-
-  <h2>9. Ńdébé</h2>
-  <p>
-    Ńdébé is a modern script developed specifically for writing Igbo. Its supporters present it as a practical indigenous alternative
-    better suited to Igbo phonology and literacy. Its strengths and limits are still part of an evolving discussion.
-  </p>
-
-  <h2>10. Merits and demerits of script options</h2>
-  <p>
-    Latin-based orthography has the advantage of institutional acceptance, keyboard availability, and educational familiarity.
-    Nsibidi has historical and cultural prestige but is limited for full phonological writing.
-    Ńdébé offers a purposeful indigenous design, but its adoption depends on teaching, standardization, tools, and public acceptance.
-  </p>
-
-  <h2>11. The future of written Igbo</h2>
-  <p>
-    The future of the language depends partly on whether writing becomes easier, more precise, and more widely used across education,
-    media, publishing, and technology. That is why orthographic reform, digital input tools, and script debate remain important.
-  </p>
-
-  <h2>Suggested next reading</h2>
-  <ul>
-    <li><strong>Overview:</strong> the broad historical development of written Igbo.</li>
-    <li><strong>People:</strong> language planners, scholars, and script inventors.</li>
-    <li><strong>Sources:</strong> orthography guides, dictionaries, linguistic studies, and script documentation.</li>
-  </ul>
-
-</div>
-HTML,
-];
+echo '<div class="mk-prose">';
+echo '<p class="mk-muted" style="margin-top:0;">Key topics in Igbo language study — from tones to scripts to revitalization.</p>';
+echo '<h2>Tones and Meaning</h2>';
+echo '<p>Understanding Igbo tones is essential to understanding the language. "Aka" (hand) and "àkà" (direction/side) differ only in tone. "Ọ bịara" (he/she came) and "ọ bịarā" (has he/she come?) differ in the tone of the final syllable. Tones carry grammatical information — distinguishing statements from questions, complete from incomplete actions, and in some cases entirely different words.</p>';
+echo '<h2>Igbo Proverbs — Ilu</h2>';
+echo '<p>Proverbs are the currency of Igbo rhetoric. Achebe famously wrote: "Among the Igbo the art of conversation is regarded very highly, and proverbs are the palm-oil with which words are eaten." Proverbs encode legal principles, ethical guidance, social wisdom, and historical memory in compact, memorable form. Learning Igbo proverbs is learning Igbo philosophy.</p>';
+echo '<h2>Writing Igbo — The Orthography Question</h2>';
+echo '<p>The question of how to write Igbo has been contested for over a century. Missionaries created the first written forms. The Önwu orthography (1961) brought partial standardization. Ndebe — an indigenous script created in 2009 — offers a non-Roman alternative. Each system makes different tradeoffs between ease of learning, cultural expression, and practical utility.</p>';
+echo '<h2>Nsịbịdị — Indigenous Signs</h2>';
+echo '<p>Nsịbịdị is a system of ideographic signs developed among the Igbo and Ibibio peoples of southeastern Nigeria. Used by the Ékpè (Leopard Society) and in other ritual contexts, Nsịbịdị signs encode social, spiritual, and philosophical meanings. Though not a phonetic writing system, Nsịbịdị represents an important tradition of Igbo visual communication that predates European contact.</p>';
+echo '<h2>Igbo Names — Nomenclature</h2>';
+echo '<p>Igbo names are a compressed language of their own. They encode theology ("Chukwuemeka" — God has done great things), philosophy ("Ifeanyi" — there is nothing like God), history ("Nnenna" — grandmother lives again), and aspiration ("Chidinma" — God is good). The system of names given at birth, earned through title, and taken in old age constitutes a biography in miniature. Understanding Igbo names is understanding Igbo worldview.</p>';
+echo '<h2>Language and Identity</h2>';
+echo '<p>The question of Igbo language maintenance is inseparable from the question of Igbo identity. For many diaspora Igbo, the language has been lost across one or two generations. For home communities, it is under pressure from English, Pidgin, and urban migration. What is at stake in Igbo language revitalization is not just communication — it is the survival of a worldview encoded in proverbs, names, ritual language, and oral literature that cannot be fully translated.</p>';
+echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 4px;">';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/language1/intro/">Introduction</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/language1/overview/">Overview</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/language1/people/">People</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/language1/sources/">Sources</a>';
+echo '</div></div>';

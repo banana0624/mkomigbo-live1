@@ -8,6 +8,7 @@ declare(strict_types=1);
 /* ---------------------------
  * SESSION
  * --------------------------- */
+if (!function_exists('mk_staff_session_start')) {
 function mk_staff_session_start(): void {
     if (function_exists('mk__session_start')) {
         mk__session_start();
@@ -17,6 +18,7 @@ function mk_staff_session_start(): void {
     if (session_status() !== PHP_SESSION_ACTIVE) {
         session_start();
     }
+}
 }
 
 /* ---------------------------
@@ -97,8 +99,8 @@ function mk_require_staff_login(): void {
     }
 
     // Secondary protection
-    if (str_starts_with($uri, '/staff/login')) {
-        return;
+    if (strpos($uri, '/staff/login.php') !== false) {
+        return; // DO NOT redirect login page
     }
 
     $uid = (int)($_SESSION['staff_user_id'] ?? 0);

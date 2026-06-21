@@ -32,5 +32,5 @@ if (!is_file($public)) {
   exit;
 }
 
-require $public;
+header("Location: /awag/igbo-calendar/", true, 301); exit;
 exit;

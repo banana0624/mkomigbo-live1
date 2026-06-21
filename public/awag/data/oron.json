@@ -1,0 +1,950 @@
+{
+    "id": "oron",
+    "name": "Oron",
+    "full_name": "Oron Calendar",
+    "language": "Oron \/ English",
+    "region": "Guinea Coast",
+    "area": "Oron \/ Akwa Ibom",
+    "color": "#1a4a3a",
+    "initial": "OR",
+    "calendar_type": "Efik-Oron Urua 8-day",
+    "market_cycle": 8,
+    "market_days": [
+        "Akwa Ikwọ",
+        "Akwa Ederi",
+        "Akwa Eyibio",
+        "Akwa Ọfiọñ",
+        "Ekpri Ikwọ",
+        "Ekpri Ederi",
+        "Ekpri Eyibio",
+        "Ekpri Ọfiọñ"
+    ],
+    "market_symbols": {
+        "Akwa Ikwọ": {
+            "element": "Ekpe Day",
+            "symbol": "🎭",
+            "color": "#8b1a1a",
+            "meaning": "Ekpe masquerade display. Major ceremonial day. Oron Ekung society active."
+        },
+        "Akwa Ederi": {
+            "element": "Ekpu Rest Day",
+            "symbol": "🗿",
+            "color": "#c0c0ff",
+            "meaning": "Sacred rest day. Ekpu Oro ancestral figures honored. No sea fishing."
+        },
+        "Akwa Eyibio": {
+            "element": "Sea Deity Day",
+            "symbol": "🌊",
+            "color": "#20c0d0",
+            "meaning": "Abazi Oro (Supreme Being) offerings. Ndem water spirit ceremony. Canoe blessing."
+        },
+        "Akwa Ọfiọñ": {
+            "element": "Market Day",
+            "symbol": "🛒",
+            "color": "#ffd040",
+            "meaning": "Major Oron waterfront market. Fish, palm oil and ancestral crafts trading."
+        },
+        "Ekpri Ikwọ": {
+            "element": "Small Ekpe",
+            "symbol": "🎭",
+            "color": "#6b1a1a",
+            "meaning": "Minor Ekpe ceremony. Ekpu ancestral rites. Inam society gathering."
+        },
+        "Ekpri Ederi": {
+            "element": "Ancestor Day",
+            "symbol": "💤",
+            "color": "#8080c0",
+            "meaning": "Ekpu Oro veneration. Family ancestral prayers. Rest from sea fishing."
+        },
+        "Ekpri Eyibio": {
+            "element": "Fishing Day",
+            "symbol": "🎣",
+            "color": "#308080",
+            "meaning": "Community fishing day. Canoe fleet sets out. Atlantic and estuary fishing."
+        },
+        "Ekpri Ọfiọñ": {
+            "element": "Small Market",
+            "symbol": "🏪",
+            "color": "#c0a020",
+            "meaning": "Minor market day. Local waterfront trading. Craft and smoked fish sales."
+        }
+    },
+    "months": [
+        {
+            "n": 1,
+            "name": "Oron Ama",
+            "greg": "Jan",
+            "note": "Dry season \/ Atlantic fishing"
+        },
+        {
+            "n": 2,
+            "name": "Oron Ete",
+            "greg": "Feb",
+            "note": "Late dry season"
+        },
+        {
+            "n": 3,
+            "name": "Oron Ubi",
+            "greg": "Mar",
+            "note": "First rains approaching"
+        },
+        {
+            "n": 4,
+            "name": "Oron Ebre",
+            "greg": "Apr",
+            "note": "First rains \/ Planting"
+        },
+        {
+            "n": 5,
+            "name": "Oron Ita",
+            "greg": "May",
+            "note": "Peak rains \/ Farming"
+        },
+        {
+            "n": 6,
+            "name": "Oron Idem",
+            "greg": "Jun",
+            "note": "Heavy rains"
+        },
+        {
+            "n": 7,
+            "name": "Oron Ekong",
+            "greg": "Jul",
+            "note": "Ekong festival season"
+        },
+        {
+            "n": 8,
+            "name": "Oron Abang",
+            "greg": "Aug",
+            "note": "August break \/ Ancestor season"
+        },
+        {
+            "n": 9,
+            "name": "Oron Nkanda",
+            "greg": "Sep",
+            "note": "Second rains"
+        },
+        {
+            "n": 10,
+            "name": "Oron Idiok",
+            "greg": "Oct",
+            "note": "Harvest season"
+        },
+        {
+            "n": 11,
+            "name": "Oron Ndidem",
+            "greg": "Nov",
+            "note": "Dry season onset"
+        },
+        {
+            "n": 12,
+            "name": "Oron Ubio",
+            "greg": "Dec",
+            "note": "Harmattan \/ Year end"
+        }
+    ],
+    "farming": [
+        {
+            "month": 1,
+            "activity": "Dry season. Clear coastal farm plots. Plant dry-season vegetables. Tend coconut and palm.",
+            "crops": [
+                "Vegetables",
+                "Palm",
+                "Coconut"
+            ],
+            "icon": "🌱"
+        },
+        {
+            "month": 2,
+            "activity": "Late dry. Prepare yam mounds. Plant cassava near homestead. Tend perennial crops.",
+            "crops": [
+                "Cassava",
+                "Yam"
+            ],
+            "icon": "🌿"
+        },
+        {
+            "month": 3,
+            "activity": "Pre-rain clearing. Buy yam seedlings. Prepare mounds near Cross River delta.",
+            "crops": [
+                "Yam",
+                "Cassava"
+            ],
+            "icon": "⚒️"
+        },
+        {
+            "month": 4,
+            "activity": "First rains. Plant yam and plantain. Intercrop with cocoyam and vegetables.",
+            "crops": [
+                "Yam",
+                "Plantain",
+                "Cocoyam"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 5,
+            "activity": "Peak rains. Weed yam mounds. Plant cassava widely. Monitor coastal drainage.",
+            "crops": [
+                "Yam",
+                "Cassava",
+                "Cocoyam"
+            ],
+            "icon": "🌿"
+        },
+        {
+            "month": 6,
+            "activity": "Heavy rains. Farm maintenance. Harvest early cocoyam. Tend plantain.",
+            "crops": [
+                "Cocoyam (harvest)",
+                "Plantain"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 7,
+            "activity": "Ekong season. Reduced farming. Harvest early yam. Plant second-season vegetables.",
+            "crops": [
+                "Yam (early)",
+                "Vegetables"
+            ],
+            "icon": "🎋"
+        },
+        {
+            "month": 8,
+            "activity": "August break. Harvest early yam and plantain. Excellent drying weather.",
+            "crops": [
+                "Yam (harvest)",
+                "Plantain"
+            ],
+            "icon": "☀️"
+        },
+        {
+            "month": 9,
+            "activity": "Second rains. Late yam tending. Harvest plantain. Plant dry-season crops.",
+            "crops": [
+                "Plantain",
+                "Yam"
+            ],
+            "icon": "🌦"
+        },
+        {
+            "month": 10,
+            "activity": "Main harvest. Yam, cassava, palm. Oron Museum area farm thanksgiving.",
+            "crops": [
+                "Yam",
+                "Cassava",
+                "Palm"
+            ],
+            "icon": "🏺"
+        },
+        {
+            "month": 11,
+            "activity": "Dry season begins. Harvest remaining cassava. Palm oil and palm wine season.",
+            "crops": [
+                "Cassava",
+                "Palm oil",
+                "Palm wine"
+            ],
+            "icon": "🌴"
+        },
+        {
+            "month": 12,
+            "activity": "Harmattan. Dry season farming. Process palm. Harvest perennial crops.",
+            "crops": [
+                "Palm",
+                "Vegetables"
+            ],
+            "icon": "🌬"
+        }
+    ],
+    "fishing": [
+        {
+            "month": 1,
+            "activity": "Oron Atlantic fishing peak. Deep sea canoe fishing. Cross River estuary excellent.",
+            "fish": [
+                "Barracuda",
+                "Catfish",
+                "Sea bream"
+            ],
+            "conditions": "Excellent",
+            "icon": "🎣"
+        },
+        {
+            "month": 2,
+            "activity": "Best fishing season for Oron seafarers. Calm Atlantic. Export fish production.",
+            "fish": [
+                "Sea fish",
+                "Catfish",
+                "Bonga"
+            ],
+            "conditions": "Excellent",
+            "icon": "🎣"
+        },
+        {
+            "month": 3,
+            "activity": "Pre-rain. Atlantic bonga season. Oron pier and canoe fishing very active.",
+            "fish": [
+                "Bonga",
+                "Catfish"
+            ],
+            "conditions": "Very Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 4,
+            "activity": "First rains. Fish spawning. Coastal and estuary fishing continues well.",
+            "fish": [
+                "Mixed",
+                "Bonga"
+            ],
+            "conditions": "Good",
+            "icon": "🌊"
+        },
+        {
+            "month": 5,
+            "activity": "Flood season. Fish in creek and mangrove systems. Community estuary fishing.",
+            "fish": [
+                "Mangrove fish",
+                "Tilapia"
+            ],
+            "conditions": "Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 6,
+            "activity": "Heavy rains. Oron coastal fishing continues despite rains. Oyster season.",
+            "fish": [
+                "Sea fish",
+                "Oyster",
+                "Crab"
+            ],
+            "conditions": "Moderate",
+            "icon": "🦪"
+        },
+        {
+            "month": 7,
+            "activity": "Ekong season. Some fishing taboos. Ancestral water offering rites. Crab season.",
+            "fish": [
+                "Crab",
+                "Sea fish"
+            ],
+            "conditions": "Moderate",
+            "icon": "🦀"
+        },
+        {
+            "month": 8,
+            "activity": "August break. Best deep-sea and canoe fishing. Atlantic barracuda season.",
+            "fish": [
+                "Barracuda",
+                "Perch",
+                "Sea fish"
+            ],
+            "conditions": "Excellent",
+            "icon": "🎣"
+        },
+        {
+            "month": 9,
+            "activity": "Second rains. Good coastal fishing. Cross River delta productive. Smoke fish.",
+            "fish": [
+                "Tilapia",
+                "Catfish"
+            ],
+            "conditions": "Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 10,
+            "activity": "Harvest season. Rivers falling. Concentrated fishing. Major smoking season.",
+            "fish": [
+                "Catfish",
+                "Tilapia"
+            ],
+            "conditions": "Very Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 11,
+            "activity": "Dry season returning. Rivers clear. Excellent Oron pier and estuary fishing.",
+            "fish": [
+                "Mixed"
+            ],
+            "conditions": "Very Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 12,
+            "activity": "Harmattan. Rivers low. Peak canoe fishing season. Year-end fish market surge.",
+            "fish": [
+                "Catfish",
+                "Tilapia",
+                "Sea fish"
+            ],
+            "conditions": "Excellent",
+            "icon": "🎣"
+        }
+    ],
+    "trading": [
+        {
+            "month": 1,
+            "activity": "Oron market and waterfront active. Fish and palm oil export. Ancestral crafts trading.",
+            "goods": [
+                "Fish",
+                "Palm oil",
+                "Ancestral crafts"
+            ],
+            "icon": "🛒"
+        },
+        {
+            "month": 2,
+            "activity": "Fishing season trading peak. Smoked fish export. Cross River delta goods.",
+            "goods": [
+                "Smoked fish",
+                "Palm oil",
+                "Crafts"
+            ],
+            "icon": "🐟"
+        },
+        {
+            "month": 3,
+            "activity": "Farm input trading. Seeds, cassava cuttings, fishing gear. Pre-season markets.",
+            "goods": [
+                "Farm inputs",
+                "Fishing gear"
+            ],
+            "icon": "⚒️"
+        },
+        {
+            "month": 4,
+            "activity": "Reduced trading. Farming begins. Local Oron waterfront markets steady.",
+            "goods": [
+                "Fish",
+                "Food",
+                "Crafts"
+            ],
+            "icon": "🥬"
+        },
+        {
+            "month": 5,
+            "activity": "Quiet trading period. Farming focus. Waterfront markets for essentials.",
+            "goods": [
+                "Daily food",
+                "Fish"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 6,
+            "activity": "Moderate trading. Rain limits travel. Waterfront trading active.",
+            "goods": [
+                "Local food",
+                "Fish"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 7,
+            "activity": "Ekong festival trading. Ancestral crafts, wood carvings, ceremonial goods peak.",
+            "goods": [
+                "Wood carvings",
+                "Ceremonial goods",
+                "Crafts"
+            ],
+            "icon": "🎋"
+        },
+        {
+            "month": 8,
+            "activity": "August break. Good transport. Oron Museum area tourism and craft trading.",
+            "goods": [
+                "Crafts",
+                "Fish",
+                "Museum goods"
+            ],
+            "icon": "🏛"
+        },
+        {
+            "month": 9,
+            "activity": "Harvest trading begins. Yam and plantain markets opening.",
+            "goods": [
+                "Yam",
+                "Plantain",
+                "Fish"
+            ],
+            "icon": "🛒"
+        },
+        {
+            "month": 10,
+            "activity": "Peak harvest trading. Palm oil processing and export. Waterfront very busy.",
+            "goods": [
+                "Yam",
+                "Cassava",
+                "Palm oil"
+            ],
+            "icon": "📦"
+        },
+        {
+            "month": 11,
+            "activity": "Post-harvest. Craft production. Oron wood carvings famous across Nigeria.",
+            "goods": [
+                "Wood carvings",
+                "Palm oil",
+                "Fish"
+            ],
+            "icon": "🪵"
+        },
+        {
+            "month": 12,
+            "activity": "Year-end markets. Christmas surge. Oron ancestral crafts gifting season.",
+            "goods": [
+                "Gifts",
+                "Food",
+                "Crafts"
+            ],
+            "icon": "🎁"
+        }
+    ],
+    "herding": [
+        {
+            "month": 1,
+            "conditions": "Dry",
+            "activity": "Dry season. Small ruminants on crop residues. Goats near homestead.",
+            "icon": "🐐"
+        },
+        {
+            "month": 2,
+            "conditions": "Dry",
+            "activity": "Late dry. Livestock trading season. Sell surplus before rains.",
+            "icon": "🐐"
+        },
+        {
+            "month": 3,
+            "conditions": "Transitional",
+            "activity": "Pre-rain. Buy young animals. Prepare pens for rainy season.",
+            "icon": "🌱"
+        },
+        {
+            "month": 4,
+            "conditions": "Wet",
+            "activity": "Rains begin. Livestock on elevated ground. Prevent wet-season diseases.",
+            "icon": "🌧"
+        },
+        {
+            "month": 5,
+            "conditions": "Wet",
+            "activity": "Peak rains. Keep livestock near homestead. Treat foot rot.",
+            "icon": "🌿"
+        },
+        {
+            "month": 6,
+            "conditions": "Wet",
+            "activity": "Heavy rains. House livestock. Feed dry fodder. Prevent flooding losses.",
+            "icon": "🐐"
+        },
+        {
+            "month": 7,
+            "conditions": "Wet",
+            "activity": "Ekong season. Livestock kept from sacred areas. Health monitoring.",
+            "icon": "🏠"
+        },
+        {
+            "month": 8,
+            "conditions": "Good",
+            "activity": "August break. Move livestock to fresh grass. Good recovery period.",
+            "icon": "🌿"
+        },
+        {
+            "month": 9,
+            "conditions": "Wet",
+            "activity": "Second rains. Tick control. Monitor waterborne disease in livestock.",
+            "icon": "💧"
+        },
+        {
+            "month": 10,
+            "conditions": "Good",
+            "activity": "Harvest. Keep livestock off farms. Feed on crop residues after harvest.",
+            "icon": "🌾"
+        },
+        {
+            "month": 11,
+            "conditions": "Good",
+            "activity": "Dry season returning. Open range grazing. Good condition recovery.",
+            "icon": "🐐"
+        },
+        {
+            "month": 12,
+            "conditions": "Dry",
+            "activity": "Harmattan. Year-end livestock sales. Fatten for Christmas market.",
+            "icon": "🎁"
+        }
+    ],
+    "healing": [
+        {
+            "month": 1,
+            "activity": "Dry season. Collect Oron ancestral medicines. Ekong healing herbs. Coastal plant medicines.",
+            "herbs": [
+                "Coastal herbs",
+                "Ancestral medicines",
+                "Bark medicines"
+            ],
+            "rituals": "Oron ancestral New Year ceremony",
+            "icon": "🌿"
+        },
+        {
+            "month": 2,
+            "activity": "Collect medicines from Oron forests. Prepare fishing community health remedies.",
+            "herbs": [
+                "Forest herbs",
+                "Fishermen medicines"
+            ],
+            "rituals": "Community health gathering",
+            "icon": "🌙"
+        },
+        {
+            "month": 3,
+            "activity": "Pre-rain cleansing. Collect last dry-season medicines. Land and water blessing.",
+            "herbs": [
+                "Cleansing herbs"
+            ],
+            "rituals": "Land and water purification (Oron tradition)",
+            "icon": "🌱"
+        },
+        {
+            "month": 4,
+            "activity": "First rains. Fresh herbs sprouting. Treat seasonal malaria. Collect young leaves.",
+            "herbs": [
+                "Fever herbs",
+                "Bitter leaf"
+            ],
+            "rituals": "Rain thanksgiving",
+            "icon": "🌧"
+        },
+        {
+            "month": 5,
+            "activity": "Abundant herbs. Mass collection. Treat humidity and waterborne diseases.",
+            "herbs": [
+                "Anti-malaria",
+                "Neem",
+                "Lemongrass"
+            ],
+            "rituals": "Farming and fishing blessing",
+            "icon": "🌿"
+        },
+        {
+            "month": 6,
+            "activity": "Heavy rains. Protect water sources. Anti-fungal treatments. Treat flood ailments.",
+            "herbs": [
+                "Anti-fungal",
+                "Water purification"
+            ],
+            "rituals": "Water protection ceremony",
+            "icon": "💧"
+        },
+        {
+            "month": 7,
+            "activity": "Ekong ancestral healing. Sacred Oron medicines for spirit ceremonies.",
+            "herbs": [
+                "Ekong sacred herbs",
+                "Ancestral medicines"
+            ],
+            "rituals": "Ekong healing ceremony",
+            "icon": "🎋"
+        },
+        {
+            "month": 8,
+            "activity": "August break. Dry herbs. Prepare stores. Oron Museum area community health.",
+            "herbs": [
+                "Stored medicines",
+                "Wound herbs"
+            ],
+            "rituals": "Pre-harvest community health rite",
+            "icon": "☀️"
+        },
+        {
+            "month": 9,
+            "activity": "Second rains. Treat waterborne diseases. Fresh medicines available.",
+            "herbs": [
+                "Fresh herbs",
+                "Water purification"
+            ],
+            "rituals": "Water blessing",
+            "icon": "💧"
+        },
+        {
+            "month": 10,
+            "activity": "Harvest thanksgiving medicines. Rest and recovery herbs after farming.",
+            "herbs": [
+                "Recovery herbs",
+                "Thanksgiving plants"
+            ],
+            "rituals": "Harvest thanksgiving (Oron tradition)",
+            "icon": "🙏"
+        },
+        {
+            "month": 11,
+            "activity": "Dry season. Collect bark medicines. Prepare ancestral spirit medicines.",
+            "herbs": [
+                "Bark medicines",
+                "Ancestral herbs"
+            ],
+            "rituals": "Ancestral remembrance (Oron Ekong)",
+            "icon": "🏺"
+        },
+        {
+            "month": 12,
+            "activity": "Year-end Oron purification. Cleanse homestead and canoes. Prepare new year medicines.",
+            "herbs": [
+                "Purification herbs",
+                "Canoe blessing herbs"
+            ],
+            "rituals": "Year-end canoe and homestead purification",
+            "icon": "🔥"
+        }
+    ],
+    "weather": [
+        {
+            "month": 1,
+            "season": "Dry Season",
+            "rains": "10-25mm",
+            "temp": "Hot 32°C",
+            "wind": "Harmattan NE",
+            "advisory": "Dry season. Oron coast: Atlantic sea breeze moderates harmattan. Good fishing weather.",
+            "icon": "☀️"
+        },
+        {
+            "month": 2,
+            "season": "Late Dry",
+            "rains": "15-35mm",
+            "temp": "Hot 33°C",
+            "wind": "NE easing",
+            "advisory": "Hottest period. High coastal humidity. Pre-rain conditions building fast.",
+            "icon": "🌤"
+        },
+        {
+            "month": 3,
+            "season": "Pre-rains",
+            "rains": "55-95mm",
+            "temp": "Hot 31°C",
+            "wind": "SW monsoon begins",
+            "advisory": "First rains arrive. Thunderstorms. Humidity rising fast on Oron coast.",
+            "icon": "🌦"
+        },
+        {
+            "month": 4,
+            "season": "Early Rains",
+            "rains": "130-190mm",
+            "temp": "Warm 29°C",
+            "wind": "SW monsoon",
+            "advisory": "Reliable rains. Good planting. Flash floods near Cross River delta.",
+            "icon": "🌧"
+        },
+        {
+            "month": 5,
+            "season": "Peak Rains",
+            "rains": "210-290mm",
+            "temp": "Warm humid 27°C",
+            "wind": "SW monsoon strong",
+            "advisory": "Very heavy rains. Delta flooding. Cross River high. Rough coastal waters.",
+            "icon": "⛈"
+        },
+        {
+            "month": 6,
+            "season": "Peak Rains",
+            "rains": "230-310mm",
+            "temp": "Warm humid 26°C",
+            "wind": "SW monsoon",
+            "advisory": "Heaviest rains of year. Oron waterfront floods. Stay cautious near water.",
+            "icon": "⛈"
+        },
+        {
+            "month": 7,
+            "season": "Peak Rains",
+            "rains": "190-270mm",
+            "temp": "Warm 27°C",
+            "wind": "SW monsoon",
+            "advisory": "Still very rainy. Ekong season. Ceremonial weather reading by elders.",
+            "icon": "🌧"
+        },
+        {
+            "month": 8,
+            "season": "August Break",
+            "rains": "55-95mm",
+            "temp": "Warm 28°C",
+            "wind": "Mixed",
+            "advisory": "Brief dry spell. Excellent Oron coastal and deep-sea fishing. Good travel weather.",
+            "icon": "🌥"
+        },
+        {
+            "month": 9,
+            "season": "Second Rains",
+            "rains": "150-210mm",
+            "temp": "Warm 27°C",
+            "wind": "SW monsoon returns",
+            "advisory": "Second rainy season. Heavy rains return. Coastal conditions moderate.",
+            "icon": "🌦"
+        },
+        {
+            "month": 10,
+            "season": "Late Rains",
+            "rains": "90-150mm",
+            "temp": "Warm 28°C",
+            "wind": "Transitional",
+            "advisory": "Rains tapering. Good harvest weather. Oron coastal fishing excellent.",
+            "icon": "🌤"
+        },
+        {
+            "month": 11,
+            "season": "Dry onset",
+            "rains": "25-55mm",
+            "temp": "Hot 30°C",
+            "wind": "NE beginning",
+            "advisory": "Dry season returning. Good travel. Oron waterfront and pier very active.",
+            "icon": "🌤"
+        },
+        {
+            "month": 12,
+            "season": "Harmattan",
+            "rains": "8-18mm",
+            "temp": "Hot 31°C",
+            "wind": "NE Harmattan",
+            "advisory": "Harmattan mild on Oron coast. Excellent canoe fishing season. Good festive weather.",
+            "icon": "💨"
+        }
+    ],
+    "rulers": [
+        {
+            "month": 1,
+            "title": "Oron Ancestral New Year",
+            "events": [
+                "Ancestral libations at Oron Museum",
+                "Ekong society new year rites",
+                "Community assembly at waterfront"
+            ],
+            "rulers": "Oron traditional council presides",
+            "icon": "👑"
+        },
+        {
+            "month": 2,
+            "title": "Fishing Season Opening",
+            "events": [
+                "Canoe blessing ceremony",
+                "Sea offering to water spirits",
+                "Fishing community thanksgiving"
+            ],
+            "rulers": "Oron fishing community elders bless canoes",
+            "icon": "⛵"
+        },
+        {
+            "month": 3,
+            "title": "Land Blessing",
+            "events": [
+                "Farm land blessing by elders",
+                "Water spirit propitiation",
+                "Community farming assembly"
+            ],
+            "rulers": "Clan heads bless new farming season",
+            "icon": "🌱"
+        },
+        {
+            "month": 4,
+            "title": "Ekong Initiation Season",
+            "events": [
+                "Ekong society initiations",
+                "Ancestral spirit invocation",
+                "Community law declaration"
+            ],
+            "rulers": "Ekong Obong presides over initiations",
+            "icon": "🎭"
+        },
+        {
+            "month": 5,
+            "title": "Ancestral Water Rites",
+            "events": [
+                "Water spirit ceremonies",
+                "Cross River delta offerings",
+                "Community fishing blessing"
+            ],
+            "rulers": "Water spirit priests lead ceremonies",
+            "icon": "💧"
+        },
+        {
+            "month": 6,
+            "title": "Mid-Year Community Assembly",
+            "events": [
+                "Oron community review",
+                "Ekong society meeting",
+                "Cultural performances"
+            ],
+            "rulers": "Oron traditional council holds assembly",
+            "icon": "👑"
+        },
+        {
+            "month": 7,
+            "title": "Ekong Grand Festival",
+            "events": [
+                "Grand Ekong ancestral festival",
+                "Masquerade displays",
+                "Sacred forest ceremonies",
+                "Ancestral veneration"
+            ],
+            "rulers": "Ekong society highest grade presides",
+            "icon": "🎋"
+        },
+        {
+            "month": 8,
+            "title": "Oron Museum Heritage",
+            "events": [
+                "Oron ancestral art celebration",
+                "Museum heritage ceremonies",
+                "Community cultural display"
+            ],
+            "rulers": "Traditional council honors ancestral art",
+            "icon": "🏛"
+        },
+        {
+            "month": 9,
+            "title": "Harvest First Fruits",
+            "events": [
+                "First fruits ceremony at waterfront",
+                "Ancestral thanksgiving",
+                "Community harvest feast"
+            ],
+            "rulers": "Oron council leads harvest thanksgiving",
+            "icon": "🌾"
+        },
+        {
+            "month": 10,
+            "title": "Ekong Harvest Law",
+            "events": [
+                "Harvest laws by Ekong society",
+                "Community accounts reviewed",
+                "Ancestral shrine thanksgiving"
+            ],
+            "rulers": "Ekong enforces harvest community laws",
+            "icon": "⚖️"
+        },
+        {
+            "month": 11,
+            "title": "Annual Oron Council",
+            "events": [
+                "Traditional council annual sitting",
+                "Chiefs and elders convene",
+                "Community planning for new year"
+            ],
+            "rulers": "Oron traditional council annual assembly",
+            "icon": "👑"
+        },
+        {
+            "month": 12,
+            "title": "Year-End Canoe Blessing",
+            "events": [
+                "Canoe and boat blessing",
+                "Ancestral year-end rites",
+                "Community fishing thanksgiving",
+                "New year preparations"
+            ],
+            "rulers": "Fishing elders bless all canoes for new year",
+            "icon": "⛵"
+        }
+    ],
+    "calendar_note": "Oron Urua 8-day week: shares Efik calendar system. 9 ancestral Afaha clans. Ekpu Oro carved ancestor figures central to timekeeping."
+}

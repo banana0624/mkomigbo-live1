@@ -1,43 +1,37 @@
 <?php
 declare(strict_types=1);
 
-require_once __DIR__ . '/../../_init.php';
+require_once __DIR__ . '/../_init.php';
 
 /**
  * /public/staff/tools/index.php
  * Staff Tools dashboard (registry-driven).
- *
- * Features:
- * - Health Snapshot widget (latest quick_scan JSON)
- * - Trend Preview sparkline (from quick_scan_history.csv)
- * - Primary "Scan Project" CTA
- * - Grouped listing from registry
- * - Normalizes registry format (supports list or keyed map)
- * - Default "last tool" session seed for first-time users
- *
- * Patch:
- * - Properly injects built-in Audit Log tool into $tools (no syntax errors)
- * - Adds safe defaults for missing meta fields
  */
 
+header('Cache-Control: no-store, no-cache, must-revalidate');
 @ini_set('display_errors', '0');
 @ini_set('display_startup_errors', '0');
 error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
 
 /* ---------------------------------------------------------
-   Canonical init (ensures APP_ROOT/PRIVATE_PATH and core helpers load)
---------------------------------------------------------- *
-
-/* ---------------------------------------------------------
    Session (canonical)
 --------------------------------------------------------- */
+if (!function_exists('mk_staff_session_start')) {
+  function mk_staff_session_start(): void {
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+      @session_start();
+    }
+  }
+}
+
 if (function_exists('mk__session_start')) {
   mk__session_start();
 } else {
+  mk_staff_session_start();
 }
 
 /* ---------------------------------------------------------
-   Ensure auth helpers are loaded (so mk_require_staff_login exists)
+   Ensure auth helpers are loaded
 --------------------------------------------------------- */
 if (!function_exists('mk_require_staff_login') || !function_exists('auth_login')) {
   $auth = null;
@@ -52,8 +46,7 @@ if (!function_exists('mk_require_staff_login') || !function_exists('auth_login')
 }
 
 /* ---------------------------------------------------------
-   Require staff login (canonical key: staff_user_id)
-   Always provides a safe return URL back to Tools.
+   Require staff login
 --------------------------------------------------------- */
 $wantReturn = '/staff/tools/';
 if (function_exists('mk_require_staff_login')) {
@@ -63,9 +56,7 @@ if (function_exists('mk_require_staff_login')) {
     auth_require_role('staff');
   }
 } else {
-  $r = rawurlencode($wantReturn);
-  header('Location: /staff/login.php?return=' . $r, true, 302);
-  exit;
+  auth_require_role('staff');
 }
 
 /* ---------------------------------------------------------
@@ -95,7 +86,6 @@ if (!function_exists('url_for')) {
   function url_for(string $path): string { return '/' . ltrim($path, '/'); }
 }
 
-/* Page vars (tools_header seeds defaults; we set explicit intent) */
 $page_title = 'Tools • Staff';
 $page_desc  = 'Diagnostics, audits, and scans (restricted).';
 $nav_active = 'tools';
@@ -195,17 +185,17 @@ $mk_latest_quick_scan = static function(): array {
   $duration  = is_array($meta) && isset($meta['duration_ms']) ? (int)$meta['duration_ms'] : 0;
 
   return [
-    'ok' => true,
-    'path' => $path,
-    'status' => $status,
-    'score' => $score,
-    'critical' => $critical,
-    'high' => $high,
-    'medium' => $medium,
-    'low' => $low,
+    'ok'         => true,
+    'path'       => $path,
+    'status'     => $status,
+    'score'      => $score,
+    'critical'   => $critical,
+    'high'       => $high,
+    'medium'     => $medium,
+    'low'        => $low,
     'started_at' => $startedAt,
-    'duration_ms' => $duration,
-    'raw' => $data,
+    'duration_ms'=> $duration,
+    'raw'        => $data,
   ];
 };
 
@@ -244,14 +234,14 @@ $mk_read_quick_scan_history = static function(int $limit = 24): array {
     if ($score < 0) $score = 0;
     if ($score > 100) $score = 100;
 
-    $crit = (int)($r['critical'] ?? 0);
+    $crit   = (int)($r['critical'] ?? 0);
     $status = strtoupper((string)($r['status'] ?? ''));
 
     $out[] = [
-      'score' => $score,
-      'critical' => $crit,
+      'score'       => $score,
+      'critical'    => $crit,
       'is_critical' => ($crit > 0 || $status === 'CRITICAL'),
-      'date' => (string)($r['started_at'] ?? ''),
+      'date'        => (string)($r['started_at'] ?? ''),
     ];
   }
   return $out;
@@ -276,7 +266,7 @@ $mk_svg_sparkline = static function(array $points): string {
   }
   $polyStr = implode(' ', $poly);
 
-  $last = $points[$n-1];
+  $last      = $points[$n-1];
   $lastScore = (int)$last['score'];
 
   $marks = '';
@@ -318,22 +308,20 @@ $toolCount   = is_array($tools) ? count($tools) : 0;
 
 /* ---------------------------------------------------------
    Inject built-in tools not present in registry
-   (This is the correct way to add Audit Log to dashboard)
 --------------------------------------------------------- */
 if (!isset($tools['audit_log'])) {
   $tools['audit_log'] = [
-    'key'       => 'audit_log',
-    'title'     => 'Audit Log',
-    'desc'      => 'View staff audit trail with filters (admin-only).',
-    'group'     => 'Security',
-    'min_role'  => 'admin',
-    'mutating'  => false,
-    // This dashboard supports "url" tools if registry or meta uses it; we handle it below.
-    'url'       => '/staff/tools/audit_log.php',
+    'key'      => 'audit_log',
+    'title'    => 'Audit Log',
+    'desc'     => 'View staff audit trail with filters (admin-only).',
+    'group'    => 'Security',
+    'min_role' => 'admin',
+    'mutating' => false,
+    'url'      => '/staff/tools/audit_log.php',
   ];
 }
 
-/* Determine Scan tool key (project-wide scan CTA) */
+/* Determine Scan tool key */
 $preferred = '';
 $scanCandidates = [
   'diagnostics/staff-tools/scan-project',
@@ -344,7 +332,7 @@ foreach ($scanCandidates as $cand) {
   if (isset($tools[$cand])) { $preferred = $cand; break; }
 }
 
-/* Seed default last tool ONLY if not already set */
+/* Seed default last tool */
 if (
   (!isset($_SESSION['mk_last_tool']) || !is_string($_SESSION['mk_last_tool']) || trim($_SESSION['mk_last_tool']) === '')
   && $preferred !== ''
@@ -352,11 +340,10 @@ if (
   $_SESSION['mk_last_tool'] = $preferred;
 }
 
-/* CTA */
 $scanHref = ($preferred !== '') ? $runUrl($preferred, 'pre') : '';
 
 /* ---------------------------------------------------------
-   Group tools by group label
+   Group tools
 --------------------------------------------------------- */
 $groups = [];
 
@@ -366,7 +353,6 @@ foreach ($tools as $key => $meta) {
   $group = isset($meta['group']) && is_string($meta['group']) && trim($meta['group']) !== '' ? trim($meta['group']) : 'Tools';
   if (!isset($groups[$group])) $groups[$group] = [];
 
-  // Normalize minimum required fields to keep UI consistent
   if (!isset($meta['title']) || !is_string($meta['title']) || trim($meta['title']) === '') $meta['title'] = (string)$key;
   if (!isset($meta['desc'])  || !is_string($meta['desc'])) $meta['desc'] = '';
   if (!isset($meta['min_role']) || !is_string($meta['min_role']) || trim($meta['min_role']) === '') $meta['min_role'] = 'admin';
@@ -374,7 +360,6 @@ foreach ($tools as $key => $meta) {
   $groups[$group][$key] = $meta;
 }
 
-/* Sort groups: Diagnostics first, then Security, then alpha */
 if ($groups) {
   $ordered = [];
   if (isset($groups['Diagnostics'])) { $ordered['Diagnostics'] = $groups['Diagnostics']; unset($groups['Diagnostics']); }
@@ -389,31 +374,21 @@ if ($groups) {
 --------------------------------------------------------- */
 $health = $mk_latest_quick_scan();
 
-/* Determine quick scan tool key */
 $quickScanKey = '';
-$quickScanCandidates = [
-  'diagnostics/lint/quick-scan',
-  'diagnostics/quick-scan',
-  'lint/quick-scan',
-];
-foreach ($quickScanCandidates as $cand) {
+foreach (['diagnostics/lint/quick-scan', 'diagnostics/quick-scan', 'lint/quick-scan'] as $cand) {
   if (isset($tools[$cand])) { $quickScanKey = $cand; break; }
 }
 
-/* Determine trend chart tool key (optional) */
 $trendKey = '';
-$trendCandidates = [
-  'diagnostics/lint/trend-chart',
-  'diagnostics/trend-chart',
-  'lint/trend-chart',
-];
-foreach ($trendCandidates as $cand) {
+foreach (['diagnostics/lint/trend-chart', 'diagnostics/trend-chart', 'lint/trend-chart'] as $cand) {
   if (isset($tools[$cand])) { $trendKey = $cand; break; }
 }
 
 /* ---------------------------------------------------------
    HERO
 --------------------------------------------------------- */
+
+echo '<style>[data-group]{border:2px solid #3b82f6!important;border-radius:16px!important;padding:18px!important;margin-bottom:12px!important}[data-group="Diagnostics"]{border-color:#3b82f6!important;background:rgba(59,130,246,.08)!important}[data-group="Security"]{border-color:#ef4444!important;background:rgba(239,68,68,.08)!important}[data-group="Ops"]{border-color:#f59e0b!important;background:rgba(245,158,11,.08)!important}[data-group="Staff Tools"]{border-color:#8b5cf6!important;background:rgba(139,92,246,.08)!important}[data-group="AWAG"]{border-color:#22c55e!important;background:rgba(34,197,94,.08)!important}[data-group] h2{padding-left:12px!important;margin-bottom:14px!important}[data-group="Diagnostics"] h2{color:#93c5fd!important;border-left:4px solid #3b82f6!important}[data-group="Security"] h2{color:#fca5a5!important;border-left:4px solid #ef4444!important}[data-group="Ops"] h2{color:#fcd34d!important;border-left:4px solid #f59e0b!important}[data-group="Staff Tools"] h2{color:#c4b5fd!important;border-left:4px solid #8b5cf6!important}[data-group="AWAG"] h2{color:#86efac!important;border-left:4px solid #22c55e!important}</style>';
 echo '<section class="mk-hero" style="margin-top:14px;">';
 echo '  <div class="mk-hero__bar" aria-hidden="true"></div>';
 echo '  <div class="mk-hero__inner">';
@@ -435,7 +410,6 @@ if ($scanHref !== '') {
 }
 echo '      <a class="btn btn--ghost" href="' . h(url_for('/staff/')) . '">Dashboard</a>';
 echo '    </div>';
-
 echo '  </div>';
 echo '</section>';
 
@@ -448,7 +422,6 @@ echo '  <div>';
 echo '    <h2 style="margin:0; font-size:1.05rem; font-weight:900;">Health Snapshot</h2>';
 echo '    <div class="mk-muted" style="margin-top:4px;">Latest Lint Quick Scan summary (from logs).</div>';
 echo '  </div>';
-
 echo '  <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">';
 if ($quickScanKey !== '') {
   echo '    <a class="btn btn--small" href="' . h($runUrl($quickScanKey, 'auto')) . '">Run Quick Scan</a>';
@@ -463,7 +436,6 @@ if (!$health['ok']) {
   echo '<div class="mk-muted" style="margin-top:10px;">';
   echo 'No snapshot available: <strong>' . h((string)($health['reason'] ?? 'unknown')) . '</strong>';
   echo '</div>';
-
   if (!empty($health['path'])) {
     echo '<div class="mk-muted" style="margin-top:6px;"><code>' . h((string)$health['path']) . '</code></div>';
   }
@@ -478,8 +450,7 @@ if (!$health['ok']) {
   $tone = 'muted';
   if ($status === 'OK') $tone = 'ok';
   elseif ($status === 'WARN') $tone = 'warn';
-  elseif ($status === 'AT RISK') $tone = 'bad';
-  elseif ($status === 'CRITICAL') $tone = 'bad';
+  elseif (in_array($status, ['AT RISK', 'CRITICAL'], true)) $tone = 'bad';
 
   echo '<div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">';
   echo $badge('Status: ' . $status, $tone);
@@ -496,7 +467,7 @@ if (!$health['ok']) {
 
   echo '<div class="mk-muted" style="margin-top:10px;">';
   if ($startedAt !== '') {
-    echo '<div><strong>Scan time:</strong> ' . h($startedAt) . ' • <strong>Duration:</strong> ' . h((string)$duration) . " ms</div>";
+    echo '<div><strong>Scan time:</strong> ' . h($startedAt) . ' • <strong>Duration:</strong> ' . h((string)$duration) . ' ms</div>';
   }
   echo '<div><strong>JSON:</strong> <code>' . h($path) . '</code></div>';
   echo '</div>';
@@ -541,26 +512,23 @@ if (!$health['ok']) {
 }
 
 /* Trend Preview */
-$spark = '';
 $sparkPoints = $mk_read_quick_scan_history(28);
-if ($sparkPoints) $spark = $mk_svg_sparkline($sparkPoints);
+$spark = (count($sparkPoints) >= 2) ? $mk_svg_sparkline($sparkPoints) : '';
 
 echo '<section class="mk-card" style="padding:14px; margin-top:14px;">';
 echo '  <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;">';
 echo '    <h2 style="margin:0;font-size:1.02rem;font-weight:900;">Trend Preview</h2>';
-
 if ($trendKey !== '') {
   echo '    <a class="btn btn--small btn--ghost" href="' . h($runUrl($trendKey, 'html')) . '">Open Trend Chart</a>';
 } else {
   echo '    <span class="mk-muted" style="font-size:.92rem;">Trend chart tool not registered.</span>';
 }
 echo '  </div>';
-
 if ($spark !== '') {
   echo '  <div style="margin-top:10px;">' . $spark . '</div>';
   echo '  <div class="mk-muted" style="margin-top:8px;font-size:.92rem;">Last ' . (int)count($sparkPoints) . ' exported scans (from CSV history).</div>';
 } else {
-  echo '  <p class="mk-muted" style="margin:10px 0 0 0;">No trend data yet. Run Quick Scan, then run “Export History CSV”.</p>';
+  echo '  <p class="mk-muted" style="margin:10px 0 0 0;">No trend data yet. Run Quick Scan, then run "Export History CSV".</p>';
 }
 echo '</section>';
 
@@ -584,7 +552,7 @@ if (!$groups) {
       return strcasecmp($ta, $tb);
     });
 
-    echo '<div>';
+    echo '<div data-group="' . h($groupName) . '">';
     echo '<div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">';
     echo '<h2 style="margin:0; font-size:1.05rem; font-weight:900;">' . h($groupName) . '</h2>';
     echo '<div class="mk-muted" style="font-size:.92rem;">' . h((string)count($items)) . ' tool(s)</div>';
@@ -593,12 +561,10 @@ if (!$groups) {
     echo '<div style="margin-top:10px; display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:14px;">';
 
     foreach ($items as $key => $meta) {
-      $title    = isset($meta['title']) ? (string)$meta['title'] : (string)$key;
-      $desc     = isset($meta['desc'])  ? (string)$meta['desc']  : '';
-      $minRole  = isset($meta['min_role']) ? strtolower(trim((string)$meta['min_role'])) : 'admin';
-      $mutating = !empty($meta['mutating']);
-
-      // Support "url" tools (direct link) as well as registry-run tools
+      $title     = isset($meta['title']) ? (string)$meta['title'] : (string)$key;
+      $desc      = isset($meta['desc'])  ? (string)$meta['desc']  : '';
+      $minRole   = isset($meta['min_role']) ? strtolower(trim((string)$meta['min_role'])) : 'admin';
+      $mutating  = !empty($meta['mutating']);
       $directUrl = isset($meta['url']) && is_string($meta['url']) && trim($meta['url']) !== '' ? trim($meta['url']) : '';
 
       $hrefPre  = $runUrl((string)$key, 'pre');
@@ -615,7 +581,6 @@ if (!$groups) {
       echo        $badge('KEY: ' . (string)$key, 'muted');
       echo '    </div>';
       echo '    <div style="display:flex; gap:8px; flex-wrap:wrap;">';
-
       if ($directUrl !== '') {
         echo '      <a class="btn btn--small" href="' . h($directUrl) . '">Open</a>';
       } else {
@@ -623,10 +588,8 @@ if (!$groups) {
         echo '      <a class="btn btn--small btn--ghost" href="' . h($hrefAuto) . '">Auto</a>';
         echo '      <a class="btn btn--small btn--ghost" href="' . h($hrefHtml) . '">HTML</a>';
       }
-
       echo '    </div>';
       echo '  </div>';
-
       echo '  <h3 style="margin:10px 0 6px; font-size:1.05rem; font-weight:900;">' . h($title) . '</h3>';
       echo '  <p class="mk-muted" style="margin:0;">' . h($desc !== '' ? $desc : 'No description provided.') . '</p>';
       echo '</article>';
@@ -645,4 +608,14 @@ if (function_exists('mk_require_shared')) {
   return;
 }
 
-echo "</main></body></html>";
+$staff_footer = (defined('PRIVATE_PATH') && is_string(PRIVATE_PATH) && PRIVATE_PATH !== '')
+  ? rtrim(PRIVATE_PATH, "/\\") . '/shared/staff_footer.php'
+  : (defined('APP_ROOT') && is_string(APP_ROOT) && APP_ROOT !== ''
+      ? rtrim(APP_ROOT, "/\\") . '/private/shared/staff_footer.php'
+      : '');
+
+if ($staff_footer !== '' && is_file($staff_footer)) {
+  require $staff_footer;
+} else {
+  echo "</main></body></html>";
+}

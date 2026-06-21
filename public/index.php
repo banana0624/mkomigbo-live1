@@ -1,37 +1,62 @@
 <?php
-
 declare(strict_types=1);
 
-error_reporting(E_ALL);
 ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
 
-echo '<pre>';
+define('APP_ROOT', dirname(__DIR__));
 
-try {
+require_once APP_ROOT . '/app/autoload.php';
+require_once APP_ROOT . '/app/helpers.php';
 
-    require_once __DIR__ . '/../private/assets/initialize.php';
+use App\Core\Container;
+use App\Core\Database;
+use App\Core\Middleware;
+use App\Core\Request;
+use App\Core\Router;
+use App\Core\Session;
 
-    echo "INIT OK\n";
+Database::init();
+Session::start();
 
-    require_once __DIR__ . '/../routes/web.php';
+$request = new Request();
+$router  = new Router();
 
-    echo "ROUTES OK\n";
+use App\Repositories\PageRepository;
 
-} catch (Throwable $e) {
+Container::bind('pageRepo', fn () => new PageRepository(Database::pdo()));
 
-    echo "FATAL ERROR\n\n";
+$router->get('/', function () {
+    $repo = Container::make('pageRepo');
+    return $repo->findBySlug('home');
+});
 
-    echo "Message:\n";
-    echo $e->getMessage() . "\n\n";
+$router->get('/home', function () {
+    $repo = Container::make('pageRepo');
+    return $repo->findBySlug('home');
+});
 
-    echo "File:\n";
-    echo $e->getFile() . "\n\n";
+$router->get('/about', function () {
+    $repo = Container::make('pageRepo');
+    return $repo->findBySlug('about');
+});
 
-    echo "Line:\n";
-    echo $e->getLine() . "\n\n";
+$routeHandler = $router->resolve($request);
 
-    echo "Trace:\n";
-    echo $e->getTraceAsString();
+if ($routeHandler) {
+    $response = Middleware::handle([], $request, $routeHandler);
+    if (is_array($response)) {
+        mk_render_page($response);
+        exit;
+    }
+    if (is_string($response)) {
+        echo $response;
+        exit;
+    }
 }
 
-echo '</pre>';
+$path   = trim($request->path ?? '', '/');
+$domain = \App\Core\DomainResolver::resolve($path);
+if ($domain !== 'passthrough') { echo $domain; }
+if ($domain !== 'passthrough') { exit; }

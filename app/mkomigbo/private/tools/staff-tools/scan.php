@@ -36,7 +36,7 @@ register_shutdown_function(function (): void {
 });
 
 /* ---------- Bootstrap ---------- */
-if (!defined('APP_ROOT')) { define('APP_ROOT', dirname(__DIR__, 3)); }
+if (!defined('APP_ROOT')) { // // DISABLED_APP_ROOT (DISABLED_AUTO_FIX), dirname(__DIR__, 3)); }
 $init = APP_ROOT . '/private/assets/initialize.php';
 if (!is_file($init)) { echo "FAIL: initialize.php missing at {$init}
 "; exit(1); }

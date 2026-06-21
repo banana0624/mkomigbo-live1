@@ -1,0 +1,110 @@
+<?php
+declare(strict_types=1);
+
+require_once __DIR__ . '/_init.php';
+auth_require_role('staff');
+
+@ini_set('display_errors', '0');
+@ini_set('display_startup_errors', '0');
+error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
+
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+header('Expires: 0');
+
+if (!function_exists('h')) {
+  function h(string $v): string { return htmlspecialchars($v, ENT_QUOTES, 'UTF-8'); }
+}
+if (!function_exists('url_for')) {
+  function url_for(string $path): string { return '/' . ltrim($path, '/'); }
+}
+
+$page_title = 'Dashboard • Staff';
+$page_desc  = 'Staff area overview.';
+$nav_active = 'dashboard';
+$active_nav = 'dashboard';
+
+if (function_exists('mk_view_set')) {
+  try {
+    mk_view_set([
+      'page_title' => $page_title,
+      'page_desc'  => $page_desc,
+      'nav_active' => $nav_active,
+      'active_nav' => $active_nav,
+    ]);
+  } catch (Throwable $e) {}
+}
+
+$staffUser   = $_SESSION['staff_user'] ?? [];
+$staffUserId = $_SESSION['staff_user_id'] ?? null;
+$staffEmail  = is_array($staffUser) ? (string)($staffUser['email'] ?? '') : '';
+$staffRole   = is_array($staffUser) ? (string)($staffUser['role'] ?? 'staff') : 'staff';
+
+$staff_header = (defined('PRIVATE_PATH') && is_string(PRIVATE_PATH) && PRIVATE_PATH !== '')
+  ? (rtrim(PRIVATE_PATH, "/\\") . '/shared/staff_header.php')
+  : (defined('APP_ROOT') && is_string(APP_ROOT) && APP_ROOT !== ''
+      ? (rtrim(APP_ROOT, "/\\") . '/private/shared/staff_header.php')
+      : '');
+
+$staff_footer = (defined('PRIVATE_PATH') && is_string(PRIVATE_PATH) && PRIVATE_PATH !== '')
+  ? (rtrim(PRIVATE_PATH, "/\\") . '/shared/staff_footer.php')
+  : (defined('APP_ROOT') && is_string(APP_ROOT) && APP_ROOT !== ''
+      ? (rtrim(APP_ROOT, "/\\") . '/private/shared/staff_footer.php')
+      : '');
+
+if ($staff_header && is_file($staff_header)) {
+  require $staff_header;
+}
+?>
+
+<section class="staff-pagehead">
+  <h1 class="staff-pagehead__title">Staff Dashboard</h1>
+  <p class="staff-pagehead__desc">Welcome back<?= $staffEmail !== '' ? ', ' . h($staffEmail) : '' ?>.</p>
+</section>
+
+<section class="staff-section">
+  <div class="staff-card">
+    <div class="staff-card__body">
+      <h2 style="margin:0 0 14px;font-size:1.1rem;">Session</h2>
+      <table style="border-collapse:collapse;width:100%;max-width:480px;">
+        <tr>
+          <td style="padding:8px 12px 8px 0;font-weight:700;color:#667085;width:160px;">Session active</td>
+          <td style="padding:8px 0;"><?= session_status() === PHP_SESSION_ACTIVE ? 'Yes' : 'No' ?></td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px 8px 0;font-weight:700;color:#667085;">Staff user ID</td>
+          <td style="padding:8px 0;"><?= $staffUserId !== null ? h((string)$staffUserId) : '<span style="color:#667085;">—</span>' ?></td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px 8px 0;font-weight:700;color:#667085;">Email</td>
+          <td style="padding:8px 0;"><?= $staffEmail !== '' ? h($staffEmail) : '<span style="color:#667085;">—</span>' ?></td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px 8px 0;font-weight:700;color:#667085;">Role</td>
+          <td style="padding:8px 0;"><?= h($staffRole) ?></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="staff-section">
+  <div class="staff-card">
+    <div class="staff-card__body">
+      <h2 style="margin:0 0 14px;font-size:1.1rem;">Quick links</h2>
+      <div class="staff-actions" style="flex-wrap:wrap;">
+        <a class="staff-chip" href="/staff/contributors/">Contributors</a>
+        <a class="staff-chip" href="/staff/platforms/">Platforms</a>
+        <a class="staff-chip" href="/staff/subjects/">Subjects</a>
+        <a class="staff-chip" href="/staff/tools/">Tools</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<?php
+if ($staff_footer && is_file($staff_footer)) {
+  require $staff_footer;
+} else {
+  echo "</main></body></html>";
+}

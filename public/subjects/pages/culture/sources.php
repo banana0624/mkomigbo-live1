@@ -1,97 +1,41 @@
 <?php
 declare(strict_types=1);
-
-return [
-  'title' => 'Sources',
-  'body_html' => <<<HTML
-<div class="mk-prose">
-
-  <p class="mk-muted" style="margin-top:0;">
-    Igbo culture is studied through a wide range of sources:
-    oral tradition, performance, art, language, ethnography, archives,
-    and modern scholarship. Cultural knowledge is often preserved in living practice,
-    not only in written documents.
-  </p>
-
-  <div style="display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 14px;">
-    <a class="mk-btn mk-btn--ghost" href="/subjects/culture/intro/">Introduction</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/culture/overview/">Overview</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/culture/topics/">Key Topics</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/culture/people/">People</a>
-  </div>
-
-  <h2>1. Oral tradition</h2>
-  <p>
-    Oral tradition is one of the most important sources for Igbo culture.
-    Proverbs, folktales, praise speech, songs, and storytelling preserve
-    values, history, and social knowledge across generations.
-  </p>
-
-  <h2>2. Language and proverbs</h2>
-  <p>
-    The Igbo language itself is a major cultural archive.
-    Proverbs and idiomatic expressions encode moral teaching,
-    social expectations, humor, and practical wisdom.
-  </p>
-
-  <h2>3. Material culture and art</h2>
-  <p>
-    Objects such as masks, sculptures, uli designs, textiles, tools,
-    and ritual items provide direct evidence of cultural practice.
-    Museums and collections are important repositories for these materials.
-  </p>
-
-  <h2>4. Performance and festival observation</h2>
-  <p>
-    Festivals, dances, masquerades, and ceremonies are living sources.
-    Observing and documenting them provides insight into values,
-    symbolism, and social organization.
-  </p>
-
-  <h2>5. Ethnographic and anthropological records</h2>
-  <p>
-    Early ethnographers, missionaries, and colonial observers recorded aspects
-    of Igbo culture. These records are useful but must be read critically,
-    because they often reflect outsider perspectives and biases.
-  </p>
-
-  <h2>6. Modern scholarship</h2>
-  <p>
-    Contemporary historians, anthropologists, linguists, and cultural scholars
-    provide more balanced and critical interpretations of Igbo culture,
-    combining fieldwork, oral evidence, and archival research.
-  </p>
-
-  <h2>7. Literature and creative works</h2>
-  <p>
-    Novels, plays, poetry, and films by Igbo writers are also important sources.
-    They interpret cultural life, preserve memory, and present internal perspectives
-    that may not appear in formal academic writing.
-  </p>
-
-  <h2>Recommended source categories for this site</h2>
-  <ul>
-    <li><strong>Primary sources:</strong> oral accounts, recorded performances, photographs, artifacts.</li>
-    <li><strong>Language sources:</strong> proverbs, idioms, naming systems, speech forms.</li>
-    <li><strong>Ethnographic records:</strong> field notes, early descriptions, community studies.</li>
-    <li><strong>Creative works:</strong> literature, drama, film, and music.</li>
-    <li><strong>Secondary sources:</strong> academic books and articles on Igbo culture.</li>
-  </ul>
-
-  <h2>How to use sources well</h2>
-  <ul>
-    <li>Compare oral tradition with written records.</li>
-    <li>Recognize that culture is dynamic, not fixed.</li>
-    <li>Distinguish between local variation and shared patterns.</li>
-    <li>Document sources clearly (who, where, when).</li>
-    <li>Respect cultural context and meaning when interpreting practices.</li>
-  </ul>
-
-  <p>
-    A strong cultural page shows not only what practices exist,
-    but how they are known, preserved, and interpreted.
-  </p>
-
-</div>
-HTML,
-];
+echo '<div class="mk-prose">';
+echo '<p class="mk-muted" style="margin-top:0;">Key books, collections, and references for the study of Igbo culture.</p>';
+echo '<h2>Essential Literary Sources</h2>';
+echo '<ul>';
+echo '<li><strong>Chinua Achebe</strong> — <em>Things Fall Apart</em> (1958). The richest literary portrait of precolonial and early colonial Igbo culture.</li>';
+echo '<li><strong>Chinua Achebe</strong> — <em>Arrow of God</em> (1964). Focuses on Igbo religious and political culture during colonization.</li>';
+echo '<li><strong>Flora Nwapa</strong> — <em>Efuru</em> (1966). Centres Igbo women\'s lives and the Uhamiri (lake goddess) tradition.</li>';
+echo '<li><strong>Chimamanda Ngozi Adichie</strong> — <em>Purple Hibiscus</em> (2003). Contemporary Igbo family life and religious change.</li>';
+echo '</ul>';
+echo '<h2>Ethnographic and Anthropological Studies</h2>';
+echo '<ul>';
+echo '<li><strong>M.M. Green</strong> — <em>Igbo Village Affairs</em> (1947). One of the earliest and most detailed ethnographic studies of Igbo community life.</li>';
+echo '<li><strong>Victor Uchendu</strong> — <em>The Igbo of Southeast Nigeria</em> (1965). Standard introductory anthropological account, written by an Igbo scholar.</li>';
+echo '<li><strong>Phoebe Ottenberg</strong> — <em>Afikpo: The Resurgence of a Culture</em> (2005). Detailed study of Afikpo Igbo masquerade and cultural life.</li>';
+echo '<li><strong>Simon Ottenberg</strong> — <em>Masked Rituals of Afikpo</em> (1975). The definitive study of Igbo masquerade tradition.</li>';
+echo '</ul>';
+echo '<h2>Art and Visual Culture</h2>';
+echo '<ul>';
+echo '<li><strong>Herbert Cole and Chike Aniakor</strong> — <em>Igbo Arts: Community and Cosmos</em> (1984). The most comprehensive survey of Igbo visual art.</li>';
+echo '<li><strong>Chike Aniakor</strong> — various articles on Uli art and Igbo aesthetics.</li>';
+echo '<li><strong>Uche Okeke</strong> — writings on Natural Synthesis and Igbo visual traditions.</li>';
+echo '</ul>';
+echo '<h2>Language and Oral Tradition</h2>';
+echo '<ul>';
+echo '<li><strong>Onuora Nzekwu</strong> — <em>Wand of Noble Wood</em> (1961). Early novel documenting Igbo customs and social life.</li>';
+echo '<li><strong>Akachi Adimora-Ezeigbo</strong> — various works on Igbo women\'s oral literature.</li>';
+echo '<li><strong>F.C. Ogbalu</strong> — <em>Ilu Igbo</em> (Igbo Proverbs). The standard collection of Igbo proverbs.</li>';
+echo '</ul>';
+echo '<h2>Music</h2>';
+echo '<ul>';
+echo '<li><strong>John Collins</strong> — works on West African highlife music and its Igbo roots.</li>';
+echo '<li><strong>Meki Nzewi</strong> — writings on Igbo musical theory and practice.</li>';
+echo '</ul>';
+echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 4px;">';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/culture/intro/">Introduction</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/culture/overview/">Overview</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/culture/topics/">Topics</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/culture/people/">People</a>';
+echo '</div></div>';

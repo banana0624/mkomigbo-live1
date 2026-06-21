@@ -1,48 +1,43 @@
 <?php
 declare(strict_types=1);
-
-return [
-  'title' => 'Introduction',
-  'body_html' => <<<HTML
-<div class="mk-prose">
-
-  <p class="mk-muted" style="margin-top:0;">
-    <strong>Language2</strong> focuses on how the Igbo language works in practice:
-    grammar, sentence structure, tone in actual usage, numerals, counting systems,
-    and dictionary-based vocabulary development.
-  </p>
-
-  <p>
-    While <strong>Language1</strong> deals with origin, scripts, and orthography,
-    this subject deals with structure and use. It asks how Igbo words are formed,
-    how sentences are built, how meaning changes with tone, how numbers are expressed,
-    and how lexical resources such as dictionaries support literacy and language growth.
-  </p>
-
-  <h2>Why this subject matters</h2>
-  <ul>
-    <li><strong>Practical learning:</strong> grammar and usage make the language teachable and learnable.</li>
-    <li><strong>Clarity:</strong> understanding tone, sentence structure, and word formation improves reading and speech.</li>
-    <li><strong>Numeracy:</strong> number systems and counting patterns are part of both language and culture.</li>
-    <li><strong>Preservation:</strong> dictionaries and lexical work help stabilize vocabulary and support modern use.</li>
-  </ul>
-
-  <h2>What you will find in this subject</h2>
-  <ul>
-    <li><strong>Overview:</strong> the broad structure of Igbo grammar and usage.</li>
-    <li><strong>Key Topics:</strong> tone, word classes, sentence structure, numerals, counting systems, and dictionary development.</li>
-    <li><strong>People:</strong> grammarians, lexicographers, teachers, and language scholars.</li>
-    <li><strong>Sources:</strong> dictionaries, grammars, textbooks, and linguistic studies.</li>
-  </ul>
-
-  <h2>Explore</h2>
-  <div style="display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 4px;">
-    <a class="mk-btn mk-btn--ghost" href="/subjects/language2/overview/">Overview</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/language2/topics/">Key Topics</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/language2/people/">People</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/language2/sources/">Sources</a>
-  </div>
-
-</div>
-HTML,
-];
+echo '<div class="mk-prose">';
+echo '<p class="mk-muted" style="margin-top:0;">Igbo grammar, daily usage, conversation, and practical language learning.</p>';
+echo '<h2>This Track — Practical Igbo</h2>';
+echo '<p>Language 2 focuses on the living, spoken Igbo language — how it works in daily life, how sentences are built, how conversations flow, and how learners can begin to use Igbo in real situations. Where Language 1 covers the history and evolution of the language, this track covers how to understand and use it today.</p>';
+echo '<h2>Basic Structure</h2>';
+echo '<p>Igbo sentences follow Subject-Verb-Object order, like English. "Emeka rị ihe" — Emeka ate food. But Igbo grammar differs from English in important ways:</p>';
+echo '<ul>';
+echo '<li><strong>No articles</strong> — there is no "a" or "the" in Igbo</li>';
+echo '<li><strong>No grammatical gender</strong> — no he/she distinction in the third person pronoun "ọ"</li>';
+echo '<li><strong>Aspect not tense</strong> — verbs mark whether an action is complete or ongoing, not when it happened</li>';
+echo '<li><strong>Tones carry meaning</strong> — the pitch of a syllable changes what the word means</li>';
+echo '<li><strong>Vowel harmony</strong> — vowels within words belong to matching phonological groups</li>';
+echo '</ul>';
+echo '<h2>Essential Daily Phrases</h2>';
+echo '<ul>';
+echo '<li><strong>Nnọọ</strong> — Welcome</li>';
+echo '<li><strong>Ndeewo</strong> — Greetings (to one person)</li>';
+echo '<li><strong>Ndeewo unu</strong> — Greetings (to a group)</li>';
+echo '<li><strong>Kedu?</strong> — How are you?</li>';
+echo '<li><strong>Ọ dị mma</strong> — I am fine / It is fine</li>';
+echo '<li><strong>Daalu</strong> — Thank you</li>';
+echo '<li><strong>Daalu nnọọ</strong> — Thank you very much</li>';
+echo '<li><strong>Biko</strong> — Please</li>';
+echo '<li><strong>Pụọ</strong> — Go away / Leave</li>';
+echo '<li><strong>Bịa</strong> — Come</li>';
+echo '<li><strong>Ọ dị mma</strong> — It is okay / No problem</li>';
+echo '<li><strong>Anọ m mma</strong> — I am well</li>';
+echo '</ul>';
+echo '<h2>Numbers</h2>';
+echo '<ul>';
+echo '<li>Otu — 1</li><li>Abụọ — 2</li><li>Atọ — 3</li><li>Anọ — 4</li><li>Ise — 5</li>';
+echo '<li>Isii — 6</li><li>Asaa — 7</li><li>Asato — 8</li><li>Itoolu — 9</li><li>Iri — 10</li>';
+echo '<li>Iri na otu — 11</li><li>Iri abụọ — 20</li><li>Narị — 100</li><li>Puku — 1000</li>';
+echo '</ul>';
+echo '<h2>The Four Market Days</h2>';
+echo '<p>The Igbo week has four days — each named after a market: <strong>Eke, Orie, Afo, Nkwo</strong>. These names are deeply embedded in daily speech. A child born on Eke is named Nwaeke (child of Eke). Meeting times, farming schedules, and ceremonies are all organized around this four-day cycle.</p>';
+echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 4px;">';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/language2/overview/">Grammar</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/language2/topics/">Daily Usage</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/language2/sources/">Resources</a>';
+echo '</div></div>';

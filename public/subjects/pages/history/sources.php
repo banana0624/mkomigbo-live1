@@ -1,111 +1,44 @@
 <?php
 declare(strict_types=1);
-
-return [
-  'title' => 'Sources',
-  'body_html' => <<<HTML
-<div class="mk-prose">
-
-  <p class="mk-muted" style="margin-top:0;">
-    Igbo history is reconstructed from many kinds of evidence: oral tradition, archaeology,
-    language, material culture, missionary and colonial records, trade documents, literature,
-    and modern historical scholarship. No single source is sufficient on its own. Strong history
-    compares different forms of evidence and asks what each one can and cannot tell us.
-  </p>
-
-  <div style="display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 14px;">
-    <a class="mk-btn mk-btn--ghost" href="/subjects/history/intro/">Introduction</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/history/overview/">Overview</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/history/topics/">Key Topics</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/history/people/">People</a>
-  </div>
-
-  <h2>1. Oral tradition</h2>
-  <p>
-    Oral tradition remains one of the most important foundations for the study of Igbo history.
-    Community memory preserves accounts of migration, founding ancestors, political change,
-    ritual authority, markets, warfare, and relationships among villages and kindreds.
-    Oral traditions are especially valuable where written records are sparse or late.
-  </p>
-
-  <h2>2. Archaeology</h2>
-  <p>
-    Archaeology is essential for deep Igbo history. Igbo-Ukwu is one of the most important sites
-    for understanding early artistic, technological, and religious life in the wider Igbo region.
-    Its finds show highly sophisticated metalworking and a complex ritual world centuries before
-    colonial rule.
-  </p>
-
-  <h2>3. Material culture and museum collections</h2>
-  <p>
-    Objects preserved in museums—bronzes, ornaments, masks, ritual objects, carved figures,
-    and domestic artifacts—help historians study technology, symbolism, trade, and religious life.
-    Material culture is especially important because it preserves evidence not always described in texts.
-  </p>
-
-  <h2>4. Missionary and colonial records</h2>
-  <p>
-    Nineteenth- and twentieth-century missionary and colonial records are major documentary sources
-    for Igbo history. They contain information on towns, language, conversion, education, trade,
-    local institutions, and changing political structures. These sources are useful, but they must be
-    read critically because they were often produced from outsider perspectives.
-  </p>
-
-  <h2>5. Trade, slavery, and Atlantic-world records</h2>
-  <p>
-    Igbo history is also documented through Atlantic-world records relating to trade, enslavement,
-    shipping, and resistance. These sources connect southeastern Nigeria to broader histories of
-    forced migration and diaspora. They are especially important for studying the movement of Igbo
-    people beyond West Africa.
-  </p>
-
-  <h2>6. Literature and historical interpretation</h2>
-  <p>
-    Literary works can also serve as historically important interpretive sources. They do not replace
-    archival or archaeological evidence, but they can preserve social detail, worldview, memory,
-    and cultural texture. For Igbo history, modern literature has played a major role in restoring
-    African-centered interpretation of the past.
-  </p>
-
-  <h2>7. Modern scholarship</h2>
-  <p>
-    Contemporary historians combine archaeology, anthropology, linguistics, oral tradition,
-    documentary records, and comparative analysis. Good scholarship does not rely on a single
-    narrative. It compares evidence, identifies bias, and explains where uncertainty remains.
-  </p>
-
-  <h2>Recommended source categories for this site</h2>
-  <ul>
-    <li><strong>Primary sources:</strong> oral accounts, letters, missionary records, trade records, government papers, photographs, maps, and newspapers.</li>
-    <li><strong>Archaeological sources:</strong> excavation reports, site studies, artifact catalogues, and museum object records.</li>
-    <li><strong>Secondary sources:</strong> books and journal articles by trained historians and scholars of Igbo society.</li>
-    <li><strong>Reference works:</strong> trusted encyclopedias, museum essays, and library guides.</li>
-    <li><strong>Digital archives:</strong> scanned records, image collections, and curated document repositories.</li>
-  </ul>
-
-  <h2>Examples especially relevant to Igbo history</h2>
-  <ul>
-    <li><strong>Igbo-Ukwu studies:</strong> archaeological and museum material on early metalworking and ritual culture.</li>
-    <li><strong>Igbo social organization:</strong> works on village assemblies, elders, age grades, and federated communities.</li>
-    <li><strong>Atlantic slavery and diaspora:</strong> records on forced migration, resistance, and memory.</li>
-    <li><strong>Missionary archives:</strong> church, school, baptismal, burial, and correspondence records.</li>
-    <li><strong>Modern literary interpretation:</strong> texts that illuminate Igbo society under colonial pressure.</li>
-  </ul>
-
-  <h2>How to use sources well</h2>
-  <ul>
-    <li>Prefer named, citable, and verifiable sources.</li>
-    <li>Compare oral, material, and documentary evidence rather than relying on one type alone.</li>
-    <li>Distinguish clearly between fact, interpretation, and legend.</li>
-    <li>Note dates, place names, authorship, and historical context.</li>
-    <li>Attach scans, links, and bibliographic details whenever possible.</li>
-  </ul>
-
-  <p>
-    A strong Igbo history project grows by combining local knowledge with rigorous documentation.
-    The best pages will not only tell stories but also show readers the evidence behind them.
-  </p>
-
-</div>
-HTML,
-];
+echo '<div class="mk-prose">';
+echo '<p class="mk-muted" style="margin-top:0;">Key books, documents, and references for the study of Igbo history.</p>';
+echo '<h2>Essential Reading</h2>';
+echo '<ul>';
+echo '<li><strong>Olaudah Equiano</strong> — <em>The Interesting Narrative of the Life of Olaudah Equiano</em> (1789). The foundational primary source on the 18th-century Igbo world and the slave trade.</li>';
+echo '<li><strong>Chinua Achebe</strong> — <em>Things Fall Apart</em> (1958). The essential literary account of Igbo life before and during colonization.</li>';
+echo '<li><strong>Chinua Achebe</strong> — <em>There Was a Country: A Personal History of Biafra</em> (2012). The most important Igbo literary account of the civil war.</li>';
+echo '<li><strong>Elizabeth Isichei</strong> — <em>A History of the Igbo People</em> (1976). The most comprehensive academic history of the Igbo, covering origins through the post-civil war period.</li>';
+echo '<li><strong>Adiele Afigbo</strong> — <em>Ropes of Sand: Studies in Igbo History and Culture</em> (1981). Essential essays on Igbo political history and colonial encounter.</li>';
+echo '</ul>';
+echo '<h2>Archaeology and Origins</h2>';
+echo '<ul>';
+echo '<li><strong>Thurstan Shaw</strong> — <em>Igbo-Ukwu: An Account of Archaeological Discoveries in Eastern Nigeria</em> (1970). The definitive account of the Igbo-Ukwu excavations.</li>';
+echo '<li><strong>Don Ohadike</strong> — <em>Anioma: A Social History of the Western Igbo People</em> (1994). Important regional history.</li>';
+echo '</ul>';
+echo '<h2>The Slave Trade</h2>';
+echo '<ul>';
+echo '<li><strong>G. Ugo Nwokeji</strong> — <em>The Slave Trade and Culture in the Bight of Biafra</em> (2010). The most detailed modern study of the Igbo experience in the Atlantic slave trade.</li>';
+echo '<li><strong>Paul Lovejoy</strong> — various works on the Atlantic slave trade and West Africa.</li>';
+echo '</ul>';
+echo '<h2>Colonialism and Resistance</h2>';
+echo '<ul>';
+echo '<li><strong>Judith Van Allen</strong> — "Aba Riots or Igbo Women\'s War?" (1972). The seminal academic article on the Women\'s War of 1929.</li>';
+echo '<li><strong>Adiele Afigbo</strong> — <em>The Warrant Chiefs: Indirect Rule in Southeastern Nigeria 1891–1929</em> (1972). Essential on the colonial administrative system.</li>';
+echo '</ul>';
+echo '<h2>The Civil War</h2>';
+echo '<ul>';
+echo '<li><strong>Frederick Forsyth</strong> — <em>The Biafra Story</em> (1969). Contemporary journalistic account from the Biafran side.</li>';
+echo '<li><strong>John Stremlau</strong> — <em>The International Politics of the Nigerian Civil War</em> (1977). The standard academic account of the international dimensions.</li>';
+echo '<li><strong>Chimamanda Ngozi Adichie</strong> — <em>Half of a Yellow Sun</em> (2006). The most celebrated fictional account of the civil war.</li>';
+echo '</ul>';
+echo '<h2>Contemporary Igbo</h2>';
+echo '<ul>';
+echo '<li><strong>Axel Harneit-Sievers</strong> — <em>Constructions of Belonging: Igbo Communities and the Nigerian State</em> (2006).</li>';
+echo '<li><strong>Nnamdi Azikiwe</strong> — <em>My Odyssey: An Autobiography</em> (1970).</li>';
+echo '</ul>';
+echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 4px;">';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/history/intro/">Introduction</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/history/timeline/">Timeline</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/history/topics/">Topics</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/history/people/">People</a>';
+echo '</div></div>';

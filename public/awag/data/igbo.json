@@ -1,0 +1,959 @@
+{
+    "id": "igbo",
+    "name": "Igbo",
+    "full_name": "Igbo Calendar",
+    "language": "Igbo \/ English",
+    "region": "Guinea Coast",
+    "area": "Southeast Nigeria",
+    "color": "#2d6a1f",
+    "initial": "IG",
+    "calendar_type": "13-month",
+    "market_cycle": 4,
+    "market_days": [
+        "Eke",
+        "Orie",
+        "Afo",
+        "Nkwo"
+    ],
+    "months": [
+        {
+            "n": 1,
+            "name": "Ọnwa Mbụ",
+            "greg": "Feb-Mar",
+            "note": "New Year (Mbido Afọ)"
+        },
+        {
+            "n": 2,
+            "name": "Ọnwa Abụọ",
+            "greg": "Mar-Apr",
+            "note": "Farm Clearing and Cleansing"
+        },
+        {
+            "n": 3,
+            "name": "Ọnwa Ife Eke",
+            "greg": "Apr-May",
+            "note": "Fasting and Offering"
+        },
+        {
+            "n": 4,
+            "name": "Ọnwa Anọ",
+            "greg": "May-Jun",
+            "note": "Planting Season"
+        },
+        {
+            "n": 5,
+            "name": "Ọnwa Agwụ",
+            "greg": "Jun-Jul",
+            "note": "Masquerade Rites \/ Knowledge"
+        },
+        {
+            "n": 6,
+            "name": "Ọnwa Ifejiọkụ",
+            "greg": "Jul-Aug",
+            "note": "Yam Festival \/ Rituals"
+        },
+        {
+            "n": 7,
+            "name": "Ọnwa Alọm Chi \/ Asaa",
+            "greg": "Aug-Sep",
+            "note": "New Yam Festival"
+        },
+        {
+            "n": 8,
+            "name": "Ọnwa Ilo Mmụọ \/ Asatọ",
+            "greg": "Sep-Oct",
+            "note": "Ancestral Veneration"
+        },
+        {
+            "n": 9,
+            "name": "Ọnwa Ala \/ Itolu",
+            "greg": "Oct-Nov",
+            "note": "Ofala Festival"
+        },
+        {
+            "n": 10,
+            "name": "Ọnwa Okike \/ Iri",
+            "greg": "Nov",
+            "note": "Creation Myths \/ Offerings"
+        },
+        {
+            "n": 11,
+            "name": "Ọnwa Ajala \/ Iri na otu",
+            "greg": "Nov-Dec",
+            "note": "Spiritual Cleansing"
+        },
+        {
+            "n": 12,
+            "name": "Ọnwa Ede Ajala \/ Iri na abụọ",
+            "greg": "Dec-Jan",
+            "note": "End-Year Offerings"
+        },
+        {
+            "n": 13,
+            "name": "Ọnwa Ụzọ Arụsị \/ Iri na atọ",
+            "greg": "Jan-Feb",
+            "note": "Intercalary Rituals"
+        }
+    ],
+    "market_symbols": {
+        "Eke": {
+            "element": "Fire",
+            "symbol": "🔥",
+            "color": "#ff6030"
+        },
+        "Orie": {
+            "element": "Water",
+            "symbol": "💧",
+            "color": "#3090ff"
+        },
+        "Afo": {
+            "element": "Earth",
+            "symbol": "🌍",
+            "color": "#30a050"
+        },
+        "Nkwo": {
+            "element": "Air",
+            "symbol": "💨",
+            "color": "#a0c0ff"
+        }
+    },
+    "farming": [
+        {
+            "month": 1,
+            "activity": "Land preparation. Clear bush, burn old stalks. Plant early yam seedlings in mounds.",
+            "crops": [
+                "Yam",
+                "Cocoyam"
+            ],
+            "icon": "🌱"
+        },
+        {
+            "month": 2,
+            "activity": "Main yam planting season. Mound-making continues. First rains expected. Plant maize.",
+            "crops": [
+                "Yam",
+                "Maize"
+            ],
+            "icon": "🌽"
+        },
+        {
+            "month": 3,
+            "activity": "Weeding first round. Plant cassava cuttings. Tend yam mounds. Intercrop vegetables.",
+            "crops": [
+                "Cassava",
+                "Vegetables"
+            ],
+            "icon": "🌿"
+        },
+        {
+            "month": 4,
+            "activity": "Heavy rains. Second weeding. Monitor yam staking. Plant groundnuts and beans.",
+            "crops": [
+                "Groundnut",
+                "Beans"
+            ],
+            "icon": "🫘"
+        },
+        {
+            "month": 5,
+            "activity": "Harvest early maize. Continue yam tending. Plant second-season vegetables.",
+            "crops": [
+                "Maize",
+                "Pepper"
+            ],
+            "icon": "🌶"
+        },
+        {
+            "month": 6,
+            "activity": "New Yam Festival preparation. Spiritual protection of farms. First yam harvest begins.",
+            "crops": [
+                "Yam (first harvest)"
+            ],
+            "icon": "🎋"
+        },
+        {
+            "month": 7,
+            "activity": "Main yam harvest. Ikeji festival. Store yams in barns. Harvest cocoyam.",
+            "crops": [
+                "Yam",
+                "Cocoyam"
+            ],
+            "icon": "🏺"
+        },
+        {
+            "month": 8,
+            "activity": "Harvest cassava and groundnuts. Dry season begins in north. Plant dry-season crops.",
+            "crops": [
+                "Cassava",
+                "Groundnut"
+            ],
+            "icon": "🌾"
+        },
+        {
+            "month": 9,
+            "activity": "Clear land for next season. Harvest remaining crops. Plant palm seedlings.",
+            "crops": [
+                "Palm",
+                "Vegetables"
+            ],
+            "icon": "🌴"
+        },
+        {
+            "month": 10,
+            "activity": "Dry season farming. Irrigate where possible. Harvest dry-season beans and cowpeas.",
+            "crops": [
+                "Cowpea",
+                "Sorghum"
+            ],
+            "icon": "☀️"
+        },
+        {
+            "month": 11,
+            "activity": "Harmattan. Rest period. Repair tools. Prepare new farmland.",
+            "crops": [
+                "Tool repair"
+            ],
+            "icon": "🔧"
+        },
+        {
+            "month": 12,
+            "activity": "Ritual farm blessings. Plant early yam seedlings. Prepare mounds for new year.",
+            "crops": [
+                "Yam seedlings"
+            ],
+            "icon": "🙏"
+        },
+        {
+            "month": 13,
+            "activity": "Intercalary month. Complete all preparations. Community farm planning.",
+            "crops": [
+                "Planning"
+            ],
+            "icon": "🤝"
+        }
+    ],
+    "fishing": [
+        {
+            "month": 1,
+            "activity": "Rivers low and clear. Excellent trap and net fishing.",
+            "fish": [
+                "Catfish",
+                "Tilapia"
+            ],
+            "conditions": "Excellent",
+            "icon": "🎣"
+        },
+        {
+            "month": 2,
+            "activity": "Pre-rain season. Fish active and feeding heavily.",
+            "fish": [
+                "Catfish",
+                "Mudfish"
+            ],
+            "conditions": "Very Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 3,
+            "activity": "First rains. Fish begin spawning. Reduce near spawning grounds.",
+            "fish": [
+                "Mixed"
+            ],
+            "conditions": "Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 4,
+            "activity": "Flood season. Fish disperse into floodplains. Use cast nets widely.",
+            "fish": [
+                "Tilapia",
+                "Carp"
+            ],
+            "conditions": "Moderate",
+            "icon": "🌊"
+        },
+        {
+            "month": 5,
+            "activity": "Peak flood. Fish plentiful in floodplains. Community fishing season.",
+            "fish": [
+                "Tilapia",
+                "Catfish",
+                "Carp"
+            ],
+            "conditions": "Excellent",
+            "icon": "🎣"
+        },
+        {
+            "month": 6,
+            "activity": "Flood receding. Fish concentrate in channels. Use weir traps.",
+            "fish": [
+                "Catfish",
+                "Mudfish"
+            ],
+            "conditions": "Very Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 7,
+            "activity": "Post-flood. Fish trapped in pools. Community pond fishing.",
+            "fish": [
+                "Mixed"
+            ],
+            "conditions": "Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 8,
+            "activity": "Rivers falling. Fish concentrated. Excellent line fishing.",
+            "fish": [
+                "Catfish",
+                "Tilapia"
+            ],
+            "conditions": "Very Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 9,
+            "activity": "Rivers low. Best trap fishing. Night fishing for catfish.",
+            "fish": [
+                "Catfish",
+                "Bonga"
+            ],
+            "conditions": "Excellent",
+            "icon": "🎣"
+        },
+        {
+            "month": 10,
+            "activity": "Dry season. Rivers clear. Excellent visibility fishing.",
+            "fish": [
+                "Tilapia",
+                "Catfish"
+            ],
+            "conditions": "Very Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 11,
+            "activity": "Harmattan. Fish sluggish. Trap fishing most productive.",
+            "fish": [
+                "Mudfish",
+                "Catfish"
+            ],
+            "conditions": "Moderate",
+            "icon": "🎣"
+        },
+        {
+            "month": 12,
+            "activity": "Rivers lowest. Fish in deep pools. Communal fishing events.",
+            "fish": [
+                "Mixed"
+            ],
+            "conditions": "Good",
+            "icon": "🤝"
+        },
+        {
+            "month": 13,
+            "activity": "Prepare nets and traps. Repair canoes for new season.",
+            "fish": [
+                "Preparation"
+            ],
+            "conditions": "Preparation",
+            "icon": "🔧"
+        }
+    ],
+    "weather": [
+        {
+            "month": 1,
+            "season": "Dry Season",
+            "rains": "None",
+            "temp": "Hot days, warm nights",
+            "wind": "Harmattan easing",
+            "advisory": "Hot and dry. Protect from dust. Harmattan from northeast.",
+            "icon": "🌤"
+        },
+        {
+            "month": 2,
+            "season": "Late Dry",
+            "rains": "Occasional",
+            "temp": "Very hot",
+            "wind": "Light southwesterlies",
+            "advisory": "Hottest period. First clouds appear. Pre-rain humidity rising.",
+            "icon": "🌤"
+        },
+        {
+            "month": 3,
+            "season": "Early Rains",
+            "rains": "Light-moderate",
+            "temp": "Hot",
+            "wind": "SW monsoon begins",
+            "advisory": "First rains arrive. Thunderstorms possible. Temperature relief.",
+            "icon": "🌧"
+        },
+        {
+            "month": 4,
+            "season": "Rainy Season",
+            "rains": "Heavy",
+            "temp": "Warm",
+            "wind": "SW monsoon",
+            "advisory": "Heavy rainfall. Flooding risk. Rivers rising. Lightning storms.",
+            "icon": "🌧"
+        },
+        {
+            "month": 5,
+            "season": "Peak Rains",
+            "rains": "Very heavy",
+            "temp": "Warm and humid",
+            "wind": "SW monsoon strong",
+            "advisory": "Peak rainfall. Avoid river crossings. Monitor flood levels.",
+            "icon": "⛈"
+        },
+        {
+            "month": 6,
+            "season": "Peak Rains",
+            "rains": "Heavy",
+            "temp": "Warm",
+            "wind": "SW monsoon",
+            "advisory": "Continued heavy rains. Road conditions poor.",
+            "icon": "⛈"
+        },
+        {
+            "month": 7,
+            "season": "August Break",
+            "rains": "Reduced",
+            "temp": "Warm",
+            "wind": "Mixed",
+            "advisory": "Brief August break. Less rain. Good for travel and trade.",
+            "icon": "🌥"
+        },
+        {
+            "month": 8,
+            "season": "Second Rains",
+            "rains": "Moderate",
+            "temp": "Warm",
+            "wind": "SW monsoon returning",
+            "advisory": "Second rainy season. Moderate rainfall. Harvest season begins.",
+            "icon": "🌦"
+        },
+        {
+            "month": 9,
+            "season": "Late Rains",
+            "rains": "Light",
+            "temp": "Warm, nights cooling",
+            "wind": "Transitional",
+            "advisory": "Rains tapering. Good travel weather. Harvest and storage season.",
+            "icon": "🌤"
+        },
+        {
+            "month": 10,
+            "season": "Dry Season",
+            "rains": "Rare",
+            "temp": "Warm days, cool nights",
+            "wind": "Northeast begins",
+            "advisory": "Dry season returning. Pleasant temperatures. Good for trade.",
+            "icon": "☀️"
+        },
+        {
+            "month": 11,
+            "season": "Harmattan",
+            "rains": "None",
+            "temp": "Warm days, cold nights",
+            "wind": "Harmattan NE strong",
+            "advisory": "Harmattan arrives. Dusty dry winds. Protect respiratory health.",
+            "icon": "🌬"
+        },
+        {
+            "month": 12,
+            "season": "Peak Harmattan",
+            "rains": "None",
+            "temp": "Cool to cold nights",
+            "wind": "Harmattan strong",
+            "advisory": "Peak harmattan. Very dry and dusty. Protect livestock and elderly.",
+            "icon": "🌬"
+        },
+        {
+            "month": 13,
+            "season": "Late Harmattan",
+            "rains": "None",
+            "temp": "Hot days returning",
+            "wind": "Harmattan easing",
+            "advisory": "Harmattan easing. Temperatures rising. Transitional period.",
+            "icon": "🌤"
+        }
+    ],
+    "trading": [
+        {
+            "month": 1,
+            "activity": "New Year trading surge. Yam markets very active. Buy seed yams. Livestock trading peaks.",
+            "goods": [
+                "Yam",
+                "Livestock",
+                "Palm oil"
+            ],
+            "icon": "🛒"
+        },
+        {
+            "month": 2,
+            "activity": "Farm input trading. Buy seedlings, tools. Cloth and crafts markets active.",
+            "goods": [
+                "Farm inputs",
+                "Tools",
+                "Cloth"
+            ],
+            "icon": "⚒️"
+        },
+        {
+            "month": 3,
+            "activity": "Quiet trading period. Focus on farm work. Local markets steady.",
+            "goods": [
+                "Food",
+                "Vegetables"
+            ],
+            "icon": "🥬"
+        },
+        {
+            "month": 4,
+            "activity": "Moderate trading. Rain disrupts travel. Local markets only. Dried fish trading.",
+            "goods": [
+                "Dried fish",
+                "Palm oil"
+            ],
+            "icon": "🛖"
+        },
+        {
+            "month": 5,
+            "activity": "First maize harvest. Grain markets open. Vegetables abundant and cheap.",
+            "goods": [
+                "Maize",
+                "Vegetables"
+            ],
+            "icon": "🌽"
+        },
+        {
+            "month": 6,
+            "activity": "New Yam Festival. Major trading season. Textiles, crafts, and livestock surge.",
+            "goods": [
+                "Yam",
+                "Textiles",
+                "Crafts"
+            ],
+            "icon": "🎊"
+        },
+        {
+            "month": 7,
+            "activity": "Peak trading season. Yam harvest surplus. Inter-community trading active.",
+            "goods": [
+                "Yam",
+                "Cassava",
+                "Palm oil"
+            ],
+            "icon": "📦"
+        },
+        {
+            "month": 8,
+            "activity": "Cassava and groundnut markets active. Livestock fattened for sale.",
+            "goods": [
+                "Cassava",
+                "Groundnut",
+                "Livestock"
+            ],
+            "icon": "🛒"
+        },
+        {
+            "month": 9,
+            "activity": "Long-distance trading resumes. Roads accessible. Bulk grain trading.",
+            "goods": [
+                "Grains",
+                "Palm produce"
+            ],
+            "icon": "🚛"
+        },
+        {
+            "month": 10,
+            "activity": "Dry season markets. Steady trading. Craft production peaks. Weaving season.",
+            "goods": [
+                "Crafts",
+                "Textiles",
+                "Pottery"
+            ],
+            "icon": "🏺"
+        },
+        {
+            "month": 11,
+            "activity": "Harmattan trading. Long-distance traders active. Cattle from north arrive.",
+            "goods": [
+                "Cattle",
+                "Grains",
+                "Dried goods"
+            ],
+            "icon": "🐄"
+        },
+        {
+            "month": 12,
+            "activity": "Year-end trading. Festival preparations. Major livestock markets.",
+            "goods": [
+                "Livestock",
+                "Food",
+                "Gifts"
+            ],
+            "icon": "🎁"
+        },
+        {
+            "month": 13,
+            "activity": "Intercalary. Settle debts. Plan next season trades. Community market reviews.",
+            "goods": [
+                "Debt settlement",
+                "Planning"
+            ],
+            "icon": "📋"
+        }
+    ],
+    "herding": [
+        {
+            "month": 1,
+            "conditions": "Dry",
+            "activity": "Dry season grazing. Move cattle to river valleys. Water sources reducing. Supplement feed.",
+            "icon": "🐄"
+        },
+        {
+            "month": 2,
+            "conditions": "Transitional",
+            "activity": "Pre-rain period. Cattle restless. Prepare for movement to wet season pastures.",
+            "icon": "🐄"
+        },
+        {
+            "month": 3,
+            "conditions": "Improving",
+            "activity": "First rains. New grass growth. Cattle thrive. Move to upland pastures.",
+            "icon": "🌱"
+        },
+        {
+            "month": 4,
+            "conditions": "Excellent",
+            "activity": "Peak rains. Excellent grazing. Watch for flooding of low pastures. Tick control.",
+            "icon": "🌿"
+        },
+        {
+            "month": 5,
+            "conditions": "Excellent",
+            "activity": "Lush grazing. Cattle gain weight rapidly. Milk production peaks. Calving season.",
+            "icon": "🥛"
+        },
+        {
+            "month": 6,
+            "conditions": "Very Good",
+            "activity": "Good grazing continues. Begin drying excess milk. Prepare dried meat stores.",
+            "icon": "🐄"
+        },
+        {
+            "month": 7,
+            "conditions": "Good",
+            "activity": "Rains easing. Move cattle to lower pastures. Keep off harvest farms.",
+            "icon": "⚠️"
+        },
+        {
+            "month": 8,
+            "conditions": "Transitional",
+            "activity": "Dry season approaching. Begin migration southward. Reduce herd size if needed.",
+            "icon": "🚶"
+        },
+        {
+            "month": 9,
+            "conditions": "Challenging",
+            "activity": "Harmattan approaching. Water points critical. Salt licks needed.",
+            "icon": "💧"
+        },
+        {
+            "month": 10,
+            "conditions": "Moderate",
+            "activity": "Dry season. Cattle in riverside areas. Supplement with crop residues.",
+            "icon": "🌾"
+        },
+        {
+            "month": 11,
+            "conditions": "Difficult",
+            "activity": "Peak harmattan. Cold nights stress cattle. House young animals. Supplement feeding.",
+            "icon": "🥶"
+        },
+        {
+            "month": 12,
+            "conditions": "Moderate",
+            "activity": "Year-end. Sell surplus cattle. Prepare for festival slaughter. Plan breeding.",
+            "icon": "📊"
+        },
+        {
+            "month": 13,
+            "conditions": "Rest",
+            "activity": "Rest period. Veterinary checks. Prepare for wet season movement.",
+            "icon": "🏥"
+        }
+    ],
+    "healing": [
+        {
+            "month": 1,
+            "activity": "Harvest bark medicines while sap is low. Collect dry-season roots. Annual cleansing rituals.",
+            "herbs": [
+                "Ogirisi",
+                "Uda",
+                "Nchuanwu"
+            ],
+            "rituals": "New Year purification",
+            "icon": "🌿"
+        },
+        {
+            "month": 2,
+            "activity": "Prepare soil medicines before rains. Collect seeds for medicine gardens.",
+            "herbs": [
+                "Uziza",
+                "Aidan fruit"
+            ],
+            "rituals": "Farm blessing preparation",
+            "icon": "🌙"
+        },
+        {
+            "month": 3,
+            "activity": "First rains bring new growth. Harvest young medicinal shoots. Treat seasonal fever.",
+            "herbs": [
+                "Neem",
+                "Bitter leaf"
+            ],
+            "rituals": "Rain welcome ceremony",
+            "icon": "🌧"
+        },
+        {
+            "month": 4,
+            "activity": "Abundant herbs available. Collect and dry quickly. Treat malaria season.",
+            "herbs": [
+                "Fever tree",
+                "Lemongrass"
+            ],
+            "rituals": "Anti-malaria preparation",
+            "icon": "🌿"
+        },
+        {
+            "month": 5,
+            "activity": "Peak herb growth. Collect, dry, and store. Prepare fertility medicines.",
+            "herbs": [
+                "Mixed forest herbs"
+            ],
+            "rituals": "Fertility blessing",
+            "icon": "✨"
+        },
+        {
+            "month": 6,
+            "activity": "New Yam Festival medicines. Spiritual protection herbs. Ifejiọkụ offerings.",
+            "herbs": [
+                "Sacred herbs",
+                "Ofo tree"
+            ],
+            "rituals": "Ifejiọkụ ceremony",
+            "icon": "🎋"
+        },
+        {
+            "month": 7,
+            "activity": "Ikeji festival healing. Community health rituals. Harvest anti-rheumatic plants.",
+            "herbs": [
+                "Anti-rheumatic herbs"
+            ],
+            "rituals": "Ikeji health ritual",
+            "icon": "🏺"
+        },
+        {
+            "month": 8,
+            "activity": "Post-harvest healing. Treat farm injuries. Harvest roots before ground hardens.",
+            "herbs": [
+                "Root medicines"
+            ],
+            "rituals": "Harvest thanksgiving",
+            "icon": "🙏"
+        },
+        {
+            "month": 9,
+            "activity": "Dry season medicine storage. Protect dried herbs from harmattan dust.",
+            "herbs": [
+                "Stored medicines"
+            ],
+            "rituals": "Ancestor remembrance",
+            "icon": "🏺"
+        },
+        {
+            "month": 10,
+            "activity": "Collect bark before harmattan dries trees. Prepare cold-season remedies.",
+            "herbs": [
+                "Bark medicines",
+                "Ginger"
+            ],
+            "rituals": "Community health review",
+            "icon": "🌿"
+        },
+        {
+            "month": 11,
+            "activity": "Harmattan remedies. Treat chest ailments, dry skin. Shea butter preparation.",
+            "herbs": [
+                "Shea butter",
+                "Eucalyptus"
+            ],
+            "rituals": "Cold season protection",
+            "icon": "🌬"
+        },
+        {
+            "month": 12,
+            "activity": "Year-end purification. Cleanse homestead. Prepare new year medicines.",
+            "herbs": [
+                "Purification herbs"
+            ],
+            "rituals": "Year-end cleansing",
+            "icon": "🔥"
+        },
+        {
+            "month": 13,
+            "activity": "Intercalary. Rest and reflect. Teach apprentices. Review medicine stores.",
+            "herbs": [
+                "Teaching herbs"
+            ],
+            "rituals": "Knowledge transfer",
+            "icon": "📚"
+        }
+    ],
+    "rulers": [
+        {
+            "month": 1,
+            "title": "Mbido Afọ — New Year",
+            "events": [
+                "Ofo renewal ceremony",
+                "Ancestral libations",
+                "Community assembly"
+            ],
+            "rulers": "Eze and Obi councils convene",
+            "icon": "👑"
+        },
+        {
+            "month": 2,
+            "title": "Farm Opening Rites",
+            "events": [
+                "Ani earth goddess propitiation",
+                "First farm clearing ceremony"
+            ],
+            "rulers": "Priest-kings bless the land",
+            "icon": "🌱"
+        },
+        {
+            "month": 3,
+            "title": "Ịgba Ndu — Life Covenant",
+            "events": [
+                "Covenant renewal with land spirits",
+                "Community oath-taking"
+            ],
+            "rulers": "Elders preside over covenant rites",
+            "icon": "🤝"
+        },
+        {
+            "month": 4,
+            "title": "Ọfọ na Ogu — Justice Season",
+            "events": [
+                "Community dispute resolution",
+                "Ọfọ staff ceremonies"
+            ],
+            "rulers": "Eze presides over community court",
+            "icon": "⚖️"
+        },
+        {
+            "month": 5,
+            "title": "Agwụ Festival",
+            "events": [
+                "Agwụ divination feast",
+                "Herbalists and diviners honored"
+            ],
+            "rulers": "Dibia masters lead ceremonies",
+            "icon": "🌿"
+        },
+        {
+            "month": 6,
+            "title": "Ifejiọkụ — Yam Spirit",
+            "events": [
+                "New Yam offerings to Ifejiọkụ",
+                "Farm blessings",
+                "First yam rituals"
+            ],
+            "rulers": "Eze performs first yam rites",
+            "icon": "🎋"
+        },
+        {
+            "month": 7,
+            "title": "Ikeji — New Yam Festival",
+            "events": [
+                "Ikeji festival",
+                "Masquerade processions",
+                "Ancestral feasts",
+                "Community games"
+            ],
+            "rulers": "Eze and Obi lead Ikeji celebrations",
+            "icon": "🏺"
+        },
+        {
+            "month": 8,
+            "title": "Ọnwa Asatọ Rites",
+            "events": [
+                "Ancestral veneration",
+                "Mmụọ masquerades appear",
+                "Community harvest thanksgiving"
+            ],
+            "rulers": "Masquerade societies perform",
+            "icon": "👁"
+        },
+        {
+            "month": 9,
+            "title": "Ofala Festival",
+            "events": [
+                "Ofala royal display",
+                "Eze receives homage",
+                "Dance and cultural display"
+            ],
+            "rulers": "Eze holds royal Ofala durbar",
+            "icon": "👑"
+        },
+        {
+            "month": 10,
+            "title": "Okike — Creation Rites",
+            "events": [
+                "Chukwu offerings",
+                "Creation myth recitations",
+                "Priestly ceremonies"
+            ],
+            "rulers": "High priests lead creation rites",
+            "icon": "🙏"
+        },
+        {
+            "month": 11,
+            "title": "Ịji Ọjị — Kola Ceremonies",
+            "events": [
+                "Kola nut ceremonies",
+                "Ancestral remembrance",
+                "Spiritual cleansing"
+            ],
+            "rulers": "Elders lead kola blessing rites",
+            "icon": "🌰"
+        },
+        {
+            "month": 12,
+            "title": "Year-End Purification",
+            "events": [
+                "Household cleansing",
+                "Debt settlement",
+                "Preparation for new year"
+            ],
+            "rulers": "Community heads oversee settlements",
+            "icon": "🔥"
+        },
+        {
+            "month": 13,
+            "title": "Ụzọ Arụsị — Spirit Path",
+            "events": [
+                "Final ancestral rites",
+                "Calendar intercalation ceremony",
+                "New year preparation"
+            ],
+            "rulers": "Dibia and Eze prepare the new year",
+            "icon": "🌟"
+        }
+    ]
+}

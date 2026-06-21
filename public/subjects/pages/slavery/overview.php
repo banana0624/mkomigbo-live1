@@ -1,63 +1,22 @@
 <?php
 declare(strict_types=1);
-
-return [
-  'title' => 'Overview',
-  'body_html' => <<<HTML
-<div class="mk-prose">
-
-  <p class="mk-muted" style="margin-top:0;">
-    This overview explains how slavery became a major force in the history of southeastern Nigeria
-    and why it remains central to Igbo historical memory.
-  </p>
-
-  <h2>Slavery before and beyond the Atlantic</h2>
-  <p>
-    Slavery existed in parts of Africa before the Atlantic trade, but the Atlantic system transformed the scale,
-    direction, and violence of human capture and sale. It linked African interior societies to coastal brokers,
-    European merchants, and plantation economies in the Americas.
-  </p>
-
-  <h2>The Bight of Biafra and Igbo history</h2>
-  <p>
-    The Igbo-speaking hinterland was closely tied to the Bight of Biafra, one of the major export regions in the Atlantic slave trade.
-    The Niger Delta city-states became major outlets for that traffic, connecting inland populations to coastal trade systems.
-  </p>
-
-  <h2>Effects on Igbo society</h2>
-  <p>
-    The slave trade affected warfare, insecurity, migration, commerce, and political relations. It altered local balances of power,
-    encouraged predatory forms of exchange, and tied regional history to the wider Atlantic economy.
-  </p>
-
-  <h2>Resistance and remembered history</h2>
-  <p>
-    Enslaved people resisted in many ways: flight, revolt, preservation of language and custom, and refusal to submit.
-    One of the best-known remembered episodes is Igbo Landing in 1803, when a group of Igbo captives in Georgia chose death over enslavement,
-    an event that became a lasting symbol in African American and diasporic memory.
-  </p>
-
-  <h2>Abolition and transition</h2>
-  <p>
-    The nineteenth century did not simply end the story. British anti-slave-trade pressure altered commercial patterns,
-    and palm oil was promoted as a replacement export in parts of the Niger Delta. Even so, the social effects of slavery
-    and the slave trade continued long after formal abolition efforts intensified.
-  </p>
-
-  <h2>Why this history remains important</h2>
-  <p>
-    The study of slavery in Igbo history connects local memory in southeastern Nigeria to Atlantic history, Black diaspora history,
-    and modern debates about evidence, remembrance, justice, and identity.
-  </p>
-
-  <h2>Navigate this subject</h2>
-  <div style="display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 4px;">
-    <a class="mk-btn mk-btn--ghost" href="/subjects/slavery/intro/">Introduction</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/slavery/topics/">Key Topics</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/slavery/people/">People</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/slavery/sources/">Sources</a>
-  </div>
-
-</div>
-HTML,
-];
+echo '<div class="mk-prose">';
+echo '<p class="mk-muted" style="margin-top:0;">The broad history of slavery as it affected the Igbo and West Africa.</p>';
+echo '<h2>Before the Atlantic Trade</h2>';
+echo '<p>Slavery was not introduced to West Africa by Europeans — it existed in various forms in African societies for centuries before Atlantic contact. Enslaved people were taken in wars, through judicial processes, through debt, and through kidnapping. Within Igbo society, the distinction between "ohu" (domestic slaves) and free people was real but more permeable than the chattel slavery of the Americas — enslaved people could accumulate property, participate in community life, and their children could sometimes achieve free status.</p>';
+echo '<h2>The Atlantic Trade Transforms Everything</h2>';
+echo '<p>The arrival of European demand for enslaved labor changed the scale and character of slavery in West Africa entirely. Communities that had previously enslaved small numbers now found external markets willing to pay high prices. Wars became more frequent and more oriented toward capturing people for sale. The Aro trading network expanded specifically to meet Atlantic demand. By the 18th century, the Bight of Biafra was exporting tens of thousands of enslaved people annually.</p>';
+echo '<h2>The Middle Passage</h2>';
+echo '<p>The transatlantic voyage — the Middle Passage — was a system of calculated terror. Enslaved people were packed into ships at densities designed to maximize cargo while accepting a level of mortality. Disease, dehydration, violence, and suicide killed between 10 and 20 percent of those who boarded. Those who survived arrived in the Americas physically broken and psychologically shattered, their names replaced, their languages forbidden, their communities destroyed.</p>';
+echo '<h2>Igbo in the Americas</h2>';
+echo '<p>Igbo people enslaved in the Americas were noted by slaveowners and observers for their distinctiveness. They were often described as proud, prone to resistance and suicide, and difficult to assimilate into plantation hierarchy. "Ibo Landing" — the tradition of Igbo captives drowning themselves collectively rather than accepting enslavement — became a powerful symbol across the African-American South. Research into African-American genealogy has increasingly traced Igbo ancestry in Virginia, South Carolina, Jamaica, and Trinidad.</p>';
+echo '<h2>The Osu System</h2>';
+echo '<p>The osu — individuals dedicated to a deity and their descendants — occupy a unique position in Igbo society. Osu cannot marry free-born Igbo, cannot hold certain titles, and were historically excluded from full community participation. The system predates the Atlantic trade. The Church initially treated osu and free-born equally, which was one of its attractions to osu communities. Despite legal abolition and Church opposition, osu discrimination persists in some communities, particularly around marriage, and is a subject of active social debate among Igbo people.</p>';
+echo '<h2>Memory and Reparations</h2>';
+echo '<p>The question of reparations for the transatlantic slave trade has been debated for decades. African states, Caribbean nations, and African-American communities have all advanced reparations claims. Britain, which profited most directly from the trade, has consistently refused reparations while acknowledging the trade\'s horror. The debate touches questions of historical responsibility, international law, and the ongoing structural consequences of slavery that no financial settlement alone can address.</p>';
+echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 4px;">';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/slavery/intro/">Introduction</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/slavery/topics/">Key Topics</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/slavery/people/">People</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/slavery/sources/">Sources</a>';
+echo '</div></div>';

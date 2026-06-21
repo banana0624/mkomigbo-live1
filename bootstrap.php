@@ -9,7 +9,7 @@ define('APP_BOOTSTRAPPED', true);
 /**
  * FIX: use actual web root (NOT /home/mkomigbo)
  */
-define('APP_ROOT', __DIR__ . '/app/mkomigbo');
+// // DISABLED_APP_ROOT (DISABLED_AUTO_FIX), __DIR__ . '/app/mkomigbo');
 
 /**
  * CORRECT INITIALIZER PATH

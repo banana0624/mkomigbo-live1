@@ -3,7 +3,7 @@ ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
 /* GLOBAL PATH DEFINITIONS */
-define('APP_ROOT', __DIR__ . '/app/mkomigbo');
+// // DISABLED_APP_ROOT (DISABLED_AUTO_FIX), __DIR__ . '/app/mkomigbo');
 define('PRIVATE_PATH', APP_ROOT . '/private/functions');
 
 require_once PRIVATE_PATH . '/bootstrap_init.php';

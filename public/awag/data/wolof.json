@@ -1,0 +1,938 @@
+{
+    "id": "wolof",
+    "name": "Wolof",
+    "full_name": "Wolof Calendar",
+    "language": "Wolof \/ French",
+    "region": "Sahel Coast",
+    "area": "Senegal \/ Gambia",
+    "color": "#2d4a1a",
+    "initial": "WO",
+    "calendar_type": "Islamic + Seasonal",
+    "market_cycle": 7,
+    "market_days": [
+        "Altine",
+        "Talaata",
+        "Allarba",
+        "Alxames",
+        "Àjjuma",
+        "Gaawu",
+        "Dibéer"
+    ],
+    "market_symbols": {
+        "Altine": {
+            "element": "Work",
+            "symbol": "⚒️",
+            "color": "#c87040"
+        },
+        "Talaata": {
+            "element": "Fire",
+            "symbol": "🔥",
+            "color": "#ff6030"
+        },
+        "Allarba": {
+            "element": "Water",
+            "symbol": "💧",
+            "color": "#40a0ff"
+        },
+        "Alxames": {
+            "element": "Earth",
+            "symbol": "🌍",
+            "color": "#50c850"
+        },
+        "Àjjuma": {
+            "element": "Prayer",
+            "symbol": "🕌",
+            "color": "#a0c0ff"
+        },
+        "Gaawu": {
+            "element": "Rest",
+            "symbol": "⭐",
+            "color": "#ffa040"
+        },
+        "Dibéer": {
+            "element": "Family",
+            "symbol": "👨‍👩‍👧",
+            "color": "#ff80c0"
+        }
+    },
+    "months": [
+        {
+            "n": 1,
+            "name": "Sanwiyee",
+            "greg": "Jan",
+            "note": "Dry season \/ Harmattan"
+        },
+        {
+            "n": 2,
+            "name": "Feewriyee",
+            "greg": "Feb",
+            "note": "Late dry season"
+        },
+        {
+            "n": 3,
+            "name": "Màrs",
+            "greg": "Mar",
+            "note": "Hot dry season"
+        },
+        {
+            "n": 4,
+            "name": "Awril",
+            "greg": "Apr",
+            "note": "Pre-rains"
+        },
+        {
+            "n": 5,
+            "name": "Mee",
+            "greg": "May",
+            "note": "First rains approaching"
+        },
+        {
+            "n": 6,
+            "name": "Suwe",
+            "greg": "Jun",
+            "note": "Hivernage begins"
+        },
+        {
+            "n": 7,
+            "name": "Sulet",
+            "greg": "Jul",
+            "note": "Peak rainy season"
+        },
+        {
+            "n": 8,
+            "name": "Ut",
+            "greg": "Aug",
+            "note": "Heavy rains \/ Farming"
+        },
+        {
+            "n": 9,
+            "name": "Septàmbar",
+            "greg": "Sep",
+            "note": "Rains tapering"
+        },
+        {
+            "n": 10,
+            "name": "Oktoobar",
+            "greg": "Oct",
+            "note": "Harvest season"
+        },
+        {
+            "n": 11,
+            "name": "Nowàmbar",
+            "greg": "Nov",
+            "note": "Dry season onset"
+        },
+        {
+            "n": 12,
+            "name": "Desàmbar",
+            "greg": "Dec",
+            "note": "Dry season \/ Year end"
+        }
+    ],
+    "farming": [
+        {
+            "month": 1,
+            "activity": "Dry season. Harvest groundnuts and millet. Process and sell. Prepare fields.",
+            "crops": [
+                "Groundnut",
+                "Millet"
+            ],
+            "icon": "🥜"
+        },
+        {
+            "month": 2,
+            "activity": "Late dry season. Complete groundnut harvest. Prepare land for next season.",
+            "crops": [
+                "Groundnut",
+                "Vegetables"
+            ],
+            "icon": "🌿"
+        },
+        {
+            "month": 3,
+            "activity": "Hottest month. Land preparation. Clear fields. Plant irrigated onions and tomatoes.",
+            "crops": [
+                "Onion",
+                "Tomato"
+            ],
+            "icon": "🔥"
+        },
+        {
+            "month": 4,
+            "activity": "Pre-rain preparation. Final land clearing. Buy seeds and fertiliser.",
+            "crops": [
+                "Seeds",
+                "Inputs"
+            ],
+            "icon": "⚒️"
+        },
+        {
+            "month": 5,
+            "activity": "First rains possible in south. Plant early millet. North still waiting.",
+            "crops": [
+                "Millet",
+                "Sorghum"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 6,
+            "activity": "Hivernage begins. Plant millet and sorghum. Groundnut planting starts.",
+            "crops": [
+                "Millet",
+                "Groundnut",
+                "Sorghum"
+            ],
+            "icon": "🌱"
+        },
+        {
+            "month": 7,
+            "activity": "Peak rains. Heavy farming. Weed millet and groundnut. Plant late-season crops.",
+            "crops": [
+                "Millet",
+                "Groundnut",
+                "Cowpea"
+            ],
+            "icon": "🌿"
+        },
+        {
+            "month": 8,
+            "activity": "Heavy rains. Farm maintenance. Weed sorghum. Plant maize and cowpea.",
+            "crops": [
+                "Sorghum",
+                "Maize",
+                "Cowpea"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 9,
+            "activity": "Rains tapering. Harvest early millet. Prepare sorghum storage.",
+            "crops": [
+                "Millet (harvest)",
+                "Sorghum"
+            ],
+            "icon": "🌾"
+        },
+        {
+            "month": 10,
+            "activity": "Main harvest. Groundnut and sorghum harvest. Process and sell. Major trading.",
+            "crops": [
+                "Groundnut",
+                "Sorghum",
+                "Millet"
+            ],
+            "icon": "🏺"
+        },
+        {
+            "month": 11,
+            "activity": "Post-harvest. Dry season vegetables near rivers. Irrigated farming begins.",
+            "crops": [
+                "Onion",
+                "Tomato",
+                "Vegetables"
+            ],
+            "icon": "🌱"
+        },
+        {
+            "month": 12,
+            "activity": "Dry season. Irrigated farming active. Harvest vegetables. Year-end sales.",
+            "crops": [
+                "Onion",
+                "Tomato",
+                "Garlic"
+            ],
+            "icon": "🌬"
+        }
+    ],
+    "fishing": [
+        {
+            "month": 1,
+            "activity": "Dry season. Atlantic coast excellent fishing. Pirogue fishing peaks. Thiof (grouper) season.",
+            "fish": [
+                "Thiof (grouper)",
+                "Yeet (conch)",
+                "Jën"
+            ],
+            "conditions": "Excellent",
+            "icon": "🎣"
+        },
+        {
+            "month": 2,
+            "activity": "Dry season peak. Best ocean fishing. Calm seas. Dakar Yoff beach fishers most active.",
+            "fish": [
+                "Grouper",
+                "Sea bream",
+                "Barracuda"
+            ],
+            "conditions": "Excellent",
+            "icon": "🎣"
+        },
+        {
+            "month": 3,
+            "activity": "Hot dry season. Good ocean fishing. Upwelling brings cold nutrient-rich water.",
+            "fish": [
+                "Sardinella",
+                "Grouper"
+            ],
+            "conditions": "Very Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 4,
+            "activity": "Pre-rain. Seas slightly rougher. Pirogue fishing continues. River fishing begins.",
+            "fish": [
+                "Mixed ocean fish"
+            ],
+            "conditions": "Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 5,
+            "activity": "First rains. Rivers beginning to rise. Ocean fishing good. Oyster season on Casamance.",
+            "fish": [
+                "Ocean fish",
+                "Oysters"
+            ],
+            "conditions": "Good",
+            "icon": "🌊"
+        },
+        {
+            "month": 6,
+            "activity": "Hivernage rains. Seas rougher. Experienced fishers only. River fish migrating.",
+            "fish": [
+                "River fish",
+                "Mixed"
+            ],
+            "conditions": "Moderate",
+            "icon": "🌊"
+        },
+        {
+            "month": 7,
+            "activity": "Peak rains. Rough Atlantic. Reduce ocean fishing. Casamance river fishing excellent.",
+            "fish": [
+                "River fish",
+                "Freshwater species"
+            ],
+            "conditions": "Moderate",
+            "icon": "🌧"
+        },
+        {
+            "month": 8,
+            "activity": "Heavy rains. River fishing peak. Flooded areas productive. Atlantic calming.",
+            "fish": [
+                "River fish",
+                "Catfish"
+            ],
+            "conditions": "Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 9,
+            "activity": "Rains tapering. Atlantic improving. Pirogue fishing resuming. River still good.",
+            "fish": [
+                "Mixed ocean",
+                "River fish"
+            ],
+            "conditions": "Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 10,
+            "activity": "Dry season returning. Excellent Atlantic fishing. Sardinella (yaboy) season peaks.",
+            "fish": [
+                "Sardinella",
+                "Grouper",
+                "Barracuda"
+            ],
+            "conditions": "Very Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 11,
+            "activity": "Dry season. Excellent ocean conditions. Major fishing season. Export fish production.",
+            "fish": [
+                "Thiof",
+                "Sardinella",
+                "Mixed"
+            ],
+            "conditions": "Excellent",
+            "icon": "🎣"
+        },
+        {
+            "month": 12,
+            "activity": "Peak dry season fishing. Best catches of year. Year-end fish market surge.",
+            "fish": [
+                "Grouper",
+                "Barracuda",
+                "Sardinella"
+            ],
+            "conditions": "Excellent",
+            "icon": "🎣"
+        }
+    ],
+    "trading": [
+        {
+            "month": 1,
+            "activity": "Dry season. Groundnut and millet markets busy. Tiébou dien (rice-fish) ingredients trading.",
+            "goods": [
+                "Groundnut",
+                "Millet",
+                "Fish"
+            ],
+            "icon": "🥜"
+        },
+        {
+            "month": 2,
+            "activity": "Major groundnut trading season. Export groundnut oil. Livestock markets active.",
+            "goods": [
+                "Groundnut",
+                "Oil",
+                "Livestock"
+            ],
+            "icon": "🛒"
+        },
+        {
+            "month": 3,
+            "activity": "Louga market famous for cattle. Dakar fish market peak. Textile trading active.",
+            "goods": [
+                "Cattle",
+                "Fish",
+                "Textiles"
+            ],
+            "icon": "🐄"
+        },
+        {
+            "month": 4,
+            "activity": "Farm input trading. Buy seeds and fertiliser. Àjjuma (Friday) prayer markets huge.",
+            "goods": [
+                "Seeds",
+                "Inputs",
+                "Religious goods"
+            ],
+            "icon": "🕌"
+        },
+        {
+            "month": 5,
+            "activity": "Pre-rain. Sell last dry-season goods. Stock up before hivernage isolation.",
+            "goods": [
+                "Food stocks",
+                "Cloth"
+            ],
+            "icon": "📦"
+        },
+        {
+            "month": 6,
+            "activity": "Hivernage begins. Trading slows. Local markets only. River transport active.",
+            "goods": [
+                "Local food",
+                "River goods"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 7,
+            "activity": "Quiet trading period. Farmers busy. Market attendance low. River pirogue trading.",
+            "goods": [
+                "Local essentials"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 8,
+            "activity": "Moderate trading. Some road travel. Millet harvest approaching. Preparation buying.",
+            "goods": [
+                "Storage bags",
+                "Tools"
+            ],
+            "icon": "🌾"
+        },
+        {
+            "month": 9,
+            "activity": "Harvest trading begins. Millet and sorghum markets opening. Prices falling.",
+            "goods": [
+                "Millet",
+                "Sorghum",
+                "Groundnut"
+            ],
+            "icon": "🛒"
+        },
+        {
+            "month": 10,
+            "activity": "Peak harvest trading. Major Touba and Saint-Louis markets. Grand Magal trading.",
+            "goods": [
+                "Groundnut",
+                "Sorghum",
+                "Livestock"
+            ],
+            "icon": "📦"
+        },
+        {
+            "month": 11,
+            "activity": "Post-harvest. Long-distance Mouride brotherhood trading networks active.",
+            "goods": [
+                "Groundnut",
+                "Cloth",
+                "Crafts"
+            ],
+            "icon": "🚛"
+        },
+        {
+            "month": 12,
+            "activity": "Year-end Tabaski trading. Livestock surge. Cloth, perfume, and gifts markets peak.",
+            "goods": [
+                "Sheep",
+                "Cloth",
+                "Gifts",
+                "Perfume"
+            ],
+            "icon": "🎁"
+        }
+    ],
+    "herding": [
+        {
+            "month": 1,
+            "conditions": "Dry",
+            "activity": "Dry season. Fulani herders with Wolof cattle. Move to Ferlo pastoral zone. Supplement feed.",
+            "icon": "🐄"
+        },
+        {
+            "month": 2,
+            "conditions": "Dry",
+            "activity": "Late dry. Long treks to water. Sell weak cattle. Reduce herd for dry season.",
+            "icon": "💧"
+        },
+        {
+            "month": 3,
+            "conditions": "Very Dry",
+            "activity": "Hottest driest month. Water critical. Livestock near boreholes and rivers.",
+            "icon": "☀️"
+        },
+        {
+            "month": 4,
+            "conditions": "Transitional",
+            "activity": "Pre-rain. New grass shoots beginning. Cattle restless. Prepare for Ferlo pasture movement.",
+            "icon": "🌱"
+        },
+        {
+            "month": 5,
+            "conditions": "Improving",
+            "activity": "First rains in south. Begin northward movement. New grass in Ferlo starting.",
+            "icon": "🌿"
+        },
+        {
+            "month": 6,
+            "conditions": "Good",
+            "activity": "Hivernage rains. Good Ferlo grazing. Cattle thrive. Milk peaks. Calving season.",
+            "icon": "🥛"
+        },
+        {
+            "month": 7,
+            "conditions": "Excellent",
+            "activity": "Peak rains. Lush Ferlo pastures. Best grazing of year. Community celebrations.",
+            "icon": "🌿"
+        },
+        {
+            "month": 8,
+            "conditions": "Very Good",
+            "activity": "Rains continue. Excellent grazing. Sell surplus cattle to towns.",
+            "icon": "🐄"
+        },
+        {
+            "month": 9,
+            "conditions": "Good",
+            "activity": "Rains tapering. Prepare for southward movement. Harvest underway.",
+            "icon": "🌾"
+        },
+        {
+            "month": 10,
+            "conditions": "Moderate",
+            "activity": "Dry season returning. Begin southward migration. Keep off harvested fields.",
+            "icon": "🚶"
+        },
+        {
+            "month": 11,
+            "conditions": "Challenging",
+            "activity": "Dry season. Move to coastal areas. Supplement with groundnut haulm.",
+            "icon": "💧"
+        },
+        {
+            "month": 12,
+            "conditions": "Difficult",
+            "activity": "Harmattan. Cold nights. Tabaski sheep fattening for slaughter. Cattle sales.",
+            "icon": "🐑"
+        }
+    ],
+    "healing": [
+        {
+            "month": 1,
+            "activity": "Dry season. Collect savanna herbs. Prepare Wolof traditional remedies. Griotte medicine.",
+            "herbs": [
+                "Neem",
+                "Baobab",
+                "Bissap (hibiscus)"
+            ],
+            "rituals": "New Year blessing (Barke)",
+            "icon": "🌿"
+        },
+        {
+            "month": 2,
+            "activity": "Collect baobab leaves and bark. Prepare nutrition supplements. Anti-malnutrition medicines.",
+            "herbs": [
+                "Baobab",
+                "Moringa",
+                "Thiakry"
+            ],
+            "rituals": "Community health gathering",
+            "icon": "🌱"
+        },
+        {
+            "month": 3,
+            "activity": "Hot season cooling herbs. Bissap (hibiscus) drink preparation. Protect from heat stress.",
+            "herbs": [
+                "Bissap",
+                "Tamarind",
+                "Kinkeliba"
+            ],
+            "rituals": "Rain prayer (Nguente Kaddu)",
+            "icon": "🔥"
+        },
+        {
+            "month": 4,
+            "activity": "Pre-rain cleansing. Collect last dry-season medicines. Plant medicine gardens.",
+            "herbs": [
+                "Mixed savanna herbs"
+            ],
+            "rituals": "Land blessing",
+            "icon": "🌱"
+        },
+        {
+            "month": 5,
+            "activity": "First rains. Fresh herb growth. Treat seasonal fever. Anti-malaria preparations.",
+            "herbs": [
+                "Fever herbs",
+                "Neem"
+            ],
+            "rituals": "Rain thanksgiving",
+            "icon": "🌧"
+        },
+        {
+            "month": 6,
+            "activity": "Hivernage herbs abundant. Collect and dry quickly. Anti-malaria season begins.",
+            "herbs": [
+                "Anti-malaria",
+                "Kinkeliba"
+            ],
+            "rituals": "Community healing",
+            "icon": "🌿"
+        },
+        {
+            "month": 7,
+            "activity": "Peak rains. Treat waterborne diseases. Protect well water. Anti-cholera herbs.",
+            "herbs": [
+                "Water purification",
+                "Garlic"
+            ],
+            "rituals": "Water protection ceremony",
+            "icon": "💧"
+        },
+        {
+            "month": 8,
+            "activity": "Heavy rains. Community health focus. Treat skin diseases from humidity.",
+            "herbs": [
+                "Anti-fungal",
+                "Neem"
+            ],
+            "rituals": "Community health rite",
+            "icon": "🌿"
+        },
+        {
+            "month": 9,
+            "activity": "Rains easing. Prepare harvest medicines. Treat fatigue from farming season.",
+            "herbs": [
+                "Energy herbs",
+                "Dates"
+            ],
+            "rituals": "Pre-harvest thanksgiving",
+            "icon": "🌾"
+        },
+        {
+            "month": 10,
+            "activity": "Harvest. Grand Magal pilgrimage medicines. Treat pilgrimage ailments.",
+            "herbs": [
+                "Pilgrimage herbs",
+                "Barke plants"
+            ],
+            "rituals": "Grand Magal preparations",
+            "icon": "🕌"
+        },
+        {
+            "month": 11,
+            "activity": "Dry season. Collect last fresh medicines. Prepare harmattan respiratory remedies.",
+            "herbs": [
+                "Chest herbs",
+                "Eucalyptus"
+            ],
+            "rituals": "Ancestral prayers",
+            "icon": "🏺"
+        },
+        {
+            "month": 12,
+            "activity": "Tabaski season. Prepare sacrifice and healing medicines. Year-end purification.",
+            "herbs": [
+                "Purification herbs",
+                "Barke plants"
+            ],
+            "rituals": "Tabaski blessing",
+            "icon": "🔥"
+        }
+    ],
+    "weather": [
+        {
+            "month": 1,
+            "season": "Dry Season",
+            "rains": "0mm",
+            "temp": "Hot 28°C, cool nights 16°C",
+            "wind": "Harmattan NE",
+            "advisory": "Dry harmattan season. Dusty. Atlantic coast gets sea breeze relief.",
+            "icon": "🌬"
+        },
+        {
+            "month": 2,
+            "season": "Late Dry",
+            "rains": "0mm",
+            "temp": "Hot 30°C",
+            "wind": "NE easing",
+            "advisory": "Hottest period approaching. Harmattan easing. Atlantic ocean still cool.",
+            "icon": "🌤"
+        },
+        {
+            "month": 3,
+            "season": "Hot Dry",
+            "rains": "0-5mm",
+            "temp": "Very hot 35°C",
+            "wind": "Light SW",
+            "advisory": "Hottest month. Intense heat inland. Coastal breeze provides relief.",
+            "icon": "🔥"
+        },
+        {
+            "month": 4,
+            "season": "Pre-rains",
+            "rains": "5-20mm",
+            "temp": "Hot 34°C",
+            "wind": "SW beginning",
+            "advisory": "Pre-rain period. Storms possible. High humidity building.",
+            "icon": "🌦"
+        },
+        {
+            "month": 5,
+            "season": "Pre-Hivernage",
+            "rains": "20-50mm",
+            "temp": "Warm 32°C",
+            "wind": "SW monsoon",
+            "advisory": "First rains in southern Senegal. North still very dry.",
+            "icon": "🌧"
+        },
+        {
+            "month": 6,
+            "season": "Hivernage",
+            "rains": "60-100mm",
+            "temp": "Warm 30°C",
+            "wind": "SW monsoon",
+            "advisory": "Hivernage (rainy season) begins. Good farming rains.",
+            "icon": "🌧"
+        },
+        {
+            "month": 7,
+            "season": "Peak Hivernage",
+            "rains": "120-200mm",
+            "temp": "Warm humid 28°C",
+            "wind": "SW monsoon strong",
+            "advisory": "Peak rains. Flooding possible. Roads muddy. Excellent farming conditions.",
+            "icon": "⛈"
+        },
+        {
+            "month": 8,
+            "season": "Peak Hivernage",
+            "rains": "200-280mm",
+            "temp": "Warm humid 27°C",
+            "wind": "SW monsoon",
+            "advisory": "Heaviest rains of year. Flash floods. High humidity.",
+            "icon": "⛈"
+        },
+        {
+            "month": 9,
+            "season": "Late Hivernage",
+            "rains": "80-140mm",
+            "temp": "Warm 29°C",
+            "wind": "Transitional",
+            "advisory": "Rains tapering. Good harvest weather approaching.",
+            "icon": "🌦"
+        },
+        {
+            "month": 10,
+            "season": "Dry onset",
+            "rains": "20-40mm",
+            "temp": "Warm 30°C",
+            "wind": "NE beginning",
+            "advisory": "Dry season returning. Good travel. Atlantic fishing season opens.",
+            "icon": "☀️"
+        },
+        {
+            "month": 11,
+            "season": "Early Dry",
+            "rains": "5-10mm",
+            "temp": "Hot 30°C",
+            "wind": "NE trade wind",
+            "advisory": "Dry season established. Excellent travel and trade weather.",
+            "icon": "🌤"
+        },
+        {
+            "month": 12,
+            "season": "Dry Season",
+            "rains": "0mm",
+            "temp": "Warm 27°C, cool 18°C",
+            "wind": "NE Harmattan",
+            "advisory": "Dry season. Cool pleasant nights. Excellent fishing and travel season.",
+            "icon": "🌬"
+        }
+    ],
+    "rulers": [
+        {
+            "month": 1,
+            "title": "Tamxarit — Muharram",
+            "events": [
+                "Islamic new year",
+                "Tamxarit masquerades",
+                "Community celebrations",
+                "Ceebu jën feast"
+            ],
+            "rulers": "Imam and Serigne lead new year rites",
+            "icon": "🕌"
+        },
+        {
+            "month": 2,
+            "title": "Gamou — Mawlid",
+            "events": [
+                "Prophet's birthday celebration",
+                "Sufi brotherhoods gather",
+                "Zikr ceremonies",
+                "Pilgrimage to Tivaouane"
+            ],
+            "rulers": "Khalife of Tijaniyya leads Gamou",
+            "icon": "🌟"
+        },
+        {
+            "month": 3,
+            "title": "Dahira Season",
+            "events": [
+                "Mouride brotherhood gatherings",
+                "Sufi order meetings",
+                "Religious songs and prayers"
+            ],
+            "rulers": "Serigne leads brotherhood dahira",
+            "icon": "🎵"
+        },
+        {
+            "month": 4,
+            "title": "Pre-Hivernage Prayers",
+            "events": [
+                "Community rain prayers",
+                "Marabout consultations",
+                "Farm blessing ceremonies"
+            ],
+            "rulers": "Imam leads community rain prayers",
+            "icon": "🌧"
+        },
+        {
+            "month": 5,
+            "title": "Hivernage Opening",
+            "events": [
+                "Farming season opening prayers",
+                "Blessing of seeds",
+                "Community cooperative launch"
+            ],
+            "rulers": "Village chief opens farming season",
+            "icon": "🌱"
+        },
+        {
+            "month": 6,
+            "title": "Wrestling Season",
+            "events": [
+                "Laamb wrestling tournaments",
+                "Champion wrestlers honored",
+                "Community celebrations"
+            ],
+            "rulers": "Buur (chief) awards wrestling champions",
+            "icon": "💪"
+        },
+        {
+            "month": 7,
+            "title": "Xoy Divination",
+            "events": [
+                "Annual Sereer Xoy ceremony",
+                "Divination for coming year",
+                "Community gathering at Fatick"
+            ],
+            "rulers": "Saltigue diviners lead Xoy ceremony",
+            "icon": "🔮"
+        },
+        {
+            "month": 8,
+            "title": "Korité — Eid al-Fitr",
+            "events": [
+                "Eid prayers",
+                "Royal audience",
+                "Community feasting",
+                "New clothes tradition"
+            ],
+            "rulers": "President and Khalife celebrate Korité",
+            "icon": "🎊"
+        },
+        {
+            "month": 9,
+            "title": "Harvest Ceremonies",
+            "events": [
+                "First millet harvest rites",
+                "Offerings to ancestors",
+                "Community thanksgiving"
+            ],
+            "rulers": "Village chief leads harvest ceremony",
+            "icon": "🌾"
+        },
+        {
+            "month": 10,
+            "title": "Grand Magal Touba",
+            "events": [
+                "Mouride pilgrimage to Touba",
+                "Millions gather at holy city",
+                "Cheikh Ahmadou Bamba remembered"
+            ],
+            "rulers": "Khalife Général leads Grand Magal",
+            "icon": "🕌"
+        },
+        {
+            "month": 11,
+            "title": "Post-Harvest Assembly",
+            "events": [
+                "Community review of year",
+                "Dispute resolution",
+                "Planning for next season"
+            ],
+            "rulers": "Village council holds assembly",
+            "icon": "👑"
+        },
+        {
+            "month": 12,
+            "title": "Tabaski — Eid al-Adha",
+            "events": [
+                "Grand Eid prayers",
+                "Sheep sacrifice",
+                "Family feasting",
+                "Gift exchange"
+            ],
+            "rulers": "Imam and chiefs lead Tabaski",
+            "icon": "🐑"
+        }
+    ]
+}

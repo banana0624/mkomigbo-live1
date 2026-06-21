@@ -29,7 +29,7 @@ if (!defined('APP_ROOT') || !is_string(APP_ROOT) || trim((string)APP_ROOT) === '
 
   $env = getenv('MK_APP_ROOT');
   if (is_string($env) && $env !== '' && is_dir($env)) {
-    define('APP_ROOT', rtrim($env, "/\\"));
+    // // DISABLED_APP_ROOT (DISABLED_AUTO_FIX), rtrim($env, "/\\"));
   } else {
     // This file should be at: APP_ROOT/private/tools/lint/trend_chart.php
     $dir = __DIR__;
@@ -52,7 +52,7 @@ if (!defined('APP_ROOT') || !is_string(APP_ROOT) || trim((string)APP_ROOT) === '
     }
 
     if ($found !== '') {
-      define('APP_ROOT', rtrim($found, "/\\"));
+      // // DISABLED_APP_ROOT (DISABLED_AUTO_FIX), rtrim($found, "/\\"));
     }
   }
 }

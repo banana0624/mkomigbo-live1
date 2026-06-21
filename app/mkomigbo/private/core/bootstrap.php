@@ -8,7 +8,7 @@ declare(strict_types=1);
 |------------------------------------------------------
 */
 
-define('APP_ROOT', dirname(__DIR__, 2));
+// // DISABLED_APP_ROOT (DISABLED_AUTO_FIX), dirname(__DIR__, 2));
 
 /* CORE FUNCTIONS (ORDER MATTERS) */
 require_once APP_ROOT . '/private/functions/db.php';

@@ -1,0 +1,941 @@
+{
+    "id": "swahili",
+    "name": "Swahili",
+    "full_name": "Swahili Calendar",
+    "language": "Kiswahili \/ English",
+    "region": "Indian Ocean Coast",
+    "area": "East Africa Coast",
+    "color": "#1a4a4a",
+    "initial": "SW",
+    "calendar_type": "Islamic + Coastal Seasonal",
+    "market_cycle": 7,
+    "market_days": [
+        "Jumapili",
+        "Jumatatu",
+        "Jumanne",
+        "Jumatano",
+        "Alhamisi",
+        "Ijumaa",
+        "Jumamosi"
+    ],
+    "market_symbols": {
+        "Jumapili": {
+            "element": "Sun",
+            "symbol": "☀️",
+            "color": "#ffd040"
+        },
+        "Jumatatu": {
+            "element": "Moon",
+            "symbol": "🌙",
+            "color": "#c0c0ff"
+        },
+        "Jumanne": {
+            "element": "Mars\/Sea",
+            "symbol": "🌊",
+            "color": "#40a0ff"
+        },
+        "Jumatano": {
+            "element": "Mercury",
+            "symbol": "⚡",
+            "color": "#80e0ff"
+        },
+        "Alhamisi": {
+            "element": "Jupiter",
+            "symbol": "🌟",
+            "color": "#ffa040"
+        },
+        "Ijumaa": {
+            "element": "Prayer",
+            "symbol": "🕌",
+            "color": "#a0c0ff"
+        },
+        "Jumamosi": {
+            "element": "Saturn",
+            "symbol": "⭐",
+            "color": "#a0a0a0"
+        }
+    },
+    "months": [
+        {
+            "n": 1,
+            "name": "Januari",
+            "greg": "Jan",
+            "note": "NE monsoon \/ Kaskazi"
+        },
+        {
+            "n": 2,
+            "name": "Februari",
+            "greg": "Feb",
+            "note": "NE monsoon peak"
+        },
+        {
+            "n": 3,
+            "name": "Machi",
+            "greg": "Mar",
+            "note": "Masika (long rains) begin"
+        },
+        {
+            "n": 4,
+            "name": "Aprili",
+            "greg": "Apr",
+            "note": "Peak Masika rains"
+        },
+        {
+            "n": 5,
+            "name": "Mei",
+            "greg": "May",
+            "note": "Masika ending"
+        },
+        {
+            "n": 6,
+            "name": "Juni",
+            "greg": "Jun",
+            "note": "SE monsoon \/ Kusi begins"
+        },
+        {
+            "n": 7,
+            "name": "Julai",
+            "greg": "Jul",
+            "note": "Kusi peak \/ Cool dry"
+        },
+        {
+            "n": 8,
+            "name": "Agosti",
+            "greg": "Aug",
+            "note": "Cool dry season"
+        },
+        {
+            "n": 9,
+            "name": "Septemba",
+            "greg": "Sep",
+            "note": "Kusi easing"
+        },
+        {
+            "n": 10,
+            "name": "Oktoba",
+            "greg": "Oct",
+            "note": "Vuli (short rains) begin"
+        },
+        {
+            "n": 11,
+            "name": "Novemba",
+            "greg": "Nov",
+            "note": "Peak Vuli rains"
+        },
+        {
+            "n": 12,
+            "name": "Desemba",
+            "greg": "Dec",
+            "note": "Vuli ending \/ NE monsoon arrives"
+        }
+    ],
+    "farming": [
+        {
+            "month": 1,
+            "activity": "NE monsoon season. Harvest cashew nuts. Plant dry-season vegetables. Irrigate coconut farms.",
+            "crops": [
+                "Cashew",
+                "Coconut",
+                "Vegetables"
+            ],
+            "icon": "🥜"
+        },
+        {
+            "month": 2,
+            "activity": "Peak NE monsoon. Harvest cashew. Plant cassava. Harvest first coconuts of season.",
+            "crops": [
+                "Cashew",
+                "Cassava",
+                "Coconut"
+            ],
+            "icon": "🌴"
+        },
+        {
+            "month": 3,
+            "activity": "Masika long rains begin. Plant maize and beans. Clear coastal farms. Plant rice in lowlands.",
+            "crops": [
+                "Maize",
+                "Beans",
+                "Rice"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 4,
+            "activity": "Peak Masika. Heavy farming. Weed maize and rice. Plant cassava widely.",
+            "crops": [
+                "Maize",
+                "Rice",
+                "Cassava"
+            ],
+            "icon": "🌿"
+        },
+        {
+            "month": 5,
+            "activity": "Masika tapering. Harvest early beans. Maize nearing harvest. Prepare storage.",
+            "crops": [
+                "Beans (harvest)",
+                "Maize"
+            ],
+            "icon": "🌾"
+        },
+        {
+            "month": 6,
+            "activity": "Kusi season begins. Harvest maize. Good drying weather. Plant millet and sorghum.",
+            "crops": [
+                "Maize (harvest)",
+                "Millet"
+            ],
+            "icon": "☀️"
+        },
+        {
+            "month": 7,
+            "activity": "Cool Kusi season. Harvest Masika rice. Dry and store grain. Plant dry-season crops.",
+            "crops": [
+                "Rice (harvest)",
+                "Vegetables"
+            ],
+            "icon": "💨"
+        },
+        {
+            "month": 8,
+            "activity": "Cool dry season. Harvest cassava. Process and sell. Plant Vuli-season maize.",
+            "crops": [
+                "Cassava",
+                "Maize"
+            ],
+            "icon": "☀️"
+        },
+        {
+            "month": 9,
+            "activity": "Kusi easing. Prepare for Vuli rains. Clear new land. Plant early Vuli crops.",
+            "crops": [
+                "Early maize",
+                "Cowpea"
+            ],
+            "icon": "🌱"
+        },
+        {
+            "month": 10,
+            "activity": "Vuli short rains. Plant maize, beans, and vegetables. Busy farming season.",
+            "crops": [
+                "Maize",
+                "Beans",
+                "Cowpea"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 11,
+            "activity": "Peak Vuli. Weed Vuli crops. Good growing conditions. Harvest cashew flowers.",
+            "crops": [
+                "Maize",
+                "Beans",
+                "Cashew flowers"
+            ],
+            "icon": "🌿"
+        },
+        {
+            "month": 12,
+            "activity": "Vuli ending. Harvest Vuli beans. NE monsoon arrives. Plant coastal vegetables.",
+            "crops": [
+                "Beans (harvest)",
+                "Vegetables"
+            ],
+            "icon": "🌬"
+        }
+    ],
+    "fishing": [
+        {
+            "month": 1,
+            "activity": "Kaskazi (NE monsoon). Excellent dhow sailing. Deep sea fishing. Yellow fin tuna season.",
+            "fish": [
+                "Tuna",
+                "Sailfish",
+                "Kingfish"
+            ],
+            "conditions": "Excellent",
+            "icon": "⛵"
+        },
+        {
+            "month": 2,
+            "activity": "Peak Kaskazi. Best fishing of year. Tuna and sailfish peak. Traditional dhow routes active.",
+            "fish": [
+                "Tuna",
+                "Sailfish",
+                "Kingfish"
+            ],
+            "conditions": "Excellent",
+            "icon": "🎣"
+        },
+        {
+            "month": 3,
+            "activity": "Kaskazi ending. Masika rains beginning. Rough seas transition. Reef fishing safer.",
+            "fish": [
+                "Reef fish",
+                "Mixed"
+            ],
+            "conditions": "Good",
+            "icon": "🌊"
+        },
+        {
+            "month": 4,
+            "activity": "Masika rains. Rough seas. Experienced fishers only. Mangrove fish plentiful.",
+            "fish": [
+                "Mangrove fish",
+                "Crab"
+            ],
+            "conditions": "Moderate",
+            "icon": "🌧"
+        },
+        {
+            "month": 5,
+            "activity": "Masika ending. Seas calming. Octopus and squid season. Reef fishing excellent.",
+            "fish": [
+                "Octopus",
+                "Squid",
+                "Reef fish"
+            ],
+            "conditions": "Good",
+            "icon": "🐙"
+        },
+        {
+            "month": 6,
+            "activity": "Kusi (SE monsoon) begins. Excellent sailing and fishing. Kingfish and barracuda.",
+            "fish": [
+                "Kingfish",
+                "Barracuda",
+                "Trevally"
+            ],
+            "conditions": "Very Good",
+            "icon": "⛵"
+        },
+        {
+            "month": 7,
+            "activity": "Peak Kusi. Excellent deep sea fishing. Cool clear waters. Marlin season.",
+            "fish": [
+                "Marlin",
+                "Sailfish",
+                "Tuna"
+            ],
+            "conditions": "Excellent",
+            "icon": "🎣"
+        },
+        {
+            "month": 8,
+            "activity": "Cool Kusi season. Best visibility. Excellent reef and deep sea fishing.",
+            "fish": [
+                "Mixed deep sea",
+                "Reef fish"
+            ],
+            "conditions": "Excellent",
+            "icon": "🎣"
+        },
+        {
+            "month": 9,
+            "activity": "Kusi easing. Good fishing continues. Transition period. Lobster season begins.",
+            "fish": [
+                "Lobster",
+                "Mixed fish"
+            ],
+            "conditions": "Very Good",
+            "icon": "🦞"
+        },
+        {
+            "month": 10,
+            "activity": "Vuli rains beginning. Reef fishing excellent before rains. Octopus season.",
+            "fish": [
+                "Octopus",
+                "Reef fish"
+            ],
+            "conditions": "Good",
+            "icon": "🐙"
+        },
+        {
+            "month": 11,
+            "activity": "Vuli rains. Rough at times. Mangrove and reef fishing. Crab season peak.",
+            "fish": [
+                "Crab",
+                "Mangrove fish"
+            ],
+            "conditions": "Moderate",
+            "icon": "🦀"
+        },
+        {
+            "month": 12,
+            "activity": "Vuli ending. Kaskazi arrives. Excellent fishing returns. Tuna season beginning.",
+            "fish": [
+                "Tuna beginning",
+                "Reef fish"
+            ],
+            "conditions": "Good",
+            "icon": "🎣"
+        }
+    ],
+    "trading": [
+        {
+            "month": 1,
+            "activity": "Kaskazi trading season. Dhow trade from Arabia and India. Spice and cloth imports.",
+            "goods": [
+                "Spices",
+                "Cloth",
+                "Dhow goods"
+            ],
+            "icon": "⛵"
+        },
+        {
+            "month": 2,
+            "activity": "Peak dhow trade. Import goods from Oman, India, Yemen. Export ivory, mangrove poles.",
+            "goods": [
+                "Dhow imports",
+                "Mangrove poles",
+                "Fish"
+            ],
+            "icon": "🛶"
+        },
+        {
+            "month": 3,
+            "activity": "Kaskazi ending. Last dhow arrivals. Pre-rain trading. Stock up before Masika.",
+            "goods": [
+                "Trade goods",
+                "Food stocks"
+            ],
+            "icon": "📦"
+        },
+        {
+            "month": 4,
+            "activity": "Masika rains. Trading reduced. Local markets only. Fish and coconut trading.",
+            "goods": [
+                "Fish",
+                "Coconut",
+                "Local food"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 5,
+            "activity": "Rains tapering. Trading resuming. Maize and bean harvest trading begins.",
+            "goods": [
+                "Maize",
+                "Beans",
+                "Fish"
+            ],
+            "icon": "🌾"
+        },
+        {
+            "month": 6,
+            "activity": "Kusi season. Good travel weather. Long-distance trading active. Cashew export.",
+            "goods": [
+                "Cashew",
+                "Spices",
+                "Fish"
+            ],
+            "icon": "🥜"
+        },
+        {
+            "month": 7,
+            "activity": "Peak Kusi trading. Excellent weather for travel. Major coastal markets. Taarab festivals.",
+            "goods": [
+                "Cloth",
+                "Spices",
+                "Crafts"
+            ],
+            "icon": "🎭"
+        },
+        {
+            "month": 8,
+            "activity": "Good trading season. Cool weather. Long-distance dhow trade. Zanzibar clove harvest.",
+            "goods": [
+                "Cloves",
+                "Fish",
+                "Crafts"
+            ],
+            "icon": "🌹"
+        },
+        {
+            "month": 9,
+            "activity": "Kusi easing. Pre-Vuli trading. Stock up. Mombasa and Dar market surges.",
+            "goods": [
+                "Food stocks",
+                "Cloth",
+                "Spices"
+            ],
+            "icon": "🛒"
+        },
+        {
+            "month": 10,
+            "activity": "Vuli rains. Local markets steady. Fish and coconut trading continues.",
+            "goods": [
+                "Fish",
+                "Coconut",
+                "Vegetables"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 11,
+            "activity": "Vuli peak. Some disruption. Local Ijumaa (Friday) mosque markets active.",
+            "goods": [
+                "Local food",
+                "Religious goods"
+            ],
+            "icon": "🕌"
+        },
+        {
+            "month": 12,
+            "activity": "Year-end trading. Eid preparations. Kaskazi arriving. Dhow trade resuming.",
+            "goods": [
+                "Gifts",
+                "Cloth",
+                "Livestock"
+            ],
+            "icon": "🎁"
+        }
+    ],
+    "herding": [
+        {
+            "month": 1,
+            "conditions": "Dry",
+            "activity": "NE monsoon. Coastal livestock. Cattle and goats on crop residues. Coconut palms provide shade.",
+            "icon": "🐄"
+        },
+        {
+            "month": 2,
+            "conditions": "Dry",
+            "activity": "Dry season peak. Move livestock to shaded areas. Supplement with coconut husks.",
+            "icon": "🌴"
+        },
+        {
+            "month": 3,
+            "conditions": "Transitional",
+            "activity": "Masika approaching. Livestock restless. New grass beginning.",
+            "icon": "🌱"
+        },
+        {
+            "month": 4,
+            "conditions": "Wet",
+            "activity": "Masika rains. Excellent coastal grazing. Livestock thrive. Monitor for disease.",
+            "icon": "🌿"
+        },
+        {
+            "month": 5,
+            "conditions": "Good",
+            "activity": "Rains tapering. Good grazing on fresh grass. Livestock in best condition.",
+            "icon": "🥛"
+        },
+        {
+            "month": 6,
+            "conditions": "Good",
+            "activity": "Kusi season. Good coastal grazing. Sell surplus livestock at town markets.",
+            "icon": "🐄"
+        },
+        {
+            "month": 7,
+            "conditions": "Good",
+            "activity": "Cool Kusi. Excellent grazing. Cattle gain weight. Milk production good.",
+            "icon": "🌿"
+        },
+        {
+            "month": 8,
+            "conditions": "Good",
+            "activity": "Cool dry season. Steady grazing. Good condition for livestock.",
+            "icon": "☀️"
+        },
+        {
+            "month": 9,
+            "conditions": "Transitional",
+            "activity": "Kusi ending. Prepare for Vuli. Livestock movement to better pastures.",
+            "icon": "🚶"
+        },
+        {
+            "month": 10,
+            "conditions": "Good",
+            "activity": "Vuli rains. Fresh grass returns. Livestock recover any lost condition.",
+            "icon": "🌿"
+        },
+        {
+            "month": 11,
+            "conditions": "Good",
+            "activity": "Vuli peak. Good grazing. Livestock healthy. Milk production rises.",
+            "icon": "🥛"
+        },
+        {
+            "month": 12,
+            "conditions": "Moderate",
+            "activity": "Vuli ending. Year-end livestock sales. Fatten animals for Eid.",
+            "icon": "🐑"
+        }
+    ],
+    "healing": [
+        {
+            "month": 1,
+            "activity": "Kaskazi season. Import Arabian and Indian medicines via dhow. Treat dry-season ailments.",
+            "herbs": [
+                "Udi (aloeswood)",
+                "Hiliki (cardamom)",
+                "Zafarani (saffron)"
+            ],
+            "rituals": "New Year blessing (Baraka)",
+            "icon": "🌿"
+        },
+        {
+            "month": 2,
+            "activity": "Dhow trade brings medicine from Arabia. Prepare Swahili coastal remedies.",
+            "herbs": [
+                "Haradali (mustard)",
+                "Tangawizi (ginger)",
+                "Pilipili"
+            ],
+            "rituals": "Coastal healing ceremony",
+            "icon": "⛵"
+        },
+        {
+            "month": 3,
+            "activity": "Pre-Masika cleansing. Prepare rain medicines. Plant coastal medicine gardens.",
+            "herbs": [
+                "Rain herbs",
+                "Cleansing plants"
+            ],
+            "rituals": "Pre-rain ceremony (Sadaka ya Mvua)",
+            "icon": "🌱"
+        },
+        {
+            "month": 4,
+            "activity": "Masika rains. Treat malaria and waterborne diseases. Fresh coastal herbs sprouting.",
+            "herbs": [
+                "Malaria herbs",
+                "Artemisia",
+                "Neem"
+            ],
+            "rituals": "Rain thanksgiving",
+            "icon": "🌧"
+        },
+        {
+            "month": 5,
+            "activity": "Rains easing. Abundant coastal herbs. Mass collection. Anti-bilharzia preparations.",
+            "herbs": [
+                "Anti-parasitic herbs",
+                "Fresh leaves"
+            ],
+            "rituals": "Community health gathering",
+            "icon": "🌿"
+        },
+        {
+            "month": 6,
+            "activity": "Kusi season. Treat cool-season respiratory conditions. Coastal herb medicine.",
+            "herbs": [
+                "Chest herbs",
+                "Eucalyptus",
+                "Hiliki"
+            ],
+            "rituals": "Kusi blessing",
+            "icon": "💨"
+        },
+        {
+            "month": 7,
+            "activity": "Peak Kusi. Community healing events. Taarab music and healing traditions.",
+            "herbs": [
+                "Mixed coastal herbs"
+            ],
+            "rituals": "Cultural healing ceremony",
+            "icon": "🎭"
+        },
+        {
+            "month": 8,
+            "activity": "Cool season. Collect last dry-season medicines. Prepare Vuli season remedies.",
+            "herbs": [
+                "Stored medicines",
+                "Root herbs"
+            ],
+            "rituals": "Community health review",
+            "icon": "🏺"
+        },
+        {
+            "month": 9,
+            "activity": "Pre-Vuli. Prepare for rainy season diseases. Anti-malaria stock up.",
+            "herbs": [
+                "Anti-malaria",
+                "Protective herbs"
+            ],
+            "rituals": "Pre-rain ceremony",
+            "icon": "🙏"
+        },
+        {
+            "month": 10,
+            "activity": "Vuli rains. Treat waterborne diseases. Islamic healing prayers. Community medicine.",
+            "herbs": [
+                "Water purification",
+                "Islamic herbs"
+            ],
+            "rituals": "Islamic healing prayers (Dua)",
+            "icon": "🕌"
+        },
+        {
+            "month": 11,
+            "activity": "Vuli peak. Treat skin and respiratory conditions. Coastal humidity remedies.",
+            "herbs": [
+                "Skin herbs",
+                "Respiratory medicine"
+            ],
+            "rituals": "Community gathering",
+            "icon": "💧"
+        },
+        {
+            "month": 12,
+            "activity": "Year-end. Prepare Eid medicines. New Year purification. Frankincense burning.",
+            "herbs": [
+                "Udi (frankincense)",
+                "Purification herbs"
+            ],
+            "rituals": "Eid and New Year purification",
+            "icon": "🔥"
+        }
+    ],
+    "weather": [
+        {
+            "month": 1,
+            "season": "Kaskazi (NE monsoon)",
+            "rains": "20-40mm",
+            "temp": "Hot 30°C",
+            "wind": "NE monsoon moderate",
+            "advisory": "NE monsoon. Reliable sailing winds. Warm humid weather. Excellent dhow season.",
+            "icon": "⛵"
+        },
+        {
+            "month": 2,
+            "season": "Peak Kaskazi",
+            "rains": "10-30mm",
+            "temp": "Hot 31°C",
+            "wind": "NE monsoon strong",
+            "advisory": "Peak NE monsoon. Best sailing season. Warm and humid. Excellent fishing.",
+            "icon": "💨"
+        },
+        {
+            "month": 3,
+            "season": "Masika begins",
+            "rains": "60-120mm",
+            "temp": "Warm 29°C",
+            "wind": "Transitional",
+            "advisory": "Long rains beginning. Seas getting rougher. Prepare farms. Dhow season ending.",
+            "icon": "🌦"
+        },
+        {
+            "month": 4,
+            "season": "Peak Masika",
+            "rains": "160-240mm",
+            "temp": "Warm humid 27°C",
+            "wind": "SW building",
+            "advisory": "Heaviest rains. Flooding coastal areas. Roads muddy. Stay near home.",
+            "icon": "⛈"
+        },
+        {
+            "month": 5,
+            "season": "Late Masika",
+            "rains": "100-160mm",
+            "temp": "Warm 27°C",
+            "wind": "SW monsoon light",
+            "advisory": "Rains tapering. Weather improving. Good harvest conditions.",
+            "icon": "🌧"
+        },
+        {
+            "month": 6,
+            "season": "Kusi begins",
+            "rains": "20-40mm",
+            "temp": "Cool 25°C",
+            "wind": "SE monsoon building",
+            "advisory": "SE monsoon (Kusi) arrives. Cool pleasant weather. Excellent sailing season.",
+            "icon": "💨"
+        },
+        {
+            "month": 7,
+            "season": "Peak Kusi",
+            "rains": "10-20mm",
+            "temp": "Cool 23°C",
+            "wind": "SE monsoon strong",
+            "advisory": "Peak SE monsoon. Cool and dry. Best weather of year. Excellent fishing and travel.",
+            "icon": "🌤"
+        },
+        {
+            "month": 8,
+            "season": "Kusi",
+            "rains": "10-20mm",
+            "temp": "Cool 24°C",
+            "wind": "SE monsoon moderate",
+            "advisory": "Kusi continues. Cool pleasant weather. Good for all activities.",
+            "icon": "🌤"
+        },
+        {
+            "month": 9,
+            "season": "Kusi easing",
+            "rains": "20-40mm",
+            "temp": "Warm 26°C",
+            "wind": "SE easing",
+            "advisory": "Kusi easing. Warming up. Pre-Vuli season. Good travel weather.",
+            "icon": "🌦"
+        },
+        {
+            "month": 10,
+            "season": "Vuli begins",
+            "rains": "60-100mm",
+            "temp": "Warm 27°C",
+            "wind": "NE building",
+            "advisory": "Short Vuli rains begin. Moderate rainfall. Good farming conditions.",
+            "icon": "🌧"
+        },
+        {
+            "month": 11,
+            "season": "Peak Vuli",
+            "rains": "100-160mm",
+            "temp": "Warm humid 27°C",
+            "wind": "NE monsoon light",
+            "advisory": "Peak Vuli rains. Flooding possible. Rough coastal waters.",
+            "icon": "⛈"
+        },
+        {
+            "month": 12,
+            "season": "Kaskazi arriving",
+            "rains": "40-80mm",
+            "temp": "Warm 29°C",
+            "wind": "NE monsoon building",
+            "advisory": "Vuli ending. NE monsoon (Kaskazi) arriving. Dhow season beginning. Warming up.",
+            "icon": "🌬"
+        }
+    ],
+    "rulers": [
+        {
+            "month": 1,
+            "title": "Mwaka Kogwa — New Year",
+            "events": [
+                "Shirazi New Year celebration",
+                "Mock fights to ward off evil",
+                "Community feasting at Makunduchi"
+            ],
+            "rulers": "Village elders lead Mwaka Kogwa",
+            "icon": "🎭"
+        },
+        {
+            "month": 2,
+            "title": "Dhow Festival",
+            "events": [
+                "Traditional dhow racing",
+                "Seafaring culture celebration",
+                "Music and taarab performances"
+            ],
+            "rulers": "Sultan of Zanzibar honors dhow culture",
+            "icon": "⛵"
+        },
+        {
+            "month": 3,
+            "title": "Maulid an-Nabi",
+            "events": [
+                "Prophet's birthday celebrations",
+                "Taarab music performances",
+                "Community processions",
+                "Lamu Maulid is UNESCO heritage"
+            ],
+            "rulers": "Liwali and Sheikhs lead Maulid",
+            "icon": "🌟"
+        },
+        {
+            "month": 4,
+            "title": "Ramadan on the Coast",
+            "events": [
+                "Ramadan fasting",
+                "Nightly Tarawih prayers",
+                "Community iftar at mosques",
+                "Taarab concerts after iftar"
+            ],
+            "rulers": "Kadhi and Imam lead Ramadan",
+            "icon": "🌙"
+        },
+        {
+            "month": 5,
+            "title": "Eid al-Fitr — Idd el Fitr",
+            "events": [
+                "Grand Eid prayers at sea fort",
+                "New clothes and feasting",
+                "Zanzibar Eid celebrations",
+                "Community visiting"
+            ],
+            "rulers": "Sultan and Kadhi lead Eid prayers",
+            "icon": "🕌"
+        },
+        {
+            "month": 6,
+            "title": "Siku ya Wakulima",
+            "events": [
+                "Farmers' day celebrations",
+                "Coastal farming culture honored",
+                "Community agricultural assembly"
+            ],
+            "rulers": "Village leaders honor farmers",
+            "icon": "🌾"
+        },
+        {
+            "month": 7,
+            "title": "Zanzibar Cultural Festival",
+            "events": [
+                "Sauti za Busara music festival",
+                "Taarab and bongo flava",
+                "Cultural exchange and performance"
+            ],
+            "rulers": "Cultural ministry hosts festival",
+            "icon": "🎵"
+        },
+        {
+            "month": 8,
+            "title": "Nane Nane — Farmers Day",
+            "events": [
+                "National Farmers Day",
+                "Agricultural exhibitions",
+                "Prize-giving to best farmers"
+            ],
+            "rulers": "Government and elders honor farmers",
+            "icon": "🏆"
+        },
+        {
+            "month": 9,
+            "title": "Coastal Heritage Month",
+            "events": [
+                "Swahili language celebrations",
+                "Heritage site visits",
+                "Oral poetry competitions"
+            ],
+            "rulers": "Community elders share oral history",
+            "icon": "📜"
+        },
+        {
+            "month": 10,
+            "title": "Eid al-Adha — Idd el Hajj",
+            "events": [
+                "Grand sacrifice prayers",
+                "Livestock slaughter and sharing",
+                "Pilgrims return from Hajj honored"
+            ],
+            "rulers": "Kadhi and Sultan lead Idd el Hajj",
+            "icon": "🕌"
+        },
+        {
+            "month": 11,
+            "title": "Vuli Thanksgiving",
+            "events": [
+                "Short rains thanksgiving",
+                "Mosque prayers for harvest",
+                "Community sharing ceremony"
+            ],
+            "rulers": "Imams lead thanksgiving prayers",
+            "icon": "🌧"
+        },
+        {
+            "month": 12,
+            "title": "Siku ya Uhuru",
+            "events": [
+                "Independence Day celebrations",
+                "Zanzibar Revolution Day",
+                "Community parades and feasts"
+            ],
+            "rulers": "Government and elders lead celebrations",
+            "icon": "🎊"
+        }
+    ]
+}

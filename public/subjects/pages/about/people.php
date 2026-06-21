@@ -1,47 +1,15 @@
 <?php
 declare(strict_types=1);
-
-return [
-  'title' => 'People',
-  'body_html' => <<<MKHTML_60d0afba
-<div class="mk-prose">
-
-  <p class="mk-muted" style="margin-top:0;">
-    <strong>Subject</strong> — People.
-    Starter scaffold: readable now, expandable later.
-  </p>
-
-  <div style="display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 14px;">
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/intro/">
-        Introduction      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/overview/">
-        Overview      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/topics/">
-        Key Topics      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/people/">
-        People      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/sources/">
-        Sources      </a>
-      </div>
-
-  <h2>What belongs here</h2>
-  <ul>
-    <li><strong>Scope:</strong> what this page covers and excludes.</li>
-    <li><strong>Key points:</strong> the essentials readers should remember.</li>
-    <li><strong>Structure:</strong> sections you’ll expand later.</li>
-  </ul>
-
-  <hr>
-
-  <p class="mk-muted">
-    Tip: add citations and attach source links/files below.
-  </p>
-
-</div>
-MKHTML_60d0afba,
-];
+echo '<div class="mk-prose">';
+echo '<p class="mk-muted" style="margin-top:0;">The contributors who build and maintain Mkomigbo.</p>';
+echo '<h2>Our Contributors</h2>';
+echo '<p>Mkomigbo is built by a small, committed team of researchers, writers, and technologists with roots in Igbo communities. Contributors include scholars, community elders, diaspora members, and anyone willing to bring honest knowledge to the table.</p>';
+echo '<p>Every article credits its contributors over time. The platform is designed so that individual knowledge — however specialized — can find its place and be preserved for future generations.</p>';
+echo '<h2>How We Work</h2>';
+echo '<p>Content on Mkomigbo goes through a review process before publication. Contributors submit articles, corrections, or additions. The editorial team reviews for accuracy, sourcing, and tone. Published content is clearly attributed.</p>';
+echo '<h2>Join Us</h2>';
+echo '<p>If you have knowledge, research, oral history, photographs, documents, or expertise that belongs on Mkomigbo, we want to hear from you. Every verified contribution, however small, helps build something that will outlast all of us.</p>';
+echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 4px;">';
+echo '<a class="mk-btn mk-btn--ghost" href="/contributors/">View All Contributors</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/contribute/">Contribute</a>';
+echo '</div></div>';

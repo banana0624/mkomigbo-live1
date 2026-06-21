@@ -1,45 +1,73 @@
 <?php
+
 declare(strict_types=1);
 
-/* DEFINE ROOT FIRST */
-define('APP_ROOT', __DIR__ . '/app/mkomigbo');
-define('PRIVATE_PATH', APP_ROOT . '/private/functions');
+require_once dirname(__DIR__) . '/app/autoload.php';
 
-require_once APP_ROOT . '/private/functions/bootstrap_init.php';
+use App\Core\Database;
+use App\Core\Request;
+use App\Core\Router;
+use App\Core\Response;
 
-mk_initialize();
+/*
+|--------------------------------------------------------------------------
+| Boot DB
+|--------------------------------------------------------------------------
+*/
 
-/* NORMALIZE PATH */
-$requestUri = $_SERVER['REQUEST_URI'] ?? '/';
-$path = parse_url($requestUri, PHP_URL_PATH);
+Database::init();
 
-$base = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
-if ($base !== '' && strpos($path, $base) === 0) {
-    $path = substr($path, strlen($base));
+/*
+|--------------------------------------------------------------------------
+| Core objects
+|--------------------------------------------------------------------------
+*/
+
+$request = new Request();
+$router  = new Router();
+
+/*
+|--------------------------------------------------------------------------
+| Routes
+|--------------------------------------------------------------------------
+*/
+
+$routes = require dirname(__DIR__) . '/routes/web.php';
+$routes($router);
+
+/*
+|--------------------------------------------------------------------------
+| Resolve route
+|--------------------------------------------------------------------------
+*/
+
+$handler = $router->resolve($request);
+
+if ($handler) {
+
+    $result = $handler($request);
+
+    if ($result) {
+        Response::view($result);
+        exit;
+    }
 }
 
-$path = trim($path, '/');
+/*
+|--------------------------------------------------------------------------
+| Fallback: dynamic page resolution
+|--------------------------------------------------------------------------
+*/
 
-/* DEBUG */
-echo "PATH = [$path]<br>";
+use App\Repositories\PageRepository;
 
-/* HOME */
-if ($path === '' || $path === 'index.php') {
-    mk_render('header');
-    mk_render('home');
-    mk_render('footer');
-    exit;
-}
+$repo = new PageRepository(Database::pdo());
 
-/* CMS */
-$page = mk_find_page_by_slug($path);
+$page = $repo->findBySlug($request->path ?: 'home');
 
 if ($page) {
-    echo "PAGE FOUND<br>";
-    mk_render_page($page);
+    Response::view($page);
     exit;
 }
 
-/* 404 */
-echo "PAGE NOT FOUND<br>";
-http_response_code(404);
+Response::notFound();

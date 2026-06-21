@@ -13,7 +13,7 @@ declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
 
 if (!defined('APP_ROOT')) {
-  define('APP_ROOT', '/home/mkomigbo/public_html/app/mkomigbo');
+  // // DISABLED_APP_ROOT (DISABLED_AUTO_FIX), '/home/mkomigbo/public_html/app/mkomigbo');
 }
 
 $appRoot = rtrim((string)APP_ROOT, "/\\");

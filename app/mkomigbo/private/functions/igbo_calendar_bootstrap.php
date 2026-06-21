@@ -48,7 +48,7 @@ if (!defined('PRIVATE_PATH') && $privateFromHere !== false) {
   define('PRIVATE_PATH', $privateFromHere);
 }
 if (!defined('APP_ROOT') && $appFromHere !== false) {
-  define('APP_ROOT', $appFromHere);
+  // // DISABLED_APP_ROOT (DISABLED_AUTO_FIX), $appFromHere);
 }
 
 $private = defined('PRIVATE_PATH') ? rtrim((string)PRIVATE_PATH, "/\\") : '';

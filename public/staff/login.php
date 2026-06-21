@@ -36,7 +36,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     id,
                     email,
                     password_hash,
-                    role
+                    role,
+                    session_version
                 FROM staff_users
                 WHERE email = ?
                 LIMIT 1
@@ -56,6 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 $_SESSION['staff_user_id'] = (int)$user['id'];
 
+                $_SESSION['staff_session_version'] = (int)$user['session_version'];
                 $_SESSION['staff_user'] = [
                     'id'    => (int)$user['id'],
                     'email' => (string)$user['email'],
@@ -104,10 +106,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="utf-8">
     <title>Staff Login</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="/lib/css/ui.css">
+<link rel="stylesheet" href="/lib/css/staff.css">
 </head>
-<body>
+<body style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg,#f8f9fb);">
 
-<h2>Staff Login</h2>
+<div style="width:100%;max-width:420px;background:#fff;border:1px solid var(--border,#e5e7eb);border-radius:20px;padding:32px;box-shadow:0 8px 30px rgba(0,0,0,.08);"><div style="text-align:center;margin-bottom:24px;"><img src="/assets/images/logos/mk-logo.png" width="48" height="48" style="border-radius:12px;border:1px solid var(--border,#e5e7eb);" alt="Mkomigbo"><h2 style="margin:12px 0 4px;font-size:1.3rem;font-weight:900;">Staff Login</h2><p style="margin:0;color:var(--muted,#6b7280);font-size:.9rem;">Mkomigbo Staff Area</p></div>
 
 <?php if ($error !== ''): ?>
     <p style="color:red;">
@@ -148,5 +153,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 </form>
 
-</body>
+</div></body>
 </html>

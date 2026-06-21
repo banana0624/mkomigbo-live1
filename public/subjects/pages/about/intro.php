@@ -1,45 +1,23 @@
 <?php
 declare(strict_types=1);
-
-return [
-  'title' => 'Sources',
-  'body_html' => <<<MKHTML_e6f3415c
-<div class="mk-prose">
-
-  <p class="mk-muted" style="margin-top:0;">
-    This is the <strong>Sources</strong> page for <strong>Subject</strong>.
-    It’s a premium starter scaffold — readable now and expandable later.
-  </p>
-
-  <h2>What this subject covers</h2>
-  <ul>
-    <li><strong>Core ideas</strong> — definitions, scope, and key distinctions.</li>
-    <li><strong>Key context</strong> — background readers need to understand the topic.</li>
-    <li><strong>Evidence</strong> — sources, links, archives, media.</li>
-    <li><strong>Debates</strong> — competing viewpoints with citations.</li>
-  </ul>
-
-  <h2>Explore next</h2>
-  <div style="display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 4px;">
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/overview/">
-        Overview      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/topics/">
-        Key Topics      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/people/">
-        People      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/sources/">
-        Sources      </a>
-      </div>
-
-  <h2>Contribute</h2>
-  <p>
-    Add a clean lede, build sections, and attach trusted references using <code>links.json</code> and local files.
-  </p>
-
-</div>
-MKHTML_e6f3415c,
-];
+echo '<div class="mk-prose">';
+echo '<p class="mk-muted" style="margin-top:0;">What Mkomigbo is, why it exists, and what it stands for.</p>';
+echo '<h2>What is Mkomigbo?</h2>';
+echo '<p>Mkomigbo is an open knowledge platform dedicated to preserving, documenting, and sharing the history, culture, language, and heritage of the Igbo people of West Africa — and the broader African experience that connects them to the world.</p>';
+echo '<p>The name draws from the Igbo language — carrying the sense of gathering knowledge from the forest. A metaphor for the deep, living, rooted nature of what we collect and protect.</p>';
+echo '<h2>Why We Built This</h2>';
+echo '<p>Igbo history is one of the richest in African history. Yet it remains fragmented — scattered across colonial archives, oral traditions, academic papers, diaspora memories, and community knowledge that risks being lost with each generation.</p>';
+echo '<p>We built Mkomigbo because knowledge about a people belongs to that people. It should be freely accessible, honestly documented, and built to last.</p>';
+echo '<h2>Our Principles</h2>';
+echo '<ul>';
+echo '<li><strong>Honesty</strong> — we document what happened, not what is comfortable</li>';
+echo '<li><strong>Accessibility</strong> — all content is free and open to everyone</li>';
+echo '<li><strong>Community</strong> — built with contributors from inside the community</li>';
+echo '<li><strong>Depth</strong> — we prefer thorough, sourced content over quick summaries</li>';
+echo '<li><strong>Continuity</strong> — we build for the long term, not for trends</li>';
+echo '</ul>';
+echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 4px;">';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/about/overview/">Overview</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/about/topics/">Topics</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/about/people/">Contributors</a>';
+echo '</div></div>';

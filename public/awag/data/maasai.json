@@ -1,0 +1,918 @@
+{
+    "id": "maasai",
+    "name": "Maasai",
+    "full_name": "Maasai Calendar",
+    "language": "Maa \/ English",
+    "region": "East African Rift",
+    "area": "Kenya \/ Tanzania",
+    "color": "#8b1a1a",
+    "initial": "MA",
+    "calendar_type": "Lunar + Seasonal",
+    "market_cycle": 7,
+    "market_days": [
+        "Mola",
+        "Lapa",
+        "Uni",
+        "Apa",
+        "Kuni",
+        "Lapa Nabo",
+        "Lorroki"
+    ],
+    "market_symbols": {
+        "Mola": {
+            "element": "Cattle",
+            "symbol": "🐄",
+            "color": "#c87040"
+        },
+        "Lapa": {
+            "element": "Moon",
+            "symbol": "🌙",
+            "color": "#c0c0ff"
+        },
+        "Uni": {
+            "element": "Water",
+            "symbol": "💧",
+            "color": "#40a0ff"
+        },
+        "Apa": {
+            "element": "Fire",
+            "symbol": "🔥",
+            "color": "#ff6030"
+        },
+        "Kuni": {
+            "element": "Earth",
+            "symbol": "🌍",
+            "color": "#50c850"
+        },
+        "Lapa Nabo": {
+            "element": "Wind",
+            "symbol": "💨",
+            "color": "#a0c0ff"
+        },
+        "Lorroki": {
+            "element": "Rest",
+            "symbol": "⭐",
+            "color": "#ffa040"
+        }
+    },
+    "months": [
+        {
+            "n": 1,
+            "name": "Olapa loltau",
+            "greg": "Jan",
+            "note": "Short dry season"
+        },
+        {
+            "n": 2,
+            "name": "Olapa loolodung'ana",
+            "greg": "Feb",
+            "note": "Dry season peak"
+        },
+        {
+            "n": 3,
+            "name": "Olapa loolaonong'on",
+            "greg": "Mar",
+            "note": "Long rains begin"
+        },
+        {
+            "n": 4,
+            "name": "Olapa loodo-kileng",
+            "greg": "Apr",
+            "note": "Peak long rains"
+        },
+        {
+            "n": 5,
+            "name": "Olapa loosapolos",
+            "greg": "May",
+            "note": "Long rains ending"
+        },
+        {
+            "n": 6,
+            "name": "Olapa loosaai",
+            "greg": "Jun",
+            "note": "Cool dry season"
+        },
+        {
+            "n": 7,
+            "name": "Olapa lookatoo",
+            "greg": "Jul",
+            "note": "Cold dry season"
+        },
+        {
+            "n": 8,
+            "name": "Olapa loolaari",
+            "greg": "Aug",
+            "note": "Dry season"
+        },
+        {
+            "n": 9,
+            "name": "Olapa loolaiyuk",
+            "greg": "Sep",
+            "note": "Short rains approaching"
+        },
+        {
+            "n": 10,
+            "name": "Olapa loosagul",
+            "greg": "Oct",
+            "note": "Short rains begin"
+        },
+        {
+            "n": 11,
+            "name": "Olapa loolaara",
+            "greg": "Nov",
+            "note": "Peak short rains"
+        },
+        {
+            "n": 12,
+            "name": "Olapa loosaari",
+            "greg": "Dec",
+            "note": "Short rains ending"
+        }
+    ],
+    "farming": [
+        {
+            "month": 1,
+            "activity": "Short dry season. Maasai do limited farming. Some communities plant sorghum near water.",
+            "crops": [
+                "Sorghum",
+                "Maize"
+            ],
+            "icon": "🌱"
+        },
+        {
+            "month": 2,
+            "activity": "Dry season peak. No farming. Focus on cattle. Some women grow vegetables near homestead.",
+            "crops": [
+                "Vegetables"
+            ],
+            "icon": "🌿"
+        },
+        {
+            "month": 3,
+            "activity": "Long rains begin. Plant maize and beans. Excellent growing conditions start.",
+            "crops": [
+                "Maize",
+                "Beans"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 4,
+            "activity": "Peak long rains. Heavy farming for agricultural Maasai. Weed maize. Plant sorghum.",
+            "crops": [
+                "Maize",
+                "Sorghum",
+                "Beans"
+            ],
+            "icon": "🌿"
+        },
+        {
+            "month": 5,
+            "activity": "Rains tapering. Harvest early beans. Maize still growing. Prepare storage.",
+            "crops": [
+                "Beans (harvest)",
+                "Maize"
+            ],
+            "icon": "🌾"
+        },
+        {
+            "month": 6,
+            "activity": "Cool dry season. Harvest maize. Good drying weather. Plant winter vegetables.",
+            "crops": [
+                "Maize (harvest)",
+                "Vegetables"
+            ],
+            "icon": "☀️"
+        },
+        {
+            "month": 7,
+            "activity": "Cold dry season. Limited farming. Focus on cattle. Dry and store harvested grain.",
+            "crops": [
+                "Storage",
+                "Vegetables"
+            ],
+            "icon": "❄️"
+        },
+        {
+            "month": 8,
+            "activity": "Dry season. Prepare land for short rains. Clear and burn old vegetation.",
+            "crops": [
+                "Land preparation"
+            ],
+            "icon": "🔥"
+        },
+        {
+            "month": 9,
+            "activity": "Pre-rains preparation. Plant early short-rain maize. Watch for first rains.",
+            "crops": [
+                "Maize",
+                "Beans"
+            ],
+            "icon": "🌱"
+        },
+        {
+            "month": 10,
+            "activity": "Short rains begin. Plant main short-rain crops. Beans, maize, and vegetables.",
+            "crops": [
+                "Maize",
+                "Beans",
+                "Vegetables"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 11,
+            "activity": "Peak short rains. Weed crops. Excellent growing conditions.",
+            "crops": [
+                "Maize",
+                "Beans"
+            ],
+            "icon": "🌿"
+        },
+        {
+            "month": 12,
+            "activity": "Rains ending. Harvest short-rain beans. Maize nearing harvest.",
+            "crops": [
+                "Beans (harvest)",
+                "Maize"
+            ],
+            "icon": "🌾"
+        }
+    ],
+    "fishing": [
+        {
+            "month": 1,
+            "activity": "Lake Victoria and Rift Valley lakes accessible. Good fishing in dry season.",
+            "fish": [
+                "Tilapia",
+                "Nile perch"
+            ],
+            "conditions": "Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 2,
+            "activity": "Dry season. Lakes clear. Excellent fishing for Maasai near Lake Naivasha, Baringo.",
+            "fish": [
+                "Tilapia",
+                "Catfish"
+            ],
+            "conditions": "Very Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 3,
+            "activity": "Long rains begin. River fishing starts. Watch for rising waters.",
+            "fish": [
+                "Mixed"
+            ],
+            "conditions": "Moderate",
+            "icon": "🌊"
+        },
+        {
+            "month": 4,
+            "activity": "Heavy rains. Muddy waters reduce visibility. Trap fishing better than line.",
+            "fish": [
+                "Catfish"
+            ],
+            "conditions": "Moderate",
+            "icon": "🌧"
+        },
+        {
+            "month": 5,
+            "activity": "Rains easing. Lakes settling. Fishing improving. Nile perch feeding actively.",
+            "fish": [
+                "Nile perch",
+                "Tilapia"
+            ],
+            "conditions": "Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 6,
+            "activity": "Cool dry season. Excellent lake and river fishing. Clear water visibility.",
+            "fish": [
+                "Tilapia",
+                "Nile perch"
+            ],
+            "conditions": "Excellent",
+            "icon": "🎣"
+        },
+        {
+            "month": 7,
+            "activity": "Cold dry season. Fish sluggish. Morning fishing best. Deep water more productive.",
+            "fish": [
+                "Tilapia"
+            ],
+            "conditions": "Moderate",
+            "icon": "🎣"
+        },
+        {
+            "month": 8,
+            "activity": "Dry season. Rivers low. Concentrated fishing in deep pools.",
+            "fish": [
+                "Catfish",
+                "Tilapia"
+            ],
+            "conditions": "Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 9,
+            "activity": "Pre-rains. Fish feeding actively before spawning. Excellent season.",
+            "fish": [
+                "Mixed"
+            ],
+            "conditions": "Very Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 10,
+            "activity": "Short rains. Fish spawning. Reduce fishing. Let stocks recover.",
+            "fish": [
+                "Mixed"
+            ],
+            "conditions": "Moderate",
+            "icon": "🌊"
+        },
+        {
+            "month": 11,
+            "activity": "Peak rains. Flooded areas provide new habitat. Community fishing.",
+            "fish": [
+                "Tilapia",
+                "Catfish"
+            ],
+            "conditions": "Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 12,
+            "activity": "Rains ending. Fish concentrated. Good end-of-year fishing.",
+            "fish": [
+                "Nile perch",
+                "Tilapia"
+            ],
+            "conditions": "Very Good",
+            "icon": "🎣"
+        }
+    ],
+    "trading": [
+        {
+            "month": 1,
+            "activity": "Dry season cattle trading. Maasai sell surplus cattle at district markets. Beadwork trading.",
+            "goods": [
+                "Cattle",
+                "Beadwork",
+                "Hides"
+            ],
+            "icon": "🐄"
+        },
+        {
+            "month": 2,
+            "activity": "Major cattle market season. Buy\/sell livestock. Exchange beads, ochre, and cloth.",
+            "goods": [
+                "Cattle",
+                "Beads",
+                "Ochre"
+            ],
+            "icon": "🛒"
+        },
+        {
+            "month": 3,
+            "activity": "Rains approaching. Sell surplus cattle before movement. Buy grain and supplies.",
+            "goods": [
+                "Cattle",
+                "Grain",
+                "Supplies"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 4,
+            "activity": "Rains heavy. Travel reduced. Local enkiama (homestead) trading only.",
+            "goods": [
+                "Milk",
+                "Beadwork"
+            ],
+            "icon": "🏠"
+        },
+        {
+            "month": 5,
+            "activity": "Rains easing. Cattle well-fed. Milk surplus trading peaks. Butter and yoghurt.",
+            "goods": [
+                "Milk",
+                "Butter",
+                "Cattle"
+            ],
+            "icon": "🥛"
+        },
+        {
+            "month": 6,
+            "activity": "Cool season. Good travel. Long-distance cattle trading to towns begins.",
+            "goods": [
+                "Cattle",
+                "Hides",
+                "Beadwork"
+            ],
+            "icon": "📦"
+        },
+        {
+            "month": 7,
+            "activity": "Cold season. Indoor craft production. Beadwork and leather goods trading.",
+            "goods": [
+                "Beadwork",
+                "Leather",
+                "Crafts"
+            ],
+            "icon": "🏺"
+        },
+        {
+            "month": 8,
+            "activity": "Dry season. Major livestock markets. Cattle, goats, and donkeys trading.",
+            "goods": [
+                "Cattle",
+                "Goats",
+                "Donkeys"
+            ],
+            "icon": "🐄"
+        },
+        {
+            "month": 9,
+            "activity": "Pre-rain markets. Buy seeds and farm inputs. Sell dry-season craft production.",
+            "goods": [
+                "Seeds",
+                "Crafts",
+                "Livestock"
+            ],
+            "icon": "🌱"
+        },
+        {
+            "month": 10,
+            "activity": "Short rains. Local markets. Milk and fresh produce trading increases.",
+            "goods": [
+                "Milk",
+                "Vegetables",
+                "Crafts"
+            ],
+            "icon": "🥛"
+        },
+        {
+            "month": 11,
+            "activity": "Rains active. Movement restricted. Homestead trading. Milk surplus peaks.",
+            "goods": [
+                "Milk",
+                "Cattle"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 12,
+            "activity": "Year-end trading. Christmas markets. Cattle sales peak. Beadwork gifts.",
+            "goods": [
+                "Cattle",
+                "Beadwork",
+                "Gifts"
+            ],
+            "icon": "🎁"
+        }
+    ],
+    "herding": [
+        {
+            "month": 1,
+            "conditions": "Dry",
+            "activity": "Short dry season. Move to permanent water sources. Supplementary feeding. Monitor condition.",
+            "icon": "🐄"
+        },
+        {
+            "month": 2,
+            "conditions": "Very Dry",
+            "activity": "Driest period. Long treks to water. Sell weak animals. Prioritize breeding stock.",
+            "icon": "💧"
+        },
+        {
+            "month": 3,
+            "conditions": "Transitional",
+            "activity": "Long rains approaching. Cattle anticipate fresh grass. Prepare for wet-season movement.",
+            "icon": "🌱"
+        },
+        {
+            "month": 4,
+            "conditions": "Excellent",
+            "activity": "Long rains. Lush grass everywhere. Best grazing of year. Calving season. Milk peaks.",
+            "icon": "🌿"
+        },
+        {
+            "month": 5,
+            "conditions": "Very Good",
+            "activity": "Rains easing. Grass maturing. Excellent grazing. Begin moving to higher ground.",
+            "icon": "🥛"
+        },
+        {
+            "month": 6,
+            "conditions": "Good",
+            "activity": "Cool dry season. Good grazing on dry grass. Move between seasonal pastures.",
+            "icon": "🐄"
+        },
+        {
+            "month": 7,
+            "conditions": "Challenging",
+            "activity": "Cold season. Grass dry. Cattle need salt licks. Monitor body condition closely.",
+            "icon": "❄️"
+        },
+        {
+            "month": 8,
+            "conditions": "Moderate",
+            "activity": "Dry season. Move to dry-season grazing areas. Water points critical.",
+            "icon": "💧"
+        },
+        {
+            "month": 9,
+            "conditions": "Improving",
+            "activity": "Pre-rains. Cattle restless. Prepare for wet-season movement to better pastures.",
+            "icon": "🌱"
+        },
+        {
+            "month": 10,
+            "conditions": "Good",
+            "activity": "Short rains. Fresh grass. Cattle recover condition. Calving begins again.",
+            "icon": "🌿"
+        },
+        {
+            "month": 11,
+            "conditions": "Very Good",
+            "activity": "Peak short rains. Excellent grazing. Milk production rises. Community celebrations.",
+            "icon": "🥛"
+        },
+        {
+            "month": 12,
+            "conditions": "Good",
+            "activity": "Rains ending. Grass still good. Year-end livestock census and culling.",
+            "icon": "📊"
+        }
+    ],
+    "healing": [
+        {
+            "month": 1,
+            "activity": "Dry season. Collect bark and root medicines. Prepare cattle disease remedies.",
+            "herbs": [
+                "Olea africana",
+                "Acacia bark",
+                "Aloe vera"
+            ],
+            "rituals": "New year blessing (Enkiama blessing)",
+            "icon": "🌿"
+        },
+        {
+            "month": 2,
+            "activity": "Collect Aloe vera and desert herbs. Prepare skin and wound medicines. Cattle remedies.",
+            "herbs": [
+                "Aloe vera",
+                "Desert herbs"
+            ],
+            "rituals": "Cattle blessing ceremony",
+            "icon": "🌱"
+        },
+        {
+            "month": 3,
+            "activity": "Long rains prepare. Gather last dry-season medicines. Plant medicine herbs near boma.",
+            "herbs": [
+                "Rain herbs",
+                "Acacia"
+            ],
+            "rituals": "Rain prayer (Entoroj)",
+            "icon": "🌧"
+        },
+        {
+            "month": 4,
+            "activity": "Rains bring fresh growth. Harvest young medicinal shoots. Treat tick fever in cattle.",
+            "herbs": [
+                "Fresh herbs",
+                "Tick medicine"
+            ],
+            "rituals": "Calving ceremony",
+            "icon": "🌿"
+        },
+        {
+            "month": 5,
+            "activity": "Abundant herbs. Mass collection and drying. Prepare fertility and calving medicines.",
+            "herbs": [
+                "Mixed savanna herbs"
+            ],
+            "rituals": "Fertility blessing (Enkidon)",
+            "icon": "✨"
+        },
+        {
+            "month": 6,
+            "activity": "Cool dry season. Dry collected herbs. Prepare storage. Anti-tick and lung medicines.",
+            "herbs": [
+                "Stored medicines",
+                "Lung herbs"
+            ],
+            "rituals": "Community health review",
+            "icon": "🏺"
+        },
+        {
+            "month": 7,
+            "activity": "Cold season. Treat respiratory ailments. Prepare warming medicines. Cattle cough remedies.",
+            "herbs": [
+                "Warming herbs",
+                "Chest remedies"
+            ],
+            "rituals": "Cold season protection",
+            "icon": "❄️"
+        },
+        {
+            "month": 8,
+            "activity": "Dry season. Collect roots before rains. Prepare anti-drought cattle medicines.",
+            "herbs": [
+                "Root medicines",
+                "Drought herbs"
+            ],
+            "rituals": "Ancestor appeasement",
+            "icon": "🙏"
+        },
+        {
+            "month": 9,
+            "activity": "Pre-rain healing. Prepare community for rainy season diseases. Anti-malaria herbs.",
+            "herbs": [
+                "Anti-malaria",
+                "Protective herbs"
+            ],
+            "rituals": "Pre-rain ceremony",
+            "icon": "🌱"
+        },
+        {
+            "month": 10,
+            "activity": "Short rains. Treat waterborne diseases. Fresh herbs available. Community healing.",
+            "herbs": [
+                "Fresh herbs",
+                "Water purification"
+            ],
+            "rituals": "Rain thanksgiving",
+            "icon": "💧"
+        },
+        {
+            "month": 11,
+            "activity": "Peak rains. Treat wet-season ailments. Collect herbs while abundant.",
+            "herbs": [
+                "Mixed fresh herbs"
+            ],
+            "rituals": "Community gathering (Eunoto)",
+            "icon": "🌿"
+        },
+        {
+            "month": 12,
+            "activity": "Year-end purification. Cleanse boma. Prepare new year medicines and protections.",
+            "herbs": [
+                "Purification herbs",
+                "Aloe"
+            ],
+            "rituals": "Year-end cleansing",
+            "icon": "🔥"
+        }
+    ],
+    "weather": [
+        {
+            "month": 1,
+            "season": "Short Dry",
+            "rains": "20-40mm",
+            "temp": "Warm 26°C, cool nights 14°C",
+            "wind": "SE trade wind",
+            "advisory": "Short dry season. Warm pleasant days. Good travel weather.",
+            "icon": "☀️"
+        },
+        {
+            "month": 2,
+            "season": "Dry Peak",
+            "rains": "10-20mm",
+            "temp": "Hot 28°C",
+            "wind": "SE trade wind strong",
+            "advisory": "Driest hottest period. Water stress on cattle. Long distances to water.",
+            "icon": "🌤"
+        },
+        {
+            "month": 3,
+            "season": "Long Rains Begin",
+            "rains": "60-100mm",
+            "temp": "Warm 24°C",
+            "wind": "NE monsoon",
+            "advisory": "Long rains arriving. Thunderstorms. Cool relief. Excellent for grass growth.",
+            "icon": "🌦"
+        },
+        {
+            "month": 4,
+            "season": "Peak Long Rains",
+            "rains": "160-220mm",
+            "temp": "Cool 22°C",
+            "wind": "NE monsoon strong",
+            "advisory": "Heaviest rains. Flooding in valleys. Roads impassable. Excellent cattle conditions.",
+            "icon": "⛈"
+        },
+        {
+            "month": 5,
+            "season": "Long Rains End",
+            "rains": "100-160mm",
+            "temp": "Cool 22°C",
+            "wind": "Transitional",
+            "advisory": "Rains tapering. Cool pleasant weather. Good travel resuming.",
+            "icon": "🌧"
+        },
+        {
+            "month": 6,
+            "season": "Cool Dry",
+            "rains": "20-40mm",
+            "temp": "Cool 20°C",
+            "wind": "SE trade wind",
+            "advisory": "Cool dry season. Clear skies. Cold nights on high ground. Good travel.",
+            "icon": "🌤"
+        },
+        {
+            "month": 7,
+            "season": "Cold Dry",
+            "rains": "10-20mm",
+            "temp": "Cool 18°C, cold nights 10°C",
+            "wind": "SE trade wind strong",
+            "advisory": "Coldest month. Cold winds. Frost possible on highlands. Protect livestock.",
+            "icon": "💨"
+        },
+        {
+            "month": 8,
+            "season": "Dry Season",
+            "rains": "15-30mm",
+            "temp": "Warm 22°C",
+            "wind": "SE trade wind",
+            "advisory": "Dry season. Warming up. Good grazing on dry grass. Fire risk increasing.",
+            "icon": "☀️"
+        },
+        {
+            "month": 9,
+            "season": "Pre-Rains",
+            "rains": "20-40mm",
+            "temp": "Warm 24°C",
+            "wind": "Shifting NE",
+            "advisory": "Short rains approaching. Increasing humidity. Thunderstorms beginning.",
+            "icon": "🌦"
+        },
+        {
+            "month": 10,
+            "season": "Short Rains",
+            "rains": "60-100mm",
+            "temp": "Warm 22°C",
+            "wind": "NE monsoon",
+            "advisory": "Short rains. Good grass growth. Flooding in low areas possible.",
+            "icon": "🌧"
+        },
+        {
+            "month": 11,
+            "season": "Peak Short Rains",
+            "rains": "100-140mm",
+            "temp": "Warm 22°C",
+            "wind": "NE monsoon",
+            "advisory": "Peak short rains. Excellent conditions. Roads muddy. Cattle thriving.",
+            "icon": "⛈"
+        },
+        {
+            "month": 12,
+            "season": "Short Rains End",
+            "rains": "40-80mm",
+            "temp": "Warm 24°C",
+            "wind": "Transitional",
+            "advisory": "Rains ending. Warming up. Good harvest weather. Year-end travel.",
+            "icon": "🌦"
+        }
+    ],
+    "rulers": [
+        {
+            "month": 1,
+            "title": "Enkiama Blessings",
+            "events": [
+                "Homestead blessing ceremony",
+                "Cattle blessing by elders",
+                "New year prayers"
+            ],
+            "rulers": "Laibon spiritual leader performs blessings",
+            "icon": "🐄"
+        },
+        {
+            "month": 2,
+            "title": "Enkidon Fertility Rites",
+            "events": [
+                "Cattle fertility ceremony",
+                "Milk blessing rites",
+                "Prayers at sacred trees"
+            ],
+            "rulers": "Laibon leads fertility ceremonies",
+            "icon": "🥛"
+        },
+        {
+            "month": 3,
+            "title": "Emuratta — Circumcision",
+            "events": [
+                "Male circumcision ceremonies",
+                "Transition to warrior age-set",
+                "Community celebrations"
+            ],
+            "rulers": "Elders and Laibon preside",
+            "icon": "⚔️"
+        },
+        {
+            "month": 4,
+            "title": "Enkang Celebrations",
+            "events": [
+                "Homestead establishment rites",
+                "Marriage ceremonies",
+                "Cattle gifting"
+            ],
+            "rulers": "Family elders lead homestead rites",
+            "icon": "🏠"
+        },
+        {
+            "month": 5,
+            "title": "Eunoto Ceremony",
+            "events": [
+                "Warriors shave heads",
+                "Transition from junior to senior warriors",
+                "Mothers bless sons"
+            ],
+            "rulers": "Senior elders preside over Eunoto",
+            "icon": "✂️"
+        },
+        {
+            "month": 6,
+            "title": "Olng'esherr — Meat Feast",
+            "events": [
+                "Warrior meat feast in forest",
+                "Age-set bonding ceremony",
+                "Elders share wisdom"
+            ],
+            "rulers": "Senior warriors lead forest ceremony",
+            "icon": "🔥"
+        },
+        {
+            "month": 7,
+            "title": "Ilkiama — Elder Passage",
+            "events": [
+                "Junior elders become senior elders",
+                "Retirement from warrior duties",
+                "Wisdom ceremonies"
+            ],
+            "rulers": "Laibon oversees age-set transitions",
+            "icon": "👴"
+        },
+        {
+            "month": 8,
+            "title": "Cattle Blessing Season",
+            "events": [
+                "Annual cattle count and blessing",
+                "Prayers for healthy herds",
+                "Trading of surplus cattle"
+            ],
+            "rulers": "Laibon blesses all cattle",
+            "icon": "🐄"
+        },
+        {
+            "month": 9,
+            "title": "Enkiama Nabo",
+            "events": [
+                "Extended family assembly",
+                "Dispute resolution by elders",
+                "Community decisions made"
+            ],
+            "rulers": "Council of elders holds assembly",
+            "icon": "👑"
+        },
+        {
+            "month": 10,
+            "title": "Rain Thanksgiving",
+            "events": [
+                "Thanksgiving for short rains",
+                "Community feasting",
+                "Prayers at sacred sites"
+            ],
+            "rulers": "Laibon leads rain thanksgiving",
+            "icon": "🌧"
+        },
+        {
+            "month": 11,
+            "title": "Enkang Festival",
+            "events": [
+                "Homestead festivals",
+                "Warriors display skills",
+                "Women sing praise songs"
+            ],
+            "rulers": "Community elders preside",
+            "icon": "🎭"
+        },
+        {
+            "month": 12,
+            "title": "Year-End Cattle Count",
+            "events": [
+                "Annual livestock census",
+                "Year review by elders",
+                "Preparation for new cycle"
+            ],
+            "rulers": "Laibon reviews year and blesses new cycle",
+            "icon": "📊"
+        }
+    ]
+}

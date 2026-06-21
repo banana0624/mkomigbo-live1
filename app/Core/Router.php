@@ -1,58 +1,34 @@
 <?php
 
+namespace App\Core;
+
 class Router
 {
-    public static function dispatch(string $uri): void
+    private array $routes = [];
+    private string $prefix = '';
+
+    public function group(string $prefix, callable $callback): void
     {
-        $path = trim($uri, '/');
+        $previous = $this->prefix;
+        $this->prefix .= '/' . trim($prefix, '/');
 
-        // Normalize
-        if ($path === '' || $path === 'index.php') {
-            require __DIR__ . '/../../public/home.php';
-            return;
-        }
+        $callback($this);
 
-        // Split segments
-        $segments = explode('/', $path);
-        $root = $segments[0];
+        $this->prefix = $previous;
+    }
 
-        /*
-        |--------------------------------------------------------------------------
-        | ADMIN ROUTE
-        |--------------------------------------------------------------------------
-        */
-        if ($root === 'admin') {
-            require_once __DIR__ . '/../Controllers/AdminController.php';
-            (new AdminController())->handle($segments);
-            return;
-        }
+    public function get(string $path, callable $handler): void
+    {
+        $fullPath = trim($this->prefix . '/' . trim($path, '/'), '/');
 
-        /*
-        |--------------------------------------------------------------------------
-        | MODULE ROUTES
-        |--------------------------------------------------------------------------
-        */
-        $modules = ['subjects', 'contributors', 'platforms', 'staff'];
+        $this->routes['GET'][$fullPath] = $handler;
+    }
 
-        if (in_array($root, $modules, true)) {
-            $moduleFile = dirname(__DIR__, 2) . "/public/{$root}/index.php";
+    public function resolve(Request $request)
+    {
+        $method = $request->method;
+        $path   = $request->path;
 
-            if (is_file($moduleFile)) {
-                require $moduleFile;
-                return;
-            }
-
-            http_response_code(404);
-            echo "<h1>Module not found: {$root}</h1>";
-            return;
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | DEFAULT PAGE (CMS)
-        |--------------------------------------------------------------------------
-        */
-        require_once __DIR__ . '/../Controllers/PageController.php';
-        (new PageController())->show($path);
+        return $this->routes[$method][$path] ?? null;
     }
 }

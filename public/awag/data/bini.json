@@ -1,0 +1,934 @@
+{
+    "id": "bini",
+    "name": "Bini",
+    "full_name": "Bini Calendar",
+    "language": "Edo \/ English",
+    "region": "Guinea Coast",
+    "area": "Edo State \/ Benin Kingdom",
+    "color": "#4a1a0a",
+    "initial": "BN",
+    "calendar_type": "4-day traditional",
+    "market_cycle": 4,
+    "market_days": [
+        "Ekioba",
+        "Ekiogbe",
+        "Ekioso",
+        "Ekiudu"
+    ],
+    "market_symbols": {
+        "Ekioba": {
+            "element": "Royal",
+            "symbol": "👑",
+            "color": "#c09020",
+            "meaning": "Royal day. Oba court ceremonies. No common trading at palace."
+        },
+        "Ekiogbe": {
+            "element": "Earth",
+            "symbol": "🌍",
+            "color": "#406020",
+            "meaning": "Earth day. Farm work and guild craft production."
+        },
+        "Ekioso": {
+            "element": "Market",
+            "symbol": "🛒",
+            "color": "#ffd040",
+            "meaning": "Major market day. Benin city markets peak. All guilds sell."
+        },
+        "Ekiudu": {
+            "element": "Rest",
+            "symbol": "⭐",
+            "color": "#a0a0e0",
+            "meaning": "Rest day. Family and community ceremonies."
+        }
+    },
+    "months": [
+        {
+            "n": 1,
+            "name": "Igue Oba",
+            "greg": "Jan",
+            "note": "Igue festival season \/ Dry"
+        },
+        {
+            "n": 2,
+            "name": "Evbare",
+            "greg": "Feb",
+            "note": "Late dry season"
+        },
+        {
+            "n": 3,
+            "name": "Odudu",
+            "greg": "Mar",
+            "note": "Pre-rains \/ Farm preparation"
+        },
+        {
+            "n": 4,
+            "name": "Uki",
+            "greg": "Apr",
+            "note": "First rains \/ Planting"
+        },
+        {
+            "n": 5,
+            "name": "Uki Evbo",
+            "greg": "May",
+            "note": "Peak rains \/ Farming"
+        },
+        {
+            "n": 6,
+            "name": "Ohu",
+            "greg": "Jun",
+            "note": "Heavy rains"
+        },
+        {
+            "n": 7,
+            "name": "Eki",
+            "greg": "Jul",
+            "note": "Peak rains"
+        },
+        {
+            "n": 8,
+            "name": "Ague",
+            "greg": "Aug",
+            "note": "August break \/ Ague festival"
+        },
+        {
+            "n": 9,
+            "name": "Uki Ogbe",
+            "greg": "Sep",
+            "note": "Second rains"
+        },
+        {
+            "n": 10,
+            "name": "Igho",
+            "greg": "Oct",
+            "note": "Harvest season"
+        },
+        {
+            "n": 11,
+            "name": "Igho Evbo",
+            "greg": "Nov",
+            "note": "Dry season onset"
+        },
+        {
+            "n": 12,
+            "name": "Igue",
+            "greg": "Dec",
+            "note": "Igue festival \/ Harmattan \/ Year end"
+        }
+    ],
+    "farming": [
+        {
+            "month": 1,
+            "activity": "Dry season. Clear farm plots. Plant dry-season vegetables. Tend rubber and oil palm.",
+            "crops": [
+                "Vegetables",
+                "Rubber",
+                "Palm"
+            ],
+            "icon": "🌱"
+        },
+        {
+            "month": 2,
+            "activity": "Late dry. Prepare yam mounds. Plant cassava cuttings. Buy seedlings.",
+            "crops": [
+                "Yam",
+                "Cassava"
+            ],
+            "icon": "🌿"
+        },
+        {
+            "month": 3,
+            "activity": "Pre-rain land clearing. Burn residues. Prepare mounds for yam planting.",
+            "crops": [
+                "Yam",
+                "Cassava",
+                "Plantain"
+            ],
+            "icon": "⚒️"
+        },
+        {
+            "month": 4,
+            "activity": "First rains. Plant yam and cocoyam. Intercrop with vegetables. Rubber tapping begins.",
+            "crops": [
+                "Yam",
+                "Cocoyam",
+                "Rubber"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 5,
+            "activity": "Peak rains. Weed yam mounds. Plant cassava. Tend rubber trees.",
+            "crops": [
+                "Yam",
+                "Cassava",
+                "Rubber"
+            ],
+            "icon": "🌿"
+        },
+        {
+            "month": 6,
+            "activity": "Heavy rains. Farm maintenance. Harvest early cocoyam. Rubber tapping.",
+            "crops": [
+                "Cocoyam (harvest)",
+                "Rubber"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 7,
+            "activity": "Continued rains. Tend late yam. Harvest plantain. Rubber and palm tending.",
+            "crops": [
+                "Plantain (harvest)",
+                "Yam",
+                "Rubber"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 8,
+            "activity": "August break. Harvest early yam. Excellent drying weather. Second-season planting.",
+            "crops": [
+                "Yam (harvest)",
+                "Maize",
+                "Vegetables"
+            ],
+            "icon": "☀️"
+        },
+        {
+            "month": 9,
+            "activity": "Second rains. Late yam tending. Harvest plantain. Palm oil season begins.",
+            "crops": [
+                "Plantain",
+                "Palm fruit",
+                "Yam"
+            ],
+            "icon": "🌦"
+        },
+        {
+            "month": 10,
+            "activity": "Main harvest. Yam, cassava, palm. Benin kingdom harvest thanksgiving.",
+            "crops": [
+                "Yam",
+                "Cassava",
+                "Palm oil"
+            ],
+            "icon": "🏺"
+        },
+        {
+            "month": 11,
+            "activity": "Post-harvest. Cassava processing. Rubber tapping peak. Palm wine season.",
+            "crops": [
+                "Cassava",
+                "Rubber",
+                "Palm wine"
+            ],
+            "icon": "🌴"
+        },
+        {
+            "month": 12,
+            "activity": "Harmattan. Igue festival season. Dry farming. Palm and rubber processing.",
+            "crops": [
+                "Palm",
+                "Rubber",
+                "Vegetables"
+            ],
+            "icon": "🌬"
+        }
+    ],
+    "fishing": [
+        {
+            "month": 1,
+            "activity": "Dry season. Benin River and creeks excellent. Osse River fishing peak.",
+            "fish": [
+                "Catfish",
+                "Tilapia",
+                "Perch"
+            ],
+            "conditions": "Excellent",
+            "icon": "🎣"
+        },
+        {
+            "month": 2,
+            "activity": "Best river fishing season. Low clear water. Community trap and net fishing.",
+            "fish": [
+                "Catfish",
+                "Tilapia",
+                "Mixed"
+            ],
+            "conditions": "Excellent",
+            "icon": "🎣"
+        },
+        {
+            "month": 3,
+            "activity": "Pre-rain. Fish feeding actively. Last excellent dry season river fishing.",
+            "fish": [
+                "Catfish",
+                "Perch",
+                "Mixed"
+            ],
+            "conditions": "Very Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 4,
+            "activity": "First rains. Rivers rising. Reduce near spawning areas. Estuary fishing good.",
+            "fish": [
+                "Mixed"
+            ],
+            "conditions": "Good",
+            "icon": "🌊"
+        },
+        {
+            "month": 5,
+            "activity": "Rains. Fish in creeks. Community net fishing in Benin River tributaries.",
+            "fish": [
+                "Mixed",
+                "Catfish"
+            ],
+            "conditions": "Moderate",
+            "icon": "🎣"
+        },
+        {
+            "month": 6,
+            "activity": "Heavy rains. Rivers high. Skilled fishers active. Catfish season in creeks.",
+            "fish": [
+                "Catfish",
+                "Mixed"
+            ],
+            "conditions": "Moderate",
+            "icon": "🌧"
+        },
+        {
+            "month": 7,
+            "activity": "Peak rains. Flooded areas good for cast nets. Tilapia in flooded farms.",
+            "fish": [
+                "Tilapia",
+                "Catfish"
+            ],
+            "conditions": "Moderate",
+            "icon": "🚣"
+        },
+        {
+            "month": 8,
+            "activity": "August break. Excellent river fishing. Osse and Benin rivers productive.",
+            "fish": [
+                "Catfish",
+                "Perch",
+                "Mixed"
+            ],
+            "conditions": "Very Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 9,
+            "activity": "Second rains. Good river fishing. Smoke and preserve large catches.",
+            "fish": [
+                "Mixed",
+                "Catfish"
+            ],
+            "conditions": "Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 10,
+            "activity": "Rivers falling. Fish concentrated. Excellent trap and net fishing.",
+            "fish": [
+                "Catfish",
+                "Tilapia",
+                "Perch"
+            ],
+            "conditions": "Very Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 11,
+            "activity": "Dry season. Good river and creek fishing. Benin city fish markets active.",
+            "fish": [
+                "Mixed",
+                "Catfish"
+            ],
+            "conditions": "Good",
+            "icon": "🎣"
+        },
+        {
+            "month": 12,
+            "activity": "Harmattan. Rivers low. Igue season — some fishing taboos near palace.",
+            "fish": [
+                "Catfish",
+                "Tilapia"
+            ],
+            "conditions": "Good",
+            "icon": "🎣"
+        }
+    ],
+    "trading": [
+        {
+            "month": 1,
+            "activity": "Igue season markets. Bronze and ivory crafts peak. Benin City markets very active.",
+            "goods": [
+                "Bronze crafts",
+                "Ivory",
+                "Palm oil",
+                "Rubber"
+            ],
+            "icon": "🏺"
+        },
+        {
+            "month": 2,
+            "activity": "Active trading. Guild craft production and sale. Rubber and palm export.",
+            "goods": [
+                "Rubber",
+                "Palm oil",
+                "Crafts"
+            ],
+            "icon": "🛒"
+        },
+        {
+            "month": 3,
+            "activity": "Farm input trading. Seeds, cassava cuttings, tools. Pre-season market surge.",
+            "goods": [
+                "Farm inputs",
+                "Tools",
+                "Seeds"
+            ],
+            "icon": "⚒️"
+        },
+        {
+            "month": 4,
+            "activity": "Reduced trading during planting. Local Benin city markets for essentials.",
+            "goods": [
+                "Food",
+                "Rubber",
+                "Local goods"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 5,
+            "activity": "Quiet period. Farming focus. Guild workshops busy with bronze and crafts.",
+            "goods": [
+                "Bronze work",
+                "Crafts"
+            ],
+            "icon": "🏺"
+        },
+        {
+            "month": 6,
+            "activity": "Moderate trading. Rain limits travel. Craft guilds active in workshops.",
+            "goods": [
+                "Local food",
+                "Crafts"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 7,
+            "activity": "Quiet trading. Rain season. Rubber tapping and processing continues.",
+            "goods": [
+                "Rubber",
+                "Local food"
+            ],
+            "icon": "🌧"
+        },
+        {
+            "month": 8,
+            "activity": "August break. Good transport. Benin city markets surge. Crafts and food.",
+            "goods": [
+                "Crafts",
+                "Farm produce",
+                "Bronze"
+            ],
+            "icon": "📦"
+        },
+        {
+            "month": 9,
+            "activity": "Harvest trading begins. Yam and plantain markets opening in Benin City.",
+            "goods": [
+                "Yam",
+                "Plantain",
+                "Palm oil"
+            ],
+            "icon": "🛒"
+        },
+        {
+            "month": 10,
+            "activity": "Peak harvest trading. Palm oil export. Benin City market at peak season.",
+            "goods": [
+                "Yam",
+                "Cassava",
+                "Palm oil",
+                "Rubber"
+            ],
+            "icon": "📦"
+        },
+        {
+            "month": 11,
+            "activity": "Post-harvest. Guild craft production for Igue season. Bronze and carving peak.",
+            "goods": [
+                "Bronze",
+                "Wood carvings",
+                "Palm oil"
+            ],
+            "icon": "🏺"
+        },
+        {
+            "month": 12,
+            "activity": "Igue festival markets. Peak season for bronze, ivory, and traditional crafts.",
+            "goods": [
+                "Bronze",
+                "Ivory",
+                "Ceremonial crafts",
+                "Food"
+            ],
+            "icon": "🎊"
+        }
+    ],
+    "herding": [
+        {
+            "month": 1,
+            "conditions": "Dry",
+            "activity": "Dry season. Goats and sheep near homestead. Cattle from Fulani herders.",
+            "icon": "🐐"
+        },
+        {
+            "month": 2,
+            "conditions": "Dry",
+            "activity": "Late dry. Livestock trading season. Sell surplus before rains.",
+            "icon": "🐐"
+        },
+        {
+            "month": 3,
+            "conditions": "Transitional",
+            "activity": "Pre-rain. Buy young animals for fattening season.",
+            "icon": "🌱"
+        },
+        {
+            "month": 4,
+            "conditions": "Wet",
+            "activity": "Rains begin. Livestock on elevated ground. Monitor health.",
+            "icon": "🌧"
+        },
+        {
+            "month": 5,
+            "conditions": "Wet",
+            "activity": "Peak rains. Keep livestock near homestead. Treat wet season diseases.",
+            "icon": "🌿"
+        },
+        {
+            "month": 6,
+            "conditions": "Wet",
+            "activity": "Heavy rains. House livestock. Feed dry fodder. Prevent flooding losses.",
+            "icon": "🐐"
+        },
+        {
+            "month": 7,
+            "conditions": "Wet",
+            "activity": "Wet season. Keep livestock elevated. Health monitoring essential.",
+            "icon": "🏠"
+        },
+        {
+            "month": 8,
+            "conditions": "Good",
+            "activity": "August break. Excellent grazing on new grass. Recovery period.",
+            "icon": "🌿"
+        },
+        {
+            "month": 9,
+            "conditions": "Wet",
+            "activity": "Second rains. Tick control. Monitor livestock health.",
+            "icon": "💧"
+        },
+        {
+            "month": 10,
+            "conditions": "Good",
+            "activity": "Harvest. Livestock on crop residues. Good fattening for Igue season.",
+            "icon": "🌾"
+        },
+        {
+            "month": 11,
+            "conditions": "Good",
+            "activity": "Dry season returning. Good grazing. Fatten livestock for Igue.",
+            "icon": "🐐"
+        },
+        {
+            "month": 12,
+            "conditions": "Dry",
+            "activity": "Harmattan. Igue season livestock trading. Sacrifice animals for ceremony.",
+            "icon": "🎊"
+        }
+    ],
+    "healing": [
+        {
+            "month": 1,
+            "activity": "Igue season healing. Sacred Oba medicines. Collect dry-season Benin forest herbs.",
+            "herbs": [
+                "Sacred herbs",
+                "Forest medicines",
+                "Bark roots"
+            ],
+            "rituals": "Igue healing ceremony by royal herbalists",
+            "icon": "🌿"
+        },
+        {
+            "month": 2,
+            "activity": "Collect dry-season medicines. Guild herbalists prepare annual medicine stores.",
+            "herbs": [
+                "Bark medicines",
+                "Root herbs"
+            ],
+            "rituals": "Community health assembly",
+            "icon": "🌙"
+        },
+        {
+            "month": 3,
+            "activity": "Pre-rain cleansing. Collect last dry-season medicines. Land blessing herbs.",
+            "herbs": [
+                "Cleansing herbs",
+                "Land medicines"
+            ],
+            "rituals": "Land and community purification",
+            "icon": "🌱"
+        },
+        {
+            "month": 4,
+            "activity": "Fresh herbs sprouting. Treat seasonal malaria. Collect young leaf medicines.",
+            "herbs": [
+                "Fever herbs",
+                "Bitter leaf",
+                "Fresh leaves"
+            ],
+            "rituals": "Rain thanksgiving ceremony",
+            "icon": "🌧"
+        },
+        {
+            "month": 5,
+            "activity": "Peak herbs. Mass collection. Anti-malaria medicines. Rubber tree healing bark.",
+            "herbs": [
+                "Anti-malaria",
+                "Rubber bark",
+                "Neem"
+            ],
+            "rituals": "Farm blessing ceremony",
+            "icon": "🌿"
+        },
+        {
+            "month": 6,
+            "activity": "Heavy rains. Treat waterborne diseases. Protect community water sources.",
+            "herbs": [
+                "Water purification",
+                "Anti-fungal"
+            ],
+            "rituals": "Water protection ceremony",
+            "icon": "💧"
+        },
+        {
+            "month": 7,
+            "activity": "Guild healing rites. Benin city traditional medicine practitioners active.",
+            "herbs": [
+                "Guild medicines",
+                "Traditional cures"
+            ],
+            "rituals": "Guild healing ceremony",
+            "icon": "🏛"
+        },
+        {
+            "month": 8,
+            "activity": "August break. Dry and store herbs. Treat farming injuries. Market health.",
+            "herbs": [
+                "Stored medicines",
+                "Wound herbs"
+            ],
+            "rituals": "Pre-harvest community health blessing",
+            "icon": "☀️"
+        },
+        {
+            "month": 9,
+            "activity": "Second rains. Treat waterborne diseases. Collect second-season medicines.",
+            "herbs": [
+                "Fresh herbs",
+                "Water purification"
+            ],
+            "rituals": "Harvest blessing",
+            "icon": "💧"
+        },
+        {
+            "month": 10,
+            "activity": "Harvest medicines. Recovery herbs. Thanksgiving to Osun (goddess of health).",
+            "herbs": [
+                "Recovery herbs",
+                "Osun herbs"
+            ],
+            "rituals": "Thanksgiving to Osun goddess of health",
+            "icon": "🙏"
+        },
+        {
+            "month": 11,
+            "activity": "Dry season. Collect medicines for Igue season. Prepare royal healing stores.",
+            "herbs": [
+                "Royal medicines",
+                "Igue herbs"
+            ],
+            "rituals": "Pre-Igue healing preparation",
+            "icon": "🏺"
+        },
+        {
+            "month": 12,
+            "activity": "Igue season. Royal purification medicines. Oba takes sacred medicines for kingdom.",
+            "herbs": [
+                "Igue sacred herbs",
+                "Royal purification medicines"
+            ],
+            "rituals": "Igue royal healing and purification ceremony",
+            "icon": "🔥"
+        }
+    ],
+    "weather": [
+        {
+            "month": 1,
+            "season": "Dry Season",
+            "rains": "10-30mm",
+            "temp": "Hot 32°C",
+            "wind": "Harmattan NE",
+            "advisory": "Dry season. Harmattan from northeast. Good travel. Excellent for Igue festival.",
+            "icon": "☀️"
+        },
+        {
+            "month": 2,
+            "season": "Late Dry",
+            "rains": "20-50mm",
+            "temp": "Hot 33°C",
+            "wind": "NE easing",
+            "advisory": "Hottest period. High humidity building. Pre-rain conditions approaching.",
+            "icon": "🌤"
+        },
+        {
+            "month": 3,
+            "season": "Pre-rains",
+            "rains": "60-110mm",
+            "temp": "Hot 31°C",
+            "wind": "SW begins",
+            "advisory": "First rains. Thunderstorms. Humidity rising fast. Good for land preparation.",
+            "icon": "🌦"
+        },
+        {
+            "month": 4,
+            "season": "Early Rains",
+            "rains": "130-190mm",
+            "temp": "Warm 29°C",
+            "wind": "SW monsoon",
+            "advisory": "Reliable rains. Good planting. Flash floods in Benin City low areas.",
+            "icon": "🌧"
+        },
+        {
+            "month": 5,
+            "season": "Peak Rains",
+            "rains": "200-280mm",
+            "temp": "Warm humid 27°C",
+            "wind": "SW monsoon strong",
+            "advisory": "Very heavy rains. Flooding in low areas. Excellent for crops. Rubber tapping good.",
+            "icon": "⛈"
+        },
+        {
+            "month": 6,
+            "season": "Peak Rains",
+            "rains": "220-300mm",
+            "temp": "Warm humid 26°C",
+            "wind": "SW monsoon",
+            "advisory": "Heaviest rains. Flooding possible. Benin River high. Stay cautious.",
+            "icon": "⛈"
+        },
+        {
+            "month": 7,
+            "season": "Peak Rains",
+            "rains": "190-260mm",
+            "temp": "Warm 27°C",
+            "wind": "SW monsoon",
+            "advisory": "Still very rainy. Rivers high. Good rubber tapping weather. Road care needed.",
+            "icon": "🌧"
+        },
+        {
+            "month": 8,
+            "season": "August Break",
+            "rains": "70-110mm",
+            "temp": "Warm 28°C",
+            "wind": "Mixed",
+            "advisory": "Brief dry spell. Excellent travel and market weather. Good harvest window.",
+            "icon": "🌥"
+        },
+        {
+            "month": 9,
+            "season": "Second Rains",
+            "rains": "160-220mm",
+            "temp": "Warm 27°C",
+            "wind": "SW returns",
+            "advisory": "Second rainy season. Heavy but shorter than main rains. Rivers still elevated.",
+            "icon": "🌦"
+        },
+        {
+            "month": 10,
+            "season": "Late Rains",
+            "rains": "100-160mm",
+            "temp": "Warm 28°C",
+            "wind": "Transitional",
+            "advisory": "Rains tapering. Good harvest weather. Benin City markets very active.",
+            "icon": "🌤"
+        },
+        {
+            "month": 11,
+            "season": "Dry onset",
+            "rains": "25-55mm",
+            "temp": "Hot 30°C",
+            "wind": "NE beginning",
+            "advisory": "Dry season returning. Good travel. Preparation for Igue festival begins.",
+            "icon": "🌤"
+        },
+        {
+            "month": 12,
+            "season": "Harmattan",
+            "rains": "8-20mm",
+            "temp": "Hot 31°C",
+            "wind": "NE Harmattan",
+            "advisory": "Harmattan mild in Benin. Igue festival season. Excellent festive weather.",
+            "icon": "💨"
+        }
+    ],
+    "rulers": [
+        {
+            "month": 1,
+            "title": "Igue Royal Festival",
+            "events": [
+                "Oba performs Igue renewal ceremony",
+                "Chiefs and Uzama nobles pay homage",
+                "Bronze and ivory display",
+                "Oba receives blessing for kingdom"
+            ],
+            "rulers": "Oba of Benin performs Igue ceremony",
+            "icon": "👑"
+        },
+        {
+            "month": 2,
+            "title": "Uzama Council",
+            "events": [
+                "Uzama nobles council meeting",
+                "Palace guild assemblies",
+                "Community homage to Oba"
+            ],
+            "rulers": "Oba holds Uzama council",
+            "icon": "🏛"
+        },
+        {
+            "month": 3,
+            "title": "Farm Blessing",
+            "events": [
+                "Oba blesses farming season",
+                "Guild craft preparation begins",
+                "Community planting assembly"
+            ],
+            "rulers": "Oba ceremonially opens farming season",
+            "icon": "🌱"
+        },
+        {
+            "month": 4,
+            "title": "Guild Ceremonies",
+            "events": [
+                "Bronze-casters guild ceremony",
+                "Carvers and weavers guild rites",
+                "Community craft guild assemblies"
+            ],
+            "rulers": "Guild chiefs lead craft ceremonies",
+            "icon": "🏺"
+        },
+        {
+            "month": 5,
+            "title": "Rain Thanksgiving",
+            "events": [
+                "Oba rain thanksgiving ceremony",
+                "Community prayers for good harvest",
+                "Ancestral libations"
+            ],
+            "rulers": "Oba leads rain thanksgiving",
+            "icon": "🌧"
+        },
+        {
+            "month": 6,
+            "title": "Mid-Year Royal Court",
+            "events": [
+                "Oba holds mid-year court",
+                "District chiefs report",
+                "Community grievances heard"
+            ],
+            "rulers": "Oba holds royal court session",
+            "icon": "👑"
+        },
+        {
+            "month": 7,
+            "title": "Palace Rites",
+            "events": [
+                "Palace inner court ceremonies",
+                "Royal ancestral rites",
+                "Oba private ceremonies"
+            ],
+            "rulers": "Oba performs private palace rites",
+            "icon": "🏛"
+        },
+        {
+            "month": 8,
+            "title": "Ague Festival",
+            "events": [
+                "Ague community festival",
+                "August break celebrations",
+                "Cultural display and dance",
+                "Benin City markets peak"
+            ],
+            "rulers": "Community chiefs lead Ague festival",
+            "icon": "🎊"
+        },
+        {
+            "month": 9,
+            "title": "Harvest Opening",
+            "events": [
+                "Oba performs first harvest ceremony",
+                "Guild chiefs give first fruits",
+                "Community thanksgiving begins"
+            ],
+            "rulers": "Oba performs first harvest rite",
+            "icon": "🌾"
+        },
+        {
+            "month": 10,
+            "title": "Grand Harvest Feast",
+            "events": [
+                "Grand harvest thanksgiving",
+                "Chiefs and nobles feast with Oba",
+                "Community celebrations",
+                "New yam ceremony"
+            ],
+            "rulers": "Oba presides over grand harvest feast",
+            "icon": "🏆"
+        },
+        {
+            "month": 11,
+            "title": "Pre-Igue Preparations",
+            "events": [
+                "Palace preparation for Igue",
+                "Guild craft production for Igue market",
+                "Community purification begins"
+            ],
+            "rulers": "Oba prepares for Igue ceremony",
+            "icon": "👑"
+        },
+        {
+            "month": 12,
+            "title": "Grand Igue Festival",
+            "events": [
+                "Grand Igue royal festival",
+                "Oba appears in full regalia",
+                "Bronze and coral bead display",
+                "Kingdom renewal ceremony",
+                "Uzama nobles procession"
+            ],
+            "rulers": "Oba of Benin leads Grand Igue festival",
+            "icon": "🎊"
+        }
+    ]
+}

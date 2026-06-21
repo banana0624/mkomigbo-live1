@@ -1,47 +1,28 @@
 <?php
 declare(strict_types=1);
-
-return [
-  'title' => 'Introduction',
-  'body_html' => <<<HTML
-<div class="mk-prose">
-
-  <p class="mk-muted" style="margin-top:0;">
-    <strong>Language1</strong> introduces the history, development, writing systems, and orthographic questions of the Igbo language.
-    It focuses on how Igbo emerged as a major language of southeastern Nigeria, how its written form was shaped,
-    and why script, sound representation, and standardization remain important issues.
-  </p>
-
-  <p>
-    This subject is not mainly about grammar rules or dictionary entries. It is about the larger framework:
-    where Igbo belongs among African languages, how dialect diversity relates to standard written Igbo,
-    how alphabets and scripts developed, and what still needs improvement in representing Igbo sounds clearly and faithfully.
-  </p>
-
-  <h2>Why this subject matters</h2>
-  <ul>
-    <li><strong>Identity:</strong> language is one of the strongest foundations of Igbo identity and continuity.</li>
-    <li><strong>History:</strong> the history of written Igbo shows the interaction of indigenous knowledge, missionary work, colonial policy, and modern reform.</li>
-    <li><strong>Literacy:</strong> orthography affects education, publishing, reading, and digital use.</li>
-    <li><strong>Preservation:</strong> clear writing systems help protect the language across generations and in the diaspora.</li>
-  </ul>
-
-  <h2>What you will find in this subject</h2>
-  <ul>
-    <li><strong>Overview:</strong> the broad development of Igbo language history and writing.</li>
-    <li><strong>Key Topics:</strong> origins, dialects, orthography, alphabets, Nsibidi, Ńdébé, tone marks, digraphs, trigraphs, and reform questions.</li>
-    <li><strong>People:</strong> language scholars, orthography reformers, script inventors, and interpreters.</li>
-    <li><strong>Sources:</strong> dictionaries, orthography guides, linguistic scholarship, and script documentation.</li>
-  </ul>
-
-  <h2>Explore</h2>
-  <div style="display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 4px;">
-    <a class="mk-btn mk-btn--ghost" href="/subjects/language1/overview/">Overview</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/language1/topics/">Key Topics</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/language1/people/">People</a>
-    <a class="mk-btn mk-btn--ghost" href="/subjects/language1/sources/">Sources</a>
-  </div>
-
-</div>
-HTML,
-];
+echo '<div class="mk-prose">';
+echo '<p class="mk-muted" style="margin-top:0;">Igbo language — its structure, history, dialects, writing systems, and learning resources.</p>';
+echo '<h2>About the Igbo Language</h2>';
+echo '<p>Igbo (Igbo: Asụsụ Igbo) is a tonal language of the Niger-Congo family spoken by over 45 million people, primarily in southeastern Nigeria. It is one of Nigeria\'s three major languages alongside Hausa and Yoruba, and one of the most linguistically complex languages in West Africa.</p>';
+echo '<p>The language is characterized by two primary lexical tones — high and low — with a downstep that creates a third functional tone level. These tones are not mere accents; they carry distinct meaning. The same sequence of consonants and vowels, spoken at different pitches, can mean completely different things.</p>';
+echo '<h2>Dialects</h2>';
+echo '<p>Igbo exists in hundreds of dialects across Igboland. Major dialect clusters include:</p>';
+echo '<ul>';
+echo '<li><strong>Owerri-Igbo</strong> — the basis of Standard Igbo, spoken in Imo State</li>';
+echo '<li><strong>Onitsha-Igbo</strong> — prestigious commercial dialect, Anambra State</li>';
+echo '<li><strong>Ngwa-Igbo</strong> — Abia State</li>';
+echo '<li><strong>Afikpo-Igbo</strong> — Ebonyi State, with significant phonological differences</li>';
+echo '<li><strong>Ika-Igbo</strong> — Delta State, transitional with Edo influences</li>';
+echo '<li><strong>Ekpeye, Oguta, Orlu</strong> — further regional varieties</li>';
+echo '</ul>';
+echo '<p>The establishment of a standard Igbo orthography in the 20th century was contentious, as communities with strong dialect identities resisted standardization. Today Standard Igbo is used in education and broadcasting while dialects remain the living daily language of communities.</p>';
+echo '<h2>Writing Systems</h2>';
+echo '<p>Igbo has been written using multiple systems. The dominant modern orthography is the Önwu system (1961), using the Roman alphabet with additional characters (ị, ọ, ụ, ṅ, gb, kp, nw, ny) and optional tone marks. Ndebe — a newly created indigenous script — offers an alternative. The older Nsịbịdị sign system, while not a full writing system, represents an important tradition of Igbo visual communication.</p>';
+echo '<h2>Language Endangerment</h2>';
+echo '<p>Igbo faces significant endangerment pressure. In urban Igbo households, children increasingly grow up speaking English as their primary language. The civil war disrupted intergenerational transmission. Mission education promoted English at the expense of Igbo. Today revitalization efforts — through schools, media, apps, and diaspora communities — are attempting to reverse this trend.</p>';
+echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 4px;">';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/language1/overview/">Overview</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/language1/topics/">Key Topics</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/language1/people/">People</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/language1/sources/">Sources</a>';
+echo '</div></div>';

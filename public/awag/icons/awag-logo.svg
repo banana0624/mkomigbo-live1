@@ -1,0 +1,137 @@
+<svg width="512" height="512" viewBox="0 0 512 512" role="img" xmlns="http://www.w3.org/2000/svg">
+<title>AWAG — Africa Weekly Activities Guide</title>
+<desc>AWAG logo: gold-ringed emblem with terracotta Africa silhouette on deep ocean, surrounded by 8 activity symbols</desc>
+
+<rect width="512" height="512" rx="80" fill="#0e0804"/>
+<radialGradient id="wg" cx="50%" cy="50%" r="50%">
+  <stop offset="0%" stop-color="#3a1a04" stop-opacity="0.6"/>
+  <stop offset="100%" stop-color="#0e0804" stop-opacity="0"/>
+</radialGradient>
+<rect width="512" height="512" rx="80" fill="url(#wg)"/>
+
+<g transform="translate(256,218)">
+
+  <circle r="196" fill="#1a0e04" opacity="0.6"/>
+  <circle r="192" fill="none" stroke="#6b4e0e" stroke-width="6"/>
+  <circle r="189" fill="none" stroke="#f5d97a" stroke-width="2"/>
+  <circle r="185" fill="none" stroke="#8b6410" stroke-width="1"/>
+  <circle r="162" fill="none" stroke="#4a3208" stroke-width="1" stroke-dasharray="2 8"/>
+  <circle r="156" fill="#0a1c2e"/>
+
+  <!-- Africa landmass -->
+  <path fill="#c85e28" stroke="#e87830" stroke-width="1" stroke-linejoin="round" d="
+    M -2,-122 C 9,-126 22,-122 30,-114 C 38,-106 42,-92 44,-78
+    C 48,-62 56,-50 62,-36 C 68,-22 72,-8 72,8
+    C 72,22 72,36 74,50 C 76,64 80,76 80,90
+    C 80,102 76,114 66,122 C 56,130 44,134 32,132
+    C 20,130 12,122 8,110 C 4,98 2,86 -2,74
+    C -6,62 -10,52 -14,40 C -18,28 -22,16 -26,4
+    C -30,-8 -32,-22 -36,-34 C -40,-48 -46,-62 -46,-76
+    C -46,-90 -40,-104 -28,-112 C -18,-120 -10,-124 -2,-122 Z
+  "/>
+  <!-- West Africa bulge -->
+  <path fill="#d46830" stroke="#e87830" stroke-width="0.8" d="
+    M -46,-76 C -58,-60 -68,-40 -68,-18 C -68,4 -56,20 -42,26
+    C -30,30 -16,28 -8,18 C 0,8 2,-4 -2,-18
+    C -6,-30 -14,-42 -20,-54 C -28,-66 -36,-78 -42,-84 Z
+  "/>
+  <!-- Horn of Africa -->
+  <path fill="#c85e28" stroke="#e87830" stroke-width="0.8" d="
+    M 72,8 C 84,10 98,18 104,30 C 110,44 106,60 94,66
+    C 84,72 72,70 68,60 C 64,50 64,36 64,22 C 64,14 68,6 72,8 Z
+  "/>
+  <!-- Cape -->
+  <path fill="#b85420" stroke="#e87830" stroke-width="0.8" d="
+    M 8,110 C 14,122 16,136 8,144 C 2,152 -8,154 -16,150
+    C -24,146 -28,136 -24,124 C -20,114 -10,108 -2,106 C 4,104 8,106 8,110 Z
+  "/>
+  <!-- East Africa coast -->
+  <path fill="#c25a26" stroke="none" d="
+    M 72,50 C 80,58 84,72 82,86 C 80,98 72,108 64,112
+    C 66,100 70,88 72,76 C 74,64 72,56 72,50 Z
+  "/>
+  <!-- Madagascar -->
+  <path fill="#c85e28" stroke="#e87830" stroke-width="0.8" d="
+    M 106,36 C 112,38 116,48 116,60 C 116,74 110,88 102,94
+    C 96,100 88,98 86,90 C 84,82 88,70 92,58 C 96,46 100,34 106,36 Z
+  "/>
+  <!-- Sahara -->
+  <ellipse cx="-2" cy="-72" rx="34" ry="22" fill="#da6e34" opacity="0.3"/>
+  <!-- Nile -->
+  <path fill="none" stroke="#164a3a" stroke-width="2" stroke-linecap="round" opacity="0.7"
+    d="M 4,-120 C 6,-92 10,-64 12,-36 C 14,-8 14,20 12,46"/>
+  <!-- Congo -->
+  <path fill="none" stroke="#164a3a" stroke-width="1.5" stroke-linecap="round" opacity="0.6"
+    d="M -28,-4 C -14,0 0,4 16,6 C 28,8 40,6 46,0"/>
+  <!-- Niger -->
+  <path fill="none" stroke="#164a3a" stroke-width="1.2" stroke-linecap="round" opacity="0.5"
+    d="M -42,-62 C -54,-44 -58,-24 -50,-6 C -44,8 -30,18 -14,20"/>
+
+  <!-- City dots -->
+  <circle cx="8"   cy="-84" r="3" fill="#f5d97a" opacity="0.8"/>
+  <circle cx="-34" cy="-20" r="3" fill="#f5d97a" opacity="0.8"/>
+  <circle cx="24"  cy="22"  r="3" fill="#f5d97a" opacity="0.8"/>
+  <circle cx="-4"  cy="76"  r="3" fill="#f5d97a" opacity="0.8"/>
+  <circle cx="56"  cy="32"  r="2.5" fill="#f5d97a" opacity="0.6"/>
+
+  <!-- 8 activity icons -->
+  <g transform="translate(0,-170)">
+    <circle r="25" fill="#0e2808" stroke="#6ec820" stroke-width="3"/>
+    <text y="2" style="font-size:23px;text-anchor:middle;dominant-baseline:central">🌾</text>
+  </g>
+  <g transform="translate(120,-120)">
+    <circle r="25" fill="#061428" stroke="#3890e0" stroke-width="3"/>
+    <text y="2" style="font-size:23px;text-anchor:middle;dominant-baseline:central">🎣</text>
+  </g>
+  <g transform="translate(170,0)">
+    <circle r="25" fill="#120828" stroke="#8850e0" stroke-width="3"/>
+    <text y="2" style="font-size:23px;text-anchor:middle;dominant-baseline:central">🌙</text>
+  </g>
+  <g transform="translate(120,120)">
+    <circle r="25" fill="#280e04" stroke="#e05818" stroke-width="3"/>
+    <text y="2" style="font-size:23px;text-anchor:middle;dominant-baseline:central">🐄</text>
+  </g>
+  <g transform="translate(0,170)">
+    <circle r="25" fill="#201604" stroke="#d8a016" stroke-width="3"/>
+    <text y="2" style="font-size:23px;text-anchor:middle;dominant-baseline:central">🛒</text>
+  </g>
+  <g transform="translate(-120,120)">
+    <circle r="25" fill="#041c14" stroke="#20b070" stroke-width="3"/>
+    <text y="2" style="font-size:23px;text-anchor:middle;dominant-baseline:central">🌿</text>
+  </g>
+  <g transform="translate(-170,0)">
+    <circle r="25" fill="#041420" stroke="#20a0c8" stroke-width="3"/>
+    <text y="2" style="font-size:23px;text-anchor:middle;dominant-baseline:central">🌊</text>
+  </g>
+  <g transform="translate(-120,-120)">
+    <circle r="25" fill="#1c1404" stroke="#c8a010" stroke-width="3"/>
+    <text y="2" style="font-size:23px;text-anchor:middle;dominant-baseline:central">☀️</text>
+  </g>
+
+  <!-- Gold dots -->
+  <circle r="5.5" cx="0"    cy="-192" fill="#f5d97a"/>
+  <circle r="4.5" cx="136"  cy="-136" fill="#f5d97a"/>
+  <circle r="4.5" cx="192"  cy="0"    fill="#f5d97a"/>
+  <circle r="4.5" cx="136"  cy="136"  fill="#f5d97a"/>
+  <circle r="5.5" cx="0"    cy="192"  fill="#f5d97a"/>
+  <circle r="4.5" cx="-136" cy="136"  fill="#f5d97a"/>
+  <circle r="4.5" cx="-192" cy="0"    fill="#f5d97a"/>
+  <circle r="4.5" cx="-136" cy="-136" fill="#f5d97a"/>
+
+  <!-- Cardinal ticks -->
+  <line x1="0"    y1="-184" x2="0"    y2="-196" stroke="#f5d97a" stroke-width="2.5"/>
+  <line x1="0"    y1="184"  x2="0"    y2="196"  stroke="#f5d97a" stroke-width="2.5"/>
+  <line x1="184"  y1="0"    x2="196"  y2="0"    stroke="#f5d97a" stroke-width="2.5"/>
+  <line x1="-184" y1="0"    x2="-196" y2="0"    stroke="#f5d97a" stroke-width="2.5"/>
+
+</g>
+
+<!-- Wordmark -->
+<text x="256" y="450" style="font-family:system-ui,sans-serif;font-weight:900;font-size:52px;text-anchor:middle;letter-spacing:10px;fill:#f5d97a">AWAG</text>
+<text x="256" y="478" style="font-family:system-ui,sans-serif;font-weight:400;font-size:10px;text-anchor:middle;letter-spacing:5px;fill:rgba(245,217,122,0.5)">AFRICA WEEKLY ACTIVITIES GUIDE</text>
+
+<line x1="154" y1="494" x2="234" y2="494" stroke="#6b4e0e" stroke-width="1.5"/>
+<circle cx="256" cy="494" r="4" fill="#f5d97a"/>
+<line x1="278" y1="494" x2="358" y2="494" stroke="#6b4e0e" stroke-width="1.5"/>
+
+</svg>

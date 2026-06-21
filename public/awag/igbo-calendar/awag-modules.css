@@ -1,0 +1,109 @@
+/* awag-modules.css — AWAG Activity Modules styles */
+
+#awag-section {
+  margin-top: 32px;
+  padding: 0 4px;
+}
+
+.awag-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255,255,255,.10);
+}
+
+.awag-header h2 {
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: #e8f5e0;
+  letter-spacing: -.01em;
+}
+
+#awag-month-label {
+  font-size: .85rem;
+  color: rgba(232,245,224,.55);
+  font-weight: 600;
+}
+
+.awag-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+}
+
+.awag-module {
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: border-color .12s, transform .12s;
+}
+
+.awag-module:hover {
+  border-color: rgba(255,255,255,.22);
+  transform: translateY(-1px);
+}
+
+.awag-module__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px 10px;
+  background: rgba(255,255,255,.04);
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.awag-module__icon {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.awag-module__title {
+  font-size: .95rem;
+  font-weight: 800;
+  color: #e8f5e0;
+  margin: 0;
+}
+
+.awag-module__body {
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.awag-field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.awag-field__label {
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: rgba(232,245,224,.4);
+}
+
+.awag-field__val {
+  font-size: .88rem;
+  color: rgba(232,245,224,.85);
+  line-height: 1.5;
+}
+
+/* Colored accent bars per module */
+.awag-module:nth-child(1) .awag-module__head { border-left: 3px solid #50c850; }
+.awag-module:nth-child(2) .awag-module__head { border-left: 3px solid #50a8ff; }
+.awag-module:nth-child(3) .awag-module__head { border-left: 3px solid #ffcc50; }
+.awag-module:nth-child(4) .awag-module__head { border-left: 3px solid #ff8c50; }
+.awag-module:nth-child(5) .awag-module__head { border-left: 3px solid #b050ff; }
+.awag-module:nth-child(6) .awag-module__head { border-left: 3px solid #50e0e0; }
+
+@media (max-width: 600px) {
+  .awag-grid { grid-template-columns: 1fr; }
+}

@@ -1,45 +1,20 @@
 <?php
 declare(strict_types=1);
-
-return [
-  'title' => 'Sources',
-  'body_html' => <<<MKHTML_2e9ca678
-<div class="mk-prose">
-
-  <p class="mk-muted" style="margin-top:0;">
-    This is the <strong>Sources</strong> page for <strong>Subject</strong>.
-    It’s a premium starter scaffold — readable now and expandable later.
-  </p>
-
-  <h2>What this subject covers</h2>
-  <ul>
-    <li><strong>Core ideas</strong> — definitions, scope, and key distinctions.</li>
-    <li><strong>Key context</strong> — background readers need to understand the topic.</li>
-    <li><strong>Evidence</strong> — sources, links, archives, media.</li>
-    <li><strong>Debates</strong> — competing viewpoints with citations.</li>
-  </ul>
-
-  <h2>Explore next</h2>
-  <div style="display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 4px;">
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/overview/">
-        Overview      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/topics/">
-        Key Topics      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/people/">
-        People      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/sources/">
-        Sources      </a>
-      </div>
-
-  <h2>Contribute</h2>
-  <p>
-    Add a clean lede, build sections, and attach trusted references using <code>links.json</code> and local files.
-  </p>
-
-</div>
-MKHTML_2e9ca678,
-];
+echo '<div class="mk-prose">';
+echo '<p class="mk-muted" style="margin-top:0;">Nigeria — its politics, society, ethnic structure, and the Igbo experience within it.</p>';
+echo '<h2>What is Nigeria?</h2>';
+echo '<p>Nigeria is the most populous country in Africa — home to over 220 million people and more than 250 ethnic groups. It was created by British colonialism: the 1914 amalgamation of Northern and Southern Nigeria joined communities with profoundly different histories, religions, and political traditions under a single administrative framework. Independence came in 1960. Since then, Nigeria has experienced six military coups, a civil war, and a turbulent democracy. It remains the world\'s largest Black nation and one of Africa\'s most consequential states.</p>';
+echo '<h2>The Igbo in Nigeria</h2>';
+echo '<p>The Igbo are one of Nigeria\'s three major ethnic groups alongside the Hausa-Fulani and the Yoruba. Concentrated in southeastern Nigeria — Anambra, Imo, Abia, Enugu, and Ebonyi states — they number approximately 45 million in Nigeria alone. The Igbo are known for their commercial enterprise, educational achievement, and adaptability. They are present in significant numbers in every Nigerian city and in major cities worldwide.</p>';
+echo '<h2>The Nigerian State and Igbo Marginalization</h2>';
+echo '<p>The relationship between the Igbo and the Nigerian federal state has been fraught since the civil war of 1967–1970. The post-war settlement — officially reconciliatory, practically punitive — left the Igbo disadvantaged in federal appointments, military rank, oil revenue allocation, and infrastructure investment. The Southeast has consistently received less federal investment per capita than other zones. This structural marginalization is the context for understanding Igbo political grievances and the persistence of separatist sentiment.</p>';
+echo '<h2>Oil, Power, and the Niger Delta</h2>';
+echo '<p>Nigeria\'s oil wealth — the foundation of the federal government\'s revenue — comes largely from the Niger Delta, partly overlapping with former Biafran territory. The communities that live on this oil — Ijaw, Ogoni, Urhobo, and others — have received minimal benefit while suffering environmental devastation. Ken Saro-Wiwa\'s execution in 1995 for his activism on behalf of the Ogoni people brought Nigeria\'s oil politics to world attention. The Niger Delta remains one of the most contested political spaces in Africa.</p>';
+echo '<h2>Democracy and Its Limits</h2>';
+echo '<p>Nigeria returned to civilian rule in 1999 after sixteen years of military government. The Fourth Republic has produced four successive civilian governments — Obasanjo, Yar\'Adua, Jonathan, and Buhari. Elections have been marred by fraud, violence, and manipulation. The 2023 election of Bola Tinubu produced mass protests. Nigerian democracy remains fragile — constrained by ethnic arithmetic, oil patronage, and a political class that has resisted structural reform.</p>';
+echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 4px;">';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/nigeria/overview/">Overview</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/nigeria/topics/">Key Topics</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/nigeria/people/">People</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/nigeria/sources/">Sources</a>';
+echo '</div></div>';

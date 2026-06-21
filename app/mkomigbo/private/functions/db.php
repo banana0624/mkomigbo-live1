@@ -3,35 +3,56 @@ declare(strict_types=1);
 
 /*
 |------------------------------------------------------
-| LOAD .env (simple, reliable)
+| LOAD .env (robust multi-location search)
 |------------------------------------------------------
 */
-$envPath = dirname(__DIR__, 2) . '/.env';
+(static function(): void {
 
-if (is_file($envPath)) {
-    $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-
-    foreach ($lines as $line) {
-        $line = trim($line);
-
-        if ($line === '' || str_starts_with($line, '#')) {
-            continue;
-        }
-
-        if (!str_contains($line, '=')) {
-            continue;
-        }
-
-        [$key, $value] = explode('=', $line, 2);
-
-        $key = trim($key);
-        $value = trim($value);
-
-        $value = trim($value, "\"'");
-
-        $_ENV[$key] = $value;
+    // Already loaded — skip
+    if (!empty($_ENV['DB_NAME'])) {
+        return;
     }
-}
+
+    // Candidate locations, most specific first
+    $candidates = [
+        // Correct location: app/mkomigbo/.env
+        dirname(__DIR__, 1) . '/.env',
+        // One level up: app/.env (fallback)
+        dirname(__DIR__, 2) . '/.env',
+        // Release root: releases/2026-.../.env
+        dirname(__DIR__, 3) . '/.env',
+    ];
+
+    foreach ($candidates as $envPath) {
+        if (!is_file($envPath)) {
+            continue;
+        }
+
+        $lines = @file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        if (!is_array($lines)) {
+            continue;
+        }
+
+        foreach ($lines as $line) {
+            $line = trim($line);
+            if ($line === '' || str_starts_with($line, '#')) {
+                continue;
+            }
+            if (!str_contains($line, '=')) {
+                continue;
+            }
+            [$key, $value] = explode('=', $line, 2);
+            $key   = trim($key);
+            $value = trim(trim($value), "\"'");
+            if ($key !== '' && !isset($_ENV[$key])) {
+                $_ENV[$key] = $value;
+            }
+        }
+
+        // Found and loaded — stop searching
+        break;
+    }
+})();
 
 /*
 |------------------------------------------------------
@@ -46,10 +67,10 @@ function db(): PDO
         return $pdo;
     }
 
-    $host = $_ENV['DB_HOST'] ?? 'localhost';
-    $db   = $_ENV['DB_NAME'] ?? '';
-    $user = $_ENV['DB_USER'] ?? '';
-    $pass = $_ENV['DB_PASS'] ?? '';
+    $host    = $_ENV['DB_HOST'] ?? 'localhost';
+    $db      = $_ENV['DB_NAME'] ?? '';
+    $user    = $_ENV['DB_USER'] ?? '';
+    $pass    = $_ENV['DB_PASS'] ?? '';
     $charset = 'utf8mb4';
 
     if ($db === '' || $user === '') {
@@ -67,16 +88,21 @@ function db(): PDO
         return $pdo;
 
     } catch (Throwable $e) {
-        die('DB ERROR: ' . $e->getMessage());
+        die('DATABASE CONNECTION FAILED: ' . $e->getMessage());
     }
 }
 
 /*
 |------------------------------------------------------
-| COMPATIBILITY WRAPPER (CRITICAL)
+| COMPATIBILITY WRAPPERS
 |------------------------------------------------------
 */
 function mk_db(): PDO
+{
+    return db();
+}
+
+function staff_pdo(): PDO
 {
     return db();
 }
