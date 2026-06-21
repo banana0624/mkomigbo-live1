@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . "/../auth/core.php";
 declare(strict_types=1);
 
 require_once __DIR__ . '/../_init.php';
@@ -44,7 +45,7 @@ if (!function_exists('mk_require_staff_login')) {
 }
 
 if (function_exists('mk_require_staff_login')) {
-  mk_require_staff_login();
+  auth_require_role('staff');
 } else {
   header('Location: /staff/login.php', true, 302);
   exit;

@@ -40,7 +40,7 @@ if (function_exists('mk__session_start')) {
 /* ---------------------------------------------------------
    Ensure auth helpers are loaded (so mk_require_staff_login exists)
 --------------------------------------------------------- */
-if (!function_exists('mk_require_staff_login') || !function_exists('mk_attempt_staff_login')) {
+if (!function_exists('mk_require_staff_login') || !function_exists('auth_login')) {
   $auth = null;
   if (defined('PRIVATE_PATH') && is_string(PRIVATE_PATH) && PRIVATE_PATH !== '') {
     $auth = rtrim(PRIVATE_PATH, "/\\") . '/functions/auth.php';
@@ -61,7 +61,7 @@ if (function_exists('mk_require_staff_login')) {
   try {
     mk_require_staff_login($wantReturn);
   } catch (Throwable $e) {
-    mk_require_staff_login();
+    auth_require_role('staff');
   }
 } else {
   $r = rawurlencode($wantReturn);

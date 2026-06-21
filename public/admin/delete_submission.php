@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . "/../auth/core.php";
 require '../../_init.php';
 
 require_once '../../private/functions/authz.php';

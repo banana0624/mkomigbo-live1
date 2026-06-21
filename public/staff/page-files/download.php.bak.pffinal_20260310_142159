@@ -27,7 +27,7 @@ if (function_exists('mk_staff_session_start')) {
   @session_start();
 }
 
-mk_require_staff_login();
+auth_require_role('staff');
 
 if (!function_exists('h')) {
   function h(string $v): string { return htmlspecialchars($v, ENT_QUOTES, 'UTF-8'); }

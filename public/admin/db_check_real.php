@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . "/../auth/core.php";
 require_once __DIR__ . '/../_init.php';
 
 $pdo = mk_db();

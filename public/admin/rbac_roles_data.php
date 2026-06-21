@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . "/../auth/core.php";
 require_once __DIR__ . '/../../private/bootstrap.php';
 
 header('Content-Type: application/json');
@@ -30,7 +31,7 @@ foreach ($roles as $role) {
     ");
     $stmt->execute([$role['id']]);
 
-    $assigned = array_column($stmt->fetchAll(PDO::FETCH_ASSOC), 'capability_id');
+    $assigned = array_map('intval', array_column($stmt->fetchAll(PDO::FETCH_ASSOC), 'capability_id'));
 
     $resultRoles[] = [
         'id' => $role['id'],

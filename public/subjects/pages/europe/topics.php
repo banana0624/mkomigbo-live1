@@ -1,47 +1,26 @@
 <?php
 declare(strict_types=1);
-
-return [
-  'title' => 'Topics',
-  'body_html' => <<<MKHTML_c20cb160
-<div class="mk-prose">
-
-  <p class="mk-muted" style="margin-top:0;">
-    <strong>Subject</strong> — Key\ Topics.
-    Starter scaffold: readable now, expandable later.
-  </p>
-
-  <div style="display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 14px;">
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/intro/">
-        Introduction      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/overview/">
-        Overview      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/topics/">
-        Key Topics      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/people/">
-        People      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/sources/">
-        Sources      </a>
-      </div>
-
-  <h2>What belongs here</h2>
-  <ul>
-    <li><strong>Scope:</strong> what this page covers and excludes.</li>
-    <li><strong>Key points:</strong> the essentials readers should remember.</li>
-    <li><strong>Structure:</strong> sections you’ll expand later.</li>
-  </ul>
-
-  <hr>
-
-  <p class="mk-muted">
-    Tip: add citations and attach source links/files below.
-  </p>
-
-</div>
-MKHTML_c20cb160,
-];
+echo '<div class="mk-prose">';
+echo '<p class="mk-muted" style="margin-top:0;">Key topics in the African and Igbo experience in Europe.</p>';
+echo '<h2>Colonial Legacy and European Responsibility</h2>';
+echo '<p>The African presence in Europe cannot be separated from European colonial history. Belgium colonized the Congo and extracted enormous wealth while perpetrating mass atrocities under Leopold II — today Brussels hosts a large Congolese community. France colonized vast swathes of West and Central Africa — today Paris has the largest African diaspora in Europe. Britain colonized Nigeria — today London has the largest Nigerian community outside Nigeria. The Netherlands colonized Indonesia and Suriname — today Amsterdam hosts significant Caribbean and African communities. This is not coincidence but consequence.</p>';
+echo '<p>The reparations debate — whether European nations owe reparations to African and Caribbean communities for the damage done by colonization and the slave trade — is one of the most significant political and moral questions of the coming decades. Several European nations have begun to address aspects of this history: Belgium returned the remains of Patrice Lumumba\'s tooth (the only physical remnant of his body after Belgian-complicit murder) to the Congo in 2022; France has begun repatriating looted African art; Germany has returned some Benin Bronzes. These are small steps relative to the scale of what was taken.</p>';
+echo '<h2>Racism and Integration</h2>';
+echo '<p>African communities across Europe face systemic racial discrimination in housing, employment, education, and interaction with law enforcement. The specific forms vary by country — France\'s republican model officially denies ethnic identity while informally practicing significant discrimination; Germany\'s citizenship was historically based on ethnicity (jus sanguinis) rather than birth (jus soli), making integration for non-ethnic-Germans structurally difficult; Italy\'s political discourse has become increasingly hostile to African migrants.</p>';
+echo '<p>The killing of George Floyd in the USA in 2020 triggered protests across Europe — in London, Paris, Amsterdam, Brussels, Berlin, and other cities — that made clear the resonance of anti-Black racism across the Atlantic. European demonstrators pulled down statues of slave traders (Edward Colston in Bristol, Leopold II in Belgium) and demanded reckoning with colonial history. This moment opened conversations about racism in Europe that had previously been largely suppressed.</p>';
+echo '<h2>Igbo and Nigerian Community Organizations in Europe</h2>';
+echo '<p>Nigerian and Igbo communities across Europe have built networks of organizations providing mutual support, cultural maintenance, and advocacy:</p>';
+echo '<ul>';
+echo '<li><strong>State associations</strong> — as in the UK, every Nigerian state has associations in major European cities; these provide mutual aid, cultural events, and collective voice</li>';
+echo '<li><strong>Churches</strong> — Nigerian Pentecostal churches are the most important community institutions in virtually every European Nigerian community; they provide spiritual community, social support, and cultural continuity</li>';
+echo '<li><strong>Professional networks</strong> — Nigerian professionals in medicine, law, academia, and business form networks that support career development and community advocacy</li>';
+echo '<li><strong>Cultural organizations</strong> — Igbo cultural organizations organize festivals, language classes, and events maintaining connection to tradition</li>';
+echo '</ul>';
+echo '<h2>Second Generation Europeans of Nigerian Origin</h2>';
+echo '<p>The children of Nigerian migrants born or raised in Europe represent a new phenomenon — genuinely bicultural people who move between European and Nigerian worlds with varying degrees of fluency. In France, second-generation Nigerians navigate the French republican model that officially denies ethnic difference while being visibly Black in a society that is not color-blind. In Germany, second-generation Nigerians fight for citizenship rights in a system that until 2000 did not grant citizenship by birth. In Ireland, the children of Nigerian nurses and doctors are among the most academically successful students in Irish schools.</p>';
+echo '<p>This generation is creating new cultural forms — music, literature, fashion, and political activism — that are neither simply European nor simply Nigerian but something genuinely new. Their emergence as a cultural and political force in European societies is one of the most significant developments in contemporary European life.</p>';
+echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 4px;">';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/europe/intro/">Introduction</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/europe/overview/">Overview</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/europe/people/">Key Figures</a>';
+echo '</div></div>';

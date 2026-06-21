@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . "/../auth/core.php";
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }

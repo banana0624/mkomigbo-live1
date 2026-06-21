@@ -123,7 +123,7 @@ if (function_exists('mk__session_start')) {
 if (function_exists('mk_require_role')) {
   mk_require_role('admin');
 } elseif (function_exists('mk_require_staff_login')) {
-  mk_require_staff_login();
+  auth_require_role('staff');
   // fallback: if RBAC role enforcement isn't available, block hard
   http_response_code(403);
   echo "Forbidden";

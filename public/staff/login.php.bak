@@ -28,7 +28,7 @@ if (!function_exists('redirect_to')) {
 }
 
 /* Defensive: ensure auth helpers are loaded */
-if (!function_exists('mk_attempt_staff_login')) {
+if (!function_exists('auth_login')) {
   $auth = null;
   if (defined('PRIVATE_PATH')) $auth = PRIVATE_PATH . '/functions/auth.php';
   elseif (defined('APP_ROOT')) $auth = APP_ROOT . '/private/functions/auth.php';
@@ -105,10 +105,10 @@ if (is_post_request()) {
   if ($password === '') { $errors[] = 'Password is required.'; }
 
   if (!$errors) {
-    if (!function_exists('mk_attempt_staff_login')) {
+    if (!function_exists('auth_login')) {
       $errors[] = 'Auth system is not loaded. Ensure /public/_init.php includes /private/functions/auth.php.';
     } else {
-      $res = mk_attempt_staff_login($email, $password);
+      $res = auth_login($email, $password);
 
       if (!is_array($res) || empty($res['ok'])) {
         $errors[] = (is_array($res) && !empty($res['error']))

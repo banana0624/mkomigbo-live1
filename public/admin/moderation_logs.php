@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . "/../auth/core.php";
 declare(strict_types=1);
 
 ini_set('display_errors', 1);
@@ -11,7 +12,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 }
 
 require __DIR__ . '/auth.php';
-requireLogin();
+auth_require_role('admin');
 
 $db = mk_db();
 

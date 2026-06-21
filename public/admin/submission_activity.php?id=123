@@ -8,7 +8,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 }
 
 require __DIR__ . '/auth.php';
-requireLogin();
+auth_require_role('admin');
 
 $db = mk_db();
 

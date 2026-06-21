@@ -71,7 +71,7 @@ $u = static function(string $path): string {
 };
 
 /* auth */
-mk_require_staff_login();
+auth_require_role('staff');
 
 $pdo = staff_pdo();
 if (!$pdo instanceof PDO) {

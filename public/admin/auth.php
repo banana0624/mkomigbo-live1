@@ -1,68 +1,96 @@
 <?php
 declare(strict_types=1);
 
+/**
+ * /public/admin/auth.php
+ *
+ * Canonical admin auth layer.
+ */
+
+if (defined('MK_ADMIN_AUTH_LOADED')) {
+    return;
+}
+
+define('MK_ADMIN_AUTH_LOADED', true);
+
+/* ---------------------------------------------------------
+   Session
+--------------------------------------------------------- */
+
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
 
-if (!empty($_SESSION['flash'])) {
-    echo '<div class="flash flash-success">' . htmlspecialchars($_SESSION['flash']) . '</div>';
-    unset($_SESSION['flash']);
-}
+/* ---------------------------------------------------------
+   Require admin login
+--------------------------------------------------------- */
 
-if (!empty($_SESSION['error'])) {
-    echo '<div class="flash flash-error">' . htmlspecialchars($_SESSION['error']) . '</div>';
-    unset($_SESSION['error']);
-}
+if (!function_exists('auth_require_role')) {
 
-function isLoggedIn(): bool {
-    return isset($_SESSION['admin_user_id']);
-}
-
-function requireLogin(): void
+    function auth_require_role(string $role): void
     {
-        if (empty($_SESSION['admin_user_id'])) {
-    
-            // Detect AJAX request
-            $isAjax = (
-                !empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
-                strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest'
-            );
-    
-            if ($isAjax) {
-                header('Content-Type: application/json');
-                echo json_encode([
-                    'success' => false,
-                    'message' => 'Unauthorized'
-                ]);
-                exit;
-            }
-    
-            header('Location: /public/admin/login.php');
+        $current =
+            $_SESSION['role']
+            ?? $_SESSION['staff_role']
+            ?? '';
+
+        if ($current !== $role) {
+
+            header('Location: /admin/login.php');
+
             exit;
         }
     }
+}
 
-function requireRole(string $role): void
-{
-    requireLogin();
+/* ---------------------------------------------------------
+   Login helper
+--------------------------------------------------------- */
 
-    if (($_SESSION['admin_role'] ?? '') !== $role) {
+if (!function_exists('auth_login')) {
 
-        $isAjax = (
-            !empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
-            strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest'
-        );
+    function auth_login(
+        int $userId,
+        string $role,
+        array $extra = []
+    ): void {
 
-        if ($isAjax) {
-            header('Content-Type: application/json');
-            echo json_encode([
-                'success' => false,
-                'message' => 'Forbidden'
-            ]);
-            exit;
+        session_regenerate_id(true);
+
+        $_SESSION['user_id'] = $userId;
+        $_SESSION['role'] = $role;
+
+        foreach ($extra as $k => $v) {
+            $_SESSION[$k] = $v;
+        }
+    }
+}
+
+/* ---------------------------------------------------------
+   Logout helper
+--------------------------------------------------------- */
+
+if (!function_exists('auth_logout')) {
+
+    function auth_logout(): void
+    {
+        $_SESSION = [];
+
+        if (ini_get('session.use_cookies')) {
+
+            $params = session_get_cookie_params();
+
+            setcookie(
+                session_name(),
+                '',
+                time() - 42000,
+                $params['path'],
+                $params['domain'],
+                $params['secure'],
+                $params['httponly']
+            );
         }
 
-        die('Access denied');
+        session_destroy();
     }
 }

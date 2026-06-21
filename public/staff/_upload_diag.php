@@ -1,9 +1,10 @@
 <?php
+require_once __DIR__ . "/../auth/core.php";
 declare(strict_types=1);
 
 require_once __DIR__ . '/_init.php';
 
-mk_require_staff_login();
+auth_require_role('staff');
 
 header('Content-Type: text/plain; charset=utf-8');
 

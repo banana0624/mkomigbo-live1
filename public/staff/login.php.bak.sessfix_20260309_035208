@@ -37,7 +37,7 @@ function redirect_to(string $path, int $code = 302): never {
   exit;
 }
 
-if (!function_exists('mk_attempt_staff_login')) {
+if (!function_exists('auth_login')) {
   $auth = null;
   if (defined('PRIVATE_PATH') && is_string(PRIVATE_PATH) && PRIVATE_PATH !== '') {
     $auth = rtrim(PRIVATE_PATH, "/\\") . '/functions/auth.php';
@@ -81,10 +81,10 @@ if (is_post()) {
   $email = trim((string)($_POST['email'] ?? ''));
   $pass  = (string)($_POST['password'] ?? '');
 
-  if (!function_exists('mk_attempt_staff_login')) {
+  if (!function_exists('auth_login')) {
     $error = 'Auth system not loaded.';
   } else {
-    $res = mk_attempt_staff_login($email, $pass);
+    $res = auth_login($email, $pass);
     if (!empty($res['ok'])) {
       redirect_to($return, 302);
     }

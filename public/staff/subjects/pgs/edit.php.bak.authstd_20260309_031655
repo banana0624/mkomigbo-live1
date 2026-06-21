@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../../../_init.php';
 
-mk_require_staff_login();
+auth_require_role('staff');
 
 /**
  * /public/staff/subjects/pgs/edit.php
@@ -268,7 +268,7 @@ if (function_exists('require_staff')) {
 } elseif (function_exists('require_staff_login')) {
   require_staff_login();
 } elseif (function_exists('mk_require_staff_login')) {
-  mk_require_staff_login();
+  auth_require_role('staff');
 }
 
 /* DB */

@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . "/../auth/core.php";
 require_once __DIR__ . '/../../private/bootstrap.php';
 
 header('Content-Type: application/json');

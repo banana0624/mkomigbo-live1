@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../../../_init.php';
 
-mk_require_staff_login();
+auth_require_role('staff');
 
 /**
  * /public/staff/subjects/pgs/edit.php
@@ -256,7 +256,7 @@ if (!function_exists('pf__backfill_external_attachment_meta')) {
 /* ---------------------------------------------------------
    Auth
 --------------------------------------------------------- */
-mk_require_staff_login();
+auth_require_role('staff');
 
 /* DB */
 $pdo = staff_pdo();

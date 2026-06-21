@@ -32,7 +32,7 @@ if ($tools_header !== '' && is_file($tools_header)) {
   require_once $tools_header;
 } else {
   if (function_exists('mk_require_staff_login')) {
-    mk_require_staff_login();
+    auth_require_role('staff');
   } else {
     header('Location: /staff/login.php', true, 302);
     exit;

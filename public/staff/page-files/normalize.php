@@ -15,7 +15,7 @@ require_once __DIR__ . '/../../_init.php';
 @ini_set('display_errors', '0');
 @ini_set('display_startup_errors', '0');
 error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
-mk_require_staff_login();
+auth_require_role('staff');
 
 if (!function_exists('h')) {
   function h(string $v): string { return htmlspecialchars($v, ENT_QUOTES, 'UTF-8'); }

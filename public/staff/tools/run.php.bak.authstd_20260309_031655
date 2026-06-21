@@ -39,7 +39,7 @@ if (function_exists('mk__session_start')) {
 /* ---------------------------------------------------------
    Ensure auth helpers loaded (belt+suspenders)
 --------------------------------------------------------- */
-if (!function_exists('mk_require_staff_login') || !function_exists('mk_attempt_staff_login')) {
+if (!function_exists('mk_require_staff_login') || !function_exists('auth_login')) {
   $auth = null;
   if (defined('PRIVATE_PATH') && is_string(PRIVATE_PATH) && PRIVATE_PATH !== '') {
     $auth = rtrim(PRIVATE_PATH, "/\\") . '/functions/auth.php';
@@ -93,7 +93,7 @@ function mk_tools_csrf_valid(?string $posted): bool {
 --------------------------------------------------------- */
 $wantReturn = '/staff/tools/';
 if (function_exists('mk_require_staff_login')) {
-  try { mk_require_staff_login($wantReturn); } catch (Throwable $e) { mk_require_staff_login(); }
+  try { mk_require_staff_login($wantReturn); } catch (Throwable $e) { auth_require_role('staff'); }
 } else {
   header('Location: /staff/login.php?return=' . rawurlencode($wantReturn), true, 302);
   exit;

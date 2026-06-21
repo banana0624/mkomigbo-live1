@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . "/../auth/core.php";
 session_start();
 
 if (!empty($_SESSION['flash'])) {

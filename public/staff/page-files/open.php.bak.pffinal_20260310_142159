@@ -185,11 +185,11 @@ header('X-MK-SIGNED-OK: ' . ($signedOk ? '1' : '0'));
 --------------------------------------------------------- */
 if (!$signedOk) {
   if (function_exists('mk_require_staff_login')) {
-    mk_require_staff_login();
+    auth_require_role('staff');
   } elseif (function_exists('require_staff_login')) {
-mk_require_staff_login();
+auth_require_role('staff');
   } elseif (function_exists('require_staff')) {
-mk_require_staff_login();
+auth_require_role('staff');
   } else {
     // absolute fallback: block
     http_response_code(403);

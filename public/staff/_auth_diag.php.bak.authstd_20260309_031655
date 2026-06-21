@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../_init.php';
-mk_require_staff_login();
+auth_require_role('staff');
 
 /**
  * /public/staff/_auth_diag.php
@@ -29,7 +29,7 @@ echo "AUTH FILE EXISTS: " . (($auth_path && is_file($auth_path)) ? 'YES' : 'NO')
 if ($auth_path && is_file($auth_path)) {
   require_once $auth_path;
 }
-echo "mk_attempt_staff_login exists: " . (function_exists('mk_attempt_staff_login') ? 'YES' : 'NO') . "\n\n";
+echo "auth_login exists: " . (function_exists('auth_login') ? 'YES' : 'NO') . "\n\n";
 
 /* DB sanity */
 if (!function_exists('db')) {

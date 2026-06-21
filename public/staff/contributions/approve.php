@@ -4,7 +4,7 @@ declare(strict_types=1);
 // /public/staff/contributions/approve.php
 
 require_once __DIR__ . '/../../_init.php';
-mk_require_staff_login();
+auth_require_role('staff');
 
 require_once APP_ROOT . '/private/functions/contributions.php';
 require_once APP_ROOT . '/private/functions/staff_flash.php';

@@ -1,0 +1,179 @@
+/* =========================================================
+   /public/lib/css/subjects-grid.css
+   Subjects grid + card system (single source of truth)
+   - styles legacy (.grid/.card/.logo) AND mk (.mk-*)
+   - avoids redefining ui.css tokens and avoids redefining body/hero
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   GRID: legacy + mk
+--------------------------------------------------------- */
+.subjects-grid,
+.grid,
+.mk-grid.mk-grid--subjects{
+  margin-top: 12px;
+  display:grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+@media (max-width: 1100px){
+  .subjects-grid, .grid, .mk-grid.mk-grid--subjects{
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 780px){
+  .subjects-grid, .grid, .mk-grid.mk-grid--subjects{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 440px){
+  .subjects-grid, .grid, .mk-grid.mk-grid--subjects{
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------------------------------------------------------
+   CARD: DO NOT override ui.css .card baseline globally.
+   Instead, scope to subject contexts by using these classes:
+   - .subject-card / .mk-subject-card / .card used within subjects pages
+--------------------------------------------------------- */
+.subject-card,
+.mk-card.mk-subject-card,
+.grid .card{
+  border: 1px solid rgba(0,0,0,.10);
+  border-radius: 18px;
+  background: var(--card, #fff);
+  overflow:hidden;
+  box-shadow: 0 12px 28px rgba(0,0,0,.05);
+  transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+  display:flex;
+  flex-direction:column;
+  min-height: 170px;
+}
+
+.subject-card:hover,
+.mk-card.mk-subject-card:hover,
+.grid .card:hover{
+  transform: translateY(-1px);
+  border-color: rgba(0,0,0,.22);
+  box-shadow: 0 18px 36px rgba(0,0,0,.08);
+}
+
+/* Color bar */
+.subject-card__bar,
+.mk-card__bar,
+.grid .card-bar{
+  height: 7px;
+  background: var(--accent, #111);
+}
+
+/* Full-card links */
+.stretch,
+.mk-card__link{
+  text-decoration:none;
+  color:inherit;
+  display:block;
+  height:100%;
+}
+
+/* Body */
+.subject-card__body,
+.mk-card__body,
+.grid .card-body{
+  padding: 14px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  flex:1;
+}
+
+/* Top row */
+.subject-card__top,
+.mk-subject-card__top,
+.grid .top{
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+}
+
+/* Logo/icon sizing (single definitive rule) */
+.subject-card__icon,
+.mk-subject-card__logo,
+.grid .logo{
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  border: 1px solid rgba(0,0,0,.10);
+  background: rgba(0,0,0,0.02);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  flex: 0 0 auto;
+  position:relative;
+  font-weight:900;
+  letter-spacing:-0.02em;
+}
+.subject-card__icon::after,
+.mk-subject-card__logo::after,
+.grid .logo::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:16px;
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,.35);
+  pointer-events:none;
+  opacity:.35;
+}
+.subject-card__icon img,
+.mk-subject-card__logo img,
+.grid .logo img{
+  width:100%;
+  height:100%;
+  object-fit: cover;
+  display:block;
+}
+
+/* Titles / text */
+.subject-card h3,
+.mk-subject-card__title,
+.grid .card h3{
+  margin: 2px 0 6px;
+  font-size: 1.1rem;
+  line-height:1.2;
+  letter-spacing:-0.01em;
+}
+.subject-card p,
+.mk-subject-card__desc,
+.grid .card p{
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* Slug line */
+.subject-card-slug,
+.mk-subject-card__slug,
+.grid .subject-slug{
+  margin-top: 2px;
+  font-size: .95rem;
+  color: var(--muted, #6b7280);
+}
+
+/* Pills / meta */
+.pill,
+.mk-pill{
+  display:inline-block;
+  padding: 4px 10px;
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 999px;
+  background: #fff;
+  font-size: .85rem;
+  color:#495057;
+}
+.meta,
+.mk-card__meta{
+  margin-top:auto;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}

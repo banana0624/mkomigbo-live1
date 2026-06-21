@@ -1,29 +1,8 @@
-# Disable directory listing & content negotiation
-Options -Indexes -MultiViews
-
-<IfModule mod_rewrite.c>
 RewriteEngine On
-RewriteBase /public/
 
-# ----------------------------------------
-# 1. Allow real files and directories
-# ----------------------------------------
-RewriteCond %{REQUEST_FILENAME} -f [OR]
-RewriteCond %{REQUEST_FILENAME} -d
-RewriteRule ^ - [L]
+# If file exists, serve it directly
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
 
-# ----------------------------------------
-# 2. Allow static assets (lib, css, js, images)
-# ----------------------------------------
-RewriteRule ^(lib|assets|css|js|images)/ - [L]
-
-# ----------------------------------------
-# 3. Allow module folders to handle themselves
-# ----------------------------------------
-
-# ----------------------------------------
-# 4. Route everything else to front controller
-# ----------------------------------------
+# Otherwise route to index.php
 RewriteRule ^ index.php [L,QSA]
-
-</IfModule>

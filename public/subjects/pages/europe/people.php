@@ -1,47 +1,22 @@
 <?php
 declare(strict_types=1);
-
-return [
-  'title' => 'People',
-  'body_html' => <<<MKHTML_8e9db453
-<div class="mk-prose">
-
-  <p class="mk-muted" style="margin-top:0;">
-    <strong>Subject</strong> — People.
-    Starter scaffold: readable now, expandable later.
-  </p>
-
-  <div style="display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 14px;">
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/intro/">
-        Introduction      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/overview/">
-        Overview      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/topics/">
-        Key Topics      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/people/">
-        People      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/sources/">
-        Sources      </a>
-      </div>
-
-  <h2>What belongs here</h2>
-  <ul>
-    <li><strong>Scope:</strong> what this page covers and excludes.</li>
-    <li><strong>Key points:</strong> the essentials readers should remember.</li>
-    <li><strong>Structure:</strong> sections you’ll expand later.</li>
-  </ul>
-
-  <hr>
-
-  <p class="mk-muted">
-    Tip: add citations and attach source links/files below.
-  </p>
-
-</div>
-MKHTML_8e9db453,
-];
+echo '<div class="mk-prose">';
+echo '<p class="mk-muted" style="margin-top:0;">Key figures in the African and Igbo experience in Europe.</p>';
+echo '<h2>Olaudah Equiano — The First</h2>';
+echo '<p>Though primarily associated with Britain, Equiano traveled extensively in Europe — his autobiography was published simultaneously in London and Dublin, and he toured Ireland and Scotland on abolition speaking engagements. He represents the beginning of the African intellectual presence in Europe.</p>';
+echo '<h2>Frantz Fanon (1925–1961)</h2>';
+echo '<p>Born in Martinique, educated in France, fought with the French Resistance in World War II, trained as a psychiatrist in Lyon, and practiced in Algeria during the independence war. His <em>Black Skin, White Masks</em> (1952) is the foundational text of the psychology of colonized peoples — written from lived experience of being Black in France. His <em>The Wretched of the Earth</em> (1961) is the canonical text of anti-colonial revolution. Fanon died of leukemia in Washington DC at 36, but his intellectual formation was European.</p>';
+echo '<h2>Chinua Achebe in Europe</h2>';
+echo '<p>Achebe spent significant time in Europe — publishing with Heinemann\'s African Writers Series (London), receiving honorary degrees from European universities, and engaging with European intellectual life. His essay "An Image of Africa: Racism in Conrad\'s \'Heart of Darkness\'" (1977) — delivered as a lecture at the University of Massachusetts but widely circulated in Europe — was the most important African intellectual challenge to European canonical literature of the 20th century.</p>';
+echo '<h2>Chimamanda Ngozi Adichie in Europe</h2>';
+echo '<p>Adichie has a significant European presence — her novels are bestsellers across Europe; her TED talks have been viewed hundreds of millions of times globally; she has received major European literary prizes. Her engagement with European feminist discourse — particularly her TED talk "We Should All Be Feminists" — brought her into dialogue with European feminist movements in ways that were sometimes contentious and always generative.</p>';
+echo '<h2>Skepta and Afrobeats in Europe</h2>';
+echo '<p>British-Nigerian artists have been the primary vectors through which African music — grime, Afrobeats, Afropop — has penetrated European mainstream culture. Skepta (British-Nigerian, Yoruba heritage) won the Mercury Prize in 2016. Wizkid, Burna Boy, and Davido have toured major European venues. This musical penetration represents a cultural reversal of the historical flow: for centuries, European culture was imposed on Africa; now African-derived music culture is reshaping Europe.</p>';
+echo '<h2>Patience Dabiri (b. 1979)</h2>';
+echo '<p>Nigerian-Irish senator; born in Lagos, raised in Ireland from age 10; elected to the Irish Senate (Seanad Éireann) in 2020; the first person of African origin elected to the Irish parliament. Her election represents the political emergence of the second generation in European democracy.</p>';
+echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 4px;">';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/europe/intro/">Introduction</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/europe/overview/">Overview</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/europe/topics/">Topics</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/europe/sources/">Sources</a>';
+echo '</div></div>';

@@ -1,11 +1,12 @@
 <?php
+require_once __DIR__ . "/../auth/core.php";
 declare(strict_types=1);
 
 require_once __DIR__ . '/../../_init.php';
 session_start();
 
 require __DIR__ . '/auth.php';
-requireLogin();
+auth_require_role('admin');
 
 $title = "RBAC - Roles";
 require __DIR__ . '/layout.php';
@@ -39,7 +40,7 @@ async function loadRoles() {
         let html = `<h3>${role.name}</h3>`;
 
         caps.forEach(cap => {
-            const checked = role.capabilities.includes(cap.name) ? 'checked' : '';
+            const checked = role.capabilities.includes(cap.id) ? 'checked' : '';
             html += `
                 <label>
                     <input type="checkbox"

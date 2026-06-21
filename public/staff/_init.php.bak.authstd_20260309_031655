@@ -56,7 +56,7 @@ require_once dirname(__DIR__) . '/_init.php';
 try {
   if (
     !function_exists('mk_require_staff_login')
-    || !function_exists('mk_attempt_staff_login')
+    || !function_exists('auth_login')
     || !function_exists('mk_staff_roles_load')
     || !function_exists('mk_require_staff_permission')
   ) {
@@ -322,7 +322,7 @@ $didEnforce = false;
 
 // Prefer explicit staff login guards if present
 if (function_exists('mk_require_staff_login')) {
-  mk_require_staff_login();
+  auth_require_role('staff');
   $didEnforce = true;
 } elseif (function_exists('require_staff_login')) {
   require_staff_login();

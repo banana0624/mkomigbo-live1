@@ -2,7 +2,7 @@
 require '../../_init.php';
 session_start();
 require 'auth.php';
-requireLogin();
+auth_require_role('admin');
 
 $db = mk_db();
 

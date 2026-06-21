@@ -4,7 +4,7 @@ require_once __DIR__ . "/../../../private/functions/attachments_engine.php";
 
 require_once __DIR__ . '/../../_init.php';
 
-mk_require_staff_login();
+auth_require_role('staff');
 
 $e = mk_attachments_engine();
 $att = $e->load_for_subject_page((int)($page['subject_id'] ?? 0), (int)($page['id'] ?? 0));

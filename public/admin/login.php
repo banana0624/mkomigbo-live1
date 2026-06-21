@@ -1,130 +1,108 @@
 <?php
 declare(strict_types=1);
 
-require_once __DIR__ . '/../../_init.php';
-
-ini_set('display_errors', 1);
 error_reporting(E_ALL);
+ini_set('display_errors', '1');
+
+require_once dirname(__DIR__, 2) . '/lib/auth.php';
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
 
-if (!empty($_SESSION['flash'])) {
-    echo '<div class="flash flash-success">' . htmlspecialchars($_SESSION['flash']) . '</div>';
-    unset($_SESSION['flash']);
-}
-
-if (!empty($_SESSION['error'])) {
-    echo '<div class="flash flash-error">' . htmlspecialchars($_SESSION['error']) . '</div>';
-    unset($_SESSION['error']);
-}
-
-$db = mk_db();
-
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
 
-    if ($email === '' || $password === '') {
-        $error = 'All fields are required';
-    } else {
+if (auth_attempt_login($email, $password)) {
 
-        $stmt = $db->prepare("
-            SELECT id, email, password_hash, role 
-            FROM staff_users 
-            WHERE email = ?
-        ");
-        $stmt->execute([$email]);
-
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if ($user && password_verify($password, $user['password_hash'])) {
-
-            // Regenerate session (security)
-            session_regenerate_id(true);
-
-            $_SESSION['admin_user_id'] = (int)$user['id'];
-            $_SESSION['admin_email'] = $user['email'];
-            $_SESSION['admin_role'] = $user['role'];
-
-            // Optional: readable name
-            $_SESSION['admin_username'] = $user['email'];
-
-            header('Location: /public/admin/submissions.php');
-            exit;
-
-        } else {
-            $error = 'Invalid credentials';
-        }
+        header('Location: /admin/index.php');
+        exit;
     }
+
+    $error = 'Invalid email or password.';
 }
 ?>
 
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login</title>
-    
+
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: #f4f6f8;
-            margin: 20px;
+            background: #f4f4f4;
+            padding: 40px;
         }
-        
-        h2 {
-            margin-bottom: 10px;
-        }
-        
-        table {
+
+        .login-box {
+            max-width: 400px;
+            margin: auto;
             background: #fff;
-            border-collapse: collapse;
+            padding: 24px;
+            border-radius: 8px;
+        }
+
+        input {
             width: 100%;
+            padding: 12px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
         }
-        
-        th {
-            background: #222;
-            color: #fff;
-        }
-        
-        td, th {
-            padding: 10px;
-            text-align: left;
-        }
-        
-        a {
-            margin-right: 10px;
-            text-decoration: none;
-            color: #007BFF;
-        }
-        
+
         button {
-            padding: 5px 10px;
+            width: 100%;
+            padding: 12px;
             cursor: pointer;
         }
-        
-        form {
-            display: inline;
+
+        .error {
+            color: red;
+            margin-bottom: 16px;
         }
     </style>
-
 </head>
 <body>
 
-<h2>Admin Login</h2>
+<div class="login-box">
 
-<?php if ($error): ?>
-<p style="color:red;"><?= htmlspecialchars($error) ?></p>
-<?php endif; ?>
+    <h2>Admin Login</h2>
 
-<form method="post">
-    <input type="email" name="email" placeholder="Email" required><br><br>
-    <input type="password" name="password" placeholder="Password" required><br><br>
-    <button type="submit">Login</button>
-</form>
+    <?php if ($error): ?>
+        <div class="error">
+            <?= htmlspecialchars($error) ?>
+        </div>
+    <?php endif; ?>
+
+    <form method="POST">
+
+        <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            required
+        >
+
+        <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            required
+        >
+
+        <button type="submit">
+            Login
+        </button>
+
+    </form>
+
+</div>
 
 </body>
 </html>

@@ -296,7 +296,7 @@ $didEnforce = false;
 
 // Prefer explicit staff login guards if present
 if (function_exists('mk_require_staff_login')) {
-  mk_require_staff_login();
+  auth_require_role('staff');
   $didEnforce = true;
 } elseif (function_exists('require_staff_login')) {
   require_staff_login();

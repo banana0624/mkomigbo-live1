@@ -53,7 +53,7 @@ if (!function_exists('mk_require_staff_login') || !function_exists('mk_staff_cur
 
 /* Require login (auth.php will also validate session vs DB and clear invalid sessions) */
 if (function_exists('mk_require_staff_login')) {
-  mk_require_staff_login();
+  auth_require_role('staff');
 } else {
   redirect_to(url_for('/staff/login.php'));
 }

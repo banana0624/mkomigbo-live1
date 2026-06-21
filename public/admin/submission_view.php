@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . "/../auth/core.php";
 require 'auth.php';
 require '../db.php';
 

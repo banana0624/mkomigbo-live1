@@ -31,7 +31,7 @@ $u = static function(string $path): string {
    Auth gate (best-effort across your stack)
 --------------------------------------------------------- */
 if (function_exists('mk_require_staff_login')) {
-  mk_require_staff_login();
+  auth_require_role('staff');
 } elseif (function_exists('mk_require_login')) {
   mk_require_login();
 } elseif (function_exists('require_login')) {

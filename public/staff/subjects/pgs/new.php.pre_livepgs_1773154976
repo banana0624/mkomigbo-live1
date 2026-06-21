@@ -101,7 +101,7 @@ if (!function_exists('staff_u')) {
 }
 
 /* auth */
-mk_require_staff_login();
+auth_require_role('staff');
 
 /* DB */
 $pdo = staff_pdo();

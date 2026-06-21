@@ -4,7 +4,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../../_init.php';
 
 mk_staff_session_start();
-mk_require_staff_login();
+auth_require_role('staff');
 
 @ini_set('display_errors', '0');
 @ini_set('display_startup_errors', '0');

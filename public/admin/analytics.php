@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . "/../auth/core.php";
 declare(strict_types=1);
 
 require_once __DIR__ . '/../../_init.php';
@@ -8,7 +9,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 }
 
 require __DIR__ . '/auth.php';
-requireLogin();
+auth_require_role('admin');
 
 header('Content-Type: application/json');
 

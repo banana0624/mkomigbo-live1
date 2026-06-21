@@ -81,7 +81,7 @@ if (function_exists('require_staff')) {
 } elseif (function_exists('require_staff_login')) {
   require_staff_login();
 } elseif (function_exists('mk_require_staff_login')) {
-  mk_require_staff_login();
+  auth_require_role('staff');
 }
 
 $pdo = staff_pdo();

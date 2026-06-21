@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../../../../_init.php';
 
-mk_require_staff_login();
+auth_require_role('staff');
 
 /**
  * /public/staff/subjects/pgs/files/upload.php
@@ -55,7 +55,7 @@ $_SESSION[$key] = $msg;
 
 /* Auth guard */
 if (function_exists('require_staff')) {
-mk_require_staff_login();
+auth_require_role('staff');
 } elseif (function_exists('require_login')) {
   require_login();
 }

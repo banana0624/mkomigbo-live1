@@ -24,7 +24,7 @@ if (!function_exists('h')) {
 }
 
 /* Staff auth */
-mk_require_staff_login();
+auth_require_role('staff');
 
 /* Inputs */
 $fileId = (int)($_GET['id'] ?? 0);

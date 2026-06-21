@@ -1,47 +1,30 @@
 <?php
 declare(strict_types=1);
-
-return [
-  'title' => 'Sources',
-  'body_html' => <<<MKHTML_8e2121d9
-<div class="mk-prose">
-
-  <p class="mk-muted" style="margin-top:0;">
-    <strong>Subject</strong> — Sources.
-    Starter scaffold: readable now, expandable later.
-  </p>
-
-  <div style="display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 14px;">
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/intro/">
-        Introduction      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/overview/">
-        Overview      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/topics/">
-        Key Topics      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/people/">
-        People      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/sources/">
-        Sources      </a>
-      </div>
-
-  <h2>What belongs here</h2>
-  <ul>
-    <li><strong>Scope:</strong> what this page covers and excludes.</li>
-    <li><strong>Key points:</strong> the essentials readers should remember.</li>
-    <li><strong>Structure:</strong> sections you’ll expand later.</li>
-  </ul>
-
-  <hr>
-
-  <p class="mk-muted">
-    Tip: add citations and attach source links/files below.
-  </p>
-
-</div>
-MKHTML_8e2121d9,
-];
+echo '<div class="mk-prose">';
+echo '<p class="mk-muted" style="margin-top:0;">Key references for the African and Igbo experience in Europe.</p>';
+echo '<h2>Colonial History and Its Legacy</h2>';
+echo '<ul>';
+echo '<li><strong>Frantz Fanon</strong> — <em>Black Skin, White Masks</em> (1952). The foundational text of the psychology of colonized peoples in Europe.</li>';
+echo '<li><strong>Frantz Fanon</strong> — <em>The Wretched of the Earth</em> (1961). Anti-colonial theory. Free: <a href="https://archive.org/search?query=fanon+wretched+earth" target="_blank" rel="noopener">archive.org</a></li>';
+echo '<li><strong>Adam Hochschild</strong> — <em>King Leopold\'s Ghost</em> (1998). Belgium and the Congo — the worst of European colonialism.</li>';
+echo '</ul>';
+echo '<h2>African Migration to Europe</h2>';
+echo '<ul>';
+echo '<li><strong>Hein de Haas</strong> — research on African migration patterns; University of Amsterdam. Papers available at heindehaas.org</li>';
+echo '<li><strong>UNHCR</strong> — unhcr.org — statistics and reports on Mediterranean migration and asylum</li>';
+echo '<li><strong>IOM (International Organization for Migration)</strong> — iom.int — data on migration flows and deaths</li>';
+echo '</ul>';
+echo '<h2>Nigerian Trafficking in Italy</h2>';
+echo '<ul>';
+echo '<li><strong>Giovanna Cavatorta</strong> — various reports on Nigerian trafficking networks in Italy</li>';
+echo '<li><strong>Save the Children Italy</strong> — annual reports on unaccompanied Nigerian minors</li>';
+echo '</ul>';
+echo '<h2>Race in Europe</h2>';
+echo '<ul>';
+echo '<li><strong>Grada Kilomba</strong> — <em>Plantation Memories</em> (2008). German-Portuguese scholar on racism in Germany and Europe.</li>';
+echo '<li><strong>Achille Mbembe</strong> — <em>Critique of Black Reason</em> (2017). Cameroonian philosopher on race in global context.</li>';
+echo '</ul>';
+echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 4px;">';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/europe/intro/">Introduction</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/europe/topics/">Topics</a>';
+echo '</div></div>';
