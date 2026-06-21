@@ -1,26 +1,36 @@
 <?php
 declare(strict_types=1);
 echo '<div class="mk-prose">';
-echo '<p class="mk-muted" style="margin-top:0;">Key references for the British-Nigerian experience.</p>';
-echo '<h2>Literature and Memoir</h2>';
+echo '<h2>What to Read, and Why</h2>';
+
+echo '<h3>Literature and Memoir</h3>';
 echo '<ul>';
-echo '<li><strong>Olaudah Equiano</strong> — <em>The Interesting Narrative</em> (1789). The foundational text.</li>';
-echo '<li><strong>Buchi Emecheta</strong> — <em>Second Class Citizen</em> (1974). Nigerian woman\'s experience in London.</li>';
-echo '<li><strong>Ben Okri</strong> — <em>The Famished Road</em> (1991). Booker Prize-winning Nigerian-British fiction.</li>';
-echo '<li><strong>Chibundu Onuzo</strong> — <em>Welcome to Lagos</em> (2017) and <em>Sankofa</em> (2021). Contemporary British-Nigerian literary fiction.</li>';
+echo '<li><strong>Olaudah Equiano, <em>The Interesting Narrative of the Life of Olaudah Equiano</em> (1789)</strong> — The foundational text. Available free at Project Gutenberg.</li>';
+echo '<li><strong>Buchi Emecheta, <em>Second Class Citizen</em> (1974)</strong> — The essential account of the Nigerian woman\'s experience in 1960s London. Essential.</li>';
+echo '<li><strong>Buchi Emecheta, <em>The Joys of Motherhood</em> (1979)</strong> — The most significant Igbo-heritage novel about the colonial period written by a woman.</li>';
+echo '<li><strong>Ben Okri, <em>The Famished Road</em> (1991)</strong> — Booker Prize winner. The defining work of British-Nigerian magical realism.</li>';
+echo '<li><strong>Bernardine Evaristo, <em>Girl, Woman, Other</em> (2019)</strong> — Booker Prize winner. The defining work of 21st-century Black British literature.</li>';
+echo '<li><strong>Bernardine Evaristo, <em>Manifesto: On Never Giving Up</em> (2021)</strong> — Memoir. The political dimensions of her literary project made explicit.</li>';
 echo '</ul>';
-echo '<h2>Academic Studies</h2>';
+
+echo '<h3>Academic and Historical Studies</h3>';
 echo '<ul>';
-echo '<li><strong>Harry Goulbourne and Mary Chamberlain (eds.)</strong> — <em>Caribbean Families in Britain and the Trans-Atlantic World</em> (2001). Broader Caribbean and African diaspora context.</li>';
-echo '<li><strong>Naomi Richman</strong> — <em>In Exile from the Self</em> (2002). Mental health and refugee experience in Britain.</li>';
-echo '<li><strong>David Killingray (ed.)</strong> — <em>Africans in Britain</em> (1994). Historical survey.</li>';
+echo '<li><strong>Hakim Adi, <em>West Africans in Britain 1900–1960</em> (1998)</strong> — The standard academic history of the early Nigerian and West African presence in Britain.</li>';
+echo '<li><strong>Remi Adekoya, <em>Biracial Britain: A Different Way of Looking at Race</em> (2021)</strong> — Nigerian-British journalist on mixed-race British identity and the Nigerian diaspora.</li>';
+echo '<li><strong>Paul Gilroy, <em>There Ain\'t No Black in the Union Jack</em> (1987)</strong> — The foundational academic account of race, ethnicity, and nation in Britain. Essential context.</li>';
+echo '<li><strong>David Killingray (ed.), <em>Africans in Britain</em> (1994)</strong> — Essays on the history of African communities in Britain from the Tudor period onward.</li>';
 echo '</ul>';
-echo '<h2>On Race in Britain</h2>';
+
+echo '<h3>Journalism and Contemporary Accounts</h3>';
 echo '<ul>';
-echo '<li><strong>Reni Eddo-Lodge</strong> — <em>Why I\'m No Longer Talking to White People About Race</em> (2017). The most widely read contemporary British book on race.</li>';
-echo '<li><strong>David Olusoga</strong> — <em>Black and British: A Forgotten History</em> (2016). Essential history of Black presence in Britain.</li>';
+echo '<li><strong>Afua Hirsch, <em>Brit(ish): On Race, Identity and Belonging</em> (2018)</strong> — Memoir and cultural criticism by a British-Ghanaian journalist. The most widely read account of being Black and British.</li>';
+echo '<li><strong>Reni Eddo-Lodge, <em>Why I\'m No Longer Talking to White People About Race</em> (2017)</strong> — The most influential recent British book on structural racism. Essential context for the Nigerian-British experience.</li>';
 echo '</ul>';
-echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 4px;">';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/uk/intro/">Introduction</a>';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/uk/topics/">Topics</a>';
-echo '</div></div>';
+
+echo '<h3>Community Resources</h3>';
+echo '<ul>';
+echo '<li><strong>Ohanaeze Ndigbo UK</strong> — The apex Igbo organisation in Britain. Events, community news, and advocacy.</li>';
+echo '<li><strong>NIDO (Nigerians in Diaspora Organisation) UK</strong> — Nigerian diaspora organisation with significant Igbo membership.</li>';
+echo '<li><strong>The Voice newspaper</strong> — Britain\'s longest-running Black newspaper. Covers Nigerian and West African diaspora community issues.</li>';
+echo '</ul>';
+echo '</div>';

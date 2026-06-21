@@ -1,32 +1,21 @@
 <?php
 declare(strict_types=1);
 echo '<div class="mk-prose">';
-echo '<p class="mk-muted" style="margin-top:0;">The Nigerian and Igbo diaspora in the United Kingdom — history, settlement patterns, community life, and identity.</p>';
-echo '<h2>Historical Overview</h2>';
-echo '<p>The Nigerian presence in the United Kingdom traces a continuous arc from the first West African students at British universities in the early 20th century to the estimated 500,000–700,000 people of Nigerian origin in Britain today. This is not simply migration history but a story shaped at every stage by the colonial relationship between Britain and Nigeria — the empire that created the conditions for migration, the education system that drew Nigerians to Britain, and the racial politics that shaped their reception.</p>';
-echo '<h2>Early Arrivals (1900–1960)</h2>';
-echo '<ul>';
-echo '<li><strong>Students and professionals</strong> — the first significant wave; Nigerians who came to study law, medicine, and the humanities at British universities; among them Nnamdi Azikiwe (Lincoln University, USA then London), Obafemi Awolowo (University of London), and Kwame Nkrumah (though Ghanaian, part of the same West African student generation in London)</li>';
-echo '<li><strong>Racial politics</strong> — early Nigerian students in Britain navigated explicit racial discrimination; African and Caribbean students in London formed their own organizations; the West African Students\' Union (WASU), founded 1925, was a center of Pan-Africanist thought and political organizing</li>';
-echo '<li><strong>World War II</strong> — Nigerian soldiers served in the British Army (particularly in Burma); their service was rarely acknowledged; they returned home with experience of a world beyond Nigeria and a changed relationship to British authority</li>';
-echo '</ul>';
-echo '<h2>Post-War Migration (1948–1970)</h2>';
-echo '<ul>';
-echo '<li><strong>The Windrush era</strong> — primarily Caribbean but West Africans also came; the 1948 British Nationality Act gave all Commonwealth citizens the right to settle in Britain; Nigerians arrived as students, skilled workers, and professionals</li>';
-echo '<li><strong>Post-independence surge</strong> — after Nigerian independence (1960), British-educated Nigerians increasingly returned home to take up positions in the new state; but the traffic was not one-way</li>';
-echo '<li><strong>Biafran war refugees</strong> — the civil war (1967–1970) drove a wave of Igbo and other eastern Nigerians to Britain; some came as students and never returned; others came explicitly as refugees; this wave created some of the earliest specifically Igbo community organizations in Britain</li>';
-echo '</ul>';
-echo '<h2>The Professional Migration (1980s–Present)</h2>';
-echo '<p>The structural adjustment programmes imposed on Nigeria by the IMF and World Bank in the 1980s, combined with military dictatorship and economic collapse, drove a sustained wave of professional and economic migration. Nigerian doctors, nurses, engineers, lawyers, accountants, and academics settled across the UK — contributing enormously to British public services while representing a significant "brain drain" from Nigeria.</p>';
-echo '<p>Nigerian nurses form a substantial proportion of the NHS workforce. Nigerian doctors are present in virtually every NHS trust. This contribution — rarely acknowledged in British political discourse about immigration — represents an enormous transfer of skilled human capital from Nigeria to Britain.</p>';
-echo '<h2>Community Organizations</h2>';
-echo '<ul>';
-echo '<li><strong>State unions</strong> — every Nigerian state has an association in the UK: Imo State Union UK, Anambra State Association UK, Enugu State Association, etc. These provide mutual aid, cultural events, and collective advocacy</li>';
-echo '<li><strong>Town and village unions</strong> — even more granular; associations of people from specific towns (Nnewi Progressive Union UK, Awka Development Union UK, etc.)</li>';
-echo '<li><strong>Professional associations</strong> — Association of Nigerian Physicians in the Americas (with UK chapters), Nigerian Lawyers Association UK, etc.</li>';
-echo '<li><strong>Churches</strong> — Nigerian Pentecostal and evangelical churches have proliferated across Britain; RCCG (Redeemed Christian Church of God), Winners Chapel, and Mountain of Fire Ministries have thousands of members across the UK; these churches serve simultaneously as spiritual, social, and community welfare institutions</li>';
-echo '</ul>';
-echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 4px;">';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/uk/intro/">Introduction</a>';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/uk/topics/">Key Topics</a>';
-echo '</div></div>';
+echo '<h2>The Nigerian and Igbo Diaspora in Britain</h2>';
+
+echo '<h3>I. Early Arrivals (1900–1960)</h3>';
+echo '<p>The Nigerian presence in Britain begins with students. From the early 20th century, ambitious young Nigerians — the sons of clergymen, lawyers, traders, and chiefs who had prospered under colonial conditions — came to Britain to study law, medicine, and the humanities at universities that their parents\' colonial relationship with Britain had made accessible. Nnamdi Azikiwe, Herbert Macaulay, H.O. Davies, and dozens of others who would shape Nigerian nationalism spent formative years in Britain, experiencing simultaneously the intellectual resources of British universities and the racial condescension of British society.</p>';
+echo '<p>This early presence was small and largely male, largely student, and largely urban — concentrated in London and in the university cities. It was shaped by the colonial framework: Nigerians came to Britain as subjects of the Crown, with rights that were formally equal to those of other British subjects but practically subordinated by race. The West African Students\' Union (WASU), founded in London in 1925, was the primary institutional expression of this early Nigerian presence — a political and social organisation that connected Nigerian students across institutions and provided a forum for anti-colonial thought.</p>';
+
+echo '<h3>II. Post-Independence Migration (1960–1980)</h3>';
+echo '<p>Nigerian independence in 1960 changed the character of Nigerian migration to Britain without immediately reducing it. Professional Nigerians — doctors, nurses, lawyers, academics, engineers — continued to come to Britain for training and work, in part because British professional qualifications carried prestige in newly independent Nigeria and in part because the Nigerian oil boom of the 1970s had not yet created sufficient domestic demand for professional services. The NHS recruited heavily in Nigeria in the 1960s and 1970s; Nigerian nurses and doctors became significant presences in British hospitals.</p>';
+echo '<p>The Biafra War (1967–1970) produced the first significant refugee flow from Nigeria to Britain: Igbo people who had been in Britain during the war and could not safely return, and a smaller number who fled during or after the conflict. This community carried the trauma of the war and the particular bitterness of the British government\'s role in it — its supply of arms to the federal government, its diplomatic support for the blockade that starved Biafran children. The Biafran community in Britain became a centre of political advocacy and memory-keeping that has persisted across generations.</p>';
+
+echo '<h3>III. The 1980s–2000s: Economic Migration and Community Formation</h3>';
+echo '<p>The 1980s saw a significant shift in the character of Nigerian migration to Britain. Economic collapse in Nigeria — the oil price crash of 1981, the structural adjustment programmes imposed by the IMF, the successive military governments\' looting of public resources — drove a new wave of migration that was less elite, more economically diverse, and more permanent in its intentions than earlier waves. Communities formed in specific London boroughs: Peckham and New Cross became centres of the Yoruba and Niger Delta communities; Tottenham and Barking developed significant Igbo populations.</p>';
+echo '<p>The 1990s Abacha dictatorship produced another wave: political activists, journalists, human rights lawyers, and others who fled the terror of the most brutal of Nigeria\'s military governments. This wave added political complexity to Nigerian British community life — bringing people with direct experience of political persecution and strong opinions about Nigerian governance into a community that had previously been more economically than politically defined.</p>';
+
+echo '<h3>IV. The Second Generation and the Contemporary Moment</h3>';
+echo '<p>The British-born or British-raised children of Nigerian migrants — the second generation — have produced some of the most significant cultural contributions to contemporary British life. Bernardine Evaristo, winner of the 2019 Booker Prize, was born in Woolwich to a Nigerian father and a British mother. David Oyelowo, the actor who played Martin Luther King in <em>Selma</em>, is of Nigerian Yoruba descent. Skepta, the grime artist who won the Mercury Prize in 2016, is of Yoruba descent. These figures are simultaneously British cultural icons and members of the Nigerian diaspora — a dual identity that British culture has been slow to acknowledge and that the second generation has had to negotiate without institutional support.</p>';
+echo '<p>The second generation also navigates the hostile environment that successive British governments have created: stop-and-search rates that target Black people disproportionately, an immigration system that treats Nigerian British citizens as suspects rather than members of the community, and a national conversation about identity that has consistently struggled to accommodate Blackness and Britishness simultaneously.</p>';
+echo '</div>';
