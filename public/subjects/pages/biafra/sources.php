@@ -1,45 +1,44 @@
 <?php
 declare(strict_types=1);
 echo '<div class="mk-prose">';
-echo '<p class="mk-muted" style="margin-top:0;">Essential books, films, and references for understanding Biafra.</p>';
-echo '<h2>Primary Accounts</h2>';
+echo '<h2>What to Read, and Why</h2>';
+
+echo '<h3>Primary Accounts</h3>';
 echo '<ul>';
-echo '<li><strong>Chinua Achebe</strong> — <em>There Was a Country: A Personal History of Biafra</em> (2012). The most important Igbo literary account. Essential.</li>';
-echo '<li><strong>Wole Soyinka</strong> — <em>The Man Died</em> (1972). Memoir of imprisonment during the war. Essential.</li>';
-echo '<li><strong>Alexander Madiebo</strong> — <em>The Nigerian Revolution and the Biafran War</em> (1980). Account by Biafra\'s army commander.</li>';
-echo '<li><strong>Emeka Odumegwu-Ojukwu</strong> — <em>Biafra: Selected Speeches and Random Thoughts</em> (1969). Ojukwu\'s own words during the war.</li>';
+echo '<li><strong>Chinua Achebe, <em>There Was a Country: A Personal History of Biafra</em> (2012)</strong> — The most important Igbo literary account of the war. Essential. Achebe\'s indictment of Awolowo and his account of international indifference are the most powerful parts.</li>';
+echo '<li><strong>Wole Soyinka, <em>The Man Died: Prison Notes</em> (1972)</strong> — Memoir of Soyinka\'s imprisonment by the federal government for attempting to negotiate a ceasefire. Essential for understanding the war from a Nigerian (non-Igbo) perspective.</li>';
+echo '<li><strong>Alexander Madiebo, <em>The Nigerian Revolution and the Biafran War</em> (1980)</strong> — Account by Biafra\'s army commander. Military history from the inside.</li>';
+echo '<li><strong>Emeka Odumegwu-Ojukwu, <em>Biafra: Selected Speeches and Random Thoughts</em> (1969)</strong> — Ojukwu\'s own words during the war. Primary source.</li>';
 echo '</ul>';
-echo '<h2>Historical Studies</h2>';
+
+echo '<h3>Academic Histories</h3>';
 echo '<ul>';
-echo '<li><strong>John Stremlau</strong> — <em>The International Politics of the Nigerian Civil War 1967–1970</em> (1977). The standard academic account of the international dimensions.</li>';
-echo '<li><strong>Adewale Ademoyega</strong> — <em>Why We Struck: The Story of the First Nigerian Coup</em> (1981). Inside account of the January 1966 coup.</li>';
-echo '<li><strong>Ntieyong Akpan</strong> — <em>The Struggle for Secession 1966–1970</em> (1971). Ibibio perspective on the war.</li>';
-echo '<li><strong>Auberon Waugh and Suzanne Cronje</strong> — <em>Biafra: Britain\'s Shame</em> (1969). Early indictment of British policy.</li>';
+echo '<li><strong>John Stremlau, <em>The International Politics of the Nigerian Civil War 1967–1970</em> (1977)</strong> — Standard academic account of the international dimensions. Essential on Britain\'s role and the OAU\'s response.</li>';
+echo '<li><strong>Axel Harneit-Sievers et al. (eds.), <em>A Social History of the Nigerian Civil War</em> (1997)</strong> — Essays on the war\'s social dimensions including the famine and civilian experience.</li>';
+echo '<li><strong>Lasse Heerten & A. Dirk Moses (eds.), <em>Postcolonial Conflict and the Question of Genocide</em> (2018)</strong> — Includes essays on Biafra and whether the famine constituted genocide. The most rigorous recent academic engagement with the question.</li>';
 echo '</ul>';
-echo '<h2>Journalism and Eyewitness Accounts</h2>';
+
+echo '<h3>Journalism and Contemporary Accounts</h3>';
 echo '<ul>';
-echo '<li><strong>Frederick Forsyth</strong> — <em>The Biafra Story</em> (1969). The most widely read contemporary account, written by a journalist sympathetic to Biafra.</li>';
-echo '<li><strong>Rolf Steiner</strong> — <em>The Last Adventurer</em> (1978). Account by a mercenary who fought for Biafra.</li>';
+echo '<li><strong>Frederick Forsyth, <em>The Biafra Story</em> (1969)</strong> — Contemporary journalistic account from the Biafran side. Partisan but invaluable as contemporaneous witness.</li>';
+echo '<li><strong>John de St. Jorre, <em>The Brothers\' War: Biafra and Nigeria</em> (1972)</strong> — More balanced journalistic account than Forsyth. Essential for the international dimensions.</li>';
 echo '</ul>';
-echo '<h2>Fiction</h2>';
+
+echo '<h3>Literature</h3>';
 echo '<ul>';
-echo '<li><strong>Chimamanda Ngozi Adichie</strong> — <em>Half of a Yellow Sun</em> (2006). The most celebrated fictional account. Winner of the Orange Prize. Essential reading.</li>';
-echo '<li><strong>Buchi Emecheta</strong> — <em>Destination Biafra</em> (1982). Fictional account from a female perspective.</li>';
-echo '<li><strong>Flora Nwapa</strong> — <em>Never Again</em> (1975). Short novel about a woman\'s experience of the war.</li>';
+echo '<li><strong>Chimamanda Ngozi Adichie, <em>Half of a Yellow Sun</em> (2006)</strong> — The most widely read fictional account. Essential for humanising the statistics.</li>';
+echo '<li><strong>Flora Nwapa, <em>Never Again</em> (1975)</strong> — Short novel about a woman\'s experience during the war. One of the few women\'s accounts.</li>';
+echo '<li><strong>Christopher Okigbo, <em>Labyrinths</em> (1971)</strong> — The collected poetry of the greatest Igbo poet, killed fighting for Biafra in 1967.</li>';
 echo '</ul>';
-echo '<h2>Documentary Film</h2>';
+
+echo '<h3>Film and Documentary</h3>';
 echo '<ul>';
-echo '<li><em>Biafra: Fighting a War with Cameras</em> — documentary on the media dimension of the conflict</li>';
-echo '<li><em>The Biafra War</em> — various documentary treatments available on YouTube and streaming services</li>';
+echo '<li><strong><em>Half of a Yellow Sun</em> (dir. Biyi Bandele, 2013)</strong> — Adaptation of Adichie\'s novel. Widely available on streaming platforms.</li>';
+echo '<li><strong><em>Biafra: Fighting for Survival</em> (various documentary treatments)</strong> — Multiple documentary accounts available online; quality varies significantly.</li>';
 echo '</ul>';
-echo '<h2>Declassified Archives</h2>';
+
+echo '<h3>Declassified Documents</h3>';
 echo '<ul>';
-echo '<li>British National Archives — FCO files on Nigeria 1966–1970, now partly declassified</li>';
-echo '<li>US State Department cables — available through the National Security Archive</li>';
+echo '<li><strong>UK National Archives, FCO files on Nigeria 1967–1970</strong> — Available at nationalarchives.gov.uk. The most important primary source on British government decision-making during the war. Reveals the commercial and strategic calculations behind British arms supplies to the federal government.</li>';
 echo '</ul>';
-echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 4px;">';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/biafra/intro/">Introduction</a>';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/biafra/overview/">Overview</a>';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/biafra/topics/">Topics</a>';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/biafra/people/">People</a>';
-echo '</div></div>';
+echo '</div>';

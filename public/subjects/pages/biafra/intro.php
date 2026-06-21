@@ -1,24 +1,28 @@
 <?php
 declare(strict_types=1);
 echo '<div class="mk-prose">';
-echo '<p class="mk-muted" style="margin-top:0;">The Republic of Biafra — its declaration, the war, the famine, and the memory that endures.</p>';
-echo '<h2>What Was Biafra?</h2>';
-echo '<p>Biafra was a secessionist state declared on May 30, 1967, in southeastern Nigeria. Led by Lt. Colonel Odumegwu Ojukwu, it encompassed the predominantly Igbo Eastern Region of Nigeria along with significant Ibibio, Efik, Ijaw, and Ogoni populations. It survived for thirty months before surrendering to Nigerian federal forces on January 15, 1970.</p>';
-echo '<p>The war that followed the declaration killed between one and three million people — the majority not from combat but from starvation, as the Nigerian federal government imposed a blockade that cut off food supplies to the Biafran heartland. Images of starving Biafran children shocked the world and triggered one of the first major international humanitarian media campaigns in history.</p>';
+echo '<p class="mk-muted" style="margin-top:0;">Biafra is not a failed state. It is an unresolved argument — about what the Igbo are owed by Nigeria, about what states owe their citizens, and about what happens when a government decides that the starvation of children is an acceptable instrument of policy.</p>';
+echo '<h2>What Biafra Was</h2>';
+echo '<p>The Republic of Biafra was declared on 30 May 1967 by Lt. Colonel Odumegwu Ojukwu, Military Governor of Eastern Nigeria, following the collapse of the Aburi Accord and the federal government\'s announcement that it would divide the Eastern Region into three states — dissolving the Igbo majority\'s political coherence. It encompassed the predominantly Igbo Eastern Region along with significant Ibibio, Efik, Ijaw, and Ogoni populations. It survived for thirty months before Ojukwu\'s flight and Philip Effiong\'s surrender on 15 January 1970.</p>';
+echo '<p>The war that followed the declaration killed between one and three million people — the overwhelming majority not from combat but from starvation, as the Nigerian federal government imposed a blockade that cut off food, medicine, and supplies to a civilian population of approximately 14 million people. The images of kwashiorkor-afflicted Biafran children — distended bellies, reddened hair, the characteristic wasting of severe protein malnutrition — shocked the world and triggered one of the first major international humanitarian media campaigns in history, leading directly to the founding of Médecins Sans Frontières.</p>';
 echo '<h2>Why Biafra Happened</h2>';
-echo '<p>Biafra did not begin with the declaration of 1967. Its roots lay in the structure of Nigeria itself — a colonial creation that amalgamated deeply different peoples under a single administrative framework. The political crises of the 1960s — rigged elections, ethnic tension, military coups — created conditions in which Igbo people in northern Nigeria became targets of mass violence.</p>';
-echo '<p>In September and October 1966, Igbo people living in northern Nigeria were massacred in pogroms that killed between 10,000 and 30,000 people. Over a million fled south. The Aburi Accord of January 1967 — signed in Ghana between Gowon and Ojukwu — offered a confederal arrangement that might have prevented war. It was repudiated by the federal government under pressure from British and Soviet advisers.</p>';
-echo '<h2>The War</h2>';
-echo '<p>The war lasted from July 1967 to January 1970. Federal forces, better equipped and internationally supported, gradually compressed Biafran territory. The fall of Port Harcourt in 1968 cut off Biafra from the sea. The encirclement of the Biafran heartland created the conditions for mass starvation. International relief operations — including airlifts organized by the Red Cross and various NGOs — saved lives but were never sufficient to prevent catastrophe.</p>';
-echo '<h2>The Famine</h2>';
-echo '<p>The Biafran famine was not simply a consequence of war — it was, many historians argue, a deliberate instrument of it. The Nigerian federal government\'s blockade prevented food from reaching the Biafran civilian population. The resulting kwashiorkor — protein deficiency malnutrition — produced the images of swollen-bellied, stick-limbed children that became the defining humanitarian images of the 20th century. Estimates of famine deaths range from 500,000 to two million.</p>';
-echo '<h2>The End and Its Aftermath</h2>';
-echo '<p>Ojukwu fled to the Ivory Coast on January 11, 1970. His deputy, Philip Effiong, formally surrendered on January 15. Gowon declared "No Victor, No Vanquished" and promised reconciliation. In practice, the post-war settlement was deeply punitive: Igbo people found their bank accounts replaced with a flat 20-pound payment regardless of pre-war savings; Igbo civil servants lost seniority; Igbo property in other parts of Nigeria was not returned.</p>';
-echo '<h2>Memory and Meaning</h2>';
-echo '<p>Biafra never disappeared from Igbo consciousness. It shaped a generation\'s understanding of Nigeria, of Igbo identity, and of the relationship between the Igbo and the Nigerian state. The civil war anniversary (May 30 — Biafra Remembrance Day) is observed by millions. The IPOB movement keeps the question of Biafran sovereignty alive. Chimamanda Ngozi Adichie\'s novel <em>Half of a Yellow Sun</em> brought the memory to a global audience. The war remains unresolved — not militarily, but historically and morally.</p>';
-echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 4px;">';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/biafra/overview/">Overview</a>';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/biafra/topics/">Key Topics</a>';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/biafra/people/">People</a>';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/biafra/sources/">Sources</a>';
-echo '</div></div>';
+echo '<p>Biafra did not begin with the declaration of 1967. Its roots lay in the structure of Nigeria itself — a colonial creation that amalgamated deeply different peoples under a single administrative framework that served British commercial interests rather than the interests of the peoples joined within it. The immediate cause was the 1966 pogroms: the mass killing of Igbo living in northern Nigeria, in which between 30,000 and 100,000 people were murdered, their property destroyed, their bodies mutilated, and over a million survivors fled south in the largest internal displacement in Nigerian history. The federal government\'s failure to protect its Igbo citizens, to prosecute the killers, or to acknowledge the scale of what had occurred made the case for a separate state not merely compelling but — for many Igbo — existential.</p>';
+echo '<p>The Aburi Accord of January 1967 — negotiated between Gowon and Ojukwu in Ghana — produced an agreement for a loose confederation that would have kept Nigeria together while protecting Igbo safety within it. It was repudiated by the federal government on Gowon\'s return to Lagos, under pressure from northern officers, British advisers, and the civil service. The repudiation of Aburi is the moment at which the war became unavoidable.</p>';
+echo '<h2>Navigate the Subject</h2>';
+echo '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin:16px 0;">';
+$sections = [
+  ['/subjects/biafra/overview/','🗺️ Overview','Causes, course, famine, end, and aftermath — the structured account'],
+  ['/subjects/biafra/topics/','🏛️ Key Topics','The 1966 pogroms, the blockade, Britain\'s role, international response, memory and denial'],
+  ['/subjects/biafra/people/','👤 People','Ojukwu, Gowon, Effiong, Awolowo, Achebe, Adichie, the children'],
+  ['/subjects/biafra/sources/','📚 Sources','Primary accounts, academic histories, literature, film'],
+];
+foreach($sections as [$href,$title,$desc]) {
+  echo '<a href="'.$href.'" style="display:block;padding:14px;border:1px solid #e5e7eb;border-radius:12px;text-decoration:none;color:inherit;background:#fff;transition:box-shadow .12s;" onmouseover="this.style.boxShadow=\'0 4px 16px rgba(0,0,0,.09)\'" onmouseout="this.style.boxShadow=\'\'">';
+  echo '<div style="font-weight:800;font-size:.95rem;color:#111;margin-bottom:4px;">'.$title.'</div>';
+  echo '<div style="font-size:.82rem;color:#6b7280;line-height:1.4;">'.$desc.'</div>';
+  echo '</a>';
+}
+echo '</div>';
+echo '<h2>Our Approach</h2>';
+echo '<p>This subject does not treat Biafra as a historical curiosity or a failed political project. It treats it as a human catastrophe with specific causes, specific actors, and specific consequences that have never been honestly addressed by the Nigerian state. It documents the 1966 pogroms as a root cause. It documents the blockade as a deliberate policy. It documents Britain\'s role without euphemism. And it documents the memory of Biafra — why it persists fifty years after the war\'s end, and what its persistence means for the future of Nigeria and the Igbo people. This subject is cross-linked with <a href="/subjects/nigeria/intro/">Nigeria</a>, <a href="/subjects/struggles/intro/">Struggles</a>, and <a href="/subjects/resistance/intro/">Resistance</a>.</p>';
+echo '</div>';
