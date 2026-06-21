@@ -1,56 +1,23 @@
 <?php
 declare(strict_types=1);
 echo '<div class="mk-prose">';
-echo '<p class="mk-muted" style="margin-top:0;">The structure of Igbo traditional life — its institutions, values, and organizing principles.</p>';
-echo '<h2>The Igbo Political Tradition — Stateless Democracy</h2>';
-echo '<p>The most distinctive feature of Igbo traditional political organization is its radical decentralization. "Igbo enwe eze" — the Igbo have no king — is not merely a historical fact but a philosophical statement about how the Igbo understand legitimate authority. Power in Igbo tradition is distributed, negotiated, and earned — not inherited or seized.</p>';
-echo '<p>In most Igbo communities, governance operated through:</p>';
-echo '<ul>';
-echo '<li><strong>Oha na eze</strong> — the assembly of the people and titled men; decisions were made by consensus in public deliberation</li>';
-echo '<li><strong>Ndị isi ọfọ</strong> — lineage heads who held the ọfọ staff of ancestral authority</li>';
-echo '<li><strong>Age grades (otu ọgbọ)</strong> — executive arms of community governance; implemented decisions, maintained infrastructure, enforced norms</li>';
-echo '<li><strong>Title societies</strong> — earned statuses that conferred specific rights and voices in governance</li>';
-echo '<li><strong>The dibia</strong> — spiritual authority whose pronouncements carried weight in judicial and social matters</li>';
-echo '<li><strong>Oracles</strong> — particularly the Aro Chukwu oracle, which served as a pan-Igbo judicial and appellate authority</li>';
-echo '</ul>';
-echo '<p>This system was fundamentally republican — power was accountable to the community, exercised through deliberation, and checked by multiple competing authorities. It was, in anthropological terms, a "stateless society" — but statelessness in the Igbo case does not mean disorder; it means a different ordering of power.</p>';
-echo '<h2>The Kola Nut Tradition — Ọlụ Oji</h2>';
-echo '<p>The kola nut (oji) is the most important ritual object in Igbo tradition. No significant social event — a visit, a meeting, a marriage negotiation, a title ceremony, a funeral — begins without the presentation, blessing, and breaking of kola. Understanding the kola tradition is understanding the core of Igbo social ethics.</p>';
-echo '<ul>';
-echo '<li><strong>Presentation</strong> — kola is presented by the host to the most senior guest. To present kola is an act of welcome and respect.</li>';
-echo '<li><strong>Breaking</strong> — the right to break kola belongs to the most senior person present (by age, title, or lineage position). To be given this right is a mark of exceptional honor.</li>';
-echo '<li><strong>Prayer (Igo oji)</strong> — before breaking, the person breaks kola offers a prayer invoking Chukwu, Chi, Ala, the ancestors, and the specific powers relevant to the occasion: "Onye wetara oji wetara ndụ" — he who brings kola brings life.</li>';
-echo '<li><strong>Distribution</strong> — the broken kola is distributed to all present in order of seniority. To refuse kola is a serious social offense; to accept it while harboring ill will is a spiritual danger.</li>';
-echo '<li><strong>Comparative note</strong>: the kola tradition functions similarly to the communion bread in Christianity, the libation in Greek religion, and the puja offering in Hinduism — a ritual act that creates sacred community and acknowledges the presence of divine forces at every human gathering.</li>';
-echo '</ul>';
-echo '<h2>The Age Grade System — Otu Ọgbọ</h2>';
-echo '<p>The age grade is one of the most powerful institutions in Igbo social organization. Men (and in parallel, women) born within the same 3–5 year cohort form a bond that lasts their entire lives. The age grade moves through life together, taking on progressively greater community responsibilities.</p>';
-echo '<ul>';
-echo '<li><strong>Youth grades</strong> — maintain roads, clear bush, provide labor for community projects</li>';
-echo '<li><strong>Middle grades</strong> — enforce community decisions, organize festivals, provide security</li>';
-echo '<li><strong>Elder grades</strong> — advise governance, adjudicate disputes, provide institutional memory</li>';
-echo '</ul>';
-echo '<p>The age grade system creates cross-lineage solidarity — your age-grade brothers are closer to you in certain respects than your kinsmen. It also creates accountability: the grade as a whole is responsible for the behavior of its members, and failure reflects on all.</p>';
-echo '<p><strong>Comparative note</strong>: age-grade systems are found across sub-Saharan Africa (Maasai, Zulu, Akan) and in ancient Greek (the Spartan agoge) and Roman (the cursus honorum) traditions. They represent a universal human solution to the problem of how to integrate youth into adult society and transmit communal values across generations.</p>';
-echo '<h2>The Title System — Ọzọ, Nze, Ichie, Eze</h2>';
-echo '<p>Igbo titles are among the most elaborate in West Africa. Taking a title is a major life event — requiring years of preparation, significant wealth, community support, and ritual readiness. Titles confer specific rights and carry specific obligations.</p>';
-echo '<ul>';
-echo '<li><strong>Ọzọ</strong> — the most prestigious title in many Igbo communities (particularly Anambra/Imo); a titled Ọzọ man wears eagle feathers, carries the ọfọ staff, and participates in community governance</li>';
-echo '<li><strong>Nze</strong> — often a prerequisite for higher titles; associated with purity and ritual status</li>';
-echo '<li><strong>Ichie</strong> — the titled chiefs of Onitsha and related communities; organized in a formal hierarchy with specific palace roles</li>';
-echo '<li><strong>Eze</strong> — a king or paramount chief; found in communities with centralized authority structures (Onitsha, Arochukwu, etc.); traditionally not found in most Igbo communities which were non-monarchical</li>';
-echo '<li><strong>Lolo</strong> — the female equivalent of the Ọzọ title; a titled woman who has achieved public recognition for her character, wealth, and community service</li>';
-echo '</ul>';
-echo '<p><strong>Comparative note</strong>: the Igbo title system bears comparison with Roman senatorial dignitas, Confucian meritocratic virtue-titles, and the Sufi system of spiritual ranks. In all cases, elevated status is tied to demonstrated merit and specific obligations, not merely to birth or wealth.</p>';
-echo '<h2>The Ụmụnna and Ụmụada</h2>';
-echo '<p>The two most important kinship institutions in Igbo tradition:</p>';
-echo '<ul>';
-echo '<li><strong>Ụmụnna</strong> (patrilineage, literally "children of the father") — the extended family through the male line; the primary unit of land ownership, dispute resolution, and mutual obligation. No significant decision affecting a member can be made without consulting the ụmụnna.</li>';
-echo '<li><strong>Ụmụada</strong> (daughters of the lineage) — women born into a patrilineage who marry out but retain rights and obligations in their birth community. The ụmụada is an institution of extraordinary power: ụmụada can veto community decisions, impose sanctions, and play crucial roles in dispute resolution and funeral ceremonies. The ụmụada represents the continuity of the female line through and beyond patrilineal structure.</li>';
-echo '</ul>';
-echo '<p><strong>Comparative note</strong>: the ụmụada institution has no direct parallel in most world traditions. It represents a sophisticated solution to the tension between patrilineal structure and female autonomy — women retain a formal, institutionalized voice in their birth community throughout their lives, regardless of where they marry.</p>';
-echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 4px;">';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/tradition/intro/">Introduction</a>';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/tradition/topics/">Key Traditions</a>';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/culture/intro/">→ Culture</a>';
-echo '</div></div>';
+echo '<h2>The Structure of Igbo Traditional Life</h2>';
+
+echo '<h3>I. The Political Tradition: Stateless Democracy</h3>';
+echo '<p>The most distinctive feature of Igbo traditional political organisation is its radical decentralisation. "Igbo enwe eze" — the Igbo have no king — is not merely a historical fact but a philosophical statement about how the Igbo understand legitimate authority. Power in Igbo tradition is distributed, negotiated, and earned — not inherited or seized. This is not a failure to achieve statehood; it is a different and sophisticated solution to the problem of political organisation, one that the British colonial administration found so illegible that they invented warrant chiefs to replace it.</p>';
+echo '<p>In most Igbo communities, governance operated through the <em>oha na eze</em> — the assembly of the people and titled men, where decisions were made by consensus in public deliberation; <em>ndị isi ọfọ</em> — lineage heads who held the <em>ọfọ</em> staff of ancestral authority; age grades (<em>otu ọgbọ</em>) — the executive arms of community governance that implemented decisions, maintained infrastructure, and enforced norms; title societies — earned statuses that conferred specific rights and voices in governance; and the <em>dibia</em> — spiritual authority whose pronouncements carried weight in judicial and social matters. None of these institutions required a hereditary ruler. All of them required demonstrated competence and moral standing.</p>';
+
+echo '<h3>II. The Ethical Framework: Ofo, Ogu, and Chi</h3>';
+echo '<p>Igbo traditional ethics is built on three foundational concepts. <em>Ọfọ</em> — the ancestral staff held by lineage heads and title holders — represents the authority of the ancestors and the obligation to act with integrity. He who holds <em>ọfọ</em> speaks with ancestral authority; he who holds it while acting unjustly invokes ancestral punishment on himself. <em>Ogu</em> — clean hands, a clear conscience — is the personal ethical standard that makes <em>ọfọ</em> authority legitimate. "Onye nwere ọfọ na ogu" — he who has <em>ọfọ</em> and clean hands — is the person whose authority is genuine because their conduct is clean.</p>';
+echo '<p>The <em>chi</em> — every person\'s personal spiritual force — completes the ethical framework by introducing the dimension of individual destiny. The <em>chi</em> is not a deterministic fate but a conversation: "Onye kwe, chi ya ekwe" — if a person agrees, their chi agrees. Success reflects alignment between the person\'s choices and their chi\'s potential; failure may reflect misalignment that ritual can address. This is not fatalism — it is a sophisticated account of the relationship between individual agency, community expectation, and forces beyond individual control.</p>';
+
+echo '<h3>III. The Social Institutions</h3>';
+echo '<p>Igbo social life is organised through overlapping institutions that create a dense web of obligation and belonging. The <em>umunna</em> — the patrilineage — is the primary unit of social identity: you are, before anything else, a member of your father\'s lineage, with all the obligations and protections that membership entails. The <em>ụmụada</em> — the daughters of the lineage — are not simply women who have married out; they retain formal authority in their natal community, return for major ceremonies, and exercise judicial power in lineage disputes that their husbands cannot exercise. This dual institution — <em>umunna</em> and <em>ụmụada</em> — means that every Igbo person belongs to two communities simultaneously: the one they were born into and the one they married into.</p>';
+echo '<p>Age grades (<em>otu ọgbọ</em>) cut across lineage lines, creating solidarity between age cohorts that balances lineage loyalty. All boys born within a defined period are members of the same age grade; they progress through life together, taking on collective responsibilities — maintaining paths and markets, providing labour for community projects, policing social norms — that no individual lineage could perform alone. The age grade is simultaneously a mutual aid society, a labour organisation, a social network, and a political institution.</p>';
+
+echo '<h3>IV. The Ritual Calendar</h3>';
+echo '<p>Igbo traditional life is structured by a ritual calendar that marks agricultural cycles, ancestral commemorations, and community transitions. The four-day market week — Eke, Orie, Afo, Nkwo — provides the basic temporal grid. The agricultural year overlays this with seasonal markers: planting season, the growing season, the harvest. The New Yam Festival (<em>Iwa Ji</em> or <em>Iri Ji</em>) marks the harvest\'s beginning and is the most important communal celebration in the Igbo calendar. Masquerade festivals mark transitions — funerals, title-taking ceremonies, the beginning and end of the farming year. The ancestral feast (<em>ịkwa mmụọ</em>) maintains the connection between the living and the dead.</p>';
+
+echo '<h3>V. Tradition and Change</h3>';
+echo '<p>Igbo tradition is not a museum piece. It is a living system that has adapted continuously — to the arrival of Islam in neighbouring regions, to Portuguese traders on the coast, to British colonialism, to Christian missionary activity, to the civil war, to urban migration, and to diaspora dispersal. What has changed is the form; what has endured is the underlying logic: authority must be earned, not inherited; wealth must be shared, not hoarded; the dead must be honoured, not forgotten; the community\'s decisions must be made by the community, not imposed from outside. These are not merely Igbo values. They are arguments about how human beings should live together, and they are as urgent in the 21st century as they were in the 9th.</p>';
+echo '</div>';

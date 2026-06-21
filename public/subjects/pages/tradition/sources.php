@@ -1,26 +1,46 @@
 <?php
 declare(strict_types=1);
 echo '<div class="mk-prose">';
-echo '<p class="mk-muted" style="margin-top:0;">Key references for the study of Igbo tradition.</p>';
-echo '<h2>Essential Reading</h2>';
+echo '<h2>What to Read, and Why</h2>';
+
+echo '<h3>Essential Reading</h3>';
 echo '<ul>';
-echo '<li><strong>Chinua Achebe</strong> — <em>Things Fall Apart</em> (1958). The richest literary account of Igbo traditional life before and during colonization. Essential.</li>';
-echo '<li><strong>Chinua Achebe</strong> — <em>Arrow of God</em> (1964). Focuses on Igbo religious and political tradition during colonization.</li>';
-echo '<li><strong>Victor Uchendu</strong> — <em>The Igbo of Southeast Nigeria</em> (1965). The standard anthropological account, written by an Igbo scholar.</li>';
-echo '<li><strong>M.M. Green</strong> — <em>Igbo Village Affairs</em> (1947). Detailed early ethnographic account.</li>';
-echo '<li><strong>F.C. Ogbalu</strong> — <em>Ilu Igbo</em> (Igbo Proverbs). The standard proverb collection — proverbs are the primary encoded form of Igbo traditional wisdom.</li>';
-echo '<li><strong>Simon Ottenberg</strong> — <em>Masked Rituals of Afikpo</em> (1975). The definitive study of Igbo masquerade tradition.</li>';
-echo '<li><strong>Herbert Cole and Chike Aniakor</strong> — <em>Igbo Arts: Community and Cosmos</em> (1984). The most comprehensive survey of Igbo art and its relationship to tradition.</li>';
+echo '<li><strong>Chinua Achebe, <em>Things Fall Apart</em> (1958)</strong> — The richest literary account of Igbo traditional life before and during colonisation. Essential.</li>';
+echo '<li><strong>Chinua Achebe, <em>Arrow of God</em> (1964)</strong> — The most philosophically profound literary treatment of Igbo religious and political tradition during colonisation.</li>';
+echo '<li><strong>Victor Uchendu, <em>The Igbo of Southeast Nigeria</em> (1965)</strong> — The standard anthropological account, written by an Igbo scholar. Foundational for any serious study.</li>';
+echo '<li><strong>M.M. Green, <em>Igbo Village Affairs</em> (1947)</strong> — Detailed early ethnographic account of Igbo community governance. Colonial-era but invaluable for detail.</li>';
 echo '</ul>';
-echo '<h2>Proverbs as Primary Source</h2>';
-echo '<p>Igbo proverbs (ilu) are the primary encoded form of traditional wisdom. They carry legal, ethical, philosophical, and historical content in memorable, transmissible form. Key proverbs on tradition:</p>';
+
+echo '<h3>Proverbs and Oral Tradition</h3>';
 echo '<ul>';
-echo '<li>"Ọ bụrụ na ọchịchọ agbagọ ọgbọ ya, ọ ga-azụ ọchịchọ" — If desire outruns its age-grade, it must go back and wait</li>';
-echo '<li>"Nna anyị dere ede, anyị na-eri ede" — Our fathers planted cocoyam; we eat cocoyam (tradition sustains us)</li>';
-echo '<li>"Onye wetara oji wetara ndụ" — He who brings kola brings life (the centrality of kola to social life)</li>';
-echo '<li>"Egbe bere, ugo bere, nke si ibe ya ebela nku kwapu ya" — Let the kite perch, let the eagle perch; whoever prevents the other from perching, may its wings break (live and let live — the core of Igbo pluralism)</li>';
+echo '<li><strong>F.C. Ogbalu, <em>Ilu Igbo</em> (Igbo Proverbs)</strong> — The standard proverb collection. Proverbs are the primary encoded form of Igbo traditional wisdom — reading them is reading the tradition\'s philosophy in concentrated form.</li>';
+echo '<li><strong>Romanus Egudu & Donatus Nwoga, <em>Poetic Heritage: Igbo Traditional Verse</em> (1971)</strong> — Collection and translation of Igbo oral poetry including praise songs, dirges, and ceremonial verse.</li>';
+echo '<li><strong>Chinua Achebe, <em>Morning Yet on Creation Day</em> (1975)</strong> — Essays on African literature, language, and cultural politics. Essential context for understanding the relationship between oral tradition and literary tradition.</li>';
 echo '</ul>';
-echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 4px;">';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/tradition/intro/">Introduction</a>';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/tradition/topics/">Key Traditions</a>';
-echo '</div></div>';
+
+echo '<h3>Masquerades and Performance</h3>';
+echo '<ul>';
+echo '<li><strong>Simon Ottenberg, <em>Masked Rituals of Afikpo</em> (1975)</strong> — The definitive study of Igbo masquerade tradition. Essential for understanding Mmanwu.</li>';
+echo '<li><strong>Phoebe Ottenberg, <em>Afikpo: The Resurgence of a Culture</em> (2005)</strong> — Detailed study of Afikpo Igbo cultural life and contemporary revival of masquerade tradition.</li>';
+echo '<li><strong>Herbert Cole & Chike Aniakor, <em>Igbo Arts: Community and Cosmos</em> (1984)</strong> — The most comprehensive survey of Igbo visual and performance art, including masquerade costumes.</li>';
+echo '</ul>';
+
+echo '<h3>Political Tradition and Governance</h3>';
+echo '<ul>';
+echo '<li><strong>Adiele Afigbo, <em>Ropes of Sand: Studies in Igbo History and Culture</em> (1981)</strong> — Essential essays on Igbo political history, the Nri Kingdom, and the colonial disruption of traditional governance.</li>';
+echo '<li><strong>Judith Van Allen, "Sitting on a Man: Colonialism and the Lost Political Institutions of Igbo Women" (1972)</strong> — The foundational account of Igbo women\'s political institutions including the ụmụada. Available in African Studies Review.</li>';
+echo '<li><strong>Kamene Okonjo, "The Dual-Sex Political System in Operation: Igbo Women and Community Politics in Midwestern Nigeria" (1976)</strong> — On the parallel male and female governance structures in Igbo communities.</li>';
+echo '</ul>';
+
+echo '<h3>Age Grades and Social Organisation</h3>';
+echo '<ul>';
+echo '<li><strong>Simon Ottenberg, <em>Boyhood Rituals in an African Society: An Interpretation</em> (1989)</strong> — On initiation and age-grade transitions among the Afikpo Igbo.</li>';
+echo '<li><strong>Richard Henderson, <em>The King in Every Man: Evolutionary Trends in Onitsha Ibo Society and Culture</em> (1972)</strong> — Detailed account of Onitsha Igbo social organisation including title systems and age grades.</li>';
+echo '</ul>';
+
+echo '<h3>Divination and Sacred Knowledge</h3>';
+echo '<ul>';
+echo '<li><strong>Nwosu Chukwuemeka, works on Igbo divination</strong> — Academic papers on the <em>dibia afa</em> tradition and its epistemological framework.</li>';
+echo '<li><strong>Chinua Achebe, <em>Arrow of God</em> (1964)</strong> — The most nuanced fictional treatment of the <em>dibia</em>\'s role and the relationship between sacred knowledge and political authority.</li>';
+echo '</ul>';
+echo '</div>';
