@@ -197,5 +197,6 @@ a{color:inherit;text-decoration:none}
   </div>
 </footer>
 <script src="/awag/engine/awag-feedback.js"></script>
+<script src="/awag/engine/awag-igbo-calendar.js"></script>
 </body>
 </html>
