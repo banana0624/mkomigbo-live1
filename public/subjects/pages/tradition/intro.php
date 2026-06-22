@@ -14,6 +14,7 @@ $sections = [
   ['/subjects/tradition/overview/','⚖️ Overview','The structure of Igbo traditional life — institutions, values, and organising principles'],
   ['/subjects/tradition/topics/','🥜 Key Traditions','Mmanwu, the New Yam Festival, kola nut, age grades, title systems, markets'],
   ['/subjects/tradition/people/','👤 Tradition Keepers','Elders, dibias, titled men and women, and cultural custodians'],
+  ['/subjects/tradition/ofo_ogu/','⚖️ Ọfọ na Ọgụ','Moral authority, clean hands, and the philosophy of governance without a king'],
   ['/subjects/tradition/sources/','📚 Sources','Texts, oral literature, and references for Igbo tradition'],
 ];
 foreach($sections as [$href,$title,$desc]) {
