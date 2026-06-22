@@ -21,6 +21,7 @@ $sections = [
   ['/subjects/religion/metempsychosis/','♾️ Metempsychosis & Karma','Reincarnation variants, karma doctrines — Igbo vs Hindu vs Buddhist vs Abrahamic'],
   ['/subjects/religion/people/','👤 Founders & Teachers','Prophets, founders, reformers, and teachers across all traditions'],
   ['/subjects/religion/quaternity/','⬡ Trinity vs Quaternity','The Fourth Wise Man, Ọdinala\'s fourfold divine structure, and the principle of Quaternity in nature and human community'],
+  ['/subjects/religion/igbo_time/','🌙 Igbo Time — Abalị','Why the Igbo count nights, the three nights of Jesus resolved by Igbo cosmology, and time as theology'],
   ['/subjects/religion/sources/','📚 Sacred Texts & Downloads','Core scriptures with free download links'],
 ];
 foreach($sections as [$href,$title,$desc]) {
