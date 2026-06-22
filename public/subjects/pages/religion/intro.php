@@ -22,6 +22,7 @@ $sections = [
   ['/subjects/religion/people/','👤 Founders & Teachers','Prophets, founders, reformers, and teachers across all traditions'],
   ['/subjects/religion/quaternity/','⬡ Trinity vs Quaternity','The Fourth Wise Man, Ọdinala\'s fourfold divine structure, and the principle of Quaternity in nature and human community'],
   ['/subjects/religion/igbo_time/','🌙 Igbo Time — Abalị','Why the Igbo count nights, the three nights of Jesus resolved by Igbo cosmology, and time as theology'],
+  ['/subjects/religion/igbo_soul/','🌀 The Igbo Soul','Chi, ọgbanje, ilo uwa — the complete Igbo philosophy of personal identity across time'],
   ['/subjects/religion/sources/','📚 Sacred Texts & Downloads','Core scriptures with free download links'],
 ];
 foreach($sections as [$href,$title,$desc]) {
