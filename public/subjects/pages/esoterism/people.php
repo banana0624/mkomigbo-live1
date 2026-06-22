@@ -23,9 +23,9 @@ $people = [
   ['1724–1804 CE','Immanuel Swedenborg','Christian Mysticism','Swedish scientist who claimed to visit heaven and hell in visionary states and wrote detailed accounts. His Heaven and Hell (1758) influenced Blake, Goethe, and the Spiritualist movement.'],
   ['1831–1891 CE','Helena Petrovna Blavatsky','Theosophy','Co-founder of the Theosophical Society. Her Secret Doctrine and Isis Unveiled synthesized Hindu, Buddhist, and Western esoteric thought into a comprehensive modern framework. The most influential single figure in modern Western esoterism.'],
   ['1861–1925 CE','Rudolf Steiner','Anthroposophy','Austrian philosopher who left the Theosophical Society to found Anthroposophy — an esoteric Christianity with applications in education (Waldorf), agriculture (biodynamics), medicine, and architecture. The most practically applied esoteric tradition.'],
-  ['1865–1936 CE','Israel Regardie','Hermetic Order of the Golden Dawn','Secretary to Aleister Crowley; later published the complete Golden Dawn system (1937-1940), making the most sophisticated Western magical system publicly available. Without Regardie, much Golden Dawn knowledge would have been lost.'],
+  ['1907–1985 CE','Israel Regardie','Hermetic Order of the Golden Dawn','Secretary to Aleister Crowley; later published the complete Golden Dawn system (1937-1940), making the most sophisticated Western magical system publicly available. Without Regardie, much Golden Dawn knowledge would have been lost.'],
   ['1875–1947 CE','Aleister Crowley','Thelema/Golden Dawn','The most controversial figure in modern Western occultism. His Book of the Law, magical system, and prolific writings made him both the most influential and most reviled figure in 20th-century esoterism. Called himself "the Great Beast 666."'],
-  ['1868–1961 CE','Alice Bailey','Theosophy/New Age','Theosophist who claimed to receive teachings from a Tibetan Master (Djwhal Khul). Her 24 books, written over 30 years, constitute the most systematic modern esoteric cosmology and gave the New Age movement much of its vocabulary.'],
+  ['1880–1949 CE','Alice Bailey','Theosophy/New Age','Theosophist who claimed to receive teachings from a Tibetan Master (Djwhal Khul). Her 24 books, written over 30 years, constitute the most systematic modern esoteric cosmology and gave the New Age movement much of its vocabulary.'],
   ['950–1020 CE','Abhinavagupta','Kashmir Shaivism','The greatest philosopher of Kashmir Shaivism. His Tantraloka (A Light on Tantra) is the most comprehensive treatment of Tantric philosophy and practice. His Pratyabhijnahridayam (Heart of Recognition) is the most accessible summary of the tradition.'],
   ['c. 800 BCE','Homer (attributed)','Greek Mystery Religion','The Iliad and Odyssey encode, according to esoteric interpreters from antiquity onward, spiritual teachings about the soul\'s descent into matter and return to the divine. Neoplatonists wrote extensively on the "inner Homer."'],
   ['1804–1869 CE','Allan Kardec','Spiritism','French educator who compiled spirit communications into a systematic philosophy of reincarnation and spiritual evolution. His five books constitute the canon of Spiritism, which has ~15 million followers, primarily in Brazil.'],
@@ -43,8 +43,8 @@ foreach($people as $r) {
 }
 echo '</table>';
 echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:24px 0 4px;">';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/spirituality/topics/">Western Esoteric</a>';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/spirituality/eastern/">Eastern Mysticism</a>';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/spirituality/african/">African Esoteric</a>';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/spirituality/sources/">Texts & Downloads</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/esoterism/topics/">Western Esoteric</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/esoterism/eastern/">Eastern Mysticism</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/esoterism/african/">African Esoteric</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/esoterism/sources/">Texts & Downloads</a>';
 echo '</div></div>';

@@ -240,9 +240,9 @@ echo '<li><strong>777 and Other Qabalistic Writings</strong> by Crowley — the 
 echo '</ul>';
 
 echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:28px 0 4px;">';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/spirituality/intro/">Introduction</a>';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/spirituality/eastern/">Eastern Mysticism</a>';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/spirituality/african/">African Esoteric</a>';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/spirituality/sources/">Texts & Downloads</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/esoterism/intro/">Introduction</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/esoterism/eastern/">Eastern Mysticism</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/esoterism/african/">African Esoteric</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/esoterism/sources/">Texts & Downloads</a>';
 echo '<a class="mk-btn mk-btn--ghost" href="/subjects/religion/overview/">→ World Religions</a>';
 echo '</div></div>';

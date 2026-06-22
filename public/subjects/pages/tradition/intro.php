@@ -25,4 +25,10 @@ foreach($sections as [$href,$title,$desc]) {
 echo '</div>';
 echo '<h2>Tradition Under Pressure</h2>';
 echo '<p>Igbo tradition has survived colonial suppression, missionary condemnation, civil war, urban migration, and diaspora dispersal. It survives not because it is rigid but because it is meaningful — because it answers questions that modernity cannot: how should authority be organised without kings? How should the dead be honoured? How should the community adjudicate disputes without courts? How should the young be initiated into adult responsibility? These are questions that every human community must answer, and Igbo tradition\'s answers are as sophisticated as any in the world. This subject is cross-linked with <a href="/subjects/culture/intro/">Culture</a>, <a href="/subjects/religion/african/">Religion: African</a>, and <a href="/subjects/esoterism/intro/">Esoterism</a>.</p>';
+echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:28px 0 4px;">';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/culture/overview/">→ Culture</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/history/overview/">→ History</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/religion/overview/">→ Religion</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/esoterism/overview/">→ Esoterism</a>';
+echo '</div>';
 echo '</div>';

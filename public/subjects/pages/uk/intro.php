@@ -22,4 +22,10 @@ foreach($sections as [$href,$title,$desc]) {
 echo '</div>';
 echo '<h2>Our Approach</h2>';
 echo '<p>This subject is written from inside the community it documents. It does not treat the Nigerian and Igbo presence in Britain as a problem to be explained or a phenomenon to be managed. It treats it as a permanent feature of British society — one with deep historical roots, complex internal diversity, and its own political and cultural agency. This subject is cross-linked with <a href="/subjects/europe/intro/">Europe</a> and <a href="/subjects/struggles/intro/">Struggles</a>.</p>';
+echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:28px 0 4px;">';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/europe/overview/">→ Europe</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/people/overview/">→ People</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/history/overview/">→ History</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/resistance/overview/">→ Resistance</a>';
+echo '</div>';
 echo '</div>';

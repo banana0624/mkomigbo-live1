@@ -97,9 +97,9 @@ echo '<h3>Key Text</h3>';
 echo '<p><strong>Zhang Zhung Nyengyu</strong> — the Oral Transmission of Zhang Zhung; the Dzogchen teachings of Bön. Partial translations available through Ligmincha Institute.</p>';
 
 echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:28px 0 4px;">';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/spirituality/intro/">Introduction</a>';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/spirituality/topics/">Western Esoteric</a>';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/spirituality/african/">African Esoteric</a>';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/spirituality/sources/">Texts & Downloads</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/esoterism/intro/">Introduction</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/esoterism/topics/">Western Esoteric</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/esoterism/african/">African Esoteric</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/esoterism/sources/">Texts & Downloads</a>';
 echo '<a class="mk-btn mk-btn--ghost" href="/subjects/religion/eastern/">→ Eastern Religions</a>';
 echo '</div></div>';

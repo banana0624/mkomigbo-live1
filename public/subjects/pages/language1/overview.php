@@ -23,4 +23,9 @@ echo '<p>The principle of H-nasalisation — that when H follows a consonant, it
 
 echo '<h3>V. Language Endangerment and Revitalisation</h3>';
 echo '<p>Igbo faces significant endangerment pressure. In urban Igbo households, children increasingly grow up speaking English as their primary language, with Igbo as a second language or not at all. The civil war disrupted intergenerational transmission in ways that have not been fully recovered. Mission education promoted English at the expense of Igbo for over a century. Today, revitalisation efforts — through schools, media, digital platforms, and diaspora communities — are attempting to reverse this trend. The adequacy of the writing system is not separate from the endangerment question: a language that cannot be fully written is a language that is harder to teach, harder to standardise, and harder to pass on across generations and geographies.</p>';
+echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:28px 0 4px;">';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/language2/overview/">→ Language II</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/history/overview/">→ History</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/culture/overview/">→ Culture</a>';
+echo '</div>';
 echo '</div>';

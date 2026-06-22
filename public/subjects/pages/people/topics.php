@@ -1,47 +1,15 @@
 <?php
 declare(strict_types=1);
-
-return [
-  'title' => 'Topics',
-  'body_html' => <<<MKHTML_d3b4f75d
-<div class="mk-prose">
-
-  <p class="mk-muted" style="margin-top:0;">
-    <strong>Subject</strong> — Key\ Topics.
-    Starter scaffold: readable now, expandable later.
-  </p>
-
-  <div style="display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 14px;">
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/intro/">
-        Introduction      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/overview/">
-        Overview      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/topics/">
-        Key Topics      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/people/">
-        People      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/sources/">
-        Sources      </a>
-      </div>
-
-  <h2>What belongs here</h2>
-  <ul>
-    <li><strong>Scope:</strong> what this page covers and excludes.</li>
-    <li><strong>Key points:</strong> the essentials readers should remember.</li>
-    <li><strong>Structure:</strong> sections you’ll expand later.</li>
-  </ul>
-
-  <hr>
-
-  <p class="mk-muted">
-    Tip: add citations and attach source links/files below.
-  </p>
-
-</div>
-MKHTML_d3b4f75d,
-];
+echo '<div class="mk-prose">';
+echo '<p class="mk-muted" style="margin-top:0;">Themes and categories among notable Igbo and African people.</p>';
+echo '<h2>Writers and Intellectuals</h2>';
+echo '<p>Igbo literary culture is one of the richest in Africa. Chinua Achebe reshaped what was possible in African fiction; his <em>Things Fall Apart</em> (1958) has sold more than twenty million copies worldwide. Buchi Emecheta brought the experience of Igbo women — in Nigeria and in the London diaspora — into literature. Chimamanda Ngozi Adichie\'s essays and novels have made her one of the most widely read African writers alive. Christopher Okigbo, killed in the Biafra war at thirty-five, left a body of poetry considered among the finest in 20th-century African literature.</p>';
+echo '<h2>Politicians and Statesmen</h2>';
+echo '<p>Igbo figures have occupied the highest offices in Nigerian public life. Nnamdi Azikiwe served as Nigeria\'s first President. Michael Okpara governed the Eastern Region during its most prosperous decade. Odumegwu Ojukwu led the Republic of Biafra. In the diaspora, politicians of Igbo descent have served in British, American, and Canadian legislatures. The Igbo tradition of democratic council — the <em>oha na eze</em> — predisposed its people toward political engagement in ways that colonial administrators consistently noticed and distrusted.</p>';
+echo '<h2>Women of Power</h2>';
+echo '<p>Igbo women have a documented history of political action that long predates formal electoral politics. Omu Okwei of Ossomari (1872–1943) was the greatest long-distance trader of her era, commanding a network that spanned the Niger Delta. The Aba Women\'s War (1929) mobilized tens of thousands against British taxation — the largest anticolonial uprising in Nigerian history. Margaret Ekpo organized women in the nationalist movement in the 1940s and 1950s. Flora Nwapa, author of <em>Efuru</em> (1966), was the first African woman to be published in English by a major publisher.</p>';
+echo '<h2>Religious and Spiritual Leaders</h2>';
+echo '<p>Before Christian missionaries arrived, Igbo spiritual life was led by <em>dibia</em> — specialists in divination, healing, and mediation with the spirit world — and by the keepers of the great oracles: Ibini Ukpabi (the Long Juju of Arochukwu), Agbala at Awka, and others. The destruction of the Long Juju by the British in 1901–1902 was deliberately calculated to break Igbo spiritual authority. In the colonial and postcolonial periods, Igbo Christians rose to prominence as priests, bishops, and theologians across West Africa.</p>';
+echo '<h2>Scientists and Professionals</h2>';
+echo '<p>The Igbo tradition of sending children to school — reinforced by the Protestant mission emphasis on literacy — created successive generations of educated professionals. By the 1960s, Igbo doctors, lawyers, engineers, and academics were working across Nigeria and the diaspora. The Biafra war interrupted this trajectory, driving many into exile. In subsequent decades, Igbo medical professionals in particular achieved distinction in Britain and North America, training at elite institutions and rising to senior positions in hospitals and universities.</p>';
+echo '</div>';

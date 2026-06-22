@@ -25,4 +25,10 @@ foreach($sections as [$href,$title,$desc]) {
 echo '</div>';
 echo '<h2>Our Approach</h2>';
 echo '<p>This subject does not treat Biafra as a historical curiosity or a failed political project. It treats it as a human catastrophe with specific causes, specific actors, and specific consequences that have never been honestly addressed by the Nigerian state. It documents the 1966 pogroms as a root cause. It documents the blockade as a deliberate policy. It documents Britain\'s role without euphemism. And it documents the memory of Biafra — why it persists fifty years after the war\'s end, and what its persistence means for the future of Nigeria and the Igbo people. This subject is cross-linked with <a href="/subjects/nigeria/intro/">Nigeria</a>, <a href="/subjects/struggles/intro/">Struggles</a>, and <a href="/subjects/resistance/intro/">Resistance</a>.</p>';
+echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:28px 0 4px;">';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/pogrom/overview/">→ Pogrom</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/nigeria/overview/">→ Nigeria</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/history/overview/">→ History</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/resistance/overview/">→ Resistance</a>';
+echo '</div>';
 echo '</div>';

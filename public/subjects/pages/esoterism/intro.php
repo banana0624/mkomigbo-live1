@@ -20,12 +20,12 @@ echo '<p>Esoteric traditions cut across the monotheism/polytheism divide in inte
 echo '<h2>Navigate This Subject</h2>';
 echo '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin:16px 0;">';
 $sections = [
-  ['/subjects/spirituality/overview/','🔭 Overview','The landscape of Western and Eastern esoterism — how traditions relate'],
-  ['/subjects/spirituality/topics/','📜 Western Esoteric Traditions','Hermeticism, Kabbalah, Gnosticism, Neoplatonism, Alchemy, Rosicrucianism, Freemasonry, Theosophy, Thelema'],
-  ['/subjects/spirituality/eastern/','🕉️ Eastern & Sufi Mysticism','Sufism, Tantra, Kundalini, Kashmir Shaivism, Tibetan Bön esoteric practice'],
-  ['/subjects/spirituality/african/','🌍 African Esoteric Traditions','Deep Ọdinala philosophy, Yoruba Ifá inner teaching, Kongo cosmogram, Kemetic esoterism'],
-  ['/subjects/spirituality/people/','👤 Masters & Initiates','Key figures across all esoteric traditions'],
-  ['/subjects/spirituality/sources/','📚 Texts & Downloads','Primary texts with free download links'],
+  ['/subjects/esoterism/overview/','🔭 Overview','The landscape of Western and Eastern esoterism — how traditions relate'],
+  ['/subjects/esoterism/topics/','📜 Western Esoteric Traditions','Hermeticism, Kabbalah, Gnosticism, Neoplatonism, Alchemy, Rosicrucianism, Freemasonry, Theosophy, Thelema'],
+  ['/subjects/esoterism/eastern/','🕉️ Eastern & Sufi Mysticism','Sufism, Tantra, Kundalini, Kashmir Shaivism, Tibetan Bön esoteric practice'],
+  ['/subjects/esoterism/african/','🌍 African Esoteric Traditions','Deep Ọdinala philosophy, Yoruba Ifá inner teaching, Kongo cosmogram, Kemetic esoterism'],
+  ['/subjects/esoterism/people/','👤 Masters & Initiates','Key figures across all esoteric traditions'],
+  ['/subjects/esoterism/sources/','📚 Texts & Downloads','Primary texts with free download links'],
 ];
 foreach($sections as [$href,$title,$desc]) {
   echo '<a href="'.$href.'" style="display:block;padding:14px;border:1px solid #e5e7eb;border-radius:12px;text-decoration:none;color:inherit;background:#fff;transition:box-shadow .12s;" onmouseover="this.style.boxShadow=\'0 4px 16px rgba(0,0,0,.09)\'" onmouseout="this.style.boxShadow=\'\'">';

@@ -1,47 +1,28 @@
 <?php
 declare(strict_types=1);
-
-return [
-  'title' => 'Sources',
-  'body_html' => <<<MKHTML_dcd1f91b
-<div class="mk-prose">
-
-  <p class="mk-muted" style="margin-top:0;">
-    <strong>Subject</strong> — Sources.
-    Starter scaffold: readable now, expandable later.
-  </p>
-
-  <div style="display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 14px;">
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/intro/">
-        Introduction      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/overview/">
-        Overview      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/topics/">
-        Key Topics      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/people/">
-        People      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/sources/">
-        Sources      </a>
-      </div>
-
-  <h2>What belongs here</h2>
-  <ul>
-    <li><strong>Scope:</strong> what this page covers and excludes.</li>
-    <li><strong>Key points:</strong> the essentials readers should remember.</li>
-    <li><strong>Structure:</strong> sections you’ll expand later.</li>
-  </ul>
-
-  <hr>
-
-  <p class="mk-muted">
-    Tip: add citations and attach source links/files below.
-  </p>
-
-</div>
-MKHTML_dcd1f91b,
-];
+echo '<div class="mk-prose">';
+echo '<p class="mk-muted" style="margin-top:0;">Key references for individual biographical portraits in Igbo and African history.</p>';
+echo '<h2>Autobiography and Memoir</h2>';
+echo '<ul>';
+echo '<li><strong>Olaudah Equiano</strong> — <em>The Interesting Narrative</em> (1789). The first and greatest Igbo autobiography.</li>';
+echo '<li><strong>Nnamdi Azikiwe</strong> — <em>My Odyssey</em> (1970).</li>';
+echo '<li><strong>Chinua Achebe</strong> — <em>There Was a Country</em> (2012).</li>';
+echo '<li><strong>Buchi Emecheta</strong> — <em>Head Above Water</em> (1986). Her autobiography.</li>';
+echo '</ul>';
+echo '<h2>Biographical Studies</h2>';
+echo '<ul>';
+echo '<li><strong>Vincent Carretta</strong> — <em>Equiano the African</em> (2005). The authoritative biography.</li>';
+echo '<li><strong>Ezenwa-Ohaeto</strong> — <em>Chinua Achebe: A Biography</em> (1997).</li>';
+echo '<li><strong>Sylvia Leith-Ross</strong> — <em>African Women</em> (1939). Contains material on Nwanyeruwa and Omu Okwei.</li>';
+echo '</ul>';
+echo '<h2>Historical Reconstructions</h2>';
+echo '<ul>';
+echo '<li><strong>Judith Van Allen</strong> — "Sitting on a Man: Colonialism and the Lost Political Institutions of Igbo Women" (1972). The essential study of the 1929 Women\'s War and its individual actors.</li>';
+echo '<li><strong>Caroline Ifeka-Moller</strong> — "Female Militancy and Colonial Revolt" (1975).</li>';
+echo '</ul>';
+echo '<h2>Fiction as Biography</h2>';
+echo '<ul>';
+echo '<li><strong>Chinua Achebe</strong> — <em>Things Fall Apart</em> (1958); <em>Arrow of God</em> (1964).</li>';
+echo '<li><strong>Chimamanda Ngozi Adichie</strong> — <em>Half of a Yellow Sun</em> (2006). The Biafra generation reconstructed through fiction.</li>';
+echo '</ul>';
+echo '</div>';

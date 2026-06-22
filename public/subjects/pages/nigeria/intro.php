@@ -24,4 +24,10 @@ foreach($sections as [$href,$title,$desc]) {
 echo '</div>';
 echo '<h2>Our Approach</h2>';
 echo '<p>This subject treats Nigeria as a political problem as much as a political entity — a state whose internal contradictions were built in at its creation and have never been honestly addressed. It documents Nigerian history from the Igbo perspective without reducing Nigeria to the Igbo experience. It acknowledges the legitimate political interests of Hausa-Fulani and Yoruba communities while being clear about how those interests have been exercised at Igbo expense. It is cross-linked with <a href="/subjects/biafra/intro/">Biafra</a>, <a href="/subjects/struggles/intro/">Struggles</a>, and <a href="/subjects/resistance/intro/">Resistance</a>.</p>';
+echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:28px 0 4px;">';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/biafra/overview/">→ Biafra</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/pogrom/overview/">→ Pogrom</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/history/overview/">→ History</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/resistance/overview/">→ Resistance</a>';
+echo '</div>';
 echo '</div>';

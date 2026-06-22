@@ -25,4 +25,10 @@ echo '<p>The 2023 presidential election introduced a new dimension to Igbo polit
 echo '<h3>V. Cultural Resistance: The Permanent Underground</h3>';
 echo '<p>Alongside the political and armed forms of resistance documented above runs a continuous stream of cultural resistance that is less visible but no less significant. Igbo literature — from Chinua Achebe\'s foundational challenge to the colonial narrative in <em>Things Fall Apart</em> (1958) to Chimamanda Ngozi Adichie\'s <em>Half of a Yellow Sun</em> (2006) and <em>Americanah</em> (2013) — has consistently asserted Igbo humanity, complexity, and historical agency against both colonial and post-colonial misrepresentation. Igbo music, film (Nollywood, which is disproportionately Igbo in its creative workforce), and fashion have created a global cultural presence that the Nigerian state has been unable to marginalise.</p>';
 echo '<p>The maintenance of Igbo language and cultural institutions in the diaspora — the town unions, the age-grade associations, the Igbo language schools, the cultural festivals — represents a form of resistance that operates below the level of political visibility but sustains the community that political resistance draws on. You cannot have a Biafran movement without Igbo people who remain Igbo. The cultural infrastructure that maintains Igbo identity is therefore not separate from resistance — it is its foundation.</p>';
+echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:28px 0 4px;">';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/struggles/overview/">→ Struggles</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/biafra/overview/">→ Biafra</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/nigeria/overview/">→ Nigeria</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/history/overview/">→ History</a>';
+echo '</div>';
 echo '</div>';

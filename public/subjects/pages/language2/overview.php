@@ -21,4 +21,9 @@ echo '<p>The serial verb construction is not merely a grammatical curiosity — 
 echo '<h3>V. Sentence Structure and Discourse</h3>';
 echo '<p>Basic Igbo sentence structure is Subject-Verb-Object, like English: "Emeka rị ihe" (Emeka ate food). But Igbo discourse — the way sentences connect into conversations and texts — differs significantly from English. Topic-comment structure is prominent: a topic is established first, then a comment is made about it. Focus constructions — emphasising a particular element of the sentence — use tonal and syntactic devices that have no direct English equivalent. Questions are formed differently depending on whether they seek a yes/no answer, a specific piece of information, or a choice between alternatives.</p>';
 echo '<p>Igbo also has a rich system of pragmatic particles and discourse markers — words and sounds that signal the speaker\'s attitude, signal the beginning or end of a conversational turn, or request confirmation from the listener. These are among the hardest elements of Igbo to learn from written materials alone, because they are primarily features of spoken discourse rather than written grammar.</p>';
+echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:28px 0 4px;">';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/language1/overview/">→ Language I</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/culture/overview/">→ Culture</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/history/overview/">→ History</a>';
+echo '</div>';
 echo '</div>';

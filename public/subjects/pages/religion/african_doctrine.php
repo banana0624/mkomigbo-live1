@@ -7,7 +7,7 @@ echo '<p class="mk-muted" style="margin-top:0;">African traditional religions at
 echo '<hr style="margin:28px 0;border:none;border-top:2px solid #e5e7eb;">';
 echo '<h2 style="color:#2d6a1f;">⊕ Ọdinala (Igbo) — Full Doctrinal Treatment</h2>';
 echo '<p><strong>Theism:</strong> Panentheistic monism with functional polytheism — Chukwu is One; alusi are aspects | <strong>People:</strong> Igbo (~45 million) | <strong>Status:</strong> Living minority practice alongside Christianity</p>';
-echo '<p>See the comprehensive treatment in <a href="/subjects/religion/doctrine/">Doctrine, Dogma & Life Cycle</a> and <a href="/subjects/spirituality/african/">African Esoteric Traditions</a>. Key points summarized here for comparative reference.</p>';
+echo '<p>See the comprehensive treatment in <a href="/subjects/religion/doctrine/">Doctrine, Dogma & Life Cycle</a> and <a href="/subjects/esoterism/african/">African Esoteric Traditions</a>. Key points summarized here for comparative reference.</p>';
 echo '<h3>Faith</h3>';
 echo '<p>Ọdinala does not require propositional faith. It is transmitted through participation — in the kola ceremony, the masquerade, the New Yam Festival, the ancestral rites, the four-day market week. Belief is embedded in action. The Igbo phrase "ọ dị n\'ọnụ" (it is in the mouth/on the lips) refers to things spoken but not truly internalized — the opposite of genuine religious commitment, which is demonstrated through practice, not declaration.</p>';
 echo '<h3>Monotheism vs Polytheism</h3>';
@@ -93,5 +93,5 @@ echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:28px 0 4px;">';
 echo '<a class="mk-btn mk-btn--ghost" href="/subjects/religion/african/">African Religions Overview</a>';
 echo '<a class="mk-btn mk-btn--ghost" href="/subjects/religion/doctrine/">Doctrine Overview</a>';
 echo '<a class="mk-btn mk-btn--ghost" href="/subjects/religion/metempsychosis/">Metempsychosis & Karma</a>';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/spirituality/african/">African Esoteric Traditions</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/esoterism/african/">African Esoteric Traditions</a>';
 echo '</div></div>';

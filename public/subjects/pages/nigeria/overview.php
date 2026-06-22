@@ -22,4 +22,10 @@ echo '<p>The Yar\'Adua presidency (2007–2010) was cut short by his illness and
 echo '<h3>V. The Igbo Question: Unresolved</h3>';
 echo '<p>Fifty years after the end of the Biafra War, the structural conditions that produced it have not been resolved. The Igbo have not held the presidency since Aguiyi-Ironsi\'s six months in 1966 (before his assassination). Federal infrastructure investment in the Southeast has been consistently below the national average. The Nigerian Army remains dominated by northern officers. Oil revenues from the Niger Delta — much of which is in Igbo and Ijaw territory — are distributed by a formula that disadvantages producing states. The wounds of the war — the abandoned property, the twenty-pound bank limit, the federal reconstruction that bypassed the Igbo heartland — have never been honestly acknowledged by the Nigerian state.</p>';
 echo '<p>The IPOB movement, the sit-at-home orders, and the continuing resonance of Biafran nationalism fifty years after the war\'s end are all expressions of this unresolved situation. They are not the cause of Igbo marginalisation; they are its consequence. Understanding Nigeria requires understanding this: that the Nigerian state has a debt to the Igbo people that it has not paid, and that the Igbo people know it.</p>';
+echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:28px 0 4px;">';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/biafra/overview/">→ Biafra</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/pogrom/overview/">→ Pogrom</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/history/overview/">→ History</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/resistance/overview/">→ Resistance</a>';
+echo '</div>';
 echo '</div>';

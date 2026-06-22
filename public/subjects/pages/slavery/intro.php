@@ -27,4 +27,10 @@ foreach($sections as [$href,$title,$desc]) {
 echo '</div>';
 echo '<h2>Our Approach</h2>';
 echo '<p>This subject does not sanitise the trade or its Igbo dimensions. It does not reduce the Igbo to victims, but it does not minimise their victimisation. It holds the complexity that the historical record requires: that the same people could be simultaneously the largest single group exported from the Bight of Biafra and the builders of the trading infrastructure that facilitated that export. That the osu system is both an internal Igbo tradition and a form of hereditary social exclusion that demands honest examination. This subject is cross-linked with <a href="/subjects/history/intro/">History</a>, <a href="/subjects/struggles/intro/">Struggles</a>, and <a href="/subjects/europe/intro/">Europe</a>.</p>';
+echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:28px 0 4px;">';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/africa/overview/">→ Africa</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/arabs/overview/">→ Arabs</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/europe/overview/">→ Europe</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/resistance/overview/">→ Resistance</a>';
+echo '</div>';
 echo '</div>';

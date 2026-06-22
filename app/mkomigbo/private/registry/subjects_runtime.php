@@ -8,7 +8,7 @@ declare(strict_types=1);
  *
  * GOAL:
  * - Prevent “arbitrary” subjects from appearing.
- * - Ensure every caller gets the same 19 subjects, in the same order, with stable IDs.
+ * - Ensure every caller gets the same 20 subjects, in the same order, with stable IDs.
  *
  * SOURCES (in priority order):
  *  1) /private/registry/subjects_register.php (preferred canonical registry)

@@ -24,4 +24,9 @@ foreach($sections as [$href,$title,$desc]) {
 echo '</div>';
 echo '<h2>Our Approach</h2>';
 echo '<p>This subject does not treat the Arab world as monolithic or Islam as inherently problematic. It treats the Arab-African relationship as a historical reality with specific phases, specific actors, and specific consequences — some profoundly enriching and some profoundly destructive. The trans-Saharan slave trade is documented with the same rigour as the Atlantic trade. This subject is cross-linked with <a href="/subjects/religion/abrahamic/">Religion: Abrahamic</a>, <a href="/subjects/nigeria/intro/">Nigeria</a>, and <a href="/subjects/slavery/intro/">Slavery</a>.</p>';
+echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:28px 0 4px;">';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/slavery/overview/">→ Slavery</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/religion/overview/">→ Religion</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/africa/overview/">→ Africa</a>';
+echo '</div>';
 echo '</div>';

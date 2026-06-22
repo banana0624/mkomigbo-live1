@@ -1,47 +1,15 @@
 <?php
 declare(strict_types=1);
-
-return [
-  'title' => 'Topics',
-  'body_html' => <<<MKHTML_026f6b80
-<div class="mk-prose">
-
-  <p class="mk-muted" style="margin-top:0;">
-    <strong>Subject</strong> — Key\ Topics.
-    Starter scaffold: readable now, expandable later.
-  </p>
-
-  <div style="display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 14px;">
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/intro/">
-        Introduction      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/overview/">
-        Overview      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/topics/">
-        Key Topics      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/people/">
-        People      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/sources/">
-        Sources      </a>
-      </div>
-
-  <h2>What belongs here</h2>
-  <ul>
-    <li><strong>Scope:</strong> what this page covers and excludes.</li>
-    <li><strong>Key points:</strong> the essentials readers should remember.</li>
-    <li><strong>Structure:</strong> sections you’ll expand later.</li>
-  </ul>
-
-  <hr>
-
-  <p class="mk-muted">
-    Tip: add citations and attach source links/files below.
-  </p>
-
-</div>
-MKHTML_026f6b80,
-];
+echo '<div class="mk-prose">';
+echo '<p class="mk-muted" style="margin-top:0;">Themes in biographical portraits of Igbo and African figures.</p>';
+echo '<h2>Education and Formation</h2>';
+echo '<p>A recurring theme in Igbo biography is the role of education — and specifically, the mission school — in forming individuals capable of moving between African and European worlds. Achebe\'s father was a catechist; Achebe grew up in a household where the Bible and Igbo oral tradition coexisted. Okigbo\'s father was a schoolteacher. This pattern — conversion, education, dual inheritance — shaped a generation that used Western literary and political tools to articulate African experience. The question of what was gained and what was lost in this transaction runs through Igbo biography and fiction alike.</p>';
+echo '<h2>Exile and Return</h2>';
+echo '<p>Many significant Igbo figures were formed in exile. Equiano made himself in London. Azikiwe was shaped by years in the United States and Britain. Ojukwu was educated at Oxford. The diaspora generation — Emecheta in London, Adichie between Nigeria and the United States — continued this pattern. Exile is not simply absence from home; it is an education in difference, in what home means when it is gone, and in the politics of belonging.</p>';
+echo '<h2>The Weight of the War</h2>';
+echo '<p>Biafra shaped virtually every Igbo life born before 1965. The war killed between one and three million people, many of them from starvation during the blockade. It destroyed institutions, property, and careers. It sent a generation into the diaspora. Chimamanda Adichie\'s <em>Half of a Yellow Sun</em> is partly a biographical act: her parents lived through the war, and the novel is an attempt to give form to what they experienced and could not fully tell.</p>';
+echo '<h2>Gender and Biography</h2>';
+echo '<p>Igbo women\'s biography poses particular methodological challenges. The dominant archive records male figures in formal roles. Recovering women\'s lives requires reading against the grain — finding them in men\'s diaries, in colonial administrative records that noted disruptions caused by women\'s protests, in the traditions of oral history that community women preserved. Flora Nwapa\'s decision to write about Igbo women\'s interior lives was itself a biographical act, recovering what official history had not recorded.</p>';
+echo '<h2>The Question of Collaboration</h2>';
+echo '<p>A recurring difficult theme in Igbo biography is collaboration with colonial and later oppressive systems. Some Igbo traders participated in the slave trade before abolition. Some mission-educated men served in the colonial civil service. Some warrant chiefs abused their positions. A complete biographical account must engage with these figures not as anomalies but as participants in systems that many Igbo people navigated in different ways, with different degrees of complicity and resistance.</p>';
+echo '</div>';

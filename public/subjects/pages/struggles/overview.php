@@ -24,4 +24,10 @@ echo '<p>Ken Saro-Wiwa\'s Movement for the Survival of the Ogoni People (MOSOP) 
 echo '<h3>V. Contemporary Struggles (1999–present)</h3>';
 echo '<p>The return to civilian rule in 1999 did not end Igbo political struggle; it transformed its forms. IPOB — the Indigenous People of Biafra, led by Nnamdi Kanu from 2012 — has pursued self-determination through a combination of media agitation (Radio Biafra), mass mobilisation, and international lobbying. Its proscription by the Nigerian government as a terrorist organisation, and the military operations against its members in the southeast, represent the continuation of state violence against Igbo political expression. The sit-at-home orders that IPOB has imposed on the southeast — and the compliance with which large sections of the Igbo population have met them — demonstrate both the organisation\'s popular resonance and the costs its tactics impose on ordinary life.</p>';
 echo '<p>The ENDSARS movement of October 2020 — a youth-led protest against police brutality that swept through Nigerian cities — was not specifically Igbo but reflected conditions experienced acutely in Igbo cities. The Lekki tollgate massacre of October 20, 2020, in which Nigerian Army personnel opened fire on unarmed protesters, was the defining atrocity of the movement. The movement\'s suppression without political accountability demonstrated the continuity between military-era and civilian-era state violence.</p>';
+echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:28px 0 4px;">';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/resistance/overview/">→ Resistance</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/slavery/overview/">→ Slavery</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/biafra/overview/">→ Biafra</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/history/overview/">→ History</a>';
+echo '</div>';
 echo '</div>';

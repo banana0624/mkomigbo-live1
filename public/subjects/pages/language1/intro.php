@@ -26,4 +26,9 @@ foreach($sections as [$href,$title,$desc]) {
 echo '</div>';
 echo '<h2>Our Approach</h2>';
 echo '<p>This subject is written from inside the language it documents. It treats the phoneme gap not as a technical curiosity but as a political and cultural problem: a writing system that cannot adequately represent a language is a writing system that silences the language\'s full expressiveness. The digraph and trigraph analysis documented in Topics represents original scholarship developed for this platform — work in progress that will be expanded as the research develops. This subject is cross-linked with <a href="/subjects/language2/intro/">Language2</a> (grammar and usage) and <a href="/subjects/culture/intro/">Culture</a>.</p>';
+echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:28px 0 4px;">';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/language2/overview/">→ Language II</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/history/overview/">→ History</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/culture/overview/">→ Culture</a>';
+echo '</div>';
 echo '</div>';

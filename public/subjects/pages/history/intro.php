@@ -25,4 +25,10 @@ foreach($sections as [$href,$title,$desc]) {
 echo '</div>';
 echo '<h2>Our Approach</h2>';
 echo '<p>This subject is written from inside the tradition it documents. It does not treat Igbo history as a problem to be explained by external frameworks. It treats it as a body of evidence — archaeological, linguistic, oral, archival, literary — that demands rigorous and honest engagement. Where the evidence is contested, we say so. Where the history involves violence, exploitation, and failure, we document it. Where it involves extraordinary achievement, we document that with equal seriousness. This subject is cross-linked with <a href="/subjects/culture/intro/">Culture</a>, <a href="/subjects/slavery/intro/">Slavery</a>, <a href="/subjects/biafra/intro/">Biafra</a>, and <a href="/subjects/struggles/intro/">Struggles</a>.</p>';
+echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:28px 0 4px;">';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/africa/overview/">→ Africa</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/nigeria/overview/">→ Nigeria</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/biafra/overview/">→ Biafra</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/tradition/overview/">→ Tradition</a>';
+echo '</div>';
 echo '</div>';

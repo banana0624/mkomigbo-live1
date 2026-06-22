@@ -22,4 +22,9 @@ foreach($sections as [$href,$title,$desc]) {
 echo '</div>';
 echo '<h2>Our Approach</h2>';
 echo '<p>Language2 is written for learners and for native speakers who want to understand their language more analytically. It does not assume prior knowledge of linguistics. It uses Igbo examples throughout, with translations and explanations. Where the grammar is complex — particularly the tonal system and the aspect-marking verb system — it explains rather than assumes. This subject is cross-linked with <a href="/subjects/language1/intro/">Language1</a> (writing systems and phoneme history) and <a href="/subjects/culture/intro/">Culture</a> (the social contexts in which language operates).</p>';
+echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:28px 0 4px;">';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/language1/overview/">→ Language I</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/culture/overview/">→ Culture</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/history/overview/">→ History</a>';
+echo '</div>';
 echo '</div>';

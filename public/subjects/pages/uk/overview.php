@@ -18,4 +18,10 @@ echo '<p>The 1990s Abacha dictatorship produced another wave: political activist
 echo '<h3>IV. The Second Generation and the Contemporary Moment</h3>';
 echo '<p>The British-born or British-raised children of Nigerian migrants — the second generation — have produced some of the most significant cultural contributions to contemporary British life. Bernardine Evaristo, winner of the 2019 Booker Prize, was born in Woolwich to a Nigerian father and a British mother. David Oyelowo, the actor who played Martin Luther King in <em>Selma</em>, is of Nigerian Yoruba descent. Skepta, the grime artist who won the Mercury Prize in 2016, is of Yoruba descent. These figures are simultaneously British cultural icons and members of the Nigerian diaspora — a dual identity that British culture has been slow to acknowledge and that the second generation has had to negotiate without institutional support.</p>';
 echo '<p>The second generation also navigates the hostile environment that successive British governments have created: stop-and-search rates that target Black people disproportionately, an immigration system that treats Nigerian British citizens as suspects rather than members of the community, and a national conversation about identity that has consistently struggled to accommodate Blackness and Britishness simultaneously.</p>';
+echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:28px 0 4px;">';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/europe/overview/">→ Europe</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/people/overview/">→ People</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/history/overview/">→ History</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/resistance/overview/">→ Resistance</a>';
+echo '</div>';
 echo '</div>';

@@ -160,5 +160,5 @@ echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:24px 0 4px;">';
 echo '<a class="mk-btn mk-btn--ghost" href="/subjects/religion/overview/">Full Map of Religions</a>';
 echo '<a class="mk-btn mk-btn--ghost" href="/subjects/religion/african/">African Religions</a>';
 echo '<a class="mk-btn mk-btn--ghost" href="/subjects/religion/eastern/">Eastern Religions</a>';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/spirituality/african/">Igbo Esoteric</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/esoterism/african/">Igbo Esoteric</a>';
 echo '</div></div>';

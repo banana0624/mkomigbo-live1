@@ -1,47 +1,32 @@
 <?php
 declare(strict_types=1);
-
-return [
-  'title' => 'Sources',
-  'body_html' => <<<MKHTML_5a0c5def
-<div class="mk-prose">
-
-  <p class="mk-muted" style="margin-top:0;">
-    <strong>Subject</strong> — Sources.
-    Starter scaffold: readable now, expandable later.
-  </p>
-
-  <div style="display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 14px;">
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/intro/">
-        Introduction      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/overview/">
-        Overview      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/topics/">
-        Key Topics      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/people/">
-        People      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/sources/">
-        Sources      </a>
-      </div>
-
-  <h2>What belongs here</h2>
-  <ul>
-    <li><strong>Scope:</strong> what this page covers and excludes.</li>
-    <li><strong>Key points:</strong> the essentials readers should remember.</li>
-    <li><strong>Structure:</strong> sections you’ll expand later.</li>
-  </ul>
-
-  <hr>
-
-  <p class="mk-muted">
-    Tip: add citations and attach source links/files below.
-  </p>
-
-</div>
-MKHTML_5a0c5def,
-];
+echo '<div class="mk-prose">';
+echo '<p class="mk-muted" style="margin-top:0;">Key references for notable Igbo and African figures.</p>';
+echo '<h2>Primary Texts</h2>';
+echo '<ul>';
+echo '<li><strong>Olaudah Equiano</strong> — <em>The Interesting Narrative of the Life of Olaudah Equiano</em> (1789). The foundational autobiography.</li>';
+echo '<li><strong>Nnamdi Azikiwe</strong> — <em>My Odyssey: An Autobiography</em> (1970).</li>';
+echo '<li><strong>Chinua Achebe</strong> — <em>There Was a Country: A Personal History of Biafra</em> (2012).</li>';
+echo '<li><strong>Chimamanda Ngozi Adichie</strong> — <em>We Should All Be Feminists</em> (2014); <em>Notes on Grief</em> (2021).</li>';
+echo '</ul>';
+echo '<h2>Literary Works</h2>';
+echo '<ul>';
+echo '<li><strong>Chinua Achebe</strong> — <em>Things Fall Apart</em> (1958); <em>Arrow of God</em> (1964); <em>A Man of the People</em> (1966).</li>';
+echo '<li><strong>Christopher Okigbo</strong> — <em>Labyrinths with Path of Thunder</em> (1971).</li>';
+echo '<li><strong>Flora Nwapa</strong> — <em>Efuru</em> (1966); <em>Idu</em> (1970).</li>';
+echo '<li><strong>Buchi Emecheta</strong> — <em>Second Class Citizen</em> (1974); <em>The Joys of Motherhood</em> (1979).</li>';
+echo '<li><strong>Chimamanda Ngozi Adichie</strong> — <em>Half of a Yellow Sun</em> (2006); <em>Americanah</em> (2013).</li>';
+echo '</ul>';
+echo '<h2>Biographies and Studies</h2>';
+echo '<ul>';
+echo '<li><strong>Ezenwa-Ohaeto</strong> — <em>Chinua Achebe: A Biography</em> (1997).</li>';
+echo '<li><strong>Vincent Carretta</strong> — <em>Equiano the African: Biography of a Self-Made Man</em> (2005).</li>';
+echo '<li><strong>Sylvia Leith-Ross</strong> — <em>African Women</em> (1939). Documents Omu Okwei and Niger Delta women traders.</li>';
+echo '</ul>';
+echo '<h2>Historical and Political Sources</h2>';
+echo '<ul>';
+echo '<li><strong>Richard Sklar</strong> — <em>Nigerian Political Parties</em> (1963).</li>';
+echo '<li><strong>Frederick Forsyth</strong> — <em>The Biafra Story</em> (1969).</li>';
+echo '<li><strong>Tekena Tamuno</strong> — <em>Nigeria and Elective Representation 1923–1947</em> (1966).</li>';
+echo '</ul>';
+echo '</div>';

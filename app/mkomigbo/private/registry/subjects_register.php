@@ -7,7 +7,7 @@ declare(strict_types=1);
  * Canonical static registry for Subjects (source of truth for the public list order).
  *
  * Used for:
- * - Public index fallback (guarantee 19 subjects exist even if DB is empty)
+ * - Public index fallback (guarantee 20 subjects exist even if DB is empty)
  * - Routing fallbacks (slug → id/name/meta/icon)
  * - SEO meta fallbacks per subject
  *

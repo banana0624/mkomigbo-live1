@@ -1,45 +1,10 @@
 <?php
 declare(strict_types=1);
-
-return [
-  'title' => 'People',
-  'body_html' => <<<MKHTML_45569689
-<div class="mk-prose">
-
-  <p class="mk-muted" style="margin-top:0;">
-    This is the <strong>People</strong> page for <strong>Subject</strong>.
-    It’s a premium starter scaffold — readable now and expandable later.
-  </p>
-
-  <h2>What this subject covers</h2>
-  <ul>
-    <li><strong>Core ideas</strong> — definitions, scope, and key distinctions.</li>
-    <li><strong>Key context</strong> — background readers need to understand the topic.</li>
-    <li><strong>Evidence</strong> — sources, links, archives, media.</li>
-    <li><strong>Debates</strong> — competing viewpoints with citations.</li>
-  </ul>
-
-  <h2>Explore next</h2>
-  <div style="display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 4px;">
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/overview/">
-        Overview      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/topics/">
-        Key Topics      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/people/">
-        People      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/sources/">
-        Sources      </a>
-      </div>
-
-  <h2>Contribute</h2>
-  <p>
-    Add a clean lede, build sections, and attach trusted references using <code>links.json</code> and local files.
-  </p>
-
-</div>
-MKHTML_45569689,
-];
+echo '<div class="mk-prose">';
+echo '<p class="mk-muted" style="margin-top:0;">Notable Igbo and African figures across history — writers, warriors, scholars, statesmen, and visionaries who shaped the world.</p>';
+echo '<h2>People of Consequence</h2>';
+echo '<p>The Igbo people have produced individuals of extraordinary range — from Olaudah Equiano, who helped end the British slave trade, to Chinua Achebe, whose novel <em>Things Fall Apart</em> reoriented world literature. Their names span continents and centuries: political leaders who negotiated independence, scholars who rebuilt African intellectual tradition, artists who gave voice to dispossession, and activists who refused erasure.</p>';
+echo '<p>This section gathers figures of significance to Igbo history, African history, and the diaspora experience. They are not a complete list — that would be impossible — but a set of lives through which larger histories can be read.</p>';
+echo '<h2>How to Read These Lives</h2>';
+echo '<p>Each person here stands at an intersection: of colonial and precolonial worlds, of African and European education, of local and global ambition. Their biographies illuminate what it meant — and what it cost — to be Igbo in the 19th, 20th, and 21st centuries. Many were the first of their kind. Many paid for their prominence with exile, imprisonment, or death. All left something that survived them.</p>';
+echo '</div>';

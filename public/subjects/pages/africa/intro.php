@@ -24,4 +24,10 @@ foreach($sections as [$href,$title,$desc]) {
 echo '</div>';
 echo '<h2>Our Approach</h2>';
 echo '<p>This subject does not treat Africa as a problem to be solved or a tragedy to be mourned. It treats Africa as a political and intellectual tradition — a set of experiences, arguments, and achievements that the world has consistently underestimated and that Igbo people, as Africans, share in and contribute to. Where African history has involved violence, exploitation, and failure, we document it. Where it has involved extraordinary governance, scholarship, resistance, and cultural creation, we document that with equal attention. This subject is cross-linked with <a href="/subjects/history/intro/">History</a>, <a href="/subjects/slavery/intro/">Slavery</a>, and <a href="/subjects/struggles/intro/">Struggles</a>.</p>';
+echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:28px 0 4px;">';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/history/overview/">→ History</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/slavery/overview/">→ Slavery</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/resistance/overview/">→ Resistance</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/tradition/overview/">→ Tradition</a>';
+echo '</div>';
 echo '</div>';

@@ -20,4 +20,10 @@ echo '<p>Igbo traditional life is structured by a ritual calendar that marks agr
 
 echo '<h3>V. Tradition and Change</h3>';
 echo '<p>Igbo tradition is not a museum piece. It is a living system that has adapted continuously — to the arrival of Islam in neighbouring regions, to Portuguese traders on the coast, to British colonialism, to Christian missionary activity, to the civil war, to urban migration, and to diaspora dispersal. What has changed is the form; what has endured is the underlying logic: authority must be earned, not inherited; wealth must be shared, not hoarded; the dead must be honoured, not forgotten; the community\'s decisions must be made by the community, not imposed from outside. These are not merely Igbo values. They are arguments about how human beings should live together, and they are as urgent in the 21st century as they were in the 9th.</p>';
+echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:28px 0 4px;">';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/culture/overview/">→ Culture</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/history/overview/">→ History</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/religion/overview/">→ Religion</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/esoterism/overview/">→ Esoterism</a>';
+echo '</div>';
 echo '</div>';

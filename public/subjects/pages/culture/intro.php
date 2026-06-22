@@ -24,4 +24,10 @@ foreach($sections as [$href,$title,$desc]) {
 echo '</div>';
 echo '<h2>Culture Under Pressure</h2>';
 echo '<p>Igbo culture has survived enormous pressure — the Atlantic slave trade, Christian missionary activity, British colonisation, the civil war, and now the globalising forces of modernity and migration. Much has been lost. Much has adapted. Much endures. The masquerade that colonial missionaries called "pagan idol worship" is performed in diaspora communities in London and Atlanta. The Uli designs that colonial administrators dismissed as primitive decoration now appear in contemporary Nigerian art exhibitions in New York and Lagos. The four-day week that structures Igbo time has survived two centuries of colonial and post-colonial attempts to replace it with the seven-day European week. This subject documents the losses, the adaptations, and what remains vigorously alive. It is cross-linked with <a href="/subjects/tradition/intro/">Tradition</a>, <a href="/subjects/religion/intro/">Religion</a>, and <a href="/subjects/language1/intro/">Language</a>.</p>';
+echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:28px 0 4px;">';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/tradition/overview/">→ Tradition</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/history/overview/">→ History</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/religion/overview/">→ Religion</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/language1/overview/">→ Language</a>';
+echo '</div>';
 echo '</div>';

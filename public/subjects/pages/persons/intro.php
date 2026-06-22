@@ -1,45 +1,10 @@
 <?php
 declare(strict_types=1);
-
-return [
-  'title' => 'Sources',
-  'body_html' => <<<MKHTML_f8431dbe
-<div class="mk-prose">
-
-  <p class="mk-muted" style="margin-top:0;">
-    This is the <strong>Sources</strong> page for <strong>Subject</strong>.
-    It’s a premium starter scaffold — readable now and expandable later.
-  </p>
-
-  <h2>What this subject covers</h2>
-  <ul>
-    <li><strong>Core ideas</strong> — definitions, scope, and key distinctions.</li>
-    <li><strong>Key context</strong> — background readers need to understand the topic.</li>
-    <li><strong>Evidence</strong> — sources, links, archives, media.</li>
-    <li><strong>Debates</strong> — competing viewpoints with citations.</li>
-  </ul>
-
-  <h2>Explore next</h2>
-  <div style="display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 4px;">
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/overview/">
-        Overview      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/topics/">
-        Key Topics      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/people/">
-        People      </a>
-          <a class="mk-btn mk-btn--ghost"
-         href="/subjects/history/sources/">
-        Sources      </a>
-      </div>
-
-  <h2>Contribute</h2>
-  <p>
-    Add a clean lede, build sections, and attach trusted references using <code>links.json</code> and local files.
-  </p>
-
-</div>
-MKHTML_f8431dbe,
-];
+echo '<div class="mk-prose">';
+echo '<p class="mk-muted" style="margin-top:0;">Individual lives in detail — biographical portraits of Igbo and African figures across history.</p>';
+echo '<h2>Persons</h2>';
+echo '<p>History is often written in aggregates — migrations, movements, populations, statistics. This section works differently. It begins with the individual: a person with a name, a birth, a set of choices, and a death. Through individual lives, larger patterns become visible. Through one person\'s confrontation with colonialism, enslavement, war, or opportunity, the texture of history becomes intelligible in ways that general accounts cannot achieve.</p>';
+echo '<p>The figures gathered here are not only the famous. Some are well-known; others have been recovered from archives, from oral tradition, from the margins of larger histories. All illuminate something about what it meant to be Igbo — or African, or Black in the diaspora — at a particular moment in time.</p>';
+echo '<h2>Portraits, Not Hagiography</h2>';
+echo '<p>These are not celebratory profiles. Where figures made compromises, collaborated with oppressive systems, or caused harm, that is part of their record. The goal is accuracy, not admiration. The Igbo have always valued <em>ihe onye mere</em> — what a person actually did — over the pretense of what they ought to have been.</p>';
+echo '</div>';

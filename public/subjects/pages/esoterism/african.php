@@ -95,9 +95,9 @@ echo '<h3>The Mystery Traditions</h3>';
 echo '<p>Greek and Roman writers described Egyptian "mystery traditions" — initiatory rites at major temple complexes (especially Abydos and Philae) in which candidates underwent ritual death and rebirth to emerge as initiates of Osiris. Plutarch\'s <em>On Isis and Osiris</em> is the most complete surviving account of the Egyptian mysteries as understood by outsiders. The Isian mysteries spread throughout the Roman Empire — Isis was the most widely worshipped deity in the Roman world after Rome absorbed Egypt. The Egyptian mysteries significantly influenced the Greek mystery religions (Eleusinian, Orphic), Neoplatonism, and through these, Western esoterism as a whole.</p>';
 
 echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:28px 0 4px;">';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/spirituality/intro/">Introduction</a>';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/spirituality/topics/">Western Esoteric</a>';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/spirituality/eastern/">Eastern Mysticism</a>';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/spirituality/sources/">Texts & Downloads</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/esoterism/intro/">Introduction</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/esoterism/topics/">Western Esoteric</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/esoterism/eastern/">Eastern Mysticism</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/esoterism/sources/">Texts & Downloads</a>';
 echo '<a class="mk-btn mk-btn--ghost" href="/subjects/religion/african/">→ African Religions</a>';
 echo '</div></div>';

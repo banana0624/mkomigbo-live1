@@ -3,7 +3,7 @@ declare(strict_types=1);
 echo '<div class="mk-prose">';
 echo '<p class="mk-muted" style="margin-top:0;">An overview of the Mkomigbo platform — what it contains and how it is organized.</p>';
 echo '<h2>The Knowledge Library</h2>';
-echo '<p>Mkomigbo is organized around 19 subject areas, each covering a distinct dimension of Igbo and African life. Each subject contains an introduction, overview, key topics, people, and sources — structured to give both a quick entry point and deep research capability.</p>';
+echo '<p>Mkomigbo is organized around 20 subject areas, each covering a distinct dimension of Igbo and African life. Each subject contains an introduction, overview, key topics, people, and sources — structured to give both a quick entry point and deep research capability.</p>';
 echo '<h2>19 Subject Areas</h2>';
 echo '<ul>';
 echo '<li><strong>History</strong> — timelines, migrations, kingdoms, and turning points</li>';

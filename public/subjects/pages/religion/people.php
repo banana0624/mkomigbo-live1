@@ -35,7 +35,7 @@ $founders = [
   ['1884–1964 CE','Gerald Gardner','Wicca','British civil servant who publicly founded Wicca in 1954; claimed initiation into a surviving witch cult; his books created the modern Wicca movement.'],
   ['1892–1975 CE','Haile Selassie I','Rastafari (as divine figure)','Emperor of Ethiopia; identified by Rastafarians as the returned Messiah and the fulfillment of Revelation 5:5; the Lion of the Tribe of Judah.'],
   ['1905–1970 CE','Paul Twitchell','Eckankar','American writer who founded Eckankar in 1965; claimed to have been initiated by a succession of ECK Masters; introduced the concepts of Soul Travel and the Sound Current.'],
-  ['1926–2009 CE','Ngô Văn Chiêu','Cao Dai','Vietnamese official credited with founding Cao Dai in 1926 after receiving divine communications; the religion synthesizes all world faiths under one God.'],
+  ['1926–2009 CE','Ngô Văn Chiêu','Cao Dai','Vietnamese official who received divine communications in 1921 and is credited as an early founder of Cao Dai; the religion was formally established in 1926 by a broader group of founders and synthesizes all world faiths under one God.'],
   ['1929–1968 CE','Martin Luther King Jr.','Social Gospel / Christianity','Baptist minister who led the American civil rights movement; applied Christian theology to the struggle for racial justice; his "I Have a Dream" speech is among the most important religious-political addresses of the 20th century.'],
 ];
 

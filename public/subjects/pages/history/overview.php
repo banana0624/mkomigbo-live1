@@ -22,4 +22,10 @@ echo '<p>Colonial administration fundamentally restructured Igbo political life.
 echo '<h3>V. The Nigeria-Biafra War and Its Aftermath</h3>';
 echo '<p>The Nigeria-Biafra War (1967–1970) is the defining event of modern Igbo history. Its immediate causes were the military coups of 1966 and the pogroms against Igbo living in northern Nigeria in which between 30,000 and 100,000 people were killed. Its deeper causes were the structural imbalances of the Nigerian federal state — the dominance of the Hausa-Fulani north in federal politics and the military, and the failure of the Aburi Accord to produce a confederal arrangement that would have protected Igbo safety. The declaration of Biafra (30 May 1967) and the subsequent federal military campaign, which included a deliberate food blockade that caused a famine killing between 500,000 and 2 million people, ended with Biafra\'s collapse in January 1970.</p>';
 echo '<p>The post-war settlement — "No Victor, No Vanquished" — was a political formula that concealed systematic Igbo marginalisation. The abandoned property policy, the twenty-pound bank limit, and the bypassing of southeastern Nigeria in federal reconstruction all compounded the war\'s human losses. The Igbo rebuilt through commerce, education, and community solidarity — the "Igbo miracle" of rapid economic recovery — but the structural conditions of marginalisation within the Nigerian federal state have never been resolved. The contemporary self-determination movement, represented most visibly by IPOB, is the direct inheritance of this unresolved history.</p>';
+echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:28px 0 4px;">';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/africa/overview/">→ Africa</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/nigeria/overview/">→ Nigeria</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/biafra/overview/">→ Biafra</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/language1/overview/">→ Language</a>';
+echo '</div>';
 echo '</div>';

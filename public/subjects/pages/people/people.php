@@ -1,79 +1,23 @@
 <?php
 declare(strict_types=1);
-
-return [
-  'title' => 'People',
-  'body_html' => <<<MKHTML_efa373fb
-<section class="mk-prose">
-  <p class="mk-muted">
-    <strong>People</strong> collects the key individuals, groups, and institutions connected to this subject — with clear scope and verifiable sources.
-  </p>
-</section>
-
-<div class="mk-card">
-  <div class="mk-card__body">
-    <h2 class="mk-h2">What belongs here</h2>
-    <ul class="mk-list">
-      <li><strong>Key people</strong> who shaped or represent major developments in this subject.</li>
-      <li><strong>Groups & institutions</strong> (communities, councils, states, movements, guilds, academies, etc.).</li>
-      <li><strong>Roles</strong> and <strong>relationships</strong> (who influenced whom, networks, alliances, rivals).</li>
-      <li><strong>Primary references</strong> that support each claim (books, papers, archives, credible databases).</li>
-    </ul>
-    <p class="mk-muted">
-      Keep entries concise and evidence-led. Prefer a few high-signal facts per entry over long biographies.
-    </p>
-  </div>
-</div>
-
-<div class="mk-card">
-  <div class="mk-card__body">
-    <h2 class="mk-h2">Recommended structure</h2>
-
-    <h3 class="mk-h3">1) Featured people</h3>
-    <ul class="mk-list">
-      <li><strong>Name</strong> — one-line descriptor (era/role) + 2–5 bullet facts.</li>
-      <li><strong>Why relevant</strong> — tie directly to the subject scope.</li>
-      <li><strong>Sources</strong> — at least 1–3 citations.</li>
-    </ul>
-
-    <h3 class="mk-h3">2) Groups & institutions</h3>
-    <ul class="mk-list">
-      <li><strong>Group/Institution</strong> — what it is, where, when, significance.</li>
-      <li><strong>Key members / leaders</strong> (if applicable).</li>
-      <li><strong>Sources</strong> — citations.</li>
-    </ul>
-
-    <h3 class="mk-h3">3) Cross-links</h3>
-    <ul class="mk-list">
-      <li>Link to related topic pages in this subject (Topics, Sources, Timeline, etc.).</li>
-      <li>Link to contributor profiles when authorship or research is notable.</li>
-    </ul>
-  </div>
-</div>
-
-<div class="mk-card">
-  <div class="mk-card__body">
-    <h2 class="mk-h2">Add citation</h2>
-    <p class="mk-muted">
-      Every non-trivial claim should be traceable. Use the format below per source, then reference it under entries.
-    </p>
-
-    <ol class="mk-list">
-      <li>
-        <strong>[1]</strong> Author. <em>Title</em>. Publisher, Year. (Chapter/pages if relevant)
-      </li>
-      <li>
-        <strong>[2]</strong> Archive/Database. <em>Record/Entry title</em>. Identifier/URL. Accessed YYYY-MM-DD.
-      </li>
-      <li>
-        <strong>[3]</strong> Journal/Report. <em>Paper/Report title</em>. Volume(Issue), Year. DOI/URL.
-      </li>
-    </ol>
-
-    <p class="mk-muted">
-      Tip: If you cite a website, prefer stable sources (institutions, archives, journals). Avoid anonymous summaries when primary sources exist.
-    </p>
-  </div>
-</div>
-MKHTML_efa373fb,
-];
+echo '<div class="mk-prose">';
+echo '<p class="mk-muted" style="margin-top:0;">Key Igbo and African figures in history, culture, politics, and the arts.</p>';
+echo '<h2>Olaudah Equiano (c. 1745–1797)</h2>';
+echo '<p>Born in the Igbo heartland, enslaved as a child, transported across the Atlantic, and eventually freed, Equiano settled in London and became the most prominent Black abolitionist in Britain. His autobiography — <em>The Interesting Narrative of the Life of Olaudah Equiano</em> (1789) — was a bestseller, going through nine editions in his lifetime. He lobbied Parliament, toured Britain on speaking engagements, and married an Englishwoman, Susanna Cullen. He is the ancestor of everything that followed in the British-Nigerian relationship.</p>';
+echo '<h2>Nnamdi Azikiwe (1904–1996)</h2>';
+echo '<p>Born in Zungeru to an Igbo father, educated in the United States at Howard, Storer, and Lincoln universities, Azikiwe returned to West Africa in the 1930s to build the institutions of nationalism. As editor of the <em>West African Pilot</em> and eventually as Nigeria\'s first President (1963–1966), he was the dominant political figure of his generation.</p>';
+echo '<h2>Chinua Achebe (1930–2013)</h2>';
+echo '<p>Born in Ogidi, Anambra State, Achebe published <em>Things Fall Apart</em> in 1958 — one year before Nigerian independence — and changed African literature permanently. The novel has been translated into more than sixty languages and sold more than twenty million copies. His account of Biafra, <em>There Was a Country</em> (2012), appeared a year before his death.</p>';
+echo '<h2>Christopher Okigbo (1932–1967)</h2>';
+echo '<p>Widely regarded as the finest Igbo poet of the 20th century, Okigbo\'s poetry — dense, allusive, drawing on Igbo ritual and Western modernism — was collected in <em>Labyrinths</em> (1971). When Biafra declared independence, Okigbo enlisted. He was killed in combat near Nsukka in August 1967, aged thirty-five.</p>';
+echo '<h2>Odumegwu Ojukwu (1933–2011)</h2>';
+echo '<p>Born in Nnewi, educated at Epsom College and Lincoln College Oxford, Ojukwu entered the Nigerian army and rose quickly. After the 1966 pogroms and the failure of the Aburi Accord, he declared the independent Republic of Biafra on 30 May 1967. He led Biafra through thirty months of war before going into exile in Côte d\'Ivoire in January 1970.</p>';
+echo '<h2>Buchi Emecheta (1944–2017)</h2>';
+echo '<p>Born in Lagos to Igbo parents, Emecheta arrived in London in 1962. After raising five children alone, she studied sociology at the University of London and wrote. Her novels — <em>Second Class Citizen</em> (1974), <em>The Joys of Motherhood</em> (1979) — documented the experience of African women in both Nigeria and Britain with a directness that made her one of the most important feminist voices of her era.</p>';
+echo '<h2>Flora Nwapa (1931–1993)</h2>';
+echo '<p>Born in Oguta, educated at University College Ibadan and the University of Edinburgh, Nwapa\'s novel <em>Efuru</em> (1966) was the first work by an African woman published by Heinemann\'s African Writers Series. She went on to found her own publishing company, Tana Press, becoming the first African woman to own and run a major publishing house.</p>';
+echo '<h2>Chimamanda Ngozi Adichie (1977–)</h2>';
+echo '<p>Born in Enugu and raised in Nsukka, Adichie\'s novels — <em>Purple Hibiscus</em> (2003), <em>Half of a Yellow Sun</em> (2006), <em>Americanah</em> (2013) — and her essays have made her one of the most widely read writers in the world. Her TED talks "The Danger of a Single Story" and "We Should All Be Feminists" have been watched by tens of millions of people.</p>';
+echo '<h2>Omu Okwei (1872–1943)</h2>';
+echo '<p>Born in Ossomari on the Niger, Okwei became the dominant long-distance trader in the Niger Delta in the early 20th century — commanding a commercial network that connected the interior to the coast and competed directly with European trading companies. She was recognized by the Ossomari community and the British colonial administration as Omu — the title reserved for the most senior woman in the community.</p>';
+echo '</div>';

@@ -160,9 +160,9 @@ echo '</ul>';
 echo '</div>';
 
 echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:24px 0 4px;">';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/spirituality/intro/">Introduction</a>';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/spirituality/topics/">Western Esoteric</a>';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/spirituality/eastern/">Eastern Mysticism</a>';
-echo '<a class="mk-btn mk-btn--ghost" href="/subjects/spirituality/african/">African Esoteric</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/esoterism/intro/">Introduction</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/esoterism/topics/">Western Esoteric</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/esoterism/eastern/">Eastern Mysticism</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/esoterism/african/">African Esoteric</a>';
 echo '<a class="mk-btn mk-btn--ghost" href="/subjects/religion/sources/">→ Religion Sources</a>';
 echo '</div></div>';

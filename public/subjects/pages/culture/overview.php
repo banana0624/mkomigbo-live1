@@ -23,4 +23,10 @@ echo '<p>Igbo music traditions are equally rich. The <em>ogene</em> (metal gong)
 echo '<h3>V. Visual Culture: Uli, Mbari, and the Arts</h3>';
 echo '<p>Igbo visual culture is as diverse as Igbo political culture — distributed, locally varied, and extraordinarily creative. <em>Uli</em> is the tradition of decorative line drawing practised by Igbo women, applied to the body for ceremonies and to the walls of houses and shrines. The designs are abstract and symbolic, drawn freehand with extraordinary skill. <em>Uli</em> was largely suppressed during the colonial period as "pagan" but has experienced significant revival as a recognised art form with influence on modern Nigerian painting and design. The artist Uche Okeke drew explicitly on <em>Uli</em> in developing what he called "Natural Synthesis" — an African modernism rooted in indigenous visual traditions.</p>';
 echo '<p><em>Mbari</em> houses — elaborate mud sculptures created for the earth deity <em>Ala</em> — represent some of the most complex and culturally rich artistic productions in precolonial West Africa. Built by community teams under ritual direction, <em>mbari</em> houses depicted the full range of Igbo life: deities, animals, humans, Europeans, everyday activities, and sexual and violent scenes that transgressed normal social boundaries. The <em>mbari</em> was understood as a gift to <em>Ala</em>; once completed, it was left to decay, embodying the Igbo understanding that creation is cyclical rather than permanent.</p>';
+echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:28px 0 4px;">';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/tradition/overview/">→ Tradition</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/history/overview/">→ History</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/religion/overview/">→ Religion</a>';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/language1/overview/">→ Language</a>';
+echo '</div>';
 echo '</div>';
