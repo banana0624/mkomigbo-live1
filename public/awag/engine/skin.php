@@ -198,5 +198,8 @@ a{color:inherit;text-decoration:none}
 </footer>
 <script src="/awag/engine/awag-feedback.js"></script>
 <script src="/awag/engine/awag-igbo-calendar.js"></script>
+<script src="/awag/engine/awag-ijaw-calendar.js"></script>
+<script src="/awag/engine/awag-tiv-calendar.js"></script>
+<script src="/awag/engine/awag-bini-calendar.js"></script>
 </body>
 </html>
