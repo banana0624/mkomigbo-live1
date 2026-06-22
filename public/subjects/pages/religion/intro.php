@@ -20,6 +20,7 @@ $sections = [
   ['/subjects/religion/doctrine/','📋 Doctrine, Dogma & Life Cycle','Faith, proselytism, apostasy, birth, marriage, and death across all traditions'],
   ['/subjects/religion/metempsychosis/','♾️ Metempsychosis & Karma','Reincarnation variants, karma doctrines — Igbo vs Hindu vs Buddhist vs Abrahamic'],
   ['/subjects/religion/people/','👤 Founders & Teachers','Prophets, founders, reformers, and teachers across all traditions'],
+  ['/subjects/religion/quaternity/','⬡ Trinity vs Quaternity','The Fourth Wise Man, Ọdinala\'s fourfold divine structure, and the principle of Quaternity in nature and human community'],
   ['/subjects/religion/sources/','📚 Sacred Texts & Downloads','Core scriptures with free download links'],
 ];
 foreach($sections as [$href,$title,$desc]) {
