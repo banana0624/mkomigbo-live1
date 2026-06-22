@@ -15,6 +15,7 @@ $sections = [
   ['/subjects/language1/overview/','🗺️ Overview','Linguistic classification, phonology, tones, grammar, and the writing systems'],
   ['/subjects/language1/topics/','🏛️ Key Topics','The phoneme gap, Nsịbịdị, Ndebe, the Önwu orthography, trigraphs, endangerment'],
   ['/subjects/language1/people/','👤 People','Ogbalu, Williamson, Emenanjo, Kamalu Uchenna, the Nsukka scholars'],
+  ['/subjects/language1/scripts/','✍️ Scripts & Orthography','Nsibidi, the missionary era, Önwu 1961, Ńdébé 2009 — the full history of Igbo writing systems'],
   ['/subjects/language1/sources/','📚 Sources','Dictionaries, grammars, orthography documents, learning resources'],
 ];
 foreach($sections as [$href,$title,$desc]) {
