@@ -25,6 +25,7 @@ $sections = [
   ['/subjects/esoterism/eastern/','🕉️ Eastern & Sufi Mysticism','Sufism, Tantra, Kundalini, Kashmir Shaivism, Tibetan Bön esoteric practice'],
   ['/subjects/esoterism/african/','🌍 African Esoteric Traditions','Deep Ọdinala philosophy, Yoruba Ifá inner teaching, Kongo cosmogram, Kemetic esoterism'],
   ['/subjects/esoterism/people/','👤 Masters & Initiates','Key figures across all esoteric traditions'],
+  ['/subjects/esoterism/dibia/','🌿 The Dibia','Agwu, the three types of dibia, the call, and the philosophy of knowledge that cannot be separated from danger'],
   ['/subjects/esoterism/sources/','📚 Texts & Downloads','Primary texts with free download links'],
 ];
 foreach($sections as [$href,$title,$desc]) {
