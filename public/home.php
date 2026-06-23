@@ -169,6 +169,57 @@ if (function_exists('mk_require_shared')) {
   </div>
 </section>
 
+<section class="mk-home-section">
+  <div class="wrap">
+    <div class="mk-home-section__eyebrow">Install Free Apps</div>
+    <h2 class="mk-home-section__title">Two Standalone Apps — Free, Offline-Ready</h2>
+    <p class="mk-home-section__desc">Both apps install directly from your browser — no app store needed. They work offline and update automatically when you are online.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;margin-top:8px;">
+
+      <div style="border:1px solid #e5e7eb;border-radius:18px;overflow:hidden;">
+        <div style="background:linear-gradient(135deg,#0a1a0a,#0f2d0f);padding:28px;color:#e8f0e8;">
+          <div style="font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:rgba(93,232,122,.7);margin-bottom:8px;">Africa-Wide</div>
+          <h3 style="font-size:1.4rem;font-weight:900;color:#fff;margin:0 0 8px;">AWAG</h3>
+          <div style="font-size:.85rem;color:rgba(232,240,232,.6);margin-bottom:16px;">Africa Weekly Activities Guide</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px;">
+            <?php foreach(["Igbo","Yoruba","Hausa","Ijaw","Bini","Efik","Ibibio","Tiv","Maasai","Swahili","Wolof","Oron","Amhara"] as $c):?>
+            <span style="padding:3px 10px;background:rgba(45,106,31,.3);border:1px solid rgba(93,232,122,.2);border-radius:20px;font-size:.72rem;font-weight:700;color:#5de87a;"><?=htmlspecialchars($c)?></span>
+            <?php endforeach;?>
+          </div>
+          <p style="font-size:.82rem;color:rgba(232,240,232,.55);line-height:1.6;margin:0 0 20px;">13 communities · 9 ecological zones · Farming, fishing, trading, herding, healing · Offline · Installable PWA</p>
+          <a href="/awag/" style="display:inline-flex;align-items:center;gap:8px;padding:11px 20px;background:#2d6a1f;color:#fff;border-radius:10px;font-weight:800;font-size:.88rem;text-decoration:none;margin-right:10px;">Open AWAG</a>
+          <a href="/awag/" style="display:inline-flex;align-items:center;gap:8px;padding:11px 20px;background:rgba(255,255,255,.08);color:#e8f0e8;border:1px solid rgba(255,255,255,.18);border-radius:10px;font-weight:800;font-size:.88rem;text-decoration:none;" title="Open in browser then tap Install or Add to Home Screen">&#x2B07; Install App</a>
+        </div>
+        <div style="padding:16px 20px;background:#f9fafb;font-size:.78rem;color:#6b7280;line-height:1.6;">
+          <strong style="color:#111;">How to install:</strong> Open the app in your browser, then tap the install icon in your address bar (desktop) or select "Add to Home Screen" from your browser menu (mobile). Works on Android, iOS, Windows, Mac, and Linux.
+        </div>
+      </div>
+
+      <div style="border:1px solid #e5e7eb;border-radius:18px;overflow:hidden;">
+        <div style="background:linear-gradient(135deg,#0b0b0b,#1a0a00);padding:28px;color:#e8f0e8;">
+          <div style="font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,160,30,.7);margin-bottom:8px;">Igbo-Specific</div>
+          <h3 style="font-size:1.4rem;font-weight:900;color:#fff;margin:0 0 8px;">Amujzi Igbo Calendar</h3>
+          <div style="font-size:.85rem;color:rgba(232,240,232,.6);margin-bottom:16px;">The complete Igbo calendar system</div>
+          <ul style="font-size:.82rem;color:rgba(232,240,232,.55);line-height:1.8;margin:0 0 20px;padding-left:18px;">
+            <li>13-month Igbo year with correct month names</li>
+            <li>4-day market week: Eke, Orie, Afo, Nkwo</li>
+            <li>Night-based counting — abal&#x12B; not days</li>
+            <li>New year anchored to February new moon</li>
+            <li>Month 7 (29 nights) and leap year handling</li>
+            <li>Moon phases and Igbo seasonal markers</li>
+          </ul>
+          <a href="/igbo-calendar/" style="display:inline-flex;align-items:center;gap:8px;padding:11px 20px;background:#b45309;color:#fff;border-radius:10px;font-weight:800;font-size:.88rem;text-decoration:none;margin-right:10px;">Open Calendar</a>
+          <a href="/igbo-calendar/" style="display:inline-flex;align-items:center;gap:8px;padding:11px 20px;background:rgba(255,255,255,.08);color:#e8f0e8;border:1px solid rgba(255,255,255,.18);border-radius:10px;font-weight:800;font-size:.88rem;text-decoration:none;" title="Open in browser then tap Install or Add to Home Screen">&#x2B07; Install App</a>
+        </div>
+        <div style="padding:16px 20px;background:#f9fafb;font-size:.78rem;color:#6b7280;line-height:1.6;">
+          <strong style="color:#111;">How to install:</strong> Open the app in your browser, then tap the install icon in your address bar (desktop) or select "Add to Home Screen" from your browser menu (mobile). Works on Android, iOS, Windows, Mac, and Linux.
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
 <section class="mk-home-footer-cta">
   <div style="max-width:1100px;margin:0 auto;padding:0 24px;">
     <h2>Knowledge belongs to everyone</h2>
