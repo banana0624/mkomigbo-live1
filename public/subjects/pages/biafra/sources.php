@@ -41,4 +41,26 @@ echo '<h3>Declassified Documents</h3>';
 echo '<ul>';
 echo '<li><strong>UK National Archives, FCO files on Nigeria 1967–1970</strong> — Available at nationalarchives.gov.uk. The most important primary source on British government decision-making during the war. Reveals the commercial and strategic calculations behind British arms supplies to the federal government.</li>';
 echo '</ul>';
+
+
+echo '<h2 style="margin-top:28px;">Key Texts — Free Downloads</h2>';
+echo '<ul>';
+echo '<li><a href="https://archive.org/search?query=biafra+war+nigeria+civil+war" target="_blank"><strong>Biafra War — archive.org search</strong></a></li>';
+echo '<li><a href="https://archive.org/search?query=odumegwu+ojukwu+biafra+speeches" target="_blank"><strong>Ojukwu — Biafra Selected Speeches</strong></a> — archive.org</li>';
+echo '<li><a href="https://archive.org/search?query=chinua+achebe+there+was+a+country" target="_blank"><strong>There Was a Country — Chinua Achebe</strong></a> — archive.org</li>';
+echo '<li><a href="https://archive.org/search?query=half+yellow+sun+adichie" target="_blank"><strong>Half of a Yellow Sun — Chimamanda Adichie</strong></a> — archive.org</li>';
+echo '<li><a href="https://archive.org/search?query=brothers+war+nigeria+st+jorre" target="_blank"><strong>The Brothers War — John de St Jorre</strong></a> — archive.org</li>';
+echo '</ul>';
+
+
+echo '<h2 style="margin-top:28px;">Free Digital Libraries</h2>';
+echo '<ul>';
+echo '<li><a href="https://archive.org" target="_blank"><strong>Internet Archive</strong></a> — millions of free books; search any author or title; download PDF, ePub, Kindle</li>';
+echo '<li><a href="https://www.globalgreyebooks.com" target="_blank"><strong>Global Grey Ebooks</strong></a> — free PDF and ePub of classic texts, beautifully formatted</li>';
+echo '<li><a href="https://www.gutenberg.org" target="_blank"><strong>Project Gutenberg</strong></a> — free public domain books</li>';
+echo '<li><a href="https://www.sacred-texts.com" target="_blank"><strong>Internet Sacred Text Archive</strong></a> — sacred and esoteric texts from all traditions</li>';
+echo '<li><a href="https://www.holybooks.com" target="_blank"><strong>HolyBooks.com</strong></a> — free PDF downloads of religious and spiritual texts</li>';
+echo '<li><a href="https://www.jstor.org" target="_blank"><strong>JSTOR</strong></a> — academic articles; 100 free per month with free registration</li>';
+echo '</ul>';
+
 echo '</div>';

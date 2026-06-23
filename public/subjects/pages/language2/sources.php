@@ -38,4 +38,24 @@ echo '<ul>';
 echo '<li><strong>University of Nigeria Nsukka, Igbo Studies Department</strong> — The primary institutional resource for Igbo language scholarship. Publications, theses, and distance learning courses available through UNN.</li>';
 echo '<li><strong>Journal of West African Languages</strong> — Academic journal that publishes Igbo linguistics research. Available through university libraries.</li>';
 echo '</ul>';
+
+
+echo '<h2 style="margin-top:28px;">Key Texts — Free Downloads</h2>';
+echo '<ul>';
+echo '<li><a href="https://archive.org/search?query=igbo+grammar+tones+verb" target="_blank"><strong>Igbo Grammar Studies — archive.org search</strong></a></li>';
+echo '<li><a href="https://archive.org/search?query=igbo+dictionary+vocabulary" target="_blank"><strong>Igbo Dictionary and Vocabulary — archive.org</strong></a></li>';
+echo '<li><a href="https://www.sil.org/language/igb" target="_blank"><strong>SIL International — Igbo Linguistic Data</strong></a></li>';
+echo '</ul>';
+
+
+echo '<h2 style="margin-top:28px;">Free Digital Libraries</h2>';
+echo '<ul>';
+echo '<li><a href="https://archive.org" target="_blank"><strong>Internet Archive</strong></a> — millions of free books; search any author or title; download PDF, ePub, Kindle</li>';
+echo '<li><a href="https://www.globalgreyebooks.com" target="_blank"><strong>Global Grey Ebooks</strong></a> — free PDF and ePub of classic texts, beautifully formatted</li>';
+echo '<li><a href="https://www.gutenberg.org" target="_blank"><strong>Project Gutenberg</strong></a> — free public domain books</li>';
+echo '<li><a href="https://www.sacred-texts.com" target="_blank"><strong>Internet Sacred Text Archive</strong></a> — sacred and esoteric texts from all traditions</li>';
+echo '<li><a href="https://www.holybooks.com" target="_blank"><strong>HolyBooks.com</strong></a> — free PDF downloads of religious and spiritual texts</li>';
+echo '<li><a href="https://www.jstor.org" target="_blank"><strong>JSTOR</strong></a> — academic articles; 100 free per month with free registration</li>';
+echo '</ul>';
+
 echo '</div>';

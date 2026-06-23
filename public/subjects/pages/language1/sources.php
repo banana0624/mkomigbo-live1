@@ -38,4 +38,26 @@ echo '<li><strong>Ikoikoigbo.com</strong> — Online Igbo dictionary and learnin
 echo '<li><strong>University of Nigeria Nsukka distance learning</strong> — Igbo language courses available through UNN\'s continuing education programme.</li>';
 echo '<li><strong>Umuigbo.com and similar diaspora platforms</strong> — Community-driven language learning resources particularly valuable for diaspora learners.</li>';
 echo '</ul>';
+
+
+echo '<h2 style="margin-top:28px;">Key Texts — Free Downloads</h2>';
+echo '<ul>';
+echo '<li><a href="https://archive.org/details/isoamaigboprimer00crow" target="_blank"><strong>Isoama-Igbo Primer — Samuel Ajayi Crowther</strong></a> (1857) — archive.org [FREE]</li>';
+echo '<li><a href="https://archive.org/search?query=kay+williamson+igbo+language" target="_blank"><strong>Kay Williamson — Igbo Linguistic Works</strong></a> — archive.org</li>';
+echo '<li><a href="https://archive.org/search?query=nsibidi+script+nigeria" target="_blank"><strong>Nsibidi Script Studies — archive.org</strong></a></li>';
+echo '<li><a href="https://www.ndebe.org" target="_blank"><strong>Ńdébé Script — ndebe.org</strong></a> — official site of the Ńdébé writing system</li>';
+echo '<li><a href="https://www.sil.org/language/igb" target="_blank"><strong>SIL International — Igbo Language Resources</strong></a></li>';
+echo '</ul>';
+
+
+echo '<h2 style="margin-top:28px;">Free Digital Libraries</h2>';
+echo '<ul>';
+echo '<li><a href="https://archive.org" target="_blank"><strong>Internet Archive</strong></a> — millions of free books; search any author or title; download PDF, ePub, Kindle</li>';
+echo '<li><a href="https://www.globalgreyebooks.com" target="_blank"><strong>Global Grey Ebooks</strong></a> — free PDF and ePub of classic texts, beautifully formatted</li>';
+echo '<li><a href="https://www.gutenberg.org" target="_blank"><strong>Project Gutenberg</strong></a> — free public domain books</li>';
+echo '<li><a href="https://www.sacred-texts.com" target="_blank"><strong>Internet Sacred Text Archive</strong></a> — sacred and esoteric texts from all traditions</li>';
+echo '<li><a href="https://www.holybooks.com" target="_blank"><strong>HolyBooks.com</strong></a> — free PDF downloads of religious and spiritual texts</li>';
+echo '<li><a href="https://www.jstor.org" target="_blank"><strong>JSTOR</strong></a> — academic articles; 100 free per month with free registration</li>';
+echo '</ul>';
+
 echo '</div>';

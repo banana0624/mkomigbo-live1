@@ -45,4 +45,25 @@ echo '<ul>';
 echo '<li><strong>Jonathan Haynes (ed.), <em>Nigerian Video Films</em> (2000; rev. ed. 2000)</strong> — Academic essays on Nollywood and its cultural significance.</li>';
 echo '<li><strong>Onookome Okome (ed.), <em>Signs of the Times: Nollywood and Its Audience</em></strong> — Essays on Nollywood\'s cultural reach and representation of Nigerian life.</li>';
 echo '</ul>';
+
+
+echo '<h2 style="margin-top:28px;">Key Texts — Free Downloads</h2>';
+echo '<ul>';
+echo '<li><a href="https://archive.org/details/thingsfallapart00ache" target="_blank"><strong>Things Fall Apart — Chinua Achebe</strong></a> — the defining portrait of Igbo cultural life</li>';
+echo '<li><a href="https://archive.org/details/iluigbo00ogba" target="_blank"><strong>Ilu Igbo (Igbo Proverbs) — F.C. Ogbalu</strong></a> — archive.org</li>';
+echo '<li><a href="https://archive.org/search?query=flora+nwapa+igbo" target="_blank"><strong>Flora Nwapa — Efuru and other works</strong></a> — archive.org</li>';
+echo '<li><a href="https://archive.org/search?query=igbo+art+culture+nigeria" target="_blank"><strong>Igbo Art and Culture — archive.org search</strong></a></li>';
+echo '</ul>';
+
+
+echo '<h2 style="margin-top:28px;">Free Digital Libraries</h2>';
+echo '<ul>';
+echo '<li><a href="https://archive.org" target="_blank"><strong>Internet Archive</strong></a> — millions of free books; search any author or title; download PDF, ePub, Kindle</li>';
+echo '<li><a href="https://www.globalgreyebooks.com" target="_blank"><strong>Global Grey Ebooks</strong></a> — free PDF and ePub of classic texts, beautifully formatted</li>';
+echo '<li><a href="https://www.gutenberg.org" target="_blank"><strong>Project Gutenberg</strong></a> — free public domain books</li>';
+echo '<li><a href="https://www.sacred-texts.com" target="_blank"><strong>Internet Sacred Text Archive</strong></a> — sacred and esoteric texts from all traditions</li>';
+echo '<li><a href="https://www.holybooks.com" target="_blank"><strong>HolyBooks.com</strong></a> — free PDF downloads of religious and spiritual texts</li>';
+echo '<li><a href="https://www.jstor.org" target="_blank"><strong>JSTOR</strong></a> — academic articles; 100 free per month with free registration</li>';
+echo '</ul>';
+
 echo '</div>';

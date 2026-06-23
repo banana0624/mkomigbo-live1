@@ -38,4 +38,44 @@ echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 4px;">';
 echo '<a class="mk-btn mk-btn--ghost" href="/subjects/pogrom/intro/">Introduction</a>';
 echo '<a class="mk-btn mk-btn--ghost" href="/subjects/pogrom/topics/">Topics</a>';
 echo '<a class="mk-btn mk-btn--ghost" href="/subjects/biafra/sources/">→ Biafra Sources</a>';
+
+
+echo '<h2 style="margin-top:28px;">Key Texts — Free Downloads</h2>';
+echo '<ul>';
+echo '<li><a href="https://archive.org/search?query=igbo+pogrom+1966+northern+nigeria" target="_blank"><strong>Igbo Pogrom 1966 — archive.org search</strong></a></li>';
+echo '<li><a href="https://archive.org/search?query=chinua+achebe+there+was+a+country" target="_blank"><strong>There Was a Country — Chinua Achebe</strong></a> — personal account including the pogrom</li>';
+echo '<li><a href="https://www.hrw.org/africa/nigeria" target="_blank"><strong>Human Rights Watch — Nigeria</strong></a> — historical and current human rights documentation</li>';
+echo '</ul>';
+
+
+echo '<h2 style="margin-top:28px;">Free Digital Libraries</h2>';
+echo '<ul>';
+echo '<li><a href="https://archive.org" target="_blank"><strong>Internet Archive</strong></a> — millions of free books; search any author or title; download PDF, ePub, Kindle</li>';
+echo '<li><a href="https://www.globalgreyebooks.com" target="_blank"><strong>Global Grey Ebooks</strong></a> — free PDF and ePub of classic texts, beautifully formatted</li>';
+echo '<li><a href="https://www.gutenberg.org" target="_blank"><strong>Project Gutenberg</strong></a> — free public domain books</li>';
+echo '<li><a href="https://www.sacred-texts.com" target="_blank"><strong>Internet Sacred Text Archive</strong></a> — sacred and esoteric texts from all traditions</li>';
+echo '<li><a href="https://www.holybooks.com" target="_blank"><strong>HolyBooks.com</strong></a> — free PDF downloads of religious and spiritual texts</li>';
+echo '<li><a href="https://www.jstor.org" target="_blank"><strong>JSTOR</strong></a> — academic articles; 100 free per month with free registration</li>';
+echo '</ul>';
+
+
+
+echo '<h2 style="margin-top:28px;">Key Texts — Free Downloads</h2>';
+echo '<ul>';
+echo '<li><a href="https://archive.org/search?query=igbo+pogrom+1966+northern+nigeria" target="_blank"><strong>Igbo Pogrom 1966 — archive.org search</strong></a></li>';
+echo '<li><a href="https://archive.org/search?query=chinua+achebe+there+was+a+country" target="_blank"><strong>There Was a Country — Chinua Achebe</strong></a> — personal account including the pogrom</li>';
+echo '<li><a href="https://www.hrw.org/africa/nigeria" target="_blank"><strong>Human Rights Watch — Nigeria</strong></a> — historical and current human rights documentation</li>';
+echo '</ul>';
+
+
+echo '<h2 style="margin-top:28px;">Free Digital Libraries</h2>';
+echo '<ul>';
+echo '<li><a href="https://archive.org" target="_blank"><strong>Internet Archive</strong></a> — millions of free books; search any author or title; download PDF, ePub, Kindle</li>';
+echo '<li><a href="https://www.globalgreyebooks.com" target="_blank"><strong>Global Grey Ebooks</strong></a> — free PDF and ePub of classic texts, beautifully formatted</li>';
+echo '<li><a href="https://www.gutenberg.org" target="_blank"><strong>Project Gutenberg</strong></a> — free public domain books</li>';
+echo '<li><a href="https://www.sacred-texts.com" target="_blank"><strong>Internet Sacred Text Archive</strong></a> — sacred and esoteric texts from all traditions</li>';
+echo '<li><a href="https://www.holybooks.com" target="_blank"><strong>HolyBooks.com</strong></a> — free PDF downloads of religious and spiritual texts</li>';
+echo '<li><a href="https://www.jstor.org" target="_blank"><strong>JSTOR</strong></a> — academic articles; 100 free per month with free registration</li>';
+echo '</ul>';
+
 echo '</div></div>';

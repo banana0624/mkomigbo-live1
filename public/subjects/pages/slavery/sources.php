@@ -46,4 +46,27 @@ echo '<li><strong>Adam Hochschild, <em>Bury the Chains: Prophets and Rebels in t
 echo '<li><strong>CARICOM Reparations Commission, <em>Ten Point Reparation Plan</em> (2014)</strong> — Available at caricomreparations.org. The formal Caribbean reparations claim and its legal and historical basis.</li>';
 echo '<li><strong>Ta-Nehisi Coates, "The Case for Reparations" (<em>The Atlantic</em>, 2014)</strong> — The most widely read contemporary argument for American reparations. Available free online.</li>';
 echo '</ul>';
+
+
+echo '<h2 style="margin-top:28px;">Key Texts — Free Downloads</h2>';
+echo '<ul>';
+echo '<li><a href="https://www.sacred-texts.com/cla/equiano/index.htm" target="_blank"><strong>Narrative of Olaudah Equiano</strong></a> (1789) — sacred-texts.com [FREE]</li>';
+echo '<li><a href="https://archive.org/details/interestingnarr00equigoog" target="_blank"><strong>Equiano Travels</strong></a> — archive.org [FREE]</li>';
+echo '<li><a href="https://www.slavevoyages.org" target="_blank"><strong>Slave Voyages Database</strong></a> — comprehensive database of transatlantic slave trade voyages; free</li>';
+echo '<li><a href="https://archive.org/details/soulofblackfolk00dubogoog" target="_blank"><strong>The Souls of Black Folk — W.E.B. Du Bois</strong></a> (1903) — archive.org [FREE]</li>';
+echo '<li><a href="https://archive.org/search?query=eric+williams+capitalism+slavery" target="_blank"><strong>Capitalism and Slavery — Eric Williams</strong></a> — archive.org</li>';
+echo '<li><a href="https://www.abolitionproject.org" target="_blank"><strong>The Abolition Project</strong></a> — educational resource on the British abolition movement</li>';
+echo '</ul>';
+
+
+echo '<h2 style="margin-top:28px;">Free Digital Libraries</h2>';
+echo '<ul>';
+echo '<li><a href="https://archive.org" target="_blank"><strong>Internet Archive</strong></a> — millions of free books; search any author or title; download PDF, ePub, Kindle</li>';
+echo '<li><a href="https://www.globalgreyebooks.com" target="_blank"><strong>Global Grey Ebooks</strong></a> — free PDF and ePub of classic texts, beautifully formatted</li>';
+echo '<li><a href="https://www.gutenberg.org" target="_blank"><strong>Project Gutenberg</strong></a> — free public domain books</li>';
+echo '<li><a href="https://www.sacred-texts.com" target="_blank"><strong>Internet Sacred Text Archive</strong></a> — sacred and esoteric texts from all traditions</li>';
+echo '<li><a href="https://www.holybooks.com" target="_blank"><strong>HolyBooks.com</strong></a> — free PDF downloads of religious and spiritual texts</li>';
+echo '<li><a href="https://www.jstor.org" target="_blank"><strong>JSTOR</strong></a> — academic articles; 100 free per month with free registration</li>';
+echo '</ul>';
+
 echo '</div>';

@@ -37,4 +37,25 @@ echo '<ul>';
 echo '<li><strong>Axel Harneit-Sievers, <em>Constructions of Belonging: Igbo Communities and the Nigerian State since Independence</em> (2006)</strong> — The best academic account of post-war Igbo politics.</li>';
 echo '<li><strong>Nnamdi Azikiwe, <em>My Odyssey: An Autobiography</em> (1970)</strong> — Primary source on the independence era from Nigeria\'s first president.</li>';
 echo '</ul>';
+
+
+echo '<h2 style="margin-top:28px;">Key Texts — Free Downloads</h2>';
+echo '<ul>';
+echo '<li><a href="https://archive.org/search?query=nigeria+history+politics" target="_blank"><strong>Nigeria History and Politics — archive.org search</strong></a></li>';
+echo '<li><a href="https://archive.org/search?query=nnamdi+azikiwe+nigeria" target="_blank"><strong>Nnamdi Azikiwe — Nigerian writings</strong></a> — archive.org</li>';
+echo '<li><a href="https://archive.org/search?query=chinua+achebe+trouble+with+nigeria" target="_blank"><strong>The Trouble with Nigeria — Chinua Achebe</strong></a> — archive.org</li>';
+echo '<li><a href="https://archive.org/search?query=wole+soyinka+nigeria" target="_blank"><strong>Wole Soyinka — Nigerian writings</strong></a> — archive.org</li>';
+echo '</ul>';
+
+
+echo '<h2 style="margin-top:28px;">Free Digital Libraries</h2>';
+echo '<ul>';
+echo '<li><a href="https://archive.org" target="_blank"><strong>Internet Archive</strong></a> — millions of free books; search any author or title; download PDF, ePub, Kindle</li>';
+echo '<li><a href="https://www.globalgreyebooks.com" target="_blank"><strong>Global Grey Ebooks</strong></a> — free PDF and ePub of classic texts, beautifully formatted</li>';
+echo '<li><a href="https://www.gutenberg.org" target="_blank"><strong>Project Gutenberg</strong></a> — free public domain books</li>';
+echo '<li><a href="https://www.sacred-texts.com" target="_blank"><strong>Internet Sacred Text Archive</strong></a> — sacred and esoteric texts from all traditions</li>';
+echo '<li><a href="https://www.holybooks.com" target="_blank"><strong>HolyBooks.com</strong></a> — free PDF downloads of religious and spiritual texts</li>';
+echo '<li><a href="https://www.jstor.org" target="_blank"><strong>JSTOR</strong></a> — academic articles; 100 free per month with free registration</li>';
+echo '</ul>';
+
 echo '</div>';

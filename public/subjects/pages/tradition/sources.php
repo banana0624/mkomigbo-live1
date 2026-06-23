@@ -43,4 +43,25 @@ echo '<ul>';
 echo '<li><strong>Nwosu Chukwuemeka, works on Igbo divination</strong> — Academic papers on the <em>dibia afa</em> tradition and its epistemological framework.</li>';
 echo '<li><strong>Chinua Achebe, <em>Arrow of God</em> (1964)</strong> — The most nuanced fictional treatment of the <em>dibia</em>\'s role and the relationship between sacred knowledge and political authority.</li>';
 echo '</ul>';
+
+
+echo '<h2 style="margin-top:28px;">Key Texts — Free Downloads</h2>';
+echo '<ul>';
+echo '<li><a href="https://archive.org/details/thingsfallapart00ache" target="_blank"><strong>Things Fall Apart — Chinua Achebe</strong></a> — fullest portrait of Igbo traditional life in fiction</li>';
+echo '<li><a href="https://archive.org/search?query=igbo+ofo+justice+traditional+governance" target="_blank"><strong>Igbo Traditional Governance — archive.org search</strong></a></li>';
+echo '<li><a href="https://archive.org/search?query=igbo+women+war+1929+aba" target="_blank"><strong>The Aba Womens War 1929 — archive.org search</strong></a></li>';
+echo '<li><a href="https://archive.org/search?query=igbo+masquerade+mmanwu" target="_blank"><strong>Igbo Masquerade Tradition — archive.org</strong></a></li>';
+echo '</ul>';
+
+
+echo '<h2 style="margin-top:28px;">Free Digital Libraries</h2>';
+echo '<ul>';
+echo '<li><a href="https://archive.org" target="_blank"><strong>Internet Archive</strong></a> — millions of free books; search any author or title; download PDF, ePub, Kindle</li>';
+echo '<li><a href="https://www.globalgreyebooks.com" target="_blank"><strong>Global Grey Ebooks</strong></a> — free PDF and ePub of classic texts, beautifully formatted</li>';
+echo '<li><a href="https://www.gutenberg.org" target="_blank"><strong>Project Gutenberg</strong></a> — free public domain books</li>';
+echo '<li><a href="https://www.sacred-texts.com" target="_blank"><strong>Internet Sacred Text Archive</strong></a> — sacred and esoteric texts from all traditions</li>';
+echo '<li><a href="https://www.holybooks.com" target="_blank"><strong>HolyBooks.com</strong></a> — free PDF downloads of religious and spiritual texts</li>';
+echo '<li><a href="https://www.jstor.org" target="_blank"><strong>JSTOR</strong></a> — academic articles; 100 free per month with free registration</li>';
+echo '</ul>';
+
 echo '</div>';

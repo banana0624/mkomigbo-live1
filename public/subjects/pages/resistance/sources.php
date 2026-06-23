@@ -39,4 +39,25 @@ echo '<li><strong>Max Siollun, <em>Soldiers of Fortune: Nigerian Politics under 
 echo '<li><strong>Festus Ugwu, <em>Peter Obi: The Will to Win</em> (2023)</strong> — Biography of the 2023 Labour Party presidential candidate.</li>';
 echo '<li><strong>SBM Intelligence, southeast security reports (various years)</strong> — Available at sbmintel.com. The most reliable analytical source on security dynamics in the Igbo southeast.</li>';
 echo '</ul>';
+
+
+echo '<h2 style="margin-top:28px;">Key Texts — Free Downloads</h2>';
+echo '<ul>';
+echo '<li><a href="https://archive.org/search?query=IPOB+igbo+self+determination+nigeria" target="_blank"><strong>Igbo Self-Determination — archive.org search</strong></a></li>';
+echo '<li><a href="https://archive.org/search?query=igbo+postwar+reconstruction+nigeria" target="_blank"><strong>Igbo Postwar Experience — archive.org</strong></a></li>';
+echo '<li><a href="https://www.amnesty.org/en/location/africa/west-and-central-africa/nigeria/" target="_blank"><strong>Amnesty International — Nigeria Reports</strong></a> — human rights documentation</li>';
+echo '<li><a href="https://www.hrw.org/africa/nigeria" target="_blank"><strong>Human Rights Watch — Nigeria</strong></a> — reports on southeast Nigeria</li>';
+echo '</ul>';
+
+
+echo '<h2 style="margin-top:28px;">Free Digital Libraries</h2>';
+echo '<ul>';
+echo '<li><a href="https://archive.org" target="_blank"><strong>Internet Archive</strong></a> — millions of free books; search any author or title; download PDF, ePub, Kindle</li>';
+echo '<li><a href="https://www.globalgreyebooks.com" target="_blank"><strong>Global Grey Ebooks</strong></a> — free PDF and ePub of classic texts, beautifully formatted</li>';
+echo '<li><a href="https://www.gutenberg.org" target="_blank"><strong>Project Gutenberg</strong></a> — free public domain books</li>';
+echo '<li><a href="https://www.sacred-texts.com" target="_blank"><strong>Internet Sacred Text Archive</strong></a> — sacred and esoteric texts from all traditions</li>';
+echo '<li><a href="https://www.holybooks.com" target="_blank"><strong>HolyBooks.com</strong></a> — free PDF downloads of religious and spiritual texts</li>';
+echo '<li><a href="https://www.jstor.org" target="_blank"><strong>JSTOR</strong></a> — academic articles; 100 free per month with free registration</li>';
+echo '</ul>';
+
 echo '</div>';

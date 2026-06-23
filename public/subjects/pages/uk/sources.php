@@ -33,4 +33,25 @@ echo '<li><strong>Ohanaeze Ndigbo UK</strong> — The apex Igbo organisation in 
 echo '<li><strong>NIDO (Nigerians in Diaspora Organisation) UK</strong> — Nigerian diaspora organisation with significant Igbo membership.</li>';
 echo '<li><strong>The Voice newspaper</strong> — Britain\'s longest-running Black newspaper. Covers Nigerian and West African diaspora community issues.</li>';
 echo '</ul>';
+
+
+echo '<h2 style="margin-top:28px;">Key Texts — Free Downloads</h2>';
+echo '<ul>';
+echo '<li><a href="https://www.sacred-texts.com/cla/equiano/index.htm" target="_blank"><strong>Narrative of Olaudah Equiano</strong></a> (1789) — sacred-texts.com [FREE] — founding text of the African presence in Britain</li>';
+echo '<li><a href="https://archive.org/details/interestingnarr00equigoog" target="_blank"><strong>Equiano Travels — archive.org</strong></a> [FREE]</li>';
+echo '<li><a href="https://archive.org/search?query=black+british+history+nigerian" target="_blank"><strong>Black British History — archive.org search</strong></a></li>';
+echo '<li><a href="https://www.nationalarchives.gov.uk" target="_blank"><strong>UK National Archives</strong></a> — colonial records, immigration history, community documentation</li>';
+echo '</ul>';
+
+
+echo '<h2 style="margin-top:28px;">Free Digital Libraries</h2>';
+echo '<ul>';
+echo '<li><a href="https://archive.org" target="_blank"><strong>Internet Archive</strong></a> — millions of free books; search any author or title; download PDF, ePub, Kindle</li>';
+echo '<li><a href="https://www.globalgreyebooks.com" target="_blank"><strong>Global Grey Ebooks</strong></a> — free PDF and ePub of classic texts, beautifully formatted</li>';
+echo '<li><a href="https://www.gutenberg.org" target="_blank"><strong>Project Gutenberg</strong></a> — free public domain books</li>';
+echo '<li><a href="https://www.sacred-texts.com" target="_blank"><strong>Internet Sacred Text Archive</strong></a> — sacred and esoteric texts from all traditions</li>';
+echo '<li><a href="https://www.holybooks.com" target="_blank"><strong>HolyBooks.com</strong></a> — free PDF downloads of religious and spiritual texts</li>';
+echo '<li><a href="https://www.jstor.org" target="_blank"><strong>JSTOR</strong></a> — academic articles; 100 free per month with free registration</li>';
+echo '</ul>';
+
 echo '</div>';

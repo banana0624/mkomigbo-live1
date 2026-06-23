@@ -33,4 +33,25 @@ echo '<ul>';
 echo '<li><strong>Karl Maier, <em>This House Has Fallen: Nigeria in Crisis</em> (2000)</strong> — The Hausa-Fulani/Igbo/Yoruba political triangle and its consequences.</li>';
 echo '<li><strong>Elizabeth Isichei, <em>A History of the Igbo People</em> (1976)</strong> — Standard history including the northern Nigerian context and the Biafra War.</li>';
 echo '</ul>';
+
+
+echo '<h2 style="margin-top:28px;">Key Texts — Free Downloads</h2>';
+echo '<ul>';
+echo '<li><a href="https://archive.org/search?query=ibn+battuta+rihla+africa+mali" target="_blank"><strong>Rihla — Ibn Battuta</strong></a> — archive.org [FREE] — primary Arab witness to medieval sub-Saharan Africa</li>';
+echo '<li><a href="https://archive.org/search?query=trans+saharan+slave+trade+arab+africa" target="_blank"><strong>Trans-Saharan Slave Trade — archive.org search</strong></a></li>';
+echo '<li><a href="https://archive.org/search?query=timbuktu+manuscripts+mali" target="_blank"><strong>Timbuktu Manuscripts — archive.org</strong></a></li>';
+echo '<li><a href="https://archive.org/search?query=wole+soyinka+arab+africa" target="_blank"><strong>Wole Soyinka — Essays on Arab-African relations</strong></a> — archive.org</li>';
+echo '</ul>';
+
+
+echo '<h2 style="margin-top:28px;">Free Digital Libraries</h2>';
+echo '<ul>';
+echo '<li><a href="https://archive.org" target="_blank"><strong>Internet Archive</strong></a> — millions of free books; search any author or title; download PDF, ePub, Kindle</li>';
+echo '<li><a href="https://www.globalgreyebooks.com" target="_blank"><strong>Global Grey Ebooks</strong></a> — free PDF and ePub of classic texts, beautifully formatted</li>';
+echo '<li><a href="https://www.gutenberg.org" target="_blank"><strong>Project Gutenberg</strong></a> — free public domain books</li>';
+echo '<li><a href="https://www.sacred-texts.com" target="_blank"><strong>Internet Sacred Text Archive</strong></a> — sacred and esoteric texts from all traditions</li>';
+echo '<li><a href="https://www.holybooks.com" target="_blank"><strong>HolyBooks.com</strong></a> — free PDF downloads of religious and spiritual texts</li>';
+echo '<li><a href="https://www.jstor.org" target="_blank"><strong>JSTOR</strong></a> — academic articles; 100 free per month with free registration</li>';
+echo '</ul>';
+
 echo '</div>';

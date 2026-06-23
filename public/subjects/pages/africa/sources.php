@@ -49,4 +49,27 @@ echo '<li><strong>Wangari Maathai, <em>Unbowed: A Memoir</em> (2006)</strong> �
 echo '<li><strong>Mo Ibrahim Foundation, Africa Governance Report (annual)</strong> — Available at moibrahimfoundation.org. The most comprehensive annual measurement of African governance quality.</li>';
 echo '<li><strong>Samir Amin, <em>Imperialism and Unequal Development</em> (1977)</strong> — Egyptian-Senegalese economist on the structural position of Africa in the global economy.</li>';
 echo '</ul>';
+
+
+echo '<h2 style="margin-top:28px;">Key Texts — Free Downloads</h2>';
+echo '<ul>';
+echo '<li><a href="https://archive.org/search?query=walter+rodney+how+europe+underdeveloped+africa" target="_blank"><strong>How Europe Underdeveloped Africa — Walter Rodney</strong></a> — archive.org [FREE]</li>';
+echo '<li><a href="https://archive.org/search?query=kwame+nkrumah+africa+must+unite" target="_blank"><strong>Africa Must Unite — Kwame Nkrumah</strong></a> — archive.org</li>';
+echo '<li><a href="https://archive.org/search?query=cheikh+anta+diop+african+origin" target="_blank"><strong>African Origin of Civilization — Cheikh Anta Diop</strong></a> — archive.org</li>';
+echo '<li><a href="https://archive.org/search?query=UNESCO+general+history+africa" target="_blank"><strong>UNESCO General History of Africa (8 vols)</strong></a> — archive.org [FREE]</li>';
+echo '<li><a href="https://archive.org/search?query=thomas+sankara+speeches+burkina+faso" target="_blank"><strong>Thomas Sankara — Speeches</strong></a> — archive.org</li>';
+echo '<li><a href="https://archive.org/search?query=frantz+fanon+wretched+of+the+earth" target="_blank"><strong>The Wretched of the Earth — Frantz Fanon</strong></a> — archive.org</li>';
+echo '</ul>';
+
+
+echo '<h2 style="margin-top:28px;">Free Digital Libraries</h2>';
+echo '<ul>';
+echo '<li><a href="https://archive.org" target="_blank"><strong>Internet Archive</strong></a> — millions of free books; search any author or title; download PDF, ePub, Kindle</li>';
+echo '<li><a href="https://www.globalgreyebooks.com" target="_blank"><strong>Global Grey Ebooks</strong></a> — free PDF and ePub of classic texts, beautifully formatted</li>';
+echo '<li><a href="https://www.gutenberg.org" target="_blank"><strong>Project Gutenberg</strong></a> — free public domain books</li>';
+echo '<li><a href="https://www.sacred-texts.com" target="_blank"><strong>Internet Sacred Text Archive</strong></a> — sacred and esoteric texts from all traditions</li>';
+echo '<li><a href="https://www.holybooks.com" target="_blank"><strong>HolyBooks.com</strong></a> — free PDF downloads of religious and spiritual texts</li>';
+echo '<li><a href="https://www.jstor.org" target="_blank"><strong>JSTOR</strong></a> — academic articles; 100 free per month with free registration</li>';
+echo '</ul>';
+
 echo '</div>';
