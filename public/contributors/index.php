@@ -91,7 +91,7 @@ if (!function_exists('pf__table_exists')) {
 /* Page vars */
 $brand_name = defined('MK_BRAND_NAME') ? (string)MK_BRAND_NAME : 'Mkomigbo';
 $page_title = 'Contributors • ' . $brand_name;
-$page_desc  = 'Authors, editors, researchers, and collaborators helping to build and refine the library.';
+$page_desc  = 'The scholars, writers, researchers, community members, and knowledge-keepers who built Mkomigbo — and those who continue to grow it.';
 $nav_active = 'contributors';
 $active_nav = 'contributors';
 
@@ -225,8 +225,7 @@ if (!$header_ok) {
     <div class="mk-hero__inner">
       <h1 class="mk-hero__title">Contributors</h1>
       <p class="mk-hero__subtitle" style="max-width:88ch;">
-        Authors, editors, researchers, and collaborators helping to build and refine the library.
-        Over time, each article will credit its contributors.
+        The scholars, writers, researchers, community members, and knowledge-keepers who built Mkomigbo. Their expertise spans Igbo history, African philosophy, linguistics, theology, and lived community knowledge.
       </p>
       <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
         <span class="mk-pill"><?= h((string)count($items)) ?> listed</span>

@@ -204,8 +204,8 @@ $coming = array_values(array_filter($platforms, static fn($p) => empty($p['hasIn
 /* ---------------------------------------------------------
  * Layout contract
  * --------------------------------------------------------- */
-$page_title = 'Platforms — Mkomi Igbo';
-$page_desc  = 'Platforms are interactive sections — tools, indexes, and features that complement the Subjects library.';
+$page_title = 'Platforms — Mkomigbo';
+$page_desc  = 'Interactive tools and community spaces that extend the Mkomigbo knowledge library — blogs, forums, galleries, media, podcasts, and more.';
 $extra_css  = [ pf__u('/lib/css/public.css'), pf__u('/lib/css/platforms.css') ];
 
 $GLOBALS['page_title']  = $page_title;
@@ -244,7 +244,7 @@ if (!$header_ok) {
   <header class="pf-hero">
     <div class="pf-hero__bar" aria-hidden="true"></div>
     <div class="pf-hero__inner">
-      <h1 class="pf-hero__title">Platforms</h1>
+      <h1 class="pf-hero__title">Community Platforms</h1>
       <p class="pf-hero__desc">
         Platforms are interactive sections of Mkomi Igbo — tools, indexes, and features that complement the Subjects library.
         This page shows what is available now and what is planned next.

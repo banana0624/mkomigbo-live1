@@ -402,8 +402,8 @@ $has_accent = function_exists('pf__accent_for');
 <header class="mk-hero" style="margin-top:14px;">
   <div class="mk-hero__bar" aria-hidden="true"></div>
   <div class="mk-hero__inner">
-    <h1 class="mk-hero__title">Subjects</h1>
-    <p class="mk-hero__subtitle"><?= h($page_desc) ?></p>
+    <h1 class="mk-hero__title">Knowledge Library</h1>
+    <p class="mk-hero__subtitle">20 subject areas · 137+ pages · thesis-level scholarship · free access to source texts · cross-linked throughout</p>
   </div>
 </header>
 
