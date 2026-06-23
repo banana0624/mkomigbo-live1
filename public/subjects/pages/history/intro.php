@@ -14,6 +14,7 @@ $sections = [
   ['/subjects/history/overview/','🗺️ Overview','From Igbo-Ukwu to the present — the broad sweep of Igbo historical development'],
   ['/subjects/history/topics/','🏛️ Key Topics','Nri Kingdom, the slave trade, the Women\'s War, Biafra, reconstruction, contemporary Igbo'],
   ['/subjects/history/people/','👤 People','Equiano, Azikiwe, Ojukwu, Achebe, Ekpo, Okigbo, Adichie'],
+  ['/subjects/history/timeline/','📅 Timeline','Key dates in Igbo history — from Igbo-Ukwu (9th century) to the present'],
   ['/subjects/history/sources/','📚 Sources','What to read — archaeology, colonial history, the civil war, contemporary scholarship'],
 ];
 foreach($sections as [$href,$title,$desc]) {
