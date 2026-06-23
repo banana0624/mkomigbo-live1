@@ -13,14 +13,14 @@ echo '</ul>';
 echo '<h3>Igbo and Bight of Biafra Specifically</h3>';
 echo '<ul>';
 echo '<li><strong>G. Ugo Nwokeji, <em>The Slave Trade and Culture in the Bight of Biafra</em> (2010)</strong> — The definitive modern scholarly study. Essential.</li>';
-echo '<li><strong>Paul Lovejoy & David Richardson, "The Business of Slaving: Pawnship in Western Africa, c. 1600–1810" (2004)</strong> — On the mechanisms of the trade including Aro network operations.</li>';
+echo '<li><strong>Paul Lovejoy & David Richardson, "The Business of Slaving: Pawnship in Western Africa, c. 1600-1810" (2004)</strong> — On the mechanisms of the trade including Aro network operations.</li>';
 echo '<li><strong>Adiele Afigbo, <em>The Warrant Chiefs</em> (1972)</strong> — Includes analysis of the Aro trading network and its colonial-era suppression.</li>';
 echo '<li><strong>Don Ohadike, <em>The Ekumeku Movement</em> (1991)</strong> — Resistance to the Aro network and British colonialism in Western Igboland.</li>';
 echo '</ul>';
 
 echo '<h3>General Atlantic Slave Trade</h3>';
 echo '<ul>';
-echo '<li><strong>Hugh Thomas, <em>The Slave Trade: The Story of the Atlantic Slave Trade, 1440–1870</em> (1997)</strong> — The most comprehensive single-volume history. Dense but invaluable.</li>';
+echo '<li><strong>Hugh Thomas, <em>The Slave Trade: The Story of the Atlantic Slave Trade, 1440-1870</em> (1997)</strong> — The most comprehensive single-volume history. Dense but invaluable.</li>';
 echo '<li><strong>Marcus Rediker, <em>The Slave Ship: A Human History</em> (2007)</strong> — The Middle Passage experience reconstructed from ship records, testimony, and material evidence. Essential for understanding the crossing.</li>';
 echo '<li><strong>Eric Williams, <em>Capitalism and Slavery</em> (1944)</strong> — The foundational argument that Atlantic slavery financed British industrialisation. Still contested; still essential.</li>';
 echo '<li><strong>Vincent Brown, <em>The Reaper\'s Garden: Death and Power in the World of Atlantic Slavery</em> (2008)</strong> — On Jamaica and the culture of death and resistance in Atlantic slavery.</li>';

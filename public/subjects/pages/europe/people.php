@@ -4,7 +4,7 @@ echo '<div class="mk-prose">';
 echo '<p class="mk-muted" style="margin-top:0;">Key figures in the African and Igbo experience in Europe.</p>';
 echo '<h2>Olaudah Equiano — The First</h2>';
 echo '<p>Though primarily associated with Britain, Equiano traveled extensively in Europe — his autobiography was published simultaneously in London and Dublin, and he toured Ireland and Scotland on abolition speaking engagements. He represents the beginning of the African intellectual presence in Europe.</p>';
-echo '<h2>Frantz Fanon (1925–1961)</h2>';
+echo '<h2>Frantz Fanon (1925-1961)</h2>';
 echo '<p>Born in Martinique, educated in France, fought with the French Resistance in World War II, trained as a psychiatrist in Lyon, and practiced in Algeria during the independence war. His <em>Black Skin, White Masks</em> (1952) is the foundational text of the psychology of colonized peoples — written from lived experience of being Black in France. His <em>The Wretched of the Earth</em> (1961) is the canonical text of anti-colonial revolution. Fanon died of leukemia in Washington DC at 36, but his intellectual formation was European.</p>';
 echo '<h2>Chinua Achebe in Europe</h2>';
 echo '<p>Achebe spent significant time in Europe — publishing with Heinemann\'s African Writers Series (London), receiving honorary degrees from European universities, and engaging with European intellectual life. His essay "An Image of Africa: Racism in Conrad\'s \'Heart of Darkness\'" (1977) — delivered as a lecture at the University of Massachusetts but widely circulated in Europe — was the most important African intellectual challenge to European canonical literature of the 20th century.</p>';

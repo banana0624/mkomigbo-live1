@@ -15,7 +15,7 @@ echo '</ul>';
 
 echo '<h3>Academic and Historical Studies</h3>';
 echo '<ul>';
-echo '<li><strong>Hakim Adi, <em>West Africans in Britain 1900–1960</em> (1998)</strong> — The standard academic history of the early Nigerian and West African presence in Britain.</li>';
+echo '<li><strong>Hakim Adi, <em>West Africans in Britain 1900-1960</em> (1998)</strong> — The standard academic history of the early Nigerian and West African presence in Britain.</li>';
 echo '<li><strong>Remi Adekoya, <em>Biracial Britain: A Different Way of Looking at Race</em> (2021)</strong> — Nigerian-British journalist on mixed-race British identity and the Nigerian diaspora.</li>';
 echo '<li><strong>Paul Gilroy, <em>There Ain\'t No Black in the Union Jack</em> (1987)</strong> — The foundational academic account of race, ethnicity, and nation in Britain. Essential context.</li>';
 echo '<li><strong>David Killingray (ed.), <em>Africans in Britain</em> (1994)</strong> — Essays on the history of African communities in Britain from the Tudor period onward.</li>';

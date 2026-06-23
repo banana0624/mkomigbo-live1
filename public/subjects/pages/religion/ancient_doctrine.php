@@ -7,7 +7,7 @@ echo '<p>Ancient religions present a unique challenge: most are extinct, known p
 // KEMET
 echo '<hr style="margin:28px 0;border:none;border-top:2px solid #e5e7eb;">';
 echo '<h2 style="color:#b7791f;">⊕ Kemet (Ancient Egyptian Religion) — Full Doctrinal Treatment</h2>';
-echo '<p><strong>Theism:</strong> Functionally polytheistic; esoterically monotheistic (Amun as the hidden unity) | <strong>Period:</strong> c. 3100 BCE – 400 CE | <strong>Status:</strong> Extinct; revived as Kemetism</p>';
+echo '<p><strong>Theism:</strong> Functionally polytheistic; esoterically monotheistic (Amun as the hidden unity) | <strong>Period:</strong> c. 3100 BCE - 400 CE | <strong>Status:</strong> Extinct; revived as Kemetism</p>';
 
 echo '<h3>Faith and Belief</h3>';
 echo '<p>Ancient Egyptian religion was not a system of faith in the Abrahamic sense — it did not require intellectual assent to propositions. It was a system of relationship maintenance: maintaining the proper relationships between humans, gods, pharaoh, and the cosmic order (Ma\'at). The Egyptian equivalent of "faith" was perhaps <em>meryt</em> (love/devotion toward the gods) and <em>shefyt</em> (awe/respect for divine power). One demonstrated one\'s right relationship with the divine through ritual, ethical conduct, and the maintenance of cosmic order.</p>';
@@ -25,7 +25,7 @@ echo '<h3>Proselytism</h3>';
 echo '<p>Ancient Egyptian religion did not proselytize. It was the religion of Egypt — embedded in the land, the Nile, the pharaonic institution, and the temple system. Non-Egyptians who settled in Egypt typically adopted Egyptian religious practice as part of cultural integration, but there was no systematic effort to convert foreigners. The cult of Isis was the exception: as Egypt was absorbed into the Roman world, Isiac religion spread throughout the Mediterranean as the most widely adopted Egyptian tradition, eventually reaching Britain. This was not missionary activity but the natural diffusion of a compelling tradition through trade, travel, and cultural contact.</p>';
 
 echo '<h3>Apostasy</h3>';
-echo '<p>The concept of apostasy is anachronistic for ancient Egyptian religion — there was no defined membership to abandon. However, the closest equivalent was the rejection of Ma\'at: denying the gods, failing to perform required rituals, or transgressing moral norms that were understood as cosmically maintained. Such transgressions were not merely social offenses but cosmic ones — disrupting the balance that kept the world in order. The most dramatic historical "apostasy" was Akhenaten\'s (c. 1353–1336 BCE) attempted monotheistic revolution: his worship of the Aten (sun disc) as the sole god, the closure of other temples, and the erasure of gods\' names (especially Amun). After his death, his reforms were reversed, his monuments defaced, and his name expunged from records — the pharaonic version of damnatio memoriae.</p>';
+echo '<p>The concept of apostasy is anachronistic for ancient Egyptian religion — there was no defined membership to abandon. However, the closest equivalent was the rejection of Ma\'at: denying the gods, failing to perform required rituals, or transgressing moral norms that were understood as cosmically maintained. Such transgressions were not merely social offenses but cosmic ones — disrupting the balance that kept the world in order. The most dramatic historical "apostasy" was Akhenaten\'s (c. 1353-1336 BCE) attempted monotheistic revolution: his worship of the Aten (sun disc) as the sole god, the closure of other temples, and the erasure of gods\' names (especially Amun). After his death, his reforms were reversed, his monuments defaced, and his name expunged from records — the pharaonic version of damnatio memoriae.</p>';
 
 echo '<h3>Birth Traditions</h3>';
 echo '<ul>';
@@ -55,7 +55,7 @@ echo '<p>Mainstream ancient Egyptian theology did not teach reincarnation back i
 // MESOPOTAMIAN
 echo '<hr style="margin:28px 0;border:none;border-top:2px solid #e5e7eb;">';
 echo '<h2 style="color:#276749;">⊕ Mesopotamian Religion — Full Doctrinal Treatment</h2>';
-echo '<p><strong>Theism:</strong> Polytheistic | <strong>Period:</strong> c. 3500 – 539 BCE | <strong>Status:</strong> Extinct</p>';
+echo '<p><strong>Theism:</strong> Polytheistic | <strong>Period:</strong> c. 3500 - 539 BCE | <strong>Status:</strong> Extinct</p>';
 
 echo '<h3>Faith and Belief</h3>';
 echo '<p>Mesopotamian religion — the religious systems of the Sumerians, Akkadians, Babylonians, and Assyrians — was a religion of cosmic service. Humans were created to serve the gods: to feed them through sacrifice, to house them in temples, to clothe them, to sing their praises, and to perform the labor that maintained civilization. This was not understood as degrading — it was the purpose for which humans were made, as stated explicitly in the Atrahasis myth and the Enuma Elish. The gods needed human service; humans needed divine favor. The relationship was one of mutual dependence, not master and slave.</p>';
@@ -83,7 +83,7 @@ echo '<p>Mesopotamian religion did not proselytize — it was the religion of sp
 // NORSE
 echo '<hr style="margin:28px 0;border:none;border-top:2px solid #e5e7eb;">';
 echo '<h2 style="color:#2d3748;">⊕ Norse Religion — Full Doctrinal Treatment</h2>';
-echo '<p><strong>Theism:</strong> Polytheistic | <strong>Period:</strong> c. 200 – 1100 CE | <strong>Status:</strong> Extinct; revived as Ásatrú/Heathenry</p>';
+echo '<p><strong>Theism:</strong> Polytheistic | <strong>Period:</strong> c. 200 - 1100 CE | <strong>Status:</strong> Extinct; revived as Ásatrú/Heathenry</p>';
 
 echo '<h3>Faith and Belief</h3>';
 echo '<p>Norse religion — the religious system of the pre-Christian Germanic and Scandinavian peoples — was a religion without dogma in any formal sense. There were no councils, no creeds, no orthodoxy to enforce. What held the tradition together was not shared belief but shared practice (ritual, sacrifice, seasonal festival) and shared story (the mythological corpus preserved in the Eddas). The Norse equivalent of faith was perhaps <em>trúa</em> (trust/belief) — a trust in the gods\' power and goodwill based on the reciprocal relationship maintained through sacrifice and prayer. But this was trust built on experience and obligation, not on revealed doctrine.</p>';
@@ -130,7 +130,7 @@ echo '<p>Norse sources contain some evidence of reincarnation belief, though it 
 // CELTIC/DRUIDIC
 echo '<hr style="margin:28px 0;border:none;border-top:2px solid #e5e7eb;">';
 echo '<h2 style="color:#276749;">⊕ Celtic / Druidic Religion — Full Doctrinal Treatment</h2>';
-echo '<p><strong>Theism:</strong> Polytheistic with animistic elements | <strong>Period:</strong> c. 600 BCE – 400 CE | <strong>Status:</strong> Extinct; revived as Neo-Druidism</p>';
+echo '<p><strong>Theism:</strong> Polytheistic with animistic elements | <strong>Period:</strong> c. 600 BCE - 400 CE | <strong>Status:</strong> Extinct; revived as Neo-Druidism</p>';
 
 echo '<h3>Faith and Belief</h3>';
 echo '<p>Celtic religion is among the most difficult to document — the Druids, who were its primary theological custodians, transmitted all knowledge orally and left no written texts. What we know comes from three sources: Greek and Roman accounts (often hostile and certainly outsider perspectives), archaeological evidence (shrines, votive deposits, iconography), and later Irish and Welsh medieval literature (which preserves mythological traditions but in a Christian literary context). This fundamental problem of sources means that Celtic religion must be approached with significant epistemic humility.</p>';

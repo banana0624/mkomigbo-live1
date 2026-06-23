@@ -29,7 +29,7 @@ echo '<p>Nsibidi is a cultural treasure and an object of legitimate pride. It is
 echo '<hr style="margin:28px 0;border:none;border-top:2px solid #e5e7eb;">';
 echo '<h2 style="color:#b7791f;">⊕ The Missionary Era — Roman Script Imposed</h2>';
 
-echo '<h3>The First Written Igbo (1777–1850s)</h3>';
+echo '<h3>The First Written Igbo (1777-1850s)</h3>';
 echo '<p>The first written representation of Igbo words appeared in G.C.A. Oldendorp\'s 1777 German missionary history — a handful of words transcribed using whatever combination of German and Latin letters seemed to approximate the sounds Oldendorp heard. This was not a writing system; it was a linguist\'s approximation, different from every other approximation anyone else made of the same sounds.</p>';
 echo '<p>For the following century, every person who wrote Igbo used their own system. Missionaries from different denominations — Church Missionary Society (Anglican), Roman Catholic, Methodist — each developed their own orthographic conventions, producing a proliferation of incompatible spellings for the same words. A word written by one missionary was unrecognizable in another missionary\'s orthography. The result was not a written language but a collection of written approximations, each intelligible only within its own missionary tradition.</p>';
 
@@ -37,7 +37,7 @@ echo '<h3>Samuel Ajayi Crowther and the First Igbo Primer (1857)</h3>';
 echo '<p>Samuel Ajayi Crowther — a Yoruba man, former slave, CMS missionary, and Africa\'s first Anglican bishop — published the first book in written Igbo in 1857: <em>Isoama-Igbo: A Primer</em>. He also published the first vocabulary of the Igbo language. Crowther was a linguistic genius who had already developed the first standardised Yoruba orthography and translated the Yoruba Bible — but his work on Igbo was constrained by the same Roman alphabet framework that constrained all missionary linguistic work of his era.</p>';
 echo '<p>Crowther worked within the Lepsius Standard Alphabet — a system developed by the German philologist Karl Richard Lepsius in the 1850s as a universal scheme for representing African and Asian languages in Roman script. Lepsius\'s system was an improvement over ad hoc missionary orthographies, but it remained fundamentally a Roman alphabet with modifications — incapable of fully representing the phoneme inventory of a language like Igbo.</p>';
 
-echo '<h3>The Union Igbo Controversy (1905–1929)</h3>';
+echo '<h3>The Union Igbo Controversy (1905-1929)</h3>';
 echo '<p>In 1905, the CMS attempted to create a unified written Igbo by producing "Union Igbo" — an artificial standard dialect compiled from multiple Igbo dialects. The attempt failed. Union Igbo satisfied nobody: it did not correspond to the spoken Igbo of any community, it was rejected by communities who recognised neither its vocabulary nor its grammar as their own, and it demonstrated the fundamental impossibility of creating a "standard" dialect by administrative committee when the living dialects were too divergent.</p>';
 echo '<p>In 1929, the International Institute of African Languages and Cultures produced the "Practical Orthography of African Languages" — an attempt to create a unified scheme for writing African languages across the continent. For Igbo, this was a partial improvement but remained within the Roman alphabet framework.</p>';
 
@@ -65,7 +65,7 @@ echo '<li><strong>The missing phonemes</strong> — specific sounds in Igbo that
 echo '</ul>';
 
 echo '<h3>The Trigraph and Digraph Path Forward</h3>';
-echo '<p>Within the Roman alphabet framework, the most direct path to greater phoneme coverage is systematic expansion of the digraph and trigraph system. The Önwu system uses 6 digraphs. A more complete Roman-based system could potentially represent 60–80 phonemes through systematic use of:</p>';
+echo '<p>Within the Roman alphabet framework, the most direct path to greater phoneme coverage is systematic expansion of the digraph and trigraph system. The Önwu system uses 6 digraphs. A more complete Roman-based system could potentially represent 60-80 phonemes through systematic use of:</p>';
 echo '<ul>';
 echo '<li><strong>Additional digraphs</strong>: combinations like "bh," "dh," "gh" (beyond the current use), "kh," "lh," "mh," "nh," "rh" could represent aspirated and fricative variants</li>';
 echo '<li><strong>Systematic trigraphs</strong>: "ngh," "ngw," "nkp," "mbw" and others for labialized and nasalized consonant clusters</li>';
@@ -102,7 +102,7 @@ echo '<h2 style="color:#744210;">⊕ The Orthography Timeline — Key Figures</h
 echo '<table style="width:100%;border-collapse:collapse;font-size:.88rem;">';
 echo '<tr style="border-bottom:2px solid #e5e7eb;"><th style="text-align:left;padding:8px 10px;">Period</th><th style="text-align:left;padding:8px 10px;">Figure / Event</th><th style="text-align:left;padding:8px 10px;">Contribution / Significance</th></tr>';
 $timeline = [
-  ['c. 500–2000 BCE','Ejagham / Igbo communities (Nsibidi)','Development of Nsibidi ideographic script across southeastern Nigeria; used by Ekpe/Mgbe secret society'],
+  ['c. 500-2000 BCE','Ejagham / Igbo communities (Nsibidi)','Development of Nsibidi ideographic script across southeastern Nigeria; used by Ekpe/Mgbe secret society'],
   ['1777','G.C.A. Oldendorp (German missionary)','First written representation of Igbo words — in a German missionary history; not a system, a transcription'],
   ['1850s','Karl Richard Lepsius (German philologist)','Developed the Lepsius Standard Alphabet — used as framework for early missionary Igbo orthography'],
   ['1857','Samuel Ajayi Crowther (Yoruba linguist/bishop)','Published <em>Isoama-Igbo</em> — first book in written Igbo; first Igbo vocabulary; established Roman script precedent'],

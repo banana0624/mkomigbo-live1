@@ -27,6 +27,6 @@ echo '<h2>Historical and Political Sources</h2>';
 echo '<ul>';
 echo '<li><strong>Richard Sklar</strong> — <em>Nigerian Political Parties</em> (1963).</li>';
 echo '<li><strong>Frederick Forsyth</strong> — <em>The Biafra Story</em> (1969).</li>';
-echo '<li><strong>Tekena Tamuno</strong> — <em>Nigeria and Elective Representation 1923–1947</em> (1966).</li>';
+echo '<li><strong>Tekena Tamuno</strong> — <em>Nigeria and Elective Representation 1923-1947</em> (1966).</li>';
 echo '</ul>';
 echo '</div>';

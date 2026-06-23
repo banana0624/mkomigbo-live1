@@ -30,7 +30,7 @@ echo '</ul>';
 echo '<h3>Music</h3>';
 echo '<ul>';
 echo '<li><strong>John Collins, <em>West African Pop Roots</em> (1992)</strong> — The history of highlife and related genres, including Igbo musical contributions.</li>';
-echo '<li><strong>Chief Osita Osadebe, discography (1960s–2000s)</strong> — The recordings themselves are the primary source. Available on streaming platforms.</li>';
+echo '<li><strong>Chief Osita Osadebe, discography (1960s-2000s)</strong> — The recordings themselves are the primary source. Available on streaming platforms.</li>';
 echo '</ul>';
 
 echo '<h3>Language and Oral Tradition</h3>';

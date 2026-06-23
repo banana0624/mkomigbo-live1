@@ -13,7 +13,7 @@ echo '</ul>';
 
 echo '<h3>Academic Histories</h3>';
 echo '<ul>';
-echo '<li><strong>John Stremlau, <em>The International Politics of the Nigerian Civil War 1967–1970</em> (1977)</strong> — Standard academic account of the international dimensions. Essential on Britain\'s role and the OAU\'s response.</li>';
+echo '<li><strong>John Stremlau, <em>The International Politics of the Nigerian Civil War 1967-1970</em> (1977)</strong> — Standard academic account of the international dimensions. Essential on Britain\'s role and the OAU\'s response.</li>';
 echo '<li><strong>Axel Harneit-Sievers et al. (eds.), <em>A Social History of the Nigerian Civil War</em> (1997)</strong> — Essays on the war\'s social dimensions including the famine and civilian experience.</li>';
 echo '<li><strong>Lasse Heerten & A. Dirk Moses (eds.), <em>Postcolonial Conflict and the Question of Genocide</em> (2018)</strong> — Includes essays on Biafra and whether the famine constituted genocide. The most rigorous recent academic engagement with the question.</li>';
 echo '</ul>';
@@ -39,7 +39,7 @@ echo '</ul>';
 
 echo '<h3>Declassified Documents</h3>';
 echo '<ul>';
-echo '<li><strong>UK National Archives, FCO files on Nigeria 1967–1970</strong> — Available at nationalarchives.gov.uk. The most important primary source on British government decision-making during the war. Reveals the commercial and strategic calculations behind British arms supplies to the federal government.</li>';
+echo '<li><strong>UK National Archives, FCO files on Nigeria 1967-1970</strong> — Available at nationalarchives.gov.uk. The most important primary source on British government decision-making during the war. Reveals the commercial and strategic calculations behind British arms supplies to the federal government.</li>';
 echo '</ul>';
 
 

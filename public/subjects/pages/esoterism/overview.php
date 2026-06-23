@@ -6,11 +6,11 @@ echo '<h2>The Western Esoteric Traditions</h2>';
 echo '<table style="width:100%;border-collapse:collapse;font-size:.88rem;">';
 echo '<tr style="border-bottom:2px solid #e5e7eb;"><th style="text-align:left;padding:8px 10px;">Tradition</th><th style="text-align:left;padding:8px 10px;">Origin</th><th style="text-align:left;padding:8px 10px;">Period</th><th style="text-align:left;padding:8px 10px;">Theism</th><th style="text-align:left;padding:8px 10px;">Key Concept</th></tr>';
 $western = [
-['Hermeticism','Egypt/Alexandria','c. 100–300 CE','Monotheistic-monist','As above, so below; the soul\'s ascent through planetary spheres'],
-['Gnosticism','Syria/Egypt/Rome','c. 100–400 CE','Dualistic (True God vs Demiurge)','The material world as prison; gnosis as liberation'],
-['Neoplatonism','Alexandria/Rome','3rd–6th century CE','Monist (The One beyond being)','Emanation from the One; the soul\'s return through contemplation'],
-['Kabbalah','Spain/Provence','12th–13th century CE','Monotheistic (Ein Sof)','Ten Sefirot; Tikkun Olam; gilgul (soul transmigration)'],
-['Alchemy','Egypt/Islamic world/Europe','c. 300 BCE–1700 CE','Varies (often Christian)','Solve et Coagula; the Great Work; inner transformation'],
+['Hermeticism','Egypt/Alexandria','c. 100-300 CE','Monotheistic-monist','As above, so below; the soul\'s ascent through planetary spheres'],
+['Gnosticism','Syria/Egypt/Rome','c. 100-400 CE','Dualistic (True God vs Demiurge)','The material world as prison; gnosis as liberation'],
+['Neoplatonism','Alexandria/Rome','3rd-6th century CE','Monist (The One beyond being)','Emanation from the One; the soul\'s return through contemplation'],
+['Kabbalah','Spain/Provence','12th-13th century CE','Monotheistic (Ein Sof)','Ten Sefirot; Tikkun Olam; gilgul (soul transmigration)'],
+['Alchemy','Egypt/Islamic world/Europe','c. 300 BCE-1700 CE','Varies (often Christian)','Solve et Coagula; the Great Work; inner transformation'],
 ['Rosicrucianism','Germany','1614 CE','Esoteric Christianity','Universal reformation; invisible brotherhood; rose and cross'],
 ['Freemasonry','Scotland/England','1717 CE (speculative)','Deistic (Supreme Being)','The Hiramic legend; moral geometry; initiation by degrees'],
 ['Theosophy','USA (HPB)','1875 CE','Panentheistic-monist','Seven planes; Root Races; Masters; karma and reincarnation'],

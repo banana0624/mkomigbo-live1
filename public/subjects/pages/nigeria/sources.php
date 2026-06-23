@@ -14,7 +14,7 @@ echo '</ul>';
 echo '<h3>The Biafra War</h3>';
 echo '<ul>';
 echo '<li><strong>Chinua Achebe, <em>There Was a Country</em> (2012)</strong> — The definitive Igbo literary account. Essential.</li>';
-echo '<li><strong>John Stremlau, <em>The International Politics of the Nigerian Civil War 1967–1970</em> (1977)</strong> — Standard academic account of the war\'s international dimensions.</li>';
+echo '<li><strong>John Stremlau, <em>The International Politics of the Nigerian Civil War 1967-1970</em> (1977)</strong> — Standard academic account of the war\'s international dimensions.</li>';
 echo '<li><strong>Frederick Forsyth, <em>The Biafra Story</em> (1969)</strong> — Contemporary journalistic account from the Biafran perspective.</li>';
 echo '</ul>';
 

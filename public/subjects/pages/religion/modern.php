@@ -6,7 +6,7 @@ echo '<p class="mk-muted" style="margin-top:0;">Modern and new religious movemen
 // BAHAI
 echo '<hr style="margin:28px 0;border:none;border-top:2px solid #e5e7eb;">';
 echo '<h2 style="color:#2b6cb0;">⊕ The Baháʼí Faith</h2>';
-echo '<p><strong>Founded:</strong> 1844 CE | <strong>Founders:</strong> The Báb (1819–1850), Baháʼu\'lláh (1817–1892) | <strong>Origin:</strong> Persia (Iran) | <strong>Followers:</strong> ~8 million | <strong>Status:</strong> Living</p>';
+echo '<p><strong>Founded:</strong> 1844 CE | <strong>Founders:</strong> The Báb (1819-1850), Baháʼu\'lláh (1817-1892) | <strong>Origin:</strong> Persia (Iran) | <strong>Followers:</strong> ~8 million | <strong>Status:</strong> Living</p>';
 echo '<h3>Origin</h3>';
 echo '<p>The Baháʼí Faith emerged from 19th-century Persia. In 1844, Siyyid ʻAlí-Muḥammad of Shiraz declared himself the Báb ("the Gate") — a forerunner of a promised one greater than himself. He attracted thousands of followers in Iran before being executed by firing squad in 1850. One of his followers, Mírzá Ḥusayn-ʻAlí Núrí — known as Baháʼu\'lláh ("Glory of God") — declared in 1863 that he was the one the Báb had foretold. Baháʼu\'lláh spent his life as a prisoner and exile, writing the core texts of the Baháʼí Faith. He died in 1892 under Ottoman house arrest in Akka (modern Israel), where the Baháʼí World Centre is now located.</p>';
 echo '<h3>Core Beliefs</h3>';
@@ -31,7 +31,7 @@ echo '</ul>';
 echo '<h3>Practices</h3>';
 echo '<ul>';
 echo '<li><strong>Prayer</strong> — one of three obligatory daily prayers must be recited</li>';
-echo '<li><strong>Fasting</strong> — 19 days of fasting (March 2–20) before the Baháʼí New Year (Naw-Rúz)</li>';
+echo '<li><strong>Fasting</strong> — 19 days of fasting (March 2-20) before the Baháʼí New Year (Naw-Rúz)</li>';
 echo '<li><strong>No clergy</strong> — the Faith has no priesthood; communities are governed by elected Houses of Justice</li>';
 echo '<li><strong>Devotional gatherings</strong> — open to all; prayer, music, and study</li>';
 echo '<li><strong>Service</strong> — community service as a form of worship</li>';
@@ -41,7 +41,7 @@ echo '<p><em>Note: Baháʼís face severe persecution in Iran, where the Faith o
 // ECKANKAR
 echo '<hr style="margin:28px 0;border:none;border-top:2px solid #e5e7eb;">';
 echo '<h2 style="color:#744210;">⊕ Eckankar</h2>';
-echo '<p><strong>Founded:</strong> 1965 CE | <strong>Founder:</strong> Paul Twitchell (1908–1971) | <strong>Origin:</strong> USA (Las Vegas, Nevada) | <strong>Followers:</strong> ~50,000 | <strong>Status:</strong> Living</p>';
+echo '<p><strong>Founded:</strong> 1965 CE | <strong>Founder:</strong> Paul Twitchell (1908-1971) | <strong>Origin:</strong> USA (Las Vegas, Nevada) | <strong>Followers:</strong> ~50,000 | <strong>Status:</strong> Living</p>';
 echo '<h3>Origin</h3>';
 echo '<p>Eckankar was founded in October 1965 by Paul Twitchell, an American writer with a background in Scientology and Kirpal Singh\'s Surat Shabd Yoga (the "sound current" tradition of North India). Twitchell claimed to have been taught by a succession of Eck Masters and synthesized these influences into a new teaching he called "the Ancient Science of Soul Travel." After Twitchell\'s death in 1971, the organization passed to Darwin Gross and then to Harold Klemp, who has led it since 1981 as the "Mahanta, the Living ECK Master." Headquarters are in Chanhassen, Minnesota.</p>';
 echo '<h3>Core Beliefs</h3>';
@@ -65,7 +65,7 @@ echo '</ul>';
 // RASTAFARI
 echo '<hr style="margin:28px 0;border:none;border-top:2px solid #e5e7eb;">';
 echo '<h2 style="color:#276749;">⊕ Rastafari</h2>';
-echo '<p><strong>Founded:</strong> 1930s | <strong>Origin:</strong> Jamaica | <strong>Key Figure:</strong> Haile Selassie I (1892–1975) | <strong>Followers:</strong> ~1 million | <strong>Status:</strong> Living</p>';
+echo '<p><strong>Founded:</strong> 1930s | <strong>Origin:</strong> Jamaica | <strong>Key Figure:</strong> Haile Selassie I (1892-1975) | <strong>Followers:</strong> ~1 million | <strong>Status:</strong> Living</p>';
 echo '<h3>Origin</h3>';
 echo '<p>Rastafari emerged in Jamaica in the 1930s among poor Black Jamaicans drawing on the prophetic Black nationalism of Marcus Garvey ("Look to Africa for the crowning of a Black King"). When Ras Tafari Makonnen was crowned Emperor Haile Selassie I of Ethiopia in 1930 — the only African monarch to resist European colonization — early Rastafarians proclaimed him the fulfillment of biblical prophecy: the returned Messiah, the Lion of the Tribe of Judah. Key early figures included Leonard Howell, Joseph Hibbert, and Archibald Dunkley.</p>';
 echo '<h3>Core Beliefs</h3>';
@@ -120,7 +120,7 @@ echo '<hr style="margin:28px 0;border:none;border-top:2px solid #e5e7eb;">';
 echo '<h2 style="color:#553c9a;">⊕ Spiritism (Kardecism)</h2>';
 echo '<p><strong>Founded:</strong> 1857 CE | <strong>Founder:</strong> Hippolyte Léon Denizard Rivail (Allan Kardec) | <strong>Origin:</strong> France | <strong>Followers:</strong> ~15 million (primarily Brazil)</p>';
 echo '<h3>Origin</h3>';
-echo '<p>Allan Kardec (1804–1869) was a French educator and investigator who, in 1854, began attending séances and became convinced that the spirits of the dead were genuinely communicating. He compiled questions and answers received through various mediums into "The Spirits\' Book" (1857) — a systematic philosophy he called Spiritism. Kardec\'s work was largely ignored in France but took root in Brazil, where it combined with Afro-Brazilian traditions (Umbanda) and became one of the most important religious movements in South America.</p>';
+echo '<p>Allan Kardec (1804-1869) was a French educator and investigator who, in 1854, began attending séances and became convinced that the spirits of the dead were genuinely communicating. He compiled questions and answers received through various mediums into "The Spirits\' Book" (1857) — a systematic philosophy he called Spiritism. Kardec\'s work was largely ignored in France but took root in Brazil, where it combined with Afro-Brazilian traditions (Umbanda) and became one of the most important religious movements in South America.</p>';
 echo '<h3>Core Beliefs</h3>';
 echo '<ul>';
 echo '<li><strong>Spirits exist</strong> — the souls of the dead survive physical death and can communicate with the living through mediums.</li>';
@@ -142,7 +142,7 @@ echo '</ul>';
 // WICCA
 echo '<hr style="margin:28px 0;border:none;border-top:2px solid #e5e7eb;">';
 echo '<h2 style="color:#2d6a1f;">⊕ Wicca / Neo-Paganism</h2>';
-echo '<p><strong>Founded:</strong> 1954 CE | <strong>Founder:</strong> Gerald Gardner (1884–1964) | <strong>Origin:</strong> England | <strong>Followers:</strong> ~1-3 million | <strong>Status:</strong> Living and growing</p>';
+echo '<p><strong>Founded:</strong> 1954 CE | <strong>Founder:</strong> Gerald Gardner (1884-1964) | <strong>Origin:</strong> England | <strong>Followers:</strong> ~1-3 million | <strong>Status:</strong> Living and growing</p>';
 echo '<h3>Origin</h3>';
 echo '<p>Wicca was publicly founded by Gerald Gardner, a British civil servant and amateur anthropologist, who claimed to have been initiated into a surviving witch cult ("the Craft") in the New Forest, Hampshire, in 1939. He published <em>Witchcraft Today</em> in 1954, presenting Wicca as a revival of pre-Christian European religion. The tradition was further developed by Doreen Valiente, who rewrote much of Gardner\'s ritual material, and has since diversified enormously — Alexandrian, Dianic, Eclectic, and many other traditions exist. Wicca is among the fastest-growing religions in the Western world.</p>';
 echo '<h3>Core Beliefs</h3>';
@@ -168,7 +168,7 @@ echo '</ul>';
 // MORMONISM
 echo '<hr style="margin:28px 0;border:none;border-top:2px solid #e5e7eb;">';
 echo '<h2 style="color:#1a365d;">⊕ Mormonism (The Church of Jesus Christ of Latter-day Saints)</h2>';
-echo '<p><strong>Founded:</strong> 1830 CE | <strong>Founder:</strong> Joseph Smith Jr. (1805–1844) | <strong>Origin:</strong> Palmyra, New York, USA | <strong>Followers:</strong> ~17 million | <strong>Status:</strong> Living</p>';
+echo '<p><strong>Founded:</strong> 1830 CE | <strong>Founder:</strong> Joseph Smith Jr. (1805-1844) | <strong>Origin:</strong> Palmyra, New York, USA | <strong>Followers:</strong> ~17 million | <strong>Status:</strong> Living</p>';
 echo '<h3>The Founder</h3>';
 echo '<p>Joseph Smith Jr. claimed a series of divine visions beginning in 1820 when (at age 14) God the Father and Jesus Christ appeared to him in a grove of trees near his home (the "First Vision"). In 1823 the angel Moroni directed him to golden plates buried on a hill called Cumorah. Smith translated these plates using two seer stones and published the result in 1830 as the Book of Mormon. He organized the Church of Christ (later renamed) in April 1830. He was murdered by a mob in Carthage, Illinois, in 1844. The majority of Latter-day Saints followed Brigham Young to Utah; other groups followed different successors.</p>';
 echo '<h3>Core Beliefs</h3>';

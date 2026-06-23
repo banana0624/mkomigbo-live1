@@ -7,7 +7,7 @@ echo '<h3>General African History</h3>';
 echo '<ul>';
 echo '<li><strong>John Reader, <em>Africa: A Biography of the Continent</em> (1997)</strong> — The most accessible comprehensive single-volume history of Africa. Combines geology, ecology, archaeology, and human history into a unified account. Start here.</li>';
 echo '<li><strong>Basil Davidson, <em>Africa in History</em> (1966; rev. 1991)</strong> — The pioneering popular history that challenged colonial myths about African statelessness. Dated in some details; foundational in approach.</li>';
-echo '<li><strong>UNESCO General History of Africa (8 vols., 1981–1993)</strong> — The most comprehensive scholarly history of Africa, written by African historians. Not light reading but authoritative. Available in university libraries and partially online.</li>';
+echo '<li><strong>UNESCO General History of Africa (8 vols., 1981-1993)</strong> — The most comprehensive scholarly history of Africa, written by African historians. Not light reading but authoritative. Available in university libraries and partially online.</li>';
 echo '<li><strong>Walter Rodney, <em>How Europe Underdeveloped Africa</em> (1972)</strong> — The foundational text of African dependency theory: the argument that Africa is poor not because of any African failure but because of the structural consequences of the slave trade and colonialism. Essential.</li>';
 echo '</ul>';
 

@@ -26,19 +26,19 @@ echo '</ul>';
 echo '<h3>The Slave Trade</h3>';
 echo '<ul>';
 echo '<li><strong>G. Ugo Nwokeji, <em>The Slave Trade and Culture in the Bight of Biafra</em> (2010)</strong> — The definitive modern study of the Igbo experience in the Atlantic slave trade.</li>';
-echo '<li><strong>Adiele Afigbo, <em>The Warrant Chiefs: Indirect Rule in Southeastern Nigeria 1891–1929</em> (1972)</strong> — Essential on the colonial administrative system and its relationship to the Aro trading network.</li>';
+echo '<li><strong>Adiele Afigbo, <em>The Warrant Chiefs: Indirect Rule in Southeastern Nigeria 1891-1929</em> (1972)</strong> — Essential on the colonial administrative system and its relationship to the Aro trading network.</li>';
 echo '</ul>';
 
 echo '<h3>Colonial Resistance</h3>';
 echo '<ul>';
 echo '<li><strong>Judith Van Allen, "Sitting on a Man: Colonialism and the Lost Political Institutions of Igbo Women" (1972)</strong> — The foundational academic account of the Women\'s War of 1929. Available in African Studies Review.</li>';
-echo '<li><strong>Don Ohadike, <em>The Ekumeku Movement: Western Igbo Resistance to the British Conquest of Nigeria, 1883–1914</em> (1991)</strong> — The only book-length study of the Ekumeku resistance movement.</li>';
+echo '<li><strong>Don Ohadike, <em>The Ekumeku Movement: Western Igbo Resistance to the British Conquest of Nigeria, 1883-1914</em> (1991)</strong> — The only book-length study of the Ekumeku resistance movement.</li>';
 echo '</ul>';
 
 echo '<h3>The Biafra War</h3>';
 echo '<ul>';
 echo '<li><strong>Frederick Forsyth, <em>The Biafra Story</em> (1969)</strong> — Contemporary journalistic account from the Biafran side. Invaluable as contemporaneous witness.</li>';
-echo '<li><strong>John Stremlau, <em>The International Politics of the Nigerian Civil War 1967–1970</em> (1977)</strong> — The standard academic account of the international dimensions of the war.</li>';
+echo '<li><strong>John Stremlau, <em>The International Politics of the Nigerian Civil War 1967-1970</em> (1977)</strong> — The standard academic account of the international dimensions of the war.</li>';
 echo '<li><strong>Chimamanda Ngozi Adichie, <em>Half of a Yellow Sun</em> (2006)</strong> — The most widely read fictional account of the war and its human cost.</li>';
 echo '<li><strong>Axel Harneit-Sievers et al. (eds.), <em>A Social History of the Nigerian Civil War</em> (1997)</strong> — Essays on the war\'s social dimensions, including the famine and civilian experience.</li>';
 echo '</ul>';

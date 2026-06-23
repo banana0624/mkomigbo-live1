@@ -6,7 +6,7 @@ echo '<p class="mk-muted" style="margin-top:0;">Ancient religions in depth — f
 // KEMET
 echo '<hr style="margin:28px 0;border:none;border-top:2px solid #e5e7eb;">';
 echo '<h2 style="color:#b7791f;">⊕ Kemet — Ancient Egyptian Religion</h2>';
-echo '<p><strong>Region:</strong> Nile Valley, Egypt | <strong>Period:</strong> c. 3100 BCE – 400 CE | <strong>Status:</strong> Extinct (revived as Kemetism)</p>';
+echo '<p><strong>Region:</strong> Nile Valley, Egypt | <strong>Period:</strong> c. 3100 BCE - 400 CE | <strong>Status:</strong> Extinct (revived as Kemetism)</p>';
 echo '<h3>Origin and Founder</h3>';
 echo '<p>Kemet (the ancient Egyptian name for Egypt, meaning "the Black Land") had no single founder. Its religious tradition emerged organically with the unification of Upper and Lower Egypt under Narmer (c. 3100 BCE) and evolved continuously for over three thousand years. It is one of the longest-surviving religious traditions in human history.</p>';
 echo '<h3>Core Beliefs</h3>';
@@ -51,7 +51,7 @@ echo '</ul>';
 // MESOPOTAMIAN
 echo '<hr style="margin:28px 0;border:none;border-top:2px solid #e5e7eb;">';
 echo '<h2 style="color:#276749;">⊕ Mesopotamian Religions — Sumerian, Babylonian, Akkadian</h2>';
-echo '<p><strong>Region:</strong> Tigris-Euphrates valley (modern Iraq/Syria) | <strong>Period:</strong> c. 3500 – 539 BCE | <strong>Status:</strong> Extinct</p>';
+echo '<p><strong>Region:</strong> Tigris-Euphrates valley (modern Iraq/Syria) | <strong>Period:</strong> c. 3500 - 539 BCE | <strong>Status:</strong> Extinct</p>';
 echo '<h3>Origin</h3>';
 echo '<p>The world\'s oldest known written religious tradition. The Sumerians of southern Mesopotamia developed city-states each with a patron deity, creating humanity\'s first recorded theology, cosmology, and mythology. Their traditions were absorbed by the Akkadians, Babylonians, and Assyrians, evolving but maintaining core continuities.</p>';
 echo '<h3>Core Beliefs</h3>';
@@ -92,7 +92,7 @@ echo '</ul>';
 // MAYA
 echo '<hr style="margin:28px 0;border:none;border-top:2px solid #e5e7eb;">';
 echo '<h2 style="color:#2b6cb0;">⊕ Maya Religion</h2>';
-echo '<p><strong>Region:</strong> Mesoamerica (southern Mexico, Guatemala, Belize, Honduras) | <strong>Period:</strong> c. 2000 BCE – present (in modified form) | <strong>Status:</strong> Partially surviving</p>';
+echo '<p><strong>Region:</strong> Mesoamerica (southern Mexico, Guatemala, Belize, Honduras) | <strong>Period:</strong> c. 2000 BCE - present (in modified form) | <strong>Status:</strong> Partially surviving</p>';
 echo '<h3>Origin</h3>';
 echo '<p>The Maya developed one of the most sophisticated civilizations of the ancient world, with advanced mathematics, astronomy, and writing. Their religion was inseparable from their calendar system — one of the most accurate ever developed — and from their understanding of cyclical time.</p>';
 echo '<h3>Core Beliefs</h3>';
@@ -130,7 +130,7 @@ echo '</ul>';
 // INCA
 echo '<hr style="margin:28px 0;border:none;border-top:2px solid #e5e7eb;">';
 echo '<h2 style="color:#744210;">⊕ Inca Religion</h2>';
-echo '<p><strong>Region:</strong> Andean South America (Peru, Bolivia, Ecuador, Chile, Argentina) | <strong>Period:</strong> c. 1400 – 1533 CE | <strong>Status:</strong> Largely extinct, elements survive in Andean indigenous practice</p>';
+echo '<p><strong>Region:</strong> Andean South America (Peru, Bolivia, Ecuador, Chile, Argentina) | <strong>Period:</strong> c. 1400 - 1533 CE | <strong>Status:</strong> Largely extinct, elements survive in Andean indigenous practice</p>';
 echo '<h3>Core Beliefs</h3>';
 echo '<ul>';
 echo '<li><strong>Inti (Sun God)</strong> — the supreme deity of the Inca state religion. The Sapa Inca (emperor) was the Son of Inti, divine intermediary between god and humanity.</li>';
@@ -151,7 +151,7 @@ echo '</ul>';
 // NORSE
 echo '<hr style="margin:28px 0;border:none;border-top:2px solid #e5e7eb;">';
 echo '<h2 style="color:#2d3748;">⊕ Norse / Germanic Religion</h2>';
-echo '<p><strong>Region:</strong> Scandinavia, Iceland, Northern Europe | <strong>Period:</strong> c. 200 – 1100 CE | <strong>Status:</strong> Extinct (revived as Ásatrú/Heathenry)</p>';
+echo '<p><strong>Region:</strong> Scandinavia, Iceland, Northern Europe | <strong>Period:</strong> c. 200 - 1100 CE | <strong>Status:</strong> Extinct (revived as Ásatrú/Heathenry)</p>';
 echo '<h3>Core Beliefs</h3>';
 echo '<ul>';
 echo '<li><strong>Nine Worlds on Yggdrasil</strong> — the cosmos is an immense ash tree (Yggdrasil) connecting nine realms: Asgard (gods), Midgard (humans), Jotunheim (giants), Niflheim (ice/death), Muspelheim (fire), Vanaheim, Alfheim, Svartalfheim, Helheim.</li>';
@@ -186,7 +186,7 @@ echo '</ul>';
 // DRUIDIC
 echo '<hr style="margin:28px 0;border:none;border-top:2px solid #e5e7eb;">';
 echo '<h2 style="color:#276749;">⊕ Celtic / Druidic Religion</h2>';
-echo '<p><strong>Region:</strong> Western and Central Europe, Britain, Ireland | <strong>Period:</strong> c. 600 BCE – 400 CE | <strong>Status:</strong> Extinct (revived as Neo-Druidism)</p>';
+echo '<p><strong>Region:</strong> Western and Central Europe, Britain, Ireland | <strong>Period:</strong> c. 600 BCE - 400 CE | <strong>Status:</strong> Extinct (revived as Neo-Druidism)</p>';
 echo '<h3>Core Beliefs</h3>';
 echo '<ul>';
 echo '<li><strong>The Otherworld (Tír na nÓg)</strong> — a parallel realm coexisting with the physical world, home of gods, ancestors, and magical beings. Entry points at certain places and times (especially Samhain).</li>';

@@ -86,7 +86,7 @@ echo '<li><strong>Additional Scripture</strong> — the Book of Mormon (ancient 
 echo '</ul>';
 
 echo '<h3>Proselytism</h3>';
-echo '<p>Mormonism is among the most actively proselytizing religions in the world. Male members typically serve a two-year full-time mission (ages 18–26); female members may serve an 18-month mission (ages 19+). Approximately 70,000 LDS missionaries serve at any given time in over 180 countries. The white-shirted, name-tagged pairs of missionaries are among the most recognizable symbols of organized religion in the modern world. The Church spends enormous resources on missionary work, including the Mormon Tabernacle Choir, visitors\' centers at Temple Square in Salt Lake City, and sophisticated online outreach.</p>';
+echo '<p>Mormonism is among the most actively proselytizing religions in the world. Male members typically serve a two-year full-time mission (ages 18-26); female members may serve an 18-month mission (ages 19+). Approximately 70,000 LDS missionaries serve at any given time in over 180 countries. The white-shirted, name-tagged pairs of missionaries are among the most recognizable symbols of organized religion in the modern world. The Church spends enormous resources on missionary work, including the Mormon Tabernacle Choir, visitors\' centers at Temple Square in Salt Lake City, and sophisticated online outreach.</p>';
 
 echo '<h3>Apostasy</h3>';
 echo '<p>Formal apostasy from the LDS Church — defined as teaching false doctrine, openly opposing Church leadership, or behavior contrary to Church standards — can result in a membership council (formerly a "disciplinary council") leading to formal disfellowshipment (retaining membership but losing privileges) or excommunication (complete removal from membership rolls). High-profile excommunications of intellectuals, feminists, and LGBTQ+ advocates have generated significant controversy and media attention. Those who simply stop attending ("going inactive") are not disciplined. Individuals who wish to have their names formally removed from Church membership records must submit a written request.</p>';
@@ -200,7 +200,7 @@ echo '<p>Most Wiccans accept reincarnation — the soul rests in the Summerland 
 // ECKANKAR
 echo '<hr style="margin:28px 0;border:none;border-top:2px solid #e5e7eb;">';
 echo '<h2 style="color:#553c9a;">⊕ Eckankar — Full Doctrinal Treatment</h2>';
-echo '<p><strong>Theism:</strong> Monotheistic — SUGMAD (God) is the supreme being; the ECK (Holy Spirit as Sound and Light) is the divine current | <strong>Founded:</strong> 1965 CE, USA | <strong>Founder:</strong> Paul Twitchell (1908–1971) | <strong>Followers:</strong> ~50,000</p>';
+echo '<p><strong>Theism:</strong> Monotheistic — SUGMAD (God) is the supreme being; the ECK (Holy Spirit as Sound and Light) is the divine current | <strong>Founded:</strong> 1965 CE, USA | <strong>Founder:</strong> Paul Twitchell (1908-1971) | <strong>Followers:</strong> ~50,000</p>';
 
 echo '<h3>Faith and Belief</h3>';
 echo '<p>Eckankar calls itself "The Ancient Science of Soul Travel." Its central claim is that the human being is Soul — a divine spark of God — and that Soul can consciously leave the physical body and travel through multiple inner spiritual planes (worlds of existence) toward reunion with SUGMAD (God). This is not metaphor but literal teaching: practitioners claim to experience out-of-body travel during sleep and meditation as real events with genuine spiritual content.</p>';

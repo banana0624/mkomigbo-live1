@@ -2,11 +2,11 @@
 declare(strict_types=1);
 echo '<div class="mk-prose">';
 echo '<h2>Teachers, Linguists, and Language Advocates</h2>';
-echo '<h3>F.C. Ogbalu (1927–1980)</h3>';
+echo '<h3>F.C. Ogbalu (1927-1980)</h3>';
 echo '<p>As the architect of the Önwu orthography and the founder of SPILC, Ogbalu created the institutional and written infrastructure on which all subsequent Igbo language education has been built. His practical works — the grammar books, the proverb collections, the dictionaries — are the tools that teachers and learners have used for six decades. His vision was practical: he wanted Igbo to be teachable, learnable, and writable in standardised form. Within the constraints of the Roman alphabet he worked with, his achievement was enormous.</p>';
-echo '<h3>Kay Williamson (1935–2005)</h3>';
+echo '<h3>Kay Williamson (1935-2005)</h3>';
 echo '<p>Kay Williamson\'s contribution to the understanding of Igbo grammar and phonology is the most rigorous from outside the Igbo-speaking community. Her work on Igbo tones — documenting the systematic relationships between tonal patterns and grammatical categories — provided the scientific foundation for subsequent grammatical analysis. Her Igbo-English dictionary remains the most phonologically precise reference work available. She also contributed to the training of Nigerian linguists at the University of Port Harcourt, creating an institutional legacy that extends beyond her own publications.</p>';
-echo '<h3>Chinua Achebe (1930–2013) on Language</h3>';
+echo '<h3>Chinua Achebe (1930-2013) on Language</h3>';
 echo '<p>Achebe\'s contribution to the understanding of Igbo language was indirect but profound. Writing in English, he demonstrated that English could carry Igbo grammatical structures, Igbo rhetorical patterns, and Igbo philosophical content. His essay "The African Writer and the English Language" (1964) is the essential text on why an Igbo writer might choose to write in English while remaining profoundly Igbo in sensibility — and on the limitations of that choice. His novels remain the richest source of Igbo proverbs, greetings, and cultural vocabulary in any language accessible to non-Igbo readers.</p>';
 echo '<h3>E.N. Emenanjo (contemporary)</h3>';
 echo '<p>Emmanuel Nolue Emenanjo\'s work on Igbo syntax and language policy has been foundational for Igbo language teaching in Nigerian schools. His educational grammars — written for teachers and students rather than for academic linguists — have shaped how generations of Igbo children have been taught their language formally. His advocacy for a more comprehensive Igbo orthography places him in the tradition of those who recognise that the Önwu system, while essential, is insufficient to represent the full richness of spoken Igbo.</p>';

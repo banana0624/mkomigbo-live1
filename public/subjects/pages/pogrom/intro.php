@@ -10,7 +10,7 @@ echo '<p>The word "pogrom" (Russian: "to wreak havoc") originally described orga
 echo '<h2>Recognition and Memory</h2>';
 echo '<p>The 1966 pogroms remain inadequately recognized in Nigerian official history. No trials have been held. No reparations paid. No formal apology issued. For the Igbo, the pogroms are the foundational trauma of the post-independence era — the event that proved the Nigerian state could not protect its Igbo citizens and made Biafra inevitable.</p>';
 echo '<h2>Historical Parallels</h2>';
-echo '<p>The 1966 pogroms have been compared to other 20th-century ethnic massacres: the Armenian genocide (1915), the Holocaust (1941–1945), the Rwandan genocide (1994). In each case, an ethnic group was targeted for mass violence by organized forces operating within or alongside a state, preceded by years of organized dehumanization, and followed by international indifference.</p>';
+echo '<p>The 1966 pogroms have been compared to other 20th-century ethnic massacres: the Armenian genocide (1915), the Holocaust (1941-1945), the Rwandan genocide (1994). In each case, an ethnic group was targeted for mass violence by organized forces operating within or alongside a state, preceded by years of organized dehumanization, and followed by international indifference.</p>';
 echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 4px;">';
 echo '<a class="mk-btn mk-btn--ghost" href="/subjects/biafra/intro/">→ Biafra</a>';
 echo '<a class="mk-btn mk-btn--ghost" href="/subjects/history/topics/">→ History Topics</a>';

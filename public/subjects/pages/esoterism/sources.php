@@ -8,15 +8,15 @@ echo '<h2>Western Esoteric Texts</h2>';
 echo '<table style="width:100%;border-collapse:collapse;font-size:.88rem;">';
 echo '<tr style="border-bottom:2px solid #e5e7eb;"><th style="text-align:left;padding:8px 10px;">Text</th><th style="text-align:left;padding:8px 10px;">Tradition</th><th style="text-align:left;padding:8px 10px;">Date</th><th style="text-align:left;padding:8px 10px;">Download</th></tr>';
 $western_texts = [
-  ['Corpus Hermeticum','Hermeticism','c. 100–300 CE','<a href="https://sacred-texts.com/egy/herm/index.htm" target="_blank" rel="noopener">sacred-texts.com [FREE]</a>'],
+  ['Corpus Hermeticum','Hermeticism','c. 100-300 CE','<a href="https://sacred-texts.com/egy/herm/index.htm" target="_blank" rel="noopener">sacred-texts.com [FREE]</a>'],
   ['The Emerald Tablet (Tabula Smaragdina)','Hermeticism/Alchemy','c. 8th century CE','<a href="https://sacred-texts.com/alc/emerald.htm" target="_blank" rel="noopener">sacred-texts.com [FREE]</a>'],
   ['The Kybalion','Hermeticism','1908 CE','<a href="https://sacred-texts.com/eso/kyb/index.htm" target="_blank" rel="noopener">sacred-texts.com [FREE]</a>'],
-  ['The Gospel of Thomas','Gnosticism','1st–2nd century CE','<a href="https://sacred-texts.com/chr/thomas.htm" target="_blank" rel="noopener">sacred-texts.com [FREE]</a>'],
-  ['Pistis Sophia','Gnosticism','3rd–4th century CE','<a href="https://sacred-texts.com/chr/ps/index.htm" target="_blank" rel="noopener">sacred-texts.com [FREE]</a>'],
+  ['The Gospel of Thomas','Gnosticism','1st-2nd century CE','<a href="https://sacred-texts.com/chr/thomas.htm" target="_blank" rel="noopener">sacred-texts.com [FREE]</a>'],
+  ['Pistis Sophia','Gnosticism','3rd-4th century CE','<a href="https://sacred-texts.com/chr/ps/index.htm" target="_blank" rel="noopener">sacred-texts.com [FREE]</a>'],
   ['The Apocryphon of John','Gnosticism (Sethian)','2nd century CE','<a href="https://gnosis.org/naghamm/apocjn.html" target="_blank" rel="noopener">gnosis.org [FREE]</a>'],
-  ['Nag Hammadi Library (complete)','Gnosticism','2nd–4th century CE','<a href="https://gnosis.org/naghamm/nhl.html" target="_blank" rel="noopener">gnosis.org [FREE]</a>'],
+  ['Nag Hammadi Library (complete)','Gnosticism','2nd-4th century CE','<a href="https://gnosis.org/naghamm/nhl.html" target="_blank" rel="noopener">gnosis.org [FREE]</a>'],
   ['The Zohar (selections)','Kabbalah','c. 1280 CE','<a href="https://sacred-texts.com/jud/index.htm" target="_blank" rel="noopener">sacred-texts.com [FREE]</a>'],
-  ['Sefer Yetzirah (Book of Formation)','Kabbalah','c. 2nd–6th century CE','<a href="https://sacred-texts.com/jud/sy/index.htm" target="_blank" rel="noopener">sacred-texts.com [FREE]</a>'],
+  ['Sefer Yetzirah (Book of Formation)','Kabbalah','c. 2nd-6th century CE','<a href="https://sacred-texts.com/jud/sy/index.htm" target="_blank" rel="noopener">sacred-texts.com [FREE]</a>'],
   ['The Enneads by Plotinus','Neoplatonism','c. 270 CE','<a href="https://sacred-texts.com/cla/plotenn/index.htm" target="_blank" rel="noopener">sacred-texts.com [FREE]</a>'],
   ['Paracelsus — Selected Works','Alchemy','16th century CE','<a href="https://sacred-texts.com/alc/paracel/index.htm" target="_blank" rel="noopener">sacred-texts.com [FREE]</a>'],
   ['The Chymical Wedding of Christian Rosenkreutz','Rosicrucianism','1616 CE','<a href="https://sacred-texts.com/sro/rcia/index.htm" target="_blank" rel="noopener">sacred-texts.com [FREE]</a>'],
@@ -51,18 +51,18 @@ $eastern_texts = [
   ['Ihya Ulum al-Din — Al-Ghazali','Sufism/Islamic Mysticism','11th century CE','<a href="https://archive.org/search?query=ihya+ulum+al-din+ghazali" target="_blank" rel="noopener">archive.org [FREE]</a>'],
   ['Fusus al-Hikam — Ibn Arabi','Sufism','13th century CE','<a href="https://archive.org/search?query=fusus+al-hikam+ibn+arabi" target="_blank" rel="noopener">archive.org [FREE]</a>'],
   ['The Bhagavad Gita','Hinduism/Vedanta','c. 200 BCE','<a href="https://sacred-texts.com/hin/gita/index.htm" target="_blank" rel="noopener">sacred-texts.com [FREE]</a>'],
-  ['The Upanishads (principal 13)','Hinduism/Vedanta','c. 800–200 BCE','<a href="https://sacred-texts.com/hin/index.htm" target="_blank" rel="noopener">sacred-texts.com [FREE]</a>'],
+  ['The Upanishads (principal 13)','Hinduism/Vedanta','c. 800-200 BCE','<a href="https://sacred-texts.com/hin/index.htm" target="_blank" rel="noopener">sacred-texts.com [FREE]</a>'],
   ['Shiva Sutras','Kashmir Shaivism','c. 9th century CE','<a href="https://sacred-texts.com/hin/shivasutra.htm" target="_blank" rel="noopener">sacred-texts.com [FREE]</a>'],
   ['Vijnanabhairava Tantra','Tantra/Kashmir Shaivism','c. 7th century CE','<a href="https://archive.org/search?query=vijnanabhairava+tantra" target="_blank" rel="noopener">archive.org [FREE]</a>'],
   ['Dhammapada','Buddhism','c. 3rd century BCE','<a href="https://sacred-texts.com/bud/dhp.htm" target="_blank" rel="noopener">sacred-texts.com [FREE]</a>'],
   ['The Tibetan Book of the Dead (Bardo Thodol)','Vajrayana Buddhism/Bön','8th century CE','<a href="https://sacred-texts.com/bud/tib/index.htm" target="_blank" rel="noopener">sacred-texts.com [FREE]</a>'],
-  ['Heart Sutra','Mahayana Buddhism','1st–2nd century CE','<a href="https://sacred-texts.com/bud/tib/heartsut.htm" target="_blank" rel="noopener">sacred-texts.com [FREE]</a>'],
+  ['Heart Sutra','Mahayana Buddhism','1st-2nd century CE','<a href="https://sacred-texts.com/bud/tib/heartsut.htm" target="_blank" rel="noopener">sacred-texts.com [FREE]</a>'],
   ['Diamond Sutra','Mahayana Buddhism','c. 4th century CE','<a href="https://sacred-texts.com/bud/tib/diam.htm" target="_blank" rel="noopener">sacred-texts.com [FREE]</a>'],
   ['Tao Te Ching — Laozi','Taoism','c. 400 BCE','<a href="https://sacred-texts.com/tao/taote.htm" target="_blank" rel="noopener">sacred-texts.com [FREE]</a>'],
   ['Zhuangzi','Taoism','c. 4th century BCE','<a href="https://sacred-texts.com/tao/creed.htm" target="_blank" rel="noopener">sacred-texts.com [FREE]</a>'],
   ['The Analects — Confucius','Confucianism','c. 5th century BCE','<a href="https://sacred-texts.com/cfu/conf1.htm" target="_blank" rel="noopener">sacred-texts.com [FREE]</a>'],
   ['Guru Granth Sahib (English translation)','Sikhism','1604 CE (final 1708)','<a href="https://sacred-texts.com/skh/index.htm" target="_blank" rel="noopener">sacred-texts.com [FREE]</a>'],
-  ['The Avesta (Gathas of Zarathustra)','Zoroastrianism','c. 1500–600 BCE','<a href="https://sacred-texts.com/zor/index.htm" target="_blank" rel="noopener">sacred-texts.com [FREE]</a>'],
+  ['The Avesta (Gathas of Zarathustra)','Zoroastrianism','c. 1500-600 BCE','<a href="https://sacred-texts.com/zor/index.htm" target="_blank" rel="noopener">sacred-texts.com [FREE]</a>'],
 ];
 foreach($eastern_texts as $r) {
   echo '<tr style="border-bottom:1px solid #f0f0f0;vertical-align:top;">';

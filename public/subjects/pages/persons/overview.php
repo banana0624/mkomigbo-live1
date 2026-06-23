@@ -10,5 +10,5 @@ echo '<p>The Church Missionary Society, the Roman Catholic Church, and the Metho
 echo '<h2>Women\'s Lives</h2>';
 echo '<p>The biographical record for Igbo women is thinner and harder to recover. Most colonial archives recorded only men in positions of formal authority. Flora Nwapa\'s fiction, Buchi Emecheta\'s autobiographical novels, and a growing body of oral history research are gradually correcting this imbalance.</p>';
 echo '<h2>The Biafra Generation</h2>';
-echo '<p>The war of 1967–1970 produced an intense biographical record. International journalists documented Biafran leadership. Chinua Achebe, Wole Soyinka, and others wrote memoirs. The generation that survived the war and entered the diaspora has produced a substantial body of memoir, fiction, and testimony that constitutes one of the richest biographical archives in postcolonial African history.</p>';
+echo '<p>The war of 1967-1970 produced an intense biographical record. International journalists documented Biafran leadership. Chinua Achebe, Wole Soyinka, and others wrote memoirs. The generation that survived the war and entered the diaspora has produced a substantial body of memoir, fiction, and testimony that constitutes one of the richest biographical archives in postcolonial African history.</p>';
 echo '</div>';

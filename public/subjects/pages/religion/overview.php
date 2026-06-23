@@ -7,19 +7,19 @@ echo '<h2>Ancient and Dead Religions</h2>';
 echo '<table style="width:100%;border-collapse:collapse;font-size:.9rem;">';
 echo '<tr style="border-bottom:2px solid #e5e7eb;"><th style="text-align:left;padding:8px 12px;">Religion</th><th style="text-align:left;padding:8px 12px;">Region</th><th style="text-align:left;padding:8px 12px;">Period</th><th style="text-align:left;padding:8px 12px;">Key Deity/Concept</th></tr>';
 $ancient = [
-['Kemet (Egyptian)','Egypt / North Africa','c. 3100 BCE – 400 CE','Ra, Osiris, Isis, Horus, Maat'],
-['Sumerian','Mesopotamia (Iraq)','c. 3500 – 1800 BCE','Enlil, Enki, Inanna, An'],
-['Babylonian / Akkadian','Mesopotamia','c. 2350 – 539 BCE','Marduk, Ishtar, Anu'],
-['Canaanite','Levant (Israel/Palestine)','c. 3000 – 200 BCE','El, Baal, Asherah, Mot'],
-['Greek','Ancient Greece','c. 800 – 400 CE','Zeus, Athena, Apollo, Dionysus'],
-['Roman','Roman Empire','c. 700 BCE – 400 CE','Jupiter, Juno, Mars, Venus'],
-['Norse / Germanic','Scandinavia / Northern Europe','c. 200 – 1100 CE','Odin, Thor, Freya, Loki'],
-['Celtic / Druidic','Western Europe / Britain','c. 600 BCE – 400 CE','Cernunnos, Brigid, Lugh, the Dagda'],
-['Maya','Mesoamerica (Mexico/Guatemala)','c. 2000 BCE – 1500 CE','Itzamna, Kukulkan, Ix Chel, Ah Puch'],
-['Aztec','Central Mexico','c. 1300 – 1521 CE','Huitzilopochtli, Quetzalcoatl, Tlaloc, Tezcatlipoca'],
-['Inca','Andean South America','c. 1400 – 1533 CE','Inti (Sun God), Pachamama, Viracocha'],
-['Mesopotamian (general)','Iraq / Syria / Iran','c. 3500 – 500 BCE','Varied pantheon by city-state'],
-['Persian (pre-Zoroastrian)','Iran / Central Asia','c. 1500 – 600 BCE','Ahura Mazda (early), Mithra'],
+['Kemet (Egyptian)','Egypt / North Africa','c. 3100 BCE - 400 CE','Ra, Osiris, Isis, Horus, Maat'],
+['Sumerian','Mesopotamia (Iraq)','c. 3500 - 1800 BCE','Enlil, Enki, Inanna, An'],
+['Babylonian / Akkadian','Mesopotamia','c. 2350 - 539 BCE','Marduk, Ishtar, Anu'],
+['Canaanite','Levant (Israel/Palestine)','c. 3000 - 200 BCE','El, Baal, Asherah, Mot'],
+['Greek','Ancient Greece','c. 800 - 400 CE','Zeus, Athena, Apollo, Dionysus'],
+['Roman','Roman Empire','c. 700 BCE - 400 CE','Jupiter, Juno, Mars, Venus'],
+['Norse / Germanic','Scandinavia / Northern Europe','c. 200 - 1100 CE','Odin, Thor, Freya, Loki'],
+['Celtic / Druidic','Western Europe / Britain','c. 600 BCE - 400 CE','Cernunnos, Brigid, Lugh, the Dagda'],
+['Maya','Mesoamerica (Mexico/Guatemala)','c. 2000 BCE - 1500 CE','Itzamna, Kukulkan, Ix Chel, Ah Puch'],
+['Aztec','Central Mexico','c. 1300 - 1521 CE','Huitzilopochtli, Quetzalcoatl, Tlaloc, Tezcatlipoca'],
+['Inca','Andean South America','c. 1400 - 1533 CE','Inti (Sun God), Pachamama, Viracocha'],
+['Mesopotamian (general)','Iraq / Syria / Iran','c. 3500 - 500 BCE','Varied pantheon by city-state'],
+['Persian (pre-Zoroastrian)','Iran / Central Asia','c. 1500 - 600 BCE','Ahura Mazda (early), Mithra'],
 ];
 foreach($ancient as $r) {
   echo '<tr style="border-bottom:1px solid #f0f0f0;">';
@@ -70,10 +70,10 @@ $abrahamic = [
 ['Islam','Arabia','610 CE (Muhammad ibn Abdullah)','1.9 billion'],
 ['— Sunni','Arabia/Global','632 CE (after Muhammad\'s death)','1.5 billion'],
 ['— Shia','Arabia/Persia','632 CE (Ali ibn Abi Talib)','300 million'],
-['— Sufi','Global','8th–9th century CE','Unknown millions'],
+['— Sufi','Global','8th-9th century CE','Unknown millions'],
 ['— Ahmadiyya','Punjab, India','1889 CE (Mirza Ghulam Ahmad)','10-20 million'],
 ['Druze','Lebanon/Syria/Israel','11th century CE','1 million'],
-['Mandaeism','Iraq/Iran','1st–3rd century CE','60,000-70,000'],
+['Mandaeism','Iraq/Iran','1st-3rd century CE','60,000-70,000'],
 ];
 foreach($abrahamic as $r) {
   echo '<tr style="border-bottom:1px solid #f0f0f0;">';
@@ -127,7 +127,7 @@ $modern = [
 ['Eckankar','1965 CE, USA','Paul Twitchell','50,000+'],
 ['Scientology','1954 CE, USA','L. Ron Hubbard','Unknown (claimed millions)'],
 ['Unitarian Universalism','1961 CE (formal), USA/UK','Merged traditions','500,000'],
-['New Age Movement','1970s–1980s, Global','No single founder','Diffuse, millions'],
+['New Age Movement','1970s-1980s, Global','No single founder','Diffuse, millions'],
 ['Wicca / Neo-Paganism','1954 CE, UK','Gerald Gardner','1-3 million'],
 ['Satanism (LaVeyan)','1966 CE, USA','Anton LaVey','Unknown'],
 ['Nation of Islam','1930 CE, USA','Wallace Fard Muhammad','50,000'],

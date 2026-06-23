@@ -5,7 +5,7 @@ echo '<h2>What to Read, and Why</h2>';
 
 echo '<h3>IPOB and the Self-Determination Movement</h3>';
 echo '<ul>';
-echo '<li><strong>Nnamdi Kanu, Radio Biafra archives (2009–2015)</strong> — Primary source. The broadcasts that built IPOB. Partial archives available online.</li>';
+echo '<li><strong>Nnamdi Kanu, Radio Biafra archives (2009-2015)</strong> — Primary source. The broadcasts that built IPOB. Partial archives available online.</li>';
 echo '<li><strong>Amnesty International, <em>Killing of Pro-Biafra Supporters</em> (2016)</strong> — Documentation of Nigerian security force killings of IPOB members and supporters. Available at amnesty.org.</li>';
 echo '<li><strong>International Crisis Group, <em>Biafra Again?</em> (2017)</strong> — Analysis of IPOB, the sit-at-home, and the security dynamics in the southeast. Available at crisisgroup.org.</li>';
 echo '<li><strong>Human Rights Watch, <em>Nigeria: Army Abuses in Southeast</em> (2021)</strong> — Documentation of military operations against IPOB and their civilian impact. Available at hrw.org.</li>';
