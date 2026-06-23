@@ -17,6 +17,7 @@ echo '<li><strong>Depth</strong> — we prefer thorough, sourced content over qu
 echo '<li><strong>Continuity</strong> — we build for the long term, not for trends</li>';
 echo '</ul>';
 echo '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 4px;">';
+echo '<a class="mk-btn mk-btn--ghost" href="/subjects/about/igbo_philosophy/">Igbo Philosophy</a>';
 echo '<a class="mk-btn mk-btn--ghost" href="/subjects/about/overview/">Overview</a>';
 echo '<a class="mk-btn mk-btn--ghost" href="/subjects/about/topics/">Topics</a>';
 echo '<a class="mk-btn mk-btn--ghost" href="/subjects/about/people/">Contributors</a>';
