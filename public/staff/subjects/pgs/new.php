@@ -297,7 +297,7 @@ if (strtoupper((string)($_SERVER['REQUEST_METHOD'] ?? 'GET')) === 'POST') {
 
 $page_title = 'New Page • Staff';
 $active_nav = 'pgs';
-require_once APP_ROOT . '/private/shared/staff_header.php';
+require_once APP_ROOT . '/app/mkomigbo/private/shared/staff_header.php';
 ?>
 <div class="container" style="padding:24px 0;">
   <section class="hero">
@@ -384,4 +384,4 @@ require_once APP_ROOT . '/private/shared/staff_header.php';
     </div>
   </section>
 </div>
-<?php require_once APP_ROOT . '/private/shared/staff_footer.php'; ?>
+<?php require_once APP_ROOT . '/app/mkomigbo/private/shared/staff_footer.php'; ?>

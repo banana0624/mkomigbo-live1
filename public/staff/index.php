@@ -12,8 +12,8 @@ $staffUser   = $_SESSION['staff_user']    ?? [];
 $staffUserId = $_SESSION['staff_user_id'] ?? null;
 $staffEmail  = is_array($staffUser) ? (string)($staffUser['email'] ?? '') : '';
 $staffRole   = is_array($staffUser) ? (string)($staffUser['role']  ?? 'staff') : 'staff';
-$staff_header = (defined('PRIVATE_PATH') && PRIVATE_PATH !== '') ? rtrim(PRIVATE_PATH,"/\\").'/shared/staff_header.php' : (defined('APP_ROOT') && APP_ROOT !== '' ? rtrim(APP_ROOT,"/\\").'/private/shared/staff_header.php' : '');
-$staff_footer = (defined('PRIVATE_PATH') && PRIVATE_PATH !== '') ? rtrim(PRIVATE_PATH,"/\\").'/shared/staff_footer.php' : (defined('APP_ROOT') && APP_ROOT !== '' ? rtrim(APP_ROOT,"/\\").'/private/shared/staff_footer.php' : '');
+$staff_header = (defined('PRIVATE_PATH') && PRIVATE_PATH !== '') ? rtrim(PRIVATE_PATH,"/\\").'/shared/staff_header.php' : (defined('APP_ROOT') && APP_ROOT !== '' ? rtrim(APP_ROOT,"/\\").'/app/mkomigbo/private/shared/staff_header.php' : '');
+$staff_footer = (defined('PRIVATE_PATH') && PRIVATE_PATH !== '') ? rtrim(PRIVATE_PATH,"/\\").'/shared/staff_footer.php' : (defined('APP_ROOT') && APP_ROOT !== '' ? rtrim(APP_ROOT,"/\\").'/app/mkomigbo/private/shared/staff_footer.php' : '');
 if ($staff_header && is_file($staff_header)) require $staff_header;
 
 // ── Stats ──────────────────────────────────────────────

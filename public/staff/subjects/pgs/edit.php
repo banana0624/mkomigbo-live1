@@ -673,7 +673,7 @@ if ($pageFilesExists) {
 /* Header */
 $active_nav = 'pgs';
 $page_title = 'Edit Page • Staff';
-require_once APP_ROOT . '/private/shared/staff_header.php';
+require_once APP_ROOT . '/app/mkomigbo/private/shared/staff_header.php';
 
 /* Define one CSRF field HTML for reuse everywhere */
 $csrf_html = staff_csrf_field();
@@ -1078,4 +1078,4 @@ sort($allow_keys);
 </div>
 
 <?php
-require_once APP_ROOT . '/private/shared/staff_footer.php';
+require_once APP_ROOT . '/app/mkomigbo/private/shared/staff_footer.php';

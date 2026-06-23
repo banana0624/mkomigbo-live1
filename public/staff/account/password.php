@@ -76,7 +76,7 @@ $nav_active = 'staff';
 /* Header */
 $staff_header = (defined('PRIVATE_PATH') && is_file(PRIVATE_PATH . '/shared/staff_header.php'))
   ? (PRIVATE_PATH . '/shared/staff_header.php')
-  : (defined('APP_ROOT') ? (APP_ROOT . '/private/shared/staff_header.php') : null);
+  : (defined('APP_ROOT') ? (APP_ROOT . '/app/mkomigbo/private/shared/staff_header.php') : null);
 
 if (!$staff_header || !is_file($staff_header)) {
   http_response_code(500);
@@ -256,7 +256,7 @@ if (is_post_request()) {
 <?php
 $staff_footer = (defined('PRIVATE_PATH') && is_file(PRIVATE_PATH . '/shared/staff_footer.php'))
   ? (PRIVATE_PATH . '/shared/staff_footer.php')
-  : (defined('APP_ROOT') ? (APP_ROOT . '/private/shared/staff_footer.php') : null);
+  : (defined('APP_ROOT') ? (APP_ROOT . '/app/mkomigbo/private/shared/staff_footer.php') : null);
 
 if ($staff_footer && is_file($staff_footer)) {
   require_once $staff_footer;

@@ -56,7 +56,7 @@ auth_require_role('staff');
 }
 
 /* Shared header helpers */
-$staff_header = APP_ROOT . '/private/shared/staff_header.php';
+$staff_header = APP_ROOT . '/app/mkomigbo/private/shared/staff_header.php';
 if (!is_file($staff_header)) {
   header('Content-Type: text/plain; charset=utf-8');
   echo "staff_header.php not found\nExpected: {$staff_header}\n";

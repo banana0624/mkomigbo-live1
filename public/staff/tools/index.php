@@ -69,7 +69,7 @@ if (function_exists('mk_require_shared')) {
 $tools_header = (defined('PRIVATE_PATH') && is_string(PRIVATE_PATH) && PRIVATE_PATH !== '')
   ? rtrim(PRIVATE_PATH, "/\\") . '/shared/tools_header.php'
   : (defined('APP_ROOT') && is_string(APP_ROOT) && APP_ROOT !== ''
-      ? rtrim(APP_ROOT, "/\\") . '/private/shared/tools_header.php'
+      ? rtrim(APP_ROOT, "/\\") . '/app/mkomigbo/private/shared/tools_header.php'
       : '');
 
 if ($tools_header !== '' && is_file($tools_header)) {
@@ -611,7 +611,7 @@ if (function_exists('mk_require_shared')) {
 $staff_footer = (defined('PRIVATE_PATH') && is_string(PRIVATE_PATH) && PRIVATE_PATH !== '')
   ? rtrim(PRIVATE_PATH, "/\\") . '/shared/staff_footer.php'
   : (defined('APP_ROOT') && is_string(APP_ROOT) && APP_ROOT !== ''
-      ? rtrim(APP_ROOT, "/\\") . '/private/shared/staff_footer.php'
+      ? rtrim(APP_ROOT, "/\\") . '/app/mkomigbo/private/shared/staff_footer.php'
       : '');
 
 if ($staff_footer !== '' && is_file($staff_footer)) {

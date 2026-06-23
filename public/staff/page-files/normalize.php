@@ -178,7 +178,7 @@ $guess_kind = static function(array $row): string {
 
 $active_nav = 'page-files';
 $page_title = 'Normalize Attachments • Staff';
-require_once APP_ROOT . '/private/shared/staff_header.php';
+require_once APP_ROOT . '/app/mkomigbo/private/shared/staff_header.php';
 
 $method = strtoupper((string)($_SERVER['REQUEST_METHOD'] ?? 'GET'));
 $ok_msg = '';
@@ -375,4 +375,4 @@ if ($method === 'POST') {
   <?php endif; ?>
 
 </div>
-<?php require_once APP_ROOT . '/private/shared/staff_footer.php'; ?>
+<?php require_once APP_ROOT . '/app/mkomigbo/private/shared/staff_footer.php'; ?>

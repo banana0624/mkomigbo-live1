@@ -91,7 +91,7 @@ try {
 
 $active_nav = 'page-files';
 $page_title = 'Attachments • Staff';
-require_once APP_ROOT . '/private/shared/staff_header.php';
+require_once APP_ROOT . '/app/mkomigbo/private/shared/staff_header.php';
 
 ?>
 <div class="container">
@@ -313,4 +313,4 @@ require_once APP_ROOT . '/private/shared/staff_header.php';
 
   <?php endif; ?>
 </div>
-<?php require_once APP_ROOT . '/private/shared/staff_footer.php'; ?>
+<?php require_once APP_ROOT . '/app/mkomigbo/private/shared/staff_footer.php'; ?>

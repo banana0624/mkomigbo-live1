@@ -25,7 +25,7 @@ if (function_exists('mk_require_shared')) {
 $tools_header = (defined('PRIVATE_PATH') && is_string(PRIVATE_PATH) && PRIVATE_PATH !== '')
   ? rtrim(PRIVATE_PATH, "/\\") . '/shared/tools_header.php'
   : (defined('APP_ROOT') && is_string(APP_ROOT) && APP_ROOT !== ''
-      ? rtrim(APP_ROOT, "/\\") . '/private/shared/tools_header.php'
+      ? rtrim(APP_ROOT, "/\\") . '/app/mkomigbo/private/shared/tools_header.php'
       : '');
 
 if ($tools_header !== '' && is_file($tools_header)) {
@@ -331,9 +331,9 @@ $report = [
 
 /* Bootstrap checks */
 $bootstrapChecks = [
-  'private/shared/staff_header.php' => $projectRoot . '/private/shared/staff_header.php',
-  'private/shared/staff_footer.php' => $projectRoot . '/private/shared/staff_footer.php',
-  'private/shared/tools_header.php' => $projectRoot . '/private/shared/tools_header.php',
+  'private/shared/staff_header.php' => $projectRoot . '/app/mkomigbo/private/shared/staff_header.php',
+  'private/shared/staff_footer.php' => $projectRoot . '/app/mkomigbo/private/shared/staff_footer.php',
+  'private/shared/tools_header.php' => $projectRoot . '/app/mkomigbo/private/shared/tools_header.php',
   'public/lib/css/ui.css'           => $projectRoot . '/public/lib/css/ui.css',
   'public/lib/css/staff.css'        => $projectRoot . '/public/lib/css/staff.css',
   'public/staff/tools/index.php'    => $projectRoot . '/public/staff/tools/index.php',

@@ -201,7 +201,7 @@ $rows = $st->fetchAll(PDO::FETCH_ASSOC) ?: [];
 
 $page_title = 'Manage Pages • Staff';
 $active_nav = 'pgs';
-require_once APP_ROOT . '/private/shared/staff_header.php';
+require_once APP_ROOT . '/app/mkomigbo/private/shared/staff_header.php';
 
 $listUrl = pf__u('/staff/subjects/pgs/index.php');
 $newUrl  = pf__u('/staff/subjects/pgs/new.php?return=' . rawurlencode($returnPath));
@@ -404,4 +404,4 @@ $bulkUrl = pf__u('/staff/subjects/pgs/bulk.php');
   if (inv) inv.addEventListener('click', function () { each(function (b) { b.checked = !b.checked; }); });
 })();
 </script>
-<?php require_once APP_ROOT . '/private/shared/staff_footer.php'; ?>
+<?php require_once APP_ROOT . '/app/mkomigbo/private/shared/staff_footer.php'; ?>

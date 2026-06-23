@@ -179,7 +179,7 @@ $delUrl  = pf__u('/staff/subjects/pgs/delete.php?id=' . rawurlencode((string)$id
 
 $page_title = 'View Page • Staff';
 $active_nav = 'pgs';
-require_once APP_ROOT . '/private/shared/staff_header.php';
+require_once APP_ROOT . '/app/mkomigbo/private/shared/staff_header.php';
 ?>
 <div class="container">
   <div class="hero">
@@ -232,4 +232,4 @@ require_once APP_ROOT . '/private/shared/staff_header.php';
     </div>
   </div>
 </div>
-<?php require_once APP_ROOT . '/private/shared/staff_footer.php'; ?>
+<?php require_once APP_ROOT . '/app/mkomigbo/private/shared/staff_footer.php'; ?>
