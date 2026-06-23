@@ -97,7 +97,7 @@ $db_error = '';
 
 if (!$final) {
 
-  $mk_hardcoded_registry_19 = static function(): array {
+  $mk_hardcoded_registry_20 = static function(): array {
     return [
       ['id'=>1,  'slug'=>'history',      'name'=>'History'],
       ['id'=>2,  'slug'=>'slavery',      'name'=>'Slavery'],
@@ -118,6 +118,7 @@ if (!$final) {
       ['id'=>17, 'slug'=>'europe',       'name'=>'Europe'],
       ['id'=>18, 'slug'=>'arabs',        'name'=>'Arabs'],
       ['id'=>19, 'slug'=>'about',        'name'=>'About'],
+      ['id'=>20, 'slug'=>'pogrom',       'name'=>'Pogrom'],
     ];
   };
 
@@ -174,7 +175,7 @@ if (!$final) {
     $registryError = ($registryError !== '' ? $registryError . ' | ' : '') . 'Registry function failed: ' . $e->getMessage();
   }
   $registry_subjects = array_values(array_filter((array)$registry_subjects, static fn($r): bool => is_array($r)));
-  if (!$registry_subjects) $registry_subjects = $mk_hardcoded_registry_19();
+  if (!$registry_subjects) $registry_subjects = $mk_hardcoded_registry_20();
 
   /* DB overlay (optional) */
   $db_by_slug = [];
@@ -319,7 +320,7 @@ if (!$final) {
   }
 
   if (!$final) {
-    foreach ($mk_hardcoded_registry_19() as $x) {
+    foreach ($mk_hardcoded_registry_20() as $x) {
       $final[] = [
         'registry_id' => (int)($x['id'] ?? 0),
         'db_id'       => 0,
