@@ -80,6 +80,74 @@ if (!function_exists('h')) {
 }
 
 /* ---------------------------------------------------------
+| PF__ helper functions (used by all staff pages)
+--------------------------------------------------------- */
+
+if (!function_exists("pf__u")) {
+    function pf__u(string $path): string {
+        return "/" . ltrim(str_replace(["\r","\n"], "", $path), "/");
+    }
+}
+
+if (!function_exists("pf__column_exists")) {
+    function pf__column_exists(PDO $pdo, string $table, string $col): bool {
+        try {
+            $st = $pdo->prepare("SELECT 1 FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=? AND COLUMN_NAME=? LIMIT 1");
+            $st->execute([$table, $col]);
+            return (bool)$st->fetchColumn();
+        } catch (Throwable $e) { return false; }
+    }
+}
+
+if (!function_exists("pf__page_title_of")) {
+    function pf__page_title_of(array $r): string {
+        foreach (["title","menu_name","nav_label","name","slug"] as $k) {
+            $v = trim((string)($r[$k] ?? ""));
+            if ($v !== "") return $v;
+        }
+        return "#" . ($r["id"] ?? "?");
+    }
+}
+
+if (!function_exists("pf__flash_set")) {
+    function pf__flash_set(string $key, string $msg): void {
+        if (!isset($_SESSION["flash"]) || !is_array($_SESSION["flash"])) $_SESSION["flash"] = [];
+        $_SESSION["flash"][$key] = $msg;
+    }
+}
+
+if (!function_exists("pf__flash_get")) {
+    function pf__flash_get(string $key): string {
+        $msg = "";
+        if (isset($_SESSION["flash"][$key])) {
+            $msg = (string)$_SESSION["flash"][$key];
+            unset($_SESSION["flash"][$key]);
+        }
+        return $msg;
+    }
+}
+
+if (!function_exists("pf__flash_html")) {
+    function pf__flash_html(): string {
+        $out = "";
+        if (!empty($_SESSION["flash"]) && is_array($_SESSION["flash"])) {
+            foreach ($_SESSION["flash"] as $k => $v) {
+                $type = str_contains($k,"err") ? "danger" : (str_contains($k,"ok") ? "success" : "info");
+                $out .= "<div class=\"alert alert--{$type}\">" . htmlspecialchars((string)$v, ENT_QUOTES, "UTF-8") . "</div>";
+            }
+            $_SESSION["flash"] = [];
+        }
+        return $out;
+    }
+}
+
+if (!function_exists("pf__subject_logo_url")) {
+    function pf__subject_logo_url(string $slug): string {
+        return "/lib/images/subjects/" . preg_replace("/[^a-z0-9_-]/","",strtolower($slug)) . ".svg";
+    }
+}
+
+/* ---------------------------------------------------------
 | IMPORTANT: DO NOT AUTO-CALL auth_require_role HERE
 | Only pages that require protection should call it
 --------------------------------------------------------- */

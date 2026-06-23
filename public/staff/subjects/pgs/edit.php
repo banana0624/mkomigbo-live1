@@ -807,6 +807,33 @@ sort($allow_keys);
           </div>
         <?php endif; ?>
 
+        <?php
+        $subj_area = (string)($page["subject_area"] ?? "");
+        $pg_slug   = (string)($page["slug"] ?? "");
+        $f_path    = "";
+        if ($subj_area !== "" && $pg_slug !== "") {
+            $cand = dirname(__DIR__, 3) . "/subjects/pages/{$subj_area}/{$pg_slug}.php";
+            if (file_exists($cand)) $f_path = $cand;
+        }
+        if ($f_path !== ""):
+            $f_content = file_get_contents($f_path);
+            $rel       = "public/subjects/pages/{$subj_area}/{$pg_slug}.php";
+        ?>
+        <div style="border:1px solid #bbf7d0;border-radius:12px;overflow:hidden;margin-bottom:20px;">
+          <div style="background:#f0fdf4;border-bottom:1px solid #bbf7d0;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+            <div>
+              <div style="font-weight:800;font-size:.88rem;color:#166534;">File-based page</div>
+              <div style="font-family:monospace;font-size:.75rem;color:#6b7280;margin-top:2px;"><?php echo h($rel); ?></div>
+            </div>
+            <a href="<?php echo h("https://mkomigbo.com/subjects/{$subj_area}/{$pg_slug}/"); ?>"
+               target="_blank" style="padding:6px 14px;background:#2d6a1f;color:#fff;border-radius:8px;font-size:.82rem;font-weight:700;text-decoration:none;">View live</a>
+          </div>
+          <div style="padding:14px 16px;background:#fafafa;">
+            <p style="font-size:.8rem;color:#6b7280;margin:0 0 8px;">Content is stored in the PHP file above. Edit via cPanel File Manager at the path shown. Preview below.</p>
+            <textarea readonly style="width:100%;height:180px;font-family:monospace;font-size:.73rem;background:#0a1a0a;color:#5de87a;border:none;border-radius:8px;padding:10px;resize:vertical;"><?php echo h($f_content); ?></textarea>
+          </div>
+        </div>
+        <?php endif; ?>
         <?php if ($body_col): ?>
           <div class="field">
             <label class="label" for="body"><?php echo h($body_col === 'body_html' ? 'Body (HTML)' : 'Body'); ?></label>
