@@ -150,6 +150,80 @@ echo '<div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:12px
 echo '<h3 style="margin-top:0;">Primary Free Libraries</h3>';
 echo '<ul style="margin:0;">';
 echo '<li><a href="https://sacred-texts.com" target="_blank" rel="noopener"><strong>sacred-texts.com</strong></a> — the most comprehensive free library of religious and esoteric texts on the internet. No registration. No cost. Thousands of texts.</li>';
+
+echo '<h2 style="margin-top:28px;">Sant Mat — Path of the Masters</h2>';
+echo '<p>Sant Mat is the esoteric tradition of the divine Sound Current (Shabd/Naam) transmitted through a living master. Most Sant Mat texts are freely available by tradition — Kirpal Singh declared all his works copyright-free.</p>';
+echo '<table style="width:100%;border-collapse:collapse;font-size:.88rem;">';
+echo '<tr style="border-bottom:2px solid #e5e7eb;"><th style="text-align:left;padding:8px 10px;">Text</th><th style="text-align:left;padding:8px 10px;">Author</th><th style="text-align:left;padding:8px 10px;">Date</th><th style="text-align:left;padding:8px 10px;">Download</th></tr>';
+$sant_texts = [
+  ['Songs of Kabir','Kabir (trans. Tagore)','c. 1500 CE','<a href="https://www.sacred-texts.com/hin/sbk/index.htm" target="_blank" rel="noopener">sacred-texts.com [FREE]</a>'],
+  ['The Bijak of Kabir','Kabir','c. 1500 CE','<a href="https://archive.org/details/bijak00kabi" target="_blank" rel="noopener">archive.org [FREE]</a>'],
+  ['Japji Sahib','Guru Nanak','1539 CE','<a href="https://www.sacred-texts.com/skh/granth/index.htm" target="_blank" rel="noopener">sacred-texts.com [FREE]</a>'],
+  ['Sar Bachan (Poetry and Prose)','Swami Ji Maharaj','1878 CE','<a href="https://archive.org/details/sarbachan00swam" target="_blank" rel="noopener">archive.org [FREE]</a>'],
+  ['Spiritual Letters','Jaimal Singh','1896-1903 CE','<a href="https://archive.org/details/spiritualletters00sing" target="_blank" rel="noopener">archive.org [FREE]</a>'],
+  ['Spiritual Gems','Sawan Singh','1948 CE','<a href="https://archive.org/details/spiritualgems00sing" target="_blank" rel="noopener">archive.org [FREE]</a>'],
+  ['Philosophy of the Masters (5 vols)','Sawan Singh','1963 CE','<a href="https://archive.org/details/philosophyofmast00sing" target="_blank" rel="noopener">archive.org [FREE]</a>'],
+  ['Path of the Masters','Julian Johnson','1939 CE','<a href="https://archive.org/details/pathofmasters00john" target="_blank" rel="noopener">archive.org [FREE]</a>'],
+  ['With a Great Master in India','Julian Johnson','1934 CE','<a href="https://archive.org/details/withgreatmaster00john" target="_blank" rel="noopener">archive.org [FREE]</a>'],
+  ['Naam or Word','Kirpal Singh','1942 CE','<a href="https://archive.org/details/namorword00sing" target="_blank" rel="noopener">archive.org [FREE]</a>'],
+  ['Crown of Life','Kirpal Singh','1961 CE','<a href="https://archive.org/details/crownoflife00sing" target="_blank" rel="noopener">archive.org [FREE]</a>'],
+  ['Spiritual Elixir','Kirpal Singh','1967 CE','<a href="https://www.ruhanisatsangusa.org/books.htm" target="_blank" rel="noopener">ruhanisatsangusa.org [FREE]</a>'],
+  ['All Kirpal Singh books','Kirpal Singh','1942-1974 CE','<a href="https://www.ruhanisatsangusa.org/books.htm" target="_blank" rel="noopener">ruhanisatsangusa.org [FREE — all books]</a>'],
+];
+foreach($sant_texts as $r) {
+  echo '<tr style="border-bottom:1px solid #f0f0f0;vertical-align:top;">';
+  echo '<td style="padding:9px 10px;font-weight:700;color:#111;">'.$r[0].'</td>';
+  echo '<td style="padding:9px 10px;color:#374151;">'.$r[1].'</td>';
+  echo '<td style="padding:9px 10px;color:#888;white-space:nowrap;">'.$r[2].'</td>';
+  echo '<td style="padding:9px 10px;">'.$r[3].'</td>';
+  echo '</tr>';
+}
+echo '</table>';
+
+echo '<h2 style="margin-top:28px;">New Thought / Mental Science</h2>';
+echo '<p>The New Thought and Mental Science tradition teaches that mind is the primary substance of the universe and that aligning individual mind with Universal Mind produces healing, abundance, and peace.</p>';
+echo '<table style="width:100%;border-collapse:collapse;font-size:.88rem;">';
+echo '<tr style="border-bottom:2px solid #e5e7eb;"><th style="text-align:left;padding:8px 10px;">Text</th><th style="text-align:left;padding:8px 10px;">Author</th><th style="text-align:left;padding:8px 10px;">Date</th><th style="text-align:left;padding:8px 10px;">Download</th></tr>';
+$new_thought_texts = [
+  ['Edinburgh Lectures on Mental Science','Thomas Troward','1904 CE','<a href="https://www.sacred-texts.com/nth/elm/index.htm" target="_blank" rel="noopener">sacred-texts.com [FREE]</a>'],
+  ['Dore Lectures on Mental Science','Thomas Troward','1909 CE','<a href="https://archive.org/details/dorelectureson00trouiala" target="_blank" rel="noopener">archive.org [FREE]</a>'],
+  ['The Hidden Power','Thomas Troward','1921 CE','<a href="https://archive.org/details/hiddenpower00trow" target="_blank" rel="noopener">archive.org [FREE]</a>'],
+  ['The Creative Process in the Individual','Thomas Troward','1910 CE','<a href="https://archive.org/details/creativeprocessi00trou" target="_blank" rel="noopener">archive.org [FREE]</a>'],
+  ['In Tune with the Infinite','Ralph Waldo Trine','1897 CE','<a href="https://archive.org/details/intunewithinfinit00trin" target="_blank" rel="noopener">archive.org [FREE]</a> | <a href="https://www.globalgreyebooks.com/in-tune-with-the-infinite-ebook.html" target="_blank" rel="noopener">Global Grey [FREE]</a>'],
+  ['Science of Mind','Ernest Holmes','1926 CE','<a href="https://archive.org/details/scienceofmind00holm" target="_blank" rel="noopener">archive.org [FREE]</a>'],
+  ['The Power of Your Subconscious Mind','Joseph Murphy','1963 CE','<a href="https://archive.org/details/powerofyoursubco00murp" target="_blank" rel="noopener">archive.org [FREE]</a>'],
+  ['As a Man Thinketh','James Allen','1903 CE','<a href="https://www.sacred-texts.com/sro/amt/index.htm" target="_blank" rel="noopener">sacred-texts.com [FREE]</a>'],
+  ['The Master Key System','Charles Haanel','1912 CE','<a href="https://archive.org/details/masterkeySystem00haan" target="_blank" rel="noopener">archive.org [FREE]</a>'],
+  ['All Alice Bailey books (24 vols)','Alice Bailey','1919-1960 CE','<a href="https://www.lucistrust.org/online_books" target="_blank" rel="noopener">lucistrust.org [FREE — all 24 books]</a>'],
+];
+foreach($new_thought_texts as $r) {
+  echo '<tr style="border-bottom:1px solid #f0f0f0;vertical-align:top;">';
+  echo '<td style="padding:9px 10px;font-weight:700;color:#111;">'.$r[0].'</td>';
+  echo '<td style="padding:9px 10px;color:#374151;">'.$r[1].'</td>';
+  echo '<td style="padding:9px 10px;color:#888;white-space:nowrap;">'.$r[2].'</td>';
+  echo '<td style="padding:9px 10px;">'.$r[3].'</td>';
+  echo '</tr>';
+}
+echo '</table>';
+
+
+echo '<h2 style="margin-top:28px;">Free Digital Libraries — Complete Directory</h2>';
+echo '<ul>';
+echo '<li><a href="https://www.sacred-texts.com" target="_blank" rel="noopener"><strong>Internet Sacred Text Archive</strong></a> — the most comprehensive free library of sacred and esoteric texts online; all traditions, no registration</li>';
+echo '<li><a href="https://archive.org" target="_blank" rel="noopener"><strong>Internet Archive</strong></a> — millions of free books; search any author or title; download in PDF, ePub, Kindle</li>';
+echo '<li><a href="https://www.globalgreyebooks.com" target="_blank" rel="noopener"><strong>Global Grey Ebooks</strong></a> — beautifully formatted free PDF and ePub of classic spiritual and philosophical texts</li>';
+echo '<li><a href="https://www.holybooks.com" target="_blank" rel="noopener"><strong>HolyBooks.com</strong></a> — free PDF downloads of sacred texts from all world religions and traditions</li>';
+echo '<li><a href="https://www.gutenberg.org" target="_blank" rel="noopener"><strong>Project Gutenberg</strong></a> — free public domain books including many classic esoteric and mystical works</li>';
+echo '<li><a href="https://www.wisdomlib.org" target="_blank" rel="noopener"><strong>Wisdom Library</strong></a> — Hindu, Buddhist, and Jain texts with scholarly annotation</li>';
+echo '<li><a href="https://www.hermetics.org" target="_blank" rel="noopener"><strong>Hermetics.org</strong></a> — Western esoteric and Hermetic texts</li>';
+echo '<li><a href="https://gnosis.org" target="_blank" rel="noopener"><strong>Gnosis.org</strong></a> — Nag Hammadi library, Gnostic texts, and Western esoteric tradition</li>';
+echo '<li><a href="https://www.lucistrust.org/online_books" target="_blank" rel="noopener"><strong>Lucis Trust</strong></a> — all 24 Alice Bailey books free online</li>';
+echo '<li><a href="https://rsarchive.org" target="_blank" rel="noopener"><strong>Rudolf Steiner Archive</strong></a> — complete Rudolf Steiner works online</li>';
+echo '<li><a href="https://www.ruhanisatsangusa.org/books.htm" target="_blank" rel="noopener"><strong>Ruhani Satsang USA</strong></a> — all Kirpal Singh books free</li>';
+echo '<li><a href="https://sefaria.org" target="_blank" rel="noopener"><strong>Sefaria</strong></a> — Jewish texts including Kabbalah, Talmud, Torah in Hebrew and English</li>';
+echo '<li><a href="https://www.buddhanet.net" target="_blank" rel="noopener"><strong>BuddhaNet</strong></a> — Buddhist texts, sutras, and teachings</li>';
+echo '</ul>';
+
 echo '<li><a href="https://archive.org" target="_blank" rel="noopener"><strong>archive.org (Internet Archive)</strong></a> — millions of free books including rare esoteric and religious texts.</li>';
 echo '<li><a href="https://gnosis.org" target="_blank" rel="noopener"><strong>gnosis.org</strong></a> — the Gnostic Society Library; Gnostic texts, Neoplatonic texts, Hermetic texts.</li>';
 echo '<li><a href="https://sefaria.org" target="_blank" rel="noopener"><strong>sefaria.org</strong></a> — complete Jewish library: Torah, Talmud, Midrash, Kabbalah, in Hebrew and English.</li>';
