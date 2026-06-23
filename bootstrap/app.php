@@ -36,3 +36,12 @@ if (is_file($envFile)) {
 
 require_once APP_ROOT . '/app/mkomigbo/private/functions/db.php';
 
+/*
+|--------------------------------------------------------------------------
+| Path constants (PRIVATE_PATH, SHARED_PATH, FUNCTIONS_PATH, etc.)
+|--------------------------------------------------------------------------
+*/
+if (!defined('PRIVATE_PATH')) {
+    require_once APP_ROOT . '/app/mkomigbo/private/functions/contain.php';
+}
+
